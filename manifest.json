@@ -1,0 +1,23 @@
+{
+	"name"				:	"Duo Strength",
+	"description"		:	"Adds individual skill strengths back into the duolingo webpage, similar to data on duome.eu",
+	"version"			:	"1.0",
+	"manifest_version"	:	2,
+	
+	"icons"				: 	{
+		"16"			: 	"icons/icon_16.png",
+		"32"			:	"icons/icon_32.png",
+		"48"			:	"icons/icon_48.png",
+		"64"			:	"icons/icon_64.png",
+		"128"			:	"icons/icon_128.png"
+	},
+	
+	"content_scripts"	:	[
+		{
+			"matches"	:	["https://www.duolingo.com/*"],
+			"js"		: 	["duoStrength.js"]
+		}
+	],
+	
+	"permissions"		:	["tabs"]
+}

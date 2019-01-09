@@ -2,6 +2,7 @@ const GOLD = "rgb(248, 176, 45)";
 const RED = "rgb(219, 62, 65)";
 var languageCode = "";
 var userData = "";
+var newUIVersion = false;
 
 function addStrengths(strengths) // Adds strength bars and percentages under each skill in the tree.
 {
@@ -85,7 +86,14 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 
 function displayNeedsStrengthening(needsStrengthening) // adds clickable list of skills that need strengthening to top of the tree.
 {
-	var topOfTree = document.getElementsByClassName('mAsUf')[0].childNodes[1]; // mAsUf is class of the container element just above tree with language name and shop button, may change.
+	var topOfTree;
+	if(newUIVersion)
+	{
+		topOfTree = document.getElementsByClassName('_2GJb6')[0]; // top of tree is first row which has part 1.
+	} else
+	{
+		topOfTree = document.getElementsByClassName('mAsUf')[0].childNodes[1]; // mAsUf is class of the container element just above tree with language name and shop button, may change.
+	}
 	var strengthenBox;
 	var needToAddBox = false;
 	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
@@ -93,6 +101,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		needToAddBox = true;
 		strengthenBox = document.createElement("div"); // div to hold list of skills that need strengthenening
 		strengthenBox.id = "strengthenBox";
+		strengthenBox.style['textAlign'] = "left";
 	}else {
 		strengthenBox = document.getElementById("strengthenBox");
 	}
@@ -232,6 +241,18 @@ function requestData() // requests data for actively logged in user.
 	}
 }
 
+function checkUIVersion(){
+	if (document.getElementsByClassName('_1bcgw').length != 0)
+	{
+		// Seem to be using new version of tree with the pentagonal checkpoint nodes
+		newUIVersion = true;
+	} else
+	{
+		newUIVersion = false;
+	}
+}
+
+checkUIVersion();
 document.body.onload = requestData(); // call function to start display sequence on first load
 
 var dataReactRoot = document.body.childNodes[0].childNodes[0]; // When entering or leaving a lesson children change and new body so need to detect that to know when to reload the bars.
@@ -246,6 +267,7 @@ var childListMutationHandle = function(mutationsList, observer)
 		if(mutation.type == 'childList' && dataReactRoot.childNodes[1].className ==  "_6t5Uh")
 		{
 			//should only be true when exiting a lesson.
+			checkUIVersion(); // here for case of switching language with different UI versions
 			requestData();
 		}
 	}
@@ -257,6 +279,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 	{
 		if(mutation.type == 'attributes' && topBarDiv.className == "_6t5Uh") // body changed to main page
 		{
+			checkUIVersion(); // here for case of switching language with different UI versions
 			requestData(); // call on attribute change
 		}
 	}

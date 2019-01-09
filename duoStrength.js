@@ -90,6 +90,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	if(newUIVersion)
 	{
 		topOfTree = document.getElementsByClassName('_2GJb6')[0]; // top of tree is first row which has part 1.
+		topOfTree.childNodes[0].style['marginBottom'] = "1em"; // reduced margin between part 1 heading an strengthenBox;
 	} else
 	{
 		topOfTree = document.getElementsByClassName('mAsUf')[0].childNodes[1]; // mAsUf is class of the container element just above tree with language name and shop button, may change.

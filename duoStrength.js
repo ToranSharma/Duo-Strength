@@ -1,6 +1,10 @@
 const GOLD = "rgb(248, 176, 45)";
 const RED = "rgb(219, 62, 65)";
 var languageCode = "";
+var languageCodeChanged = false;
+var language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
+var languageChanged = false;
+console.log(language);
 var userData = "";
 var newUIVersion = false;
 
@@ -103,7 +107,15 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox = document.createElement("div"); // div to hold list of skills that need strengthenening
 		strengthenBox.id = "strengthenBox";
 		strengthenBox.style['textAlign'] = "left";
-	}else {
+	} else if(languageChanged)
+	{
+		// remove needs strengthening box and add fresh
+		console.log("existing strengthenBox but changing language.")
+		oldStrengthenBox = document.getElementById("strengthenBox");
+		oldStrengthenBox.parentNode.removeChild(oldStrengthenBox);
+		needToAddBox = true;
+		strengthenBox = document.getElementById("strengthenBox");
+	} else {
 		strengthenBox = document.getElementById("strengthenBox");
 	}
 	strengthenBox.innerHTML = "The following " + needsStrengthening.length +
@@ -129,6 +141,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	{
 		topOfTree.appendChild(strengthenBox);
 	}
+	languageChanged = false; // regardless of what it was before, we have finished up displaying everything so set it to false.
 }
 
 function httpGetAsync(url, responseHandler)
@@ -143,7 +156,7 @@ function httpGetAsync(url, responseHandler)
 	xmlHttp.send(null);
 }
 
-function getStrengths(responseText) // parses the data from duolingo.com/users/USERNAME and extracts strengths and skills that need strengthening
+function getStrengths() // parses the data from duolingo.com/users/USERNAME and extracts strengths and skills that need strengthening
 {
 	/*
 		Data comes formatted as such:
@@ -159,14 +172,13 @@ function getStrengths(responseText) // parses the data from duolingo.com/users/U
 		}
 		each skill in either skills or bonus_skills has a number or properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
-	var data = JSON.parse(responseText);
 	
 	var strengths = Array();	// will hold the strength values for each skill in tree in order top to bottom, left to right. values between 0 and 1.0 in 0.25 steps.
 	var needsStrengthening = Array(); // will hold the objects for the skills that have strength < 1.0
 	
-	languageCode = Object.keys(data['language_data'])[0]; // only one child of 'language_data', a code for active language.
-	
-	var skills = data['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
+	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
+	console.log(languageCode);
+	var skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	skills.sort(
 		function(x, y)
 		{
@@ -189,7 +201,7 @@ function getStrengths(responseText) // parses the data from duolingo.com/users/U
 		}
 	);
 	
-	var bonusSkills = data['language_data'][Object.keys(data['language_data'])[0]]['bonus_skills'] // note bonus skills appear right to left AFAIK.
+	var bonusSkills = userData['language_data'][Object.keys(userData['language_data'])[0]]['bonus_skills'] // note bonus skills appear right to left AFAIK.
 	for (var i = 0; i <skills.length ; i++)
 	{
 		if (bonusSkills.length != 0 && i == 5) // between normal skills 6 and 7 is where bonus skills go in tree. CAUTION this is based on spanish tree, could be different for other langs or could be chagened in the future.
@@ -224,17 +236,30 @@ function getStrengths(responseText) // parses the data from duolingo.com/users/U
 
 function handleDataResponse(responseText)
 {
-	userData = responseText; // store response text for future use in faster display when changeing page.
-	getStrengths(responseText); // actual handleing of data.
+	userData = JSON.parse(responseText); // store response text as JSON object.
+	console.log(userData);
+	newDataLanguageCode = Object.keys(userData['language_data'])[0];
+	if((!languageCodeChanged) && languageChanged && newDataLanguageCode == languageCode)
+	{
+		// languageCode hasn't been changed yet but we have changed langauge but the data isn't up to dat yet.
+		// so request the data again after a little wait.
+		setTimeout(function() {httpGetAsync("/users/"+username, handleDataResponse);}, 500);
+		console.log("data not caught up yet, old langCode: " + languageCode + " new data's langCode: " + newDataLanguageCode);
+	}
+	else {
+		languageCodeChanged = true;
+		getStrengths();	// actual processing of the data.
+	}
 }
 
 function requestData() // requests data for actively logged in user.
 {
-	if (userData != "")
+	if (userData != "" && (!languageChanged))
 	{
+		// If there is already userData and not changing language, display current data while requesting new data.
 		getStrengths(userData);
 	}
-	if(document.getElementsByClassName("_2R9gT").length != 0)
+	if(document.getElementsByClassName("_2R9gT").length != 0) // Check if there is a username element
 	{
 		var username = document.getElementsByClassName("_2R9gT")[0].innerHTML;
 		httpGetAsync("/users/"+username, handleDataResponse); // asks for data and async calls handle function when ready.
@@ -269,7 +294,9 @@ var childListMutationHandle = function(mutationsList, observer)
 	{
 		if(mutation.type == 'childList' && dataReactRoot.childNodes[1].className ==  "_6t5Uh")
 		{
-			//should only be true when exiting a lesson.
+			// should only be true when exiting a lesson.
+			console.log("going back to homepage");
+			languageChanged = false; // language hasn't changed this update
 			checkUIVersion(); // here for case of switching language with different UI versions
 			requestData();
 		}
@@ -282,6 +309,16 @@ var classNameMutationHandle = function(mutationsList, observer)
 	{
 		if(mutation.type == 'attributes' && topBarDiv.className == "_6t5Uh") // body on main page
 		{
+			if (language != document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML)
+			{
+				// language has just changed set flag to true
+				languageChanged = true;
+				console.log("setting change language flag");
+			} else
+			{
+				// language hasn't just changed set flag to false
+				languageChanged = false;
+			}
 			checkUIVersion(); // here for case of switching language with different UI versions
 			requestData(); // call on attribute change
 		}

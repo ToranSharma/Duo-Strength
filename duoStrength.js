@@ -198,18 +198,20 @@ function getStrengths(responseText) // parses the data from duolingo.com/users/U
 			{
 				strengths.push(bonusSkills[j]['strength']);
 				
-				if(bonusSkills[j]['strength'] != 1)
+				if(bonusSkills[j]['strength'] != 1 && bonusSkills[j]['strength'] != 0)
 				{
+					//Add to needs strengtheneing if not at 100% and not at 0% i.e. not started
 					needsStrengthening.push(bonusSkills[j]);
 				}
 			}
 		}
 		strengths.push(skills[i]['strength']);
 		
-		if(skills[i]['strength'] != 1 && skills[i]['mastered'] != 'true')
-				{
-					needsStrengthening.push(skills[i]);
-				}
+		if(skills[i]['strength'] != 1 && skills[i]['strength'] != 0)
+		{
+			//Add to needs strengthening if nog at 100% and not at 0% i.e. not started
+			needsStrengthening.push(skills[i]);
+		}
 	}
 	
 	addStrengths(strengths); // call function to add these strengths under the skills

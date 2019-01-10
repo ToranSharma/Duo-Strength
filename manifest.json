@@ -17,7 +17,5 @@
 			"matches"	:	["https://www.duolingo.com/*"],
 			"js"		: 	["duoStrength.js"]
 		}
-	],
-	
-	"permissions"		:	["tabs"]
+	]
 }

@@ -261,7 +261,7 @@ document.body.onload = requestData(); // call function to start display sequence
 var dataReactRoot = document.body.childNodes[0].childNodes[0]; // When entering or leaving a lesson children change and new body so need to detect that to know when to reload the bars.
 var topBarDiv = dataReactRoot.childNodes[1];// seems to stay in place across page changes with just class changes when going to shop page etc.
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
-
+var languageLogo = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0];
 
 var childListMutationHandle = function(mutationsList, observer)
 {
@@ -280,17 +280,20 @@ var classNameMutationHandle = function(mutationsList, observer)
 {
 	for (var mutation of mutationsList)
 	{
-		if(mutation.type == 'attributes' && topBarDiv.className == "_6t5Uh") // body changed to main page
+		if(mutation.type == 'attributes' && topBarDiv.className == "_6t5Uh") // body on main page
 		{
 			checkUIVersion(); // here for case of switching language with different UI versions
 			requestData(); // call on attribute change
 		}
 	}
 };
+
 var classNameObserver = new MutationObserver(classNameMutationHandle);
 var childListObserver = new MutationObserver(childListMutationHandle);
 
 classNameObserver.observe(topBarDiv,{attributes: true});
 childListObserver.observe(dataReactRoot,{childList: true});
+classNameObserver.observe(languageLogo,{attributes: true});
+
 
 //observer.disconnet(); can't disconnect as always needed while page is loaded.

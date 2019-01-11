@@ -1,8 +1,39 @@
 const GOLD = "rgb(248, 176, 45)";
 const RED = "rgb(219, 62, 65)";
 var languageCode = "";
-var userData = "";
+var languageCodeChanged = false;
+var language = "";
+var languageChanged = false;
+
+var username = "";
+var userData = Object();
 var newUIVersion = false;
+
+function resetLanguageFlags()
+{
+	// reset to be called after finished successfully displaying everything.
+	// need to be ready for a change so we reset them back to false.
+	languageChanged = false;
+	languageCodeChanged = false;
+}
+
+function removeStrengthBars()
+{
+	var bars = document.getElementsByClassName("strengthBarHolder");
+	for (var bar of bars)
+	{
+		bar.parentNode.removeChild(bar);
+	}
+}
+
+function removeNeedsStrengtheningBox()
+{
+	var strengthenBox = document.getElementById("strengthenBox");
+	if(strengthenBox != null) // could be null if changed from old to new UI and the topOfTree div gets removed.
+	{
+		strengthenBox.parentNode.removeChild(strengthenBox);
+	}
+}
 
 function addStrengths(strengths) // Adds strength bars and percentages under each skill in the tree.
 {
@@ -93,24 +124,34 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		topOfTree.childNodes[0].style['marginBottom'] = "1em"; // reduced margin between part 1 heading an strengthenBox;
 	} else
 	{
-		topOfTree = document.getElementsByClassName('mAsUf')[0].childNodes[1]; // mAsUf is class of the container element just above tree with language name and shop button, may change.
+		// old UI version.
+		if(document.getElementsByClassName('mAsUf').length != 0)
+		{
+			// mAsUf is class of the container element just above tree with language name and shop button, may change.
+			topOfTree = document.getElementsByClassName('mAsUf')[0].childNodes[1];
+		} else
+		{
+			setTimeout(displayNeedsStrengthening(needsStrengthening), 500); // body hasn't loaded yet so element not there.
+			return false;
+		}
 	}
-	var strengthenBox;
+	var strengthenBox; // will be a div to hold list of skills that need strengthenening
 	var needToAddBox = false;
 	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
 	{
 		needToAddBox = true;
-		strengthenBox = document.createElement("div"); // div to hold list of skills that need strengthenening
+		strengthenBox = document.createElement("div");
 		strengthenBox.id = "strengthenBox";
 		strengthenBox.style['textAlign'] = "left";
-	}else {
+	}
+	else {
 		strengthenBox = document.getElementById("strengthenBox");
 	}
 	strengthenBox.innerHTML = "The following " + needsStrengthening.length +
 								((needsStrengthening.length != 1) ? " skills need": " skill needs") +
 								" strengthening: <br/>";
 								
-	for (var i =0; i< needsStrengthening.length - 1; i++)
+	for (var i = 0; i< needsStrengthening.length - 1; i++)
 	{
 		strengthenBox.innerHTML += "<a href='/skill/" +
 									languageCode + "/" +
@@ -143,7 +184,7 @@ function httpGetAsync(url, responseHandler)
 	xmlHttp.send(null);
 }
 
-function getStrengths(responseText) // parses the data from duolingo.com/users/USERNAME and extracts strengths and skills that need strengthening
+function getStrengths() // parses the data from duolingo.com/users/USERNAME and extracts strengths and skills that need strengthening
 {
 	/*
 		Data comes formatted as such:
@@ -159,14 +200,12 @@ function getStrengths(responseText) // parses the data from duolingo.com/users/U
 		}
 		each skill in either skills or bonus_skills has a number or properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
-	var data = JSON.parse(responseText);
 	
 	var strengths = Array();	// will hold the strength values for each skill in tree in order top to bottom, left to right. values between 0 and 1.0 in 0.25 steps.
 	var needsStrengthening = Array(); // will hold the objects for the skills that have strength < 1.0
+	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
+	var skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	
-	languageCode = Object.keys(data['language_data'])[0]; // only one child of 'language_data', a code for active language.
-	
-	var skills = data['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	skills.sort(
 		function(x, y)
 		{
@@ -189,7 +228,7 @@ function getStrengths(responseText) // parses the data from duolingo.com/users/U
 		}
 	);
 	
-	var bonusSkills = data['language_data'][Object.keys(data['language_data'])[0]]['bonus_skills'] // note bonus skills appear right to left AFAIK.
+	var bonusSkills = userData['language_data'][Object.keys(userData['language_data'])[0]]['bonus_skills'] // note bonus skills appear right to left AFAIK.
 	for (var i = 0; i <skills.length ; i++)
 	{
 		if (bonusSkills.length != 0 && i == 5) // between normal skills 6 and 7 is where bonus skills go in tree. CAUTION this is based on spanish tree, could be different for other langs or could be chagened in the future.
@@ -220,23 +259,37 @@ function getStrengths(responseText) // parses the data from duolingo.com/users/U
 	{
 		displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
+
+	// All done displaying what needs doing so let reset and get ready for another change.
+	resetLanguageFlags();
 }
 
 function handleDataResponse(responseText)
 {
-	userData = responseText; // store response text for future use in faster display when changeing page.
-	getStrengths(responseText); // actual handleing of data.
+	userData = JSON.parse(responseText); // store response text as JSON object.
+	newDataLanguageCode = Object.keys(userData['language_data'])[0];
+	if((!languageCodeChanged) && languageChanged && newDataLanguageCode == languageCode)
+	{
+		// languageCode hasn't been changed yet but we have changed langauge but the data isn't up to dat yet.
+		// so request the data again after a little wait.
+		setTimeout(function() {httpGetAsync("/users/"+ username, handleDataResponse);}, 100);
+	}
+	else {
+		languageCodeChanged = true;
+		getStrengths();	// actual processing of the data.
+	}
 }
 
 function requestData() // requests data for actively logged in user.
 {
-	if (userData != "")
+	if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
 	{
+		// If there is already userData and not changing language, display current data while requesting new data.
 		getStrengths(userData);
 	}
-	if(document.getElementsByClassName("_2R9gT").length != 0)
+	if(document.getElementsByClassName("_2R9gT").length != 0) // Check if there is a username element
 	{
-		var username = document.getElementsByClassName("_2R9gT")[0].innerHTML;
+		username = document.getElementsByClassName("_2R9gT")[0].innerHTML;
 		httpGetAsync("/users/"+username, handleDataResponse); // asks for data and async calls handle function when ready.
 	} else
 	{
@@ -254,14 +307,18 @@ function checkUIVersion(){
 		newUIVersion = false;
 	}
 }
-
-checkUIVersion();
-document.body.onload = requestData(); // call function to start display sequence on first load
+function init()
+{
+	checkUIVersion();
+	language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
+	requestData();
+}
+document.body.onload = init(); // call function to start display sequence on first load
 
 var dataReactRoot = document.body.childNodes[0].childNodes[0]; // When entering or leaving a lesson children change and new body so need to detect that to know when to reload the bars.
 var topBarDiv = dataReactRoot.childNodes[1];// seems to stay in place across page changes with just class changes when going to shop page etc.
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
-
+var languageLogo = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0];
 
 var childListMutationHandle = function(mutationsList, observer)
 {
@@ -269,7 +326,8 @@ var childListMutationHandle = function(mutationsList, observer)
 	{
 		if(mutation.type == 'childList' && dataReactRoot.childNodes[1].className ==  "_6t5Uh")
 		{
-			//should only be true when exiting a lesson.
+			// should only be true when exiting a lesson.
+			languageChanged = false; // language hasn't changed this update
 			checkUIVersion(); // here for case of switching language with different UI versions
 			requestData();
 		}
@@ -280,17 +338,33 @@ var classNameMutationHandle = function(mutationsList, observer)
 {
 	for (var mutation of mutationsList)
 	{
-		if(mutation.type == 'attributes' && topBarDiv.className == "_6t5Uh") // body changed to main page
+		if(mutation.type == 'attributes' && topBarDiv.className == "_6t5Uh") // body on main page
 		{
+			if (language != document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML)
+			{
+				// language has just changed set flag to true
+				languageChanged = true;
+				language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
+				// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
+				removeStrengthBars();
+				removeNeedsStrengtheningBox();
+			} else
+			{
+				// language hasn't just changed set flag to false
+				languageChanged = false;
+			}
 			checkUIVersion(); // here for case of switching language with different UI versions
 			requestData(); // call on attribute change
 		}
 	}
 };
+
 var classNameObserver = new MutationObserver(classNameMutationHandle);
 var childListObserver = new MutationObserver(childListMutationHandle);
 
 classNameObserver.observe(topBarDiv,{attributes: true});
 childListObserver.observe(dataReactRoot,{childList: true});
+classNameObserver.observe(languageLogo,{attributes: true});
+
 
 //observer.disconnet(); can't disconnect as always needed while page is loaded.

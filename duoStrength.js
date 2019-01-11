@@ -129,10 +129,8 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		{
 			// mAsUf is class of the container element just above tree with language name and shop button, may change.
 			topOfTree = document.getElementsByClassName('mAsUf')[0].childNodes[1];
-			console.log(topOfTree);
 		} else
 		{
-			console.log("topOfTree was not ready yet so waiting...")
 			setTimeout(displayNeedsStrengthening(needsStrengthening), 500); // body hasn't loaded yet so element not there.
 			return false;
 		}
@@ -146,19 +144,6 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox.id = "strengthenBox";
 		strengthenBox.style['textAlign'] = "left";
 	}
-	/* Delete Me
-	else if(languageChanged)
-	{
-		// remove needs strengthening box and add a fresh one for new language.
-		console.log("existing strengthenBox but changing language.")
-		oldStrengthenBox = document.getElementById("strengthenBox");
-		oldStrengthenBox.parentNode.removeChild(oldStrengthenBox);
-		needToAddBox = true;
-		strengthenBox = document.createElement("div"); // div to hold list of skills that need strengthenening
-		strengthenBox.id = "strengthenBox";
-		strengthenBox.style['textAlign'] = "left";
-	}
-	*/
 	else {
 		strengthenBox = document.getElementById("strengthenBox");
 	}
@@ -218,9 +203,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	
 	var strengths = Array();	// will hold the strength values for each skill in tree in order top to bottom, left to right. values between 0 and 1.0 in 0.25 steps.
 	var needsStrengthening = Array(); // will hold the objects for the skills that have strength < 1.0
-	console.log(userData);
 	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
-	console.log(languageCode);
 	var skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	
 	skills.sort(
@@ -285,14 +268,11 @@ function handleDataResponse(responseText)
 {
 	userData = JSON.parse(responseText); // store response text as JSON object.
 	newDataLanguageCode = Object.keys(userData['language_data'])[0];
-	console.log("languageCodeChanged:" + languageCodeChanged + " languageChanged:" + languageChanged + " newDataLanguageCode:" + newDataLanguageCode + " old languageCode:" + languageCode);
 	if((!languageCodeChanged) && languageChanged && newDataLanguageCode == languageCode)
 	{
 		// languageCode hasn't been changed yet but we have changed langauge but the data isn't up to dat yet.
 		// so request the data again after a little wait.
-		console.log("data not up to date");
 		setTimeout(function() {httpGetAsync("/users/"+ username, handleDataResponse);}, 100);
-		console.log("data not caught up yet, old langCode: " + languageCode + " new data's langCode: " + newDataLanguageCode);
 	}
 	else {
 		languageCodeChanged = true;
@@ -305,7 +285,6 @@ function requestData() // requests data for actively logged in user.
 	if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
 	{
 		// If there is already userData and not changing language, display current data while requesting new data.
-		console.log("existing userdata and not changing language so going to go ahead and start while we get new data");
 		getStrengths(userData);
 	}
 	if(document.getElementsByClassName("_2R9gT").length != 0) // Check if there is a username element
@@ -348,7 +327,6 @@ var childListMutationHandle = function(mutationsList, observer)
 		if(mutation.type == 'childList' && dataReactRoot.childNodes[1].className ==  "_6t5Uh")
 		{
 			// should only be true when exiting a lesson.
-			console.log("going back to homepage");
 			languageChanged = false; // language hasn't changed this update
 			checkUIVersion(); // here for case of switching language with different UI versions
 			requestData();
@@ -370,11 +348,9 @@ var classNameMutationHandle = function(mutationsList, observer)
 				// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
 				removeStrengthBars();
 				removeNeedsStrengtheningBox();
-				console.log("setting change language flag and saving new language.");
 			} else
 			{
 				// language hasn't just changed set flag to false
-				console.log("language hasn't changed");
 				languageChanged = false;
 			}
 			checkUIVersion(); // here for case of switching language with different UI versions

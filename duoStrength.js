@@ -355,7 +355,6 @@ var classNameMutationHandle = function(mutationsList, observer)
 			} else
 			{
 				//language had not been previously set so first time on homepage
-				console.log("first time on homepage");
 				init();
 			}
 		}
@@ -372,8 +371,9 @@ function init()
 	childListObserver.observe(dataReactRoot,{childList: true});
 	
 
-	if(dataReactRoot.childNodes[2].className == "LFfrA _3MLiB") // myster element after topBar Div is in 3rd place
+	if(!dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB"))
 	{
+		// main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
 		topBarDiv = dataReactRoot.childNodes[1];
 		classNameObserver.observe(topBarDiv,{attributes: true});
 
@@ -390,20 +390,11 @@ function init()
 		}
 	} else
 	{
-		console.log("don't think topBarDiv is in existance. Here is dataReactRoot's children");
-		console.log(dataReactRoot.childNodes);
+		// page we are on is most likely a lesson, and we go here from a link in the strengthenBox.
 	}
-
-	
-	
-
-	
 }
 
 
 document.body.onload = init(); // call function to start display sequence on first load
-
-
-
 
 //observer.disconnet(); can't disconnect as always needed while page is loaded.

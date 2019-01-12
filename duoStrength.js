@@ -4,10 +4,15 @@ var languageCode = "";
 var languageCodeChanged = false;
 var language = "";
 var languageChanged = false;
+var languageLogo;
+
 
 var username = "";
 var userData = Object();
 var newUIVersion = false;
+
+var dataReactRoot;
+var topBarDiv;
 
 function resetLanguageFlags()
 {
@@ -307,29 +312,18 @@ function checkUIVersion(){
 		newUIVersion = false;
 	}
 }
-function init()
-{
-	checkUIVersion();
-	language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
-	requestData();
-}
-document.body.onload = init(); // call function to start display sequence on first load
 
-var dataReactRoot = document.body.childNodes[0].childNodes[0]; // When entering or leaving a lesson children change and new body so need to detect that to know when to reload the bars.
-var topBarDiv = dataReactRoot.childNodes[1];// seems to stay in place across page changes with just class changes when going to shop page etc.
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
-var languageLogo = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0];
-
 var childListMutationHandle = function(mutationsList, observer)
 {
 	for (var mutation of mutationsList)
 	{
 		if(mutation.type == 'childList' && dataReactRoot.childNodes[1].className ==  "_6t5Uh")
 		{
+			topBarDiv = dataReactRoot.childNodes[1]
 			// should only be true when exiting a lesson.
 			languageChanged = false; // language hasn't changed this update
-			checkUIVersion(); // here for case of switching language with different UI versions
-			requestData();
+			init();
 		}
 	}
 };
@@ -340,21 +334,30 @@ var classNameMutationHandle = function(mutationsList, observer)
 	{
 		if(mutation.type == 'attributes' && topBarDiv.className == "_6t5Uh") // body on main page
 		{
-			if (language != document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML)
+			if (language != "")
 			{
-				// language has just changed set flag to true
-				languageChanged = true;
-				language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
-				// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
-				removeStrengthBars();
-				removeNeedsStrengtheningBox();
+				// language has previously been set so not first time on home page.
+				 if (language != document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML)
+				{
+					// language has just changed so set flag to true
+					languageChanged = true;
+					language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
+					// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
+					removeStrengthBars();
+					removeNeedsStrengtheningBox();
+				} else
+				{
+					// language hasn't just changed set flag to false
+					languageChanged = false;
+				}
+				checkUIVersion(); // here for case of switching language with different UI versions
+				requestData(); // call on attribute change
 			} else
 			{
-				// language hasn't just changed set flag to false
-				languageChanged = false;
+				//language had not been previously set so first time on homepage
+				console.log("first time on homepage");
+				init();
 			}
-			checkUIVersion(); // here for case of switching language with different UI versions
-			requestData(); // call on attribute change
 		}
 	}
 };
@@ -362,9 +365,45 @@ var classNameMutationHandle = function(mutationsList, observer)
 var classNameObserver = new MutationObserver(classNameMutationHandle);
 var childListObserver = new MutationObserver(childListMutationHandle);
 
-classNameObserver.observe(topBarDiv,{attributes: true});
-childListObserver.observe(dataReactRoot,{childList: true});
-classNameObserver.observe(languageLogo,{attributes: true});
+
+function init()
+{
+	dataReactRoot = document.body.childNodes[0].childNodes[0]; // When entering or leaving a lesson children change and new body so need to detect that to know when to reload the bars.
+	childListObserver.observe(dataReactRoot,{childList: true});
+	
+
+	if(dataReactRoot.childNodes[2].className == "LFfrA _3MLiB") // myster element after topBar Div is in 3rd place
+	{
+		topBarDiv = dataReactRoot.childNodes[1];
+		classNameObserver.observe(topBarDiv,{attributes: true});
+
+		if(topBarDiv.className == "_6t5Uh") // if we are on the homepage
+		{
+			if (languageLogo != document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0])
+			{
+				languageLogo = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0];
+				classNameObserver.observe(languageLogo,{attributes: true});
+			}
+			language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
+			checkUIVersion();
+			requestData();
+		}
+	} else
+	{
+		console.log("don't think topBarDiv is in existance. Here is dataReactRoot's children");
+		console.log(dataReactRoot.childNodes);
+	}
+
+	
+	
+
+	
+}
+
+
+document.body.onload = init(); // call function to start display sequence on first load
+
+
 
 
 //observer.disconnet(); can't disconnect as always needed while page is loaded.

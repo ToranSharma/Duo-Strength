@@ -10,6 +10,7 @@ var languageLogo;
 var username = "";
 var userData = Object();
 var newUIVersion = false;
+var numBonusSkillsInTree = 0;
 
 var dataReactRoot;
 var topBarDiv;
@@ -20,6 +21,7 @@ function resetLanguageFlags()
 	// need to be ready for a change so we reset them back to false.
 	languageChanged = false;
 	languageCodeChanged = false;
+	numBonusSkillsInTree = 0;
 }
 
 function removeStrengthBars()
@@ -50,7 +52,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		1:	skill name element.
 		2:	skill strength between 0 and 1.0.
 	*/
-	
+	var bonusElementsCount = 0;
 	for (var i=0; i<skillElements.length; i++)
 	{
 		var elementContents = [skillElements[i].childNodes[0].childNodes[0]];
@@ -63,10 +65,24 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 				elementContents.push(spanElement);
 			}
 		}
-		elementContents.push(strengths[i]);
-		
-		skills.push(elementContents);
+		if (skillElements[i].parentNode.classList.contains("_1H-7I") || skillElements[i].parentNode.classList.contains("_1--zr"))
+		{
+			// these skill elements are in the bonus skill section.
+			elementContents.push(strengths[1][bonusElementsCount]);
+
+			bonusElementsCount ++;
+
+			skills.push(elementContents);
+		} else
+		{
+			// Normal skill
+			elementContents.push(strengths[0][i - bonusElementsCount]);
+			
+			skills.push(elementContents);
+		}
 	}
+
+	numBonusSkillsInTree += bonusElementsCount; // update number of bonus elements that were in the tree for use in strengthenBox.
 	
 	var numBarsAdded = 0
 	
@@ -136,7 +152,8 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 			topOfTree = document.getElementsByClassName('mAsUf')[0].childNodes[1];
 		} else
 		{
-			setTimeout(displayNeedsStrengthening(needsStrengthening), 500); // body hasn't loaded yet so element not there.
+			// body hasn't loaded yet so element not there.
+			setTimeout(displayNeedsStrengthening(needsStrengthening), 500);
 			return false;
 		}
 	}
@@ -149,28 +166,58 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox.id = "strengthenBox";
 		strengthenBox.style['textAlign'] = "left";
 	}
-	else {
+	else
+	{
 		strengthenBox = document.getElementById("strengthenBox");
 	}
-	strengthenBox.innerHTML = "The following " + needsStrengthening.length +
-								((needsStrengthening.length != 1) ? " skills need": " skill needs") +
+
+	var numSkillsToBeStrengthened = needsStrengthening[0].length +needsStrengthening[1].length;
+
+	strengthenBox.innerHTML = "The following " + numSkillsToBeStrengthened +
+								((needsStrengthening[0].length + numBonusSkillsInTree != 1) ? " skills need": " skill needs") +
 								" strengthening: <br/>";
-								
-	for (var i = 0; i< needsStrengthening.length - 1; i++)
+	
+	for (var i = 0; i < numSkillsToBeStrengthened - 1; i++)
 	{
-		strengthenBox.innerHTML += "<a href='/skill/" +
+		if (i < needsStrengthening[0].length)
+		{
+			// index is in normal skill range
+			strengthenBox.innerHTML += "<a href='/skill/" +
 									languageCode + "/" +
-									needsStrengthening[i]['url_title'] +
-									((needsStrengthening[i]['progress_v1']['level'] == 5)? "/practice'>":"'>" ) + // 5 crown skill doesn't decay AFAIK so needless but included JIC. Similarly below.
-									needsStrengthening[i]['title'] + "</a>, ";
+									needsStrengthening[0][i]['url_title'] +
+									((needsStrengthening[0][i]['progress_v1']['level'] == 5)? "/practice'>":"'>" ) + // 5 crown skill doesn't decay AFAIK so needless but included JIC.
+									needsStrengthening[0][i]['title'] + "</a>, ";
+		} else
+		{
+			// index has past normal skills so doing bonus skills now.
+			bonusSkillIndex = i - needsStrengthening[0].length;
+			strengthenBox.innerHTML += "<a href='/skill/" +
+									languageCode + "/" +
+									needsStrengthening[1][bonusSkillIndex]['url_title'] +
+									((needsStrengthening[1][bonusSkillIndex]['progress_v1']['level'] == 1)? "/practice'>":"'>" ) + // 1 crown bonus skill does decay but is on practice not lessons.
+									needsStrengthening[1][bonusSkillIndex]['title'] + "</a>, ";
+		}
+		
 	}
 	strengthenBox.innerHTML = strengthenBox.innerHTML.substring(0, strengthenBox.innerHTML.length - 2);
-	strengthenBox.innerHTML += (needsStrengthening.length > 1) ? " & ": "";
-	strengthenBox.innerHTML += "<a href='/skill/" +
-									languageCode + "/" +
-									needsStrengthening[needsStrengthening.length -1]['url_title'] +
-									((needsStrengthening[needsStrengthening.length -1]['progress_v1']['level'] == 5)? "/practice'>":"'>" ) +
-									needsStrengthening[needsStrengthening.length -1]['title'] + "</a>";
+	strengthenBox.innerHTML += (numSkillsToBeStrengthened > 1) ? " & ": "";
+	if(needsStrengthening[1].length > 0)
+	{
+		// last skill to be displayed is a bonus skill
+		strengthenBox.innerHTML += "<a href='/skill/" +
+										languageCode + "/" +
+										needsStrengthening[1][needsStrengthening[1].length - 1]['url_title'] +
+										((needsStrengthening[1][needsStrengthening[1].length - 1]['progress_v1']['level'] == 1)? "/practice'>":"'>" ) +
+										needsStrengthening[1][needsStrengthening[1].length - 1]['title'] + "</a>";
+	} else
+	{
+		// last skill to be displayed is a normal skill
+		strengthenBox.innerHTML += "<a href='/skill/" +
+										languageCode + "/" +
+										needsStrengthening[0][needsStrengthening[0].length -1]['url_title'] +
+										((needsStrengthening[0][needsStrengthening[0].length -1]['progress_v1']['level'] == 5)? "/practice'>":"'>" ) +
+										needsStrengthening[0][needsStrengthening[0].length -1]['title'] + "</a>";
+	}
 	if(needToAddBox)
 	{
 		topOfTree.appendChild(strengthenBox);
@@ -206,8 +253,9 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		each skill in either skills or bonus_skills has a number or properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
 	
-	var strengths = Array();	// will hold the strength values for each skill in tree in order top to bottom, left to right. values between 0 and 1.0 in 0.25 steps.
-	var needsStrengthening = Array(); // will hold the objects for the skills that have strength < 1.0
+	var strengths = [[],[]];	// will hold  arry of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
+	var needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
+
 	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
 	var skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	
@@ -234,27 +282,23 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	);
 	
 	var bonusSkills = userData['language_data'][Object.keys(userData['language_data'])[0]]['bonus_skills'] // note bonus skills appear right to left AFAIK.
-	for (var i = 0; i <skills.length ; i++)
+	for (var skill of skills)
 	{
-		if (bonusSkills.length != 0 && i == 5) // between normal skills 6 and 7 is where bonus skills go in tree. CAUTION this is based on spanish tree, could be different for other langs or could be chagened in the future.
-		{
-			for (var j = bonusSkills.length -1; j > -1; j-- )
-			{
-				strengths.push(bonusSkills[j]['strength']);
-				
-				if(bonusSkills[j]['strength'] != 1 && bonusSkills[j]['strength'] != 0)
-				{
-					//Add to needs strengtheneing if not at 100% and not at 0% i.e. not started
-					needsStrengthening.push(bonusSkills[j]);
-				}
-			}
-		}
-		strengths.push(skills[i]['strength']);
+		strengths[0].push(skill['strength']);
 		
-		if(skills[i]['strength'] != 1 && skills[i]['strength'] != 0)
+		if(skill['strength'] != 1 && skill['strength'] != 0)
 		{
 			//Add to needs strengthening if nog at 100% and not at 0% i.e. not started
-			needsStrengthening.push(skills[i]);
+			needsStrengthening[0].push(skill);
+		}
+	}
+	for (var bonusSkill of bonusSkills)
+	{
+		strengths[1].unshift(bonusSkill['strength']);
+		if(bonusSkill['strength'] != 1 && bonusSkill['strength'] != 0)
+		{
+			//Add to needs strengthening if nog at 100% and not at 0% i.e. not started
+			needsStrengthening[1].unshift(bonusSkill);
 		}
 	}
 	

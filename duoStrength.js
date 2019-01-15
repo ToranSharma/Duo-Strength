@@ -304,7 +304,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	
 	addStrengths(strengths); // call function to add these strengths under the skills
 	
-	if (needsStrengthening.length !=0)
+	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
 	{
 		displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
@@ -339,7 +339,7 @@ function requestData() // requests data for actively logged in user.
 	if(document.getElementsByClassName("_2R9gT").length != 0) // Check if there is a username element
 	{
 		username = document.getElementsByClassName("_2R9gT")[0].innerHTML;
-		httpGetAsync("/users/"+username, handleDataResponse); // asks for data and async calls handle function when ready.
+		httpGetAsync(encodeURI(window.location+"/users/"+username), handleDataResponse); // asks for data and async calls handle function when ready.
 	} else
 	{
 		console.log("User does not appear to be not logged in.");

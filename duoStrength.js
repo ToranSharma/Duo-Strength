@@ -427,10 +427,8 @@ function init()
 	
 	var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
 	// main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
-	var signInButtonExists = document.getElementById("sign-in-btn") != null;
-	// if sign in button found then there is a top div that it lives in to keep track of.
-
-	if(mainBodyElemIn3rd || signInButtonExists)
+	
+	if(mainBodyElemIn3rd)
 	{
 		topBarDiv = dataReactRoot.childNodes[1];
 		classNameObserver.observe(topBarDiv,{attributes: true});

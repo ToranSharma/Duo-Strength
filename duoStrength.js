@@ -282,10 +282,8 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		}
 	}
 
-	console.log(bonusSkills[0].name + bonusSkills[1].name);
 	skills.sort(sortSkills);
 	bonusSkills.sort(sortSkills);
-	console.log(bonusSkills[0].name + bonusSkills[1].name);
 
 	for (var skill of skills)
 	{

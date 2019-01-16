@@ -12,6 +12,7 @@ var userData = Object();
 var newUIVersion = false;
 var numBonusSkillsInTree = 0;
 
+var rootElem;
 var dataReactRoot;
 var topBarDiv;
 
@@ -345,7 +346,7 @@ function requestData() // requests data for actively logged in user.
 		httpGetAsync(encodeURI(window.location+"/users/"+username), handleDataResponse); // asks for data and async calls handle function when ready.
 	} else
 	{
-		console.log("User does not appear to be not logged in.");
+		// user not logged in.
 	}
 }
 
@@ -365,10 +366,15 @@ var childListMutationHandle = function(mutationsList, observer)
 {
 	for (var mutation of mutationsList)
 	{
-		if(mutation.type == 'childList' && dataReactRoot.childNodes[1].className ==  "_6t5Uh")
+		if(mutation.target == rootElem)
 		{
+			// root child list has changed so dataReactRoot has probably been replaced, let redinfe it.
+			dataReactRoot = rootElem.childNodes[0];
+		}
+		if(dataReactRoot.childNodes[1].className ==  "_6t5Uh")
+		{
+			// Top bar div has class for main tree page.
 			topBarDiv = dataReactRoot.childNodes[1]
-			// should only be true when exiting a lesson.
 			languageChanged = false; // language hasn't changed this update
 			init();
 		}
@@ -379,7 +385,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 {
 	for (var mutation of mutationsList)
 	{
-		if(mutation.type == 'attributes' && topBarDiv.className == "_6t5Uh") // body on main page
+		if(topBarDiv.className == "_6t5Uh") // body on main page
 		{
 			if (language != "")
 			{
@@ -411,10 +417,12 @@ var classNameMutationHandle = function(mutationsList, observer)
 var classNameObserver = new MutationObserver(classNameMutationHandle);
 var childListObserver = new MutationObserver(childListMutationHandle);
 
-
 function init()
 {
-	dataReactRoot = document.body.childNodes[0].childNodes[0]; // When entering or leaving a lesson children change and new body so need to detect that to know when to reload the bars.
+	rootElem = document.getElementById("root"); // When loggin in child list is changed.
+	dataReactRoot = rootElem.childNodes[0]; // When entering or leaving a lesson children change there is a new body so need to detect that to know when to reload the bars.
+	
+	childListObserver.observe(rootElem,{childList: true});
 	childListObserver.observe(dataReactRoot,{childList: true});
 	
 	var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
@@ -443,7 +451,6 @@ function init()
 		// page we are on is most likely a lesson, and we go here from a link in the strengthenBox.
 	}
 }
-
 
 document.body.onload = init(); // call function to start display sequence on first load
 

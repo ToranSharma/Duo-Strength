@@ -257,31 +257,36 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	var needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
 
 	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
+
 	var skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	
-	skills.sort(
-		function(x, y)
+	var bonusSkills = userData['language_data'][Object.keys(userData['language_data'])[0]]['bonus_skills'];
+
+	function sortSkills(skill1,skill2)
+	{
+
+		if (skill1['coords_y'] < skill2['coords_y']) // x above y give x
 		{
-			if (x['coords_y'] < y['coords_y']) // x above y give x
+			return -1;
+		} else if (skill1['coords_y'] > skill2['coords_y'])// x below y give y
+		{
+			return 1;
+		} else // x and y on same level
+		{
+			if (skill1['coords_x'] < skill2['coords_x']) // x to left of y give x
 			{
 				return -1;
-			} else if (x['coords_y'] > y['coords_y'])// x below y give y
+			} else // x to right of y give y
 			{
 				return 1;
-			} else // x and y on same level
-			{
-				if (x['coords_x'] < y['coords_x']) // x to left of y give x
-				{
-					return -1;
-				} else // x to right of y give y
-				{
-					return 1;
-				}
 			}
 		}
-	);
-	
-	var bonusSkills = userData['language_data'][Object.keys(userData['language_data'])[0]]['bonus_skills'] // note bonus skills appear right to left AFAIK.
+	}
+
+	console.log(bonusSkills[0].name + bonusSkills[1].name);
+	skills.sort(sortSkills);
+	bonusSkills.sort(sortSkills);
+	console.log(bonusSkills[0].name + bonusSkills[1].name);
+
 	for (var skill of skills)
 	{
 		strengths[0].push(skill['strength']);
@@ -294,11 +299,11 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	}
 	for (var bonusSkill of bonusSkills)
 	{
-		strengths[1].unshift(bonusSkill['strength']);
+		strengths[1].push(bonusSkill['strength']);
 		if(bonusSkill['strength'] != 1 && bonusSkill['strength'] != 0)
 		{
 			//Add to needs strengthening if nog at 100% and not at 0% i.e. not started
-			needsStrengthening[1].unshift(bonusSkill);
+			needsStrengthening[1].push(bonusSkill);
 		}
 	}
 	

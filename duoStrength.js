@@ -417,10 +417,13 @@ function init()
 	dataReactRoot = document.body.childNodes[0].childNodes[0]; // When entering or leaving a lesson children change and new body so need to detect that to know when to reload the bars.
 	childListObserver.observe(dataReactRoot,{childList: true});
 	
+	var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
+	// main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
+	var signInButtonExists = document.getElementById("sign-in-btn") != null;
+	// if sign in button found then there is a top div that it lives in to keep track of.
 
-	if(!dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB"))
+	if(mainBodyElemIn3rd || signInButtonExists)
 	{
-		// main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
 		topBarDiv = dataReactRoot.childNodes[1];
 		classNameObserver.observe(topBarDiv,{attributes: true});
 

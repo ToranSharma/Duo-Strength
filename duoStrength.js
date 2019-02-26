@@ -59,7 +59,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		var elementContents = [skillElements[i].childNodes[0].childNodes[0]];
 		
 		// name is a span element, normally it is the last element but if the skill is clicked then a new div is created with the start lesson button etc below the name plate. So need to find the correct span element.
-		for (var spanElement of skillElements[i].childNodes[0].getElementsByTagName('span'))
+		for (var spanElement of Array.from(skillElements[i].childNodes[0].getElementsByTagName('span')))
 		{
 			if (spanElement.parentNode == elementContents[0].parentNode)
 			{

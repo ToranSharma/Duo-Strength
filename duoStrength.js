@@ -45,6 +45,37 @@ function removeNeedsStrengtheningBox()
 
 function addStrengths(strengths) // Adds strength bars and percentages under each skill in the tree.
 {
+	/*
+		The structure of skill tree is as follows:
+		<div class="_2GJb6"> 												<-- container for row of skills, has classes _1H-7I and _1--zr if bonus skill row
+			<a class="Af4up" href="javascript:;"> 							<-- container for individuale skill
+				<div class="_2albn">
+					<div>														<-- possibly new container as of 2019-03-01 holds skill icon and progress ring
+						<div class="_3zkuO _39IKr">     						<-- progress ring container
+							<div class="_2xGPj">								<-- progress ring container
+								<svg>...</svg>          						<-- progress ring svg
+							</div>
+						</div>
+						<span class="_1z_vo _3hKMG ewiWc _2vstG">				<-- skill icon background
+							<span class="..."></span>							<-- skill icon
+							<div clas ="_26l3y">...</div>						<-- skill crowns logo and number
+						</span>
+					</div>
+					<div>														<-- another possibly new container as of 2019-03-01 holds skill name
+						####################################################	<-- Strength Bar to be inserted here
+						<span class="_378Tf _3qO9M _33VdW">Skill Name</span>	<-- Skill name
+					</div>
+
+					####### when skill clicked on new div below is appended ##########
+					<div class="_2EYQL _2HujR _1ZY-H gqrCU ewiWc">				<-- popup box backgorund
+						<div>...</div>											<-- popup box info container
+						::after													<-- popup box 'speach bubble' style arrow at top
+					</div>
+				</div>
+			</a>
+		</div>
+	*/
+
 	var skillElements = document.getElementsByClassName('Af4up'); // Af4up is class of skill containing element, may change.
 	var skills = Array();
 	/*
@@ -56,8 +87,14 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 	var bonusElementsCount = 0;
 	for (var i=0; i<skillElements.length; i++)
 	{
-		var elementContents = [skillElements[i].childNodes[0].childNodes[0]];
+
+		 var elementContents = [
+		 	skillElements[i].childNodes[0].childNodes[0],
+		 	skillElements[i].childNodes[0].childNodes[1].childNodes[0]
+		 ];
 		
+		/* old way of finding name element before new containers
+
 		// name is a span element, normally it is the last element but if the skill is clicked then a new div is created with the start lesson button etc below the name plate. So need to find the correct span element.
 		for (var spanElement of Array.from(skillElements[i].childNodes[0].getElementsByTagName('span')))
 		{
@@ -66,6 +103,9 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 				elementContents.push(spanElement);
 			}
 		}
+		*/
+
+
 		if (skillElements[i].parentNode.classList.contains("_1H-7I") || skillElements[i].parentNode.classList.contains("_1--zr"))
 		{
 			// these skill elements are in the bonus skill section.

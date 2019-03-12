@@ -226,7 +226,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 			strengthenBox.innerHTML += "<a href='/skill/" +
 									languageCode + "/" +
 									needsStrengthening[0][i]['url_title'] +
-									((needsStrengthening[0][i]['progress_v1']['level'] == 5)? "/practice'>":"'>" ) + // 5 crown skill doesn't decay AFAIK so needless but included JIC.
+									((needsStrengthening[0][i]['progress_v3']['level'] == 5)? "/practice'>":"'>" ) + // 5 crown skill doesn't decay AFAIK so needless but included JIC.
 									needsStrengthening[0][i]['title'] + "</a>, ";
 		} else
 		{
@@ -235,7 +235,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 			strengthenBox.innerHTML += "<a href='/skill/" +
 									languageCode + "/" +
 									needsStrengthening[1][bonusSkillIndex]['url_title'] +
-									((needsStrengthening[1][bonusSkillIndex]['progress_v1']['level'] == 1)? "/practice'>":"'>" ) + // 1 crown bonus skill does decay but is on practice not lessons.
+									((needsStrengthening[1][bonusSkillIndex]['progress_v3']['level'] == 1)? "/practice'>":"'>" ) + // 1 crown bonus skill does decay but is on practice not lessons.
 									needsStrengthening[1][bonusSkillIndex]['title'] + "</a>, ";
 		}
 		
@@ -248,7 +248,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox.innerHTML += "<a href='/skill/" +
 										languageCode + "/" +
 										needsStrengthening[1][needsStrengthening[1].length - 1]['url_title'] +
-										((needsStrengthening[1][needsStrengthening[1].length - 1]['progress_v1']['level'] == 1)? "/practice'>":"'>" ) +
+										((needsStrengthening[1][needsStrengthening[1].length - 1]['progress_v3']['level'] == 1)? "/practice'>":"'>" ) +
 										needsStrengthening[1][needsStrengthening[1].length - 1]['title'] + "</a>";
 	} else
 	{
@@ -256,7 +256,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox.innerHTML += "<a href='/skill/" +
 										languageCode + "/" +
 										needsStrengthening[0][needsStrengthening[0].length -1]['url_title'] +
-										((needsStrengthening[0][needsStrengthening[0].length -1]['progress_v1']['level'] == 5)? "/practice'>":"'>" ) +
+										((needsStrengthening[0][needsStrengthening[0].length -1]['progress_v3']['level'] == 5)? "/practice'>":"'>" ) +
 										needsStrengthening[0][needsStrengthening[0].length -1]['title'] + "</a>";
 	}
 	if(needToAddBox)

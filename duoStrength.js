@@ -290,6 +290,15 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 		_1E3L7 is in class name of main tree, which has a white background.
 	*/
 
+	var treeLevel = 0;
+
+	var i = 0;
+	while (crownLevelCount[i] == 0 && i < 6)
+	{
+		treeLevel++;
+		i++;
+	}
+
 	var crownLevelContainer = document.getElementsByClassName('aFqnr _1E3L7')[0];
 	var crownTotalContainer = crownLevelContainer.childNodes[1];
 
@@ -304,11 +313,14 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 									+	"font-weight: 700;"
 									+	"transform: translateY(-50%);";
 
-	
-
 	var breakdownContainer = document.createElement("div");
 	breakdownContainer.id = "crownLevelBreakdownContainer";
 	breakdownContainer.style = "margin-top: 1em; text-align: left;";
+
+	var treeLevelContainer = document.createElement("div");
+	treeLevelContainer.id = "treeLevel";
+	treeLevelContainer.style = "display: inline-block";
+	treeLevelContainer.innerHTML = treeLevel;
 
 	var breakdownList = document.createElement("ul");
 
@@ -361,6 +373,11 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 		}
 
 		crownTotalContainer.appendChild(maximumCrownCountContainer);
+
+		breakdownContainer.appendChild(document.createElement("p"))
+		breakdownContainer.lastChild.style = "text-align: center;";
+		breakdownContainer.lastChild.innerHTML = "Your tree is at Level ";
+		breakdownContainer.lastChild.appendChild(treeLevelContainer);
 		breakdownContainer.appendChild(breakdownList);
 		crownLevelContainer.appendChild(breakdownContainer);
 	}
@@ -373,6 +390,7 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 		}
 
 		document.getElementById("maxCrowns").innerHTML = "/" + maxCrownCount;
+		document.getElementById("treeLevel").innerHTML = treeLevel;
 	}
 }
 

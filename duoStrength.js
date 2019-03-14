@@ -265,6 +265,53 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	}
 }
 
+function displayCrownsBreakdown(crownLevelCount)
+{
+	/*
+		Side bar HTML structure:
+		<div class="_2_lzu">							<-- Side bar container div
+			<div class="aFqnr _1E3L7">					<-- Crown Level Box container div
+				<h2>Crown Level</h2>
+				<div class="_1kQ6y">					<-- Crown image and count container div
+					<img class="_2vQZX" src="..." />	<-- Crown image svg
+					<div class="nh1S1">CROWNCOUNT</div>	<-- Crown count text
+					################################### <-- Crown Level breakdown will be put here.
+				</div>
+			</div>
+			<div class="-X3R5 _2KDjt">...</div>			<-- Advert/ disable ad blocker
+			<div class="_21w25 _1E3L7">...</div>		<-- Daily Goal, xp graph & practice button
+			<div class="_2SCNP _1E3L7">...</div>		<-- Achievements
+			<div class="a5SW0">...</div>				<-- Friends list
+			<div class="a5SW0">...</div>				<-- Duolingo Social Media links
+		</div>
+
+		Note a5SW0 seems to correspond with clear background, and _1E3L7 with whtie background.
+		_1E3L7 is in class name of main tree, which has a white background.
+	*/
+
+	var crownLevelContainer = document.getElementsByClassName('aFqnr _1E3L7')[0];
+
+	var breakdownContainer = document.createElement("div");
+
+	breakdownContainer.id = "crownLevelBreakdownContainer";
+
+	var breakdownList = document.createElement("ul");
+
+	for(var crownLevel = 0; crownLevel < crownLevelCount.length; crownLevel++)
+	{
+		var skillCount = crownLevelCount[crownLevel];
+		var crownCount = skillCount * crownLevel;
+		var breakdownListItem = document.createElement("li");
+		breakdownListItem.id = "crownLevel " + crownLevel + " count";
+		breakdownListItem.innerHTML = skillCount + " skill"+ ((skillCount == 1 )?"":"s") + " at Crown Level " + crownLevel;
+		breakdownListItem.innerHTML += " = " + crownCount + " crown" + ((crownCount == 1 )?"":"s") + ".";
+
+		breakdownList.appendChild(breakdownListItem);
+	}
+	breakdownContainer.appendChild(breakdownList);
+	crownLevelContainer.appendChild(breakdownContainer);
+}
+
 function httpGetAsync(url, responseHandler)
 {
     var xmlHttp = new XMLHttpRequest();
@@ -338,7 +385,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 
 		crownLevelCount[skill['progress_v3']['level']]++;
 	}
-	
+
 	for (var bonusSkill of bonusSkills)
 	{
 		strengths[1].push(bonusSkill['strength']);
@@ -350,13 +397,15 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 
 		crownLevelCount[bonusSkill['progress_v3']['level']]++;
 	}
-	
+
 	addStrengths(strengths); // call function to add these strengths under the skills
 	
 	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
 	{
 		displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
+
+	displayCrownsBreakdown(crownLevelCount); // call function to add breakdown of crown levels under crown total.
 
 	// All done displaying what needs doing so let reset and get ready for another change.
 	resetLanguageFlags();

@@ -459,7 +459,7 @@ var childListObserver = new MutationObserver(childListMutationHandle);
 
 function init()
 {
-	rootElem = document.getElementById("root"); // When loggin in child list is changed.
+	rootElem = document.getElementById("root"); // When logging in child list is changed.
 	dataReactRoot = rootElem.childNodes[0]; // When entering or leaving a lesson children change there is a new body so need to detect that to know when to reload the bars.
 	
 	childListObserver.observe(rootElem,{childList: true});
@@ -486,7 +486,7 @@ function init()
 		}
 	} else
 	{
-		// page we are on is most likely a lesson, and we go here from a link in the strengthenBox.
+		// page we are on is most likely a lesson, and we got here from a link in the strengthenBox.
 	}
 }
 

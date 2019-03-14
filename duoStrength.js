@@ -90,7 +90,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 
 		 var elementContents = [
 		 	skillElements[i].childNodes[0].childNodes[0],
-		 	skillElements[i].childNodes[0].childNodes[1].childNodes[0]
+		 	skillElements[i].childNodes[0].childNodes[1].lastChild
 		 ];
 		
 		/* old way of finding name element before new containers

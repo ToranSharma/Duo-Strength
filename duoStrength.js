@@ -294,17 +294,17 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		each skill in either skills or bonus_skills has a number or properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
 	
-	var strengths = [[],[]];	// will hold  arry of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
+	var strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
 	var needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
-
+ 	var crownLevelCount = Array(6).fill(0); // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
+	
 	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
 
 	var skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	var bonusSkills = userData['language_data'][Object.keys(userData['language_data'])[0]]['bonus_skills'];
+	var bonusSkills = userData['language_data'][languageCode]['bonus_skills'];
 
 	function sortSkills(skill1,skill2)
 	{
-
 		if (skill1['coords_y'] < skill2['coords_y']) // x above y give x
 		{
 			return -1;
@@ -335,7 +335,10 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 			//Add to needs strengthening if nog at 100% and not at 0% i.e. not started
 			needsStrengthening[0].push(skill);
 		}
+
+		crownLevelCount[skill['progress_v3']['level']]++;
 	}
+	
 	for (var bonusSkill of bonusSkills)
 	{
 		strengths[1].push(bonusSkill['strength']);
@@ -344,6 +347,8 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 			//Add to needs strengthening if nog at 100% and not at 0% i.e. not started
 			needsStrengthening[1].push(bonusSkill);
 		}
+
+		crownLevelCount[bonusSkill['progress_v3']['level']]++;
 	}
 	
 	addStrengths(strengths); // call function to add these strengths under the skills

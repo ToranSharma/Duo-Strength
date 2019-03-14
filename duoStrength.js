@@ -265,7 +265,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	}
 }
 
-function displayCrownsBreakdown(crownLevelCount)
+function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 {
 	/*
 		Side bar HTML structure:
@@ -275,8 +275,9 @@ function displayCrownsBreakdown(crownLevelCount)
 				<div class="_1kQ6y">					<-- Crown image and count container div
 					<img class="_2vQZX" src="..." />	<-- Crown image svg
 					<div class="nh1S1">CROWNCOUNT</div>	<-- Crown count text
-					################################### <-- Crown Level breakdown will be put here.
+					###################################	<-- /Maximum crown count will be put here.
 				</div>
+				####################################### <-- Crown Level breakdown will be put here.
 			</div>
 			<div class="-X3R5 _2KDjt">...</div>			<-- Advert/ disable ad blocker
 			<div class="_21w25 _1E3L7">...</div>		<-- Daily Goal, xp graph & practice button
@@ -290,9 +291,24 @@ function displayCrownsBreakdown(crownLevelCount)
 	*/
 
 	var crownLevelContainer = document.getElementsByClassName('aFqnr _1E3L7')[0];
+	var crownTotalContainer = crownLevelContainer.childNodes[1];
+
+	var maximumCrownCountContainer = document.createElement("div");
+	maximumCrownCountContainer.id = "maxCrowns";
+	maximumCrownCountContainer.innerHTML = "/" + maxCrownCount;
+	maximumCrownCountContainer.style =	"position:absolute;"
+									+ 	"top: 50%;"
+									+	"right: 0;"
+									+	"margin-top: 5px;"
+									+	"font-size: 36px;"
+									+	"font-weight: 700;"
+									+	"transform: translateY(-50%);";
+
+	
 
 	var breakdownContainer = document.createElement("div");
 	breakdownContainer.id = "crownLevelBreakdownContainer";
+	breakdownContainer.style = "margin-top: 1em; text-align: left;";
 
 	var breakdownList = document.createElement("ul");
 
@@ -305,7 +321,7 @@ function displayCrownsBreakdown(crownLevelCount)
 						+"top: -0.15em;";
 	
 	var levelContainer = document.createElement("div");
-	levelContainer.style = "position: absolute;"
+	levelContainer.style =	"position: absolute;"
 						+	"top: 50%;"
 						+   "left: 50%;"
 						+   "transform: translateX(-50%) translateY(-50%);"
@@ -323,26 +339,41 @@ function displayCrownsBreakdown(crownLevelCount)
 	imgContainer.appendChild(crownImg);
 	imgContainer.appendChild(levelContainer);
 
-
-	for(var crownLevel = 0; crownLevel < crownLevelCount.length; crownLevel++)
+	if(document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so lets add it.
 	{
-		var skillCount = crownLevelCount[crownLevel];
-		var crownCount = skillCount * crownLevel;
-	
-		levelContainer.innerHTML = crownLevel;
+		for(var crownLevel = 0; crownLevel < crownLevelCount.length; crownLevel++)
+		{
+			var skillCount = crownLevelCount[crownLevel];
+			var crownCount = skillCount * crownLevel;
+		
+			levelContainer.id = "crownLevel" + crownLevel + "Count";
+			levelContainer.innerHTML = crownLevel;
 
-		var breakdownListItem = document.createElement("li");
-		breakdownListItem.id = "crownLevel " + crownLevel + " count";
-		breakdownListItem.innerHTML = skillCount + " skill"+ ((skillCount == 1 )?"":"s") + " at ";
+			var breakdownListItem = document.createElement("li");
+			breakdownListItem.className = "crownLevelItem";
+			breakdownListItem.innerHTML = skillCount + " skill"+ ((skillCount == 1 )?"":"s") + " at ";
 
-		breakdownListItem.appendChild(imgContainer);
+			breakdownListItem.appendChild(imgContainer);
 
-		breakdownListItem.innerHTML += " = " + crownCount + " crown" + ((crownCount == 1 )?"":"s");
+			breakdownListItem.innerHTML += " = " + crownCount + " crown" + ((crownCount == 1 )?"":"s");
 
-		breakdownList.appendChild(breakdownListItem);
+			breakdownList.appendChild(breakdownListItem);
+		}
+
+		crownTotalContainer.appendChild(maximumCrownCountContainer);
+		breakdownContainer.appendChild(breakdownList);
+		crownLevelContainer.appendChild(breakdownContainer);
 	}
-	breakdownContainer.appendChild(breakdownList);
-	crownLevelContainer.appendChild(breakdownContainer);
+	else // We have already added the breakdown data, just update it.
+	{
+		for(var crownLevel = 0; crownLevel < crownLevelCount.length; crownLevel++)
+		{
+			levelContainerElement = document.getElementById("crownLevel" + crownLevel + "Count");
+			levelContainerElement.innerHTML = crownLevel;
+		}
+
+		document.getElementById("maxCrowns").innerHTML = "/" + maxCrownCount;
+	}
 }
 
 function httpGetAsync(url, responseHandler)
@@ -438,7 +469,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
 
-	displayCrownsBreakdown(crownLevelCount); // call function to add breakdown of crown levels under crown total.
+	displayCrownsBreakdown(crownLevelCount, skills.length*5 + bonusSkills.length); // call function to add breakdown of crown levels under crown total.
 
 	// All done displaying what needs doing so let reset and get ready for another change.
 	resetLanguageFlags();

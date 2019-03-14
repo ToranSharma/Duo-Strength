@@ -144,6 +144,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
 			
 			var strengthBar = document.createElement("div");
+			strengthBar.className = "strengthBar";
 			strengthBar.id = name + "StrengthBar";
 			strengthBar.style['display'] = "inline-block";
 			strengthBar.style['width'] = (strength*75)+"%";
@@ -153,6 +154,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			strengthBar.style['verticalAlign'] = "text-top";
 			
 			var strengthValue = document.createElement("div");
+			strengthValue.className = "strengthValue";
 			strengthValue.id = name + "StrengthValue";
 			strengthValue.style['display'] = "inline-block";
 			strengthValue.style['width'] = ((1-strength)*75+25)+"%";

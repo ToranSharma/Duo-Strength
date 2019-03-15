@@ -17,6 +17,8 @@ var dataReactRoot;
 var topBarDiv;
 var topBarMobilePractice;
 
+var onMainPage;
+
 function resetLanguageFlags()
 {
 	// reset to be called after finished successfully displaying everything.
@@ -220,8 +222,15 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	}
 	else
 	{
-		// body hasn't loaded yet so element not there.
-		setTimeout(displayNeedsStrengthening(needsStrengthening), 500);
+		// body hasn't loaded yet so element not there, lets try again after a small wait, but only if we are still on the main page.
+		if(onMainPage)
+		{
+			setTimeout(displayNeedsStrengthening(needsStrengthening), 500);
+		}
+		else
+		{
+			// swtiched away before we got a chance to try again.
+		}
 		return false;
 	}
 
@@ -391,9 +400,12 @@ function handleDataResponse(responseText)
 	newDataLanguageCode = Object.keys(userData['language_data'])[0];
 	if((!languageCodeChanged) && languageChanged && newDataLanguageCode == languageCode)
 	{
-		// languageCode hasn't been changed yet but we have changed langauge but the data isn't up to dat yet.
-		// so request the data again after a little wait.
-		setTimeout(function() {httpGetAsync("/users/"+ username, handleDataResponse);}, 100);
+		// languageCode hasn't been changed yet but we have changed langauge but the data isn't up to date yet.
+		// so request the data again after a little wait, but only if still on the main page.
+		if(onMainPage)
+		{
+			setTimeout(function() {httpGetAsync("/users/"+ username, handleDataResponse);}, 100);
+		}
 	}
 	else {
 		languageCodeChanged = true;
@@ -441,7 +453,7 @@ var childListMutationHandle = function(mutationsList, observer)
 		}
 		if(dataReactRoot.childNodes[1].className ==  "_6t5Uh")
 		{
-			// Top bar div has class for main tree page.
+			// Top bar div has class for main tree page or words page.
 			topBarDiv = dataReactRoot.childNodes[1]
 			languageChanged = false; // language hasn't changed this update
 			init();
@@ -455,6 +467,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 	{
 		if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length == 0) // _6t5Uh means we are on body on main page or words page. no _2XW92 means not on words page. So we are on main page.
 		{
+			onMainPage = true;
 			if (language != "")
 			{
 				// language has previously been set so not first time on home page.
@@ -478,6 +491,10 @@ var classNameMutationHandle = function(mutationsList, observer)
 				//language had not been previously set so first time on homepage
 				init();
 			}
+		}
+		else
+		{
+			onMainPage = false;
 		}
 	}
 };
@@ -520,6 +537,7 @@ function init()
 
 		if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length == 0) // if we are on the homepage. _2XW92 is class of mobile view practice button when on words page. On home page it is _3IyDY _1NQPL.
 		{
+			onMainPage = true;
 			if(languageLogo != document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0])
 			{
 				languageLogo = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0];
@@ -532,10 +550,12 @@ function init()
 		else if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length != 0) // if we are on the words page
 		{
 			// We are on the words page. Don't need to do anything further, we have set up the observer to see if we go back to the main page from here.
+			onMainPage = false;
 		}
 	} else
 	{
 		// page we are on is most likely a lesson, and we got here from a link in the strengthenBox.
+		onMainPage = false;
 	}
 }
 

@@ -90,9 +90,9 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 
 		 var elementContents = [
 		 	skillElements[i].childNodes[0].childNodes[0],
-		 	skillElements[i].childNodes[0].childNodes[1].childNodes[0]
+		 	skillElements[i].childNodes[0].childNodes[1].getElementsByClassName("_378Tf _3qO9M _33VdW")[0]
 		 ];
-		
+
 		/* old way of finding name element before new containers
 
 		// name is a span element, normally it is the last element but if the skill is clicked then a new div is created with the start lesson button etc below the name plate. So need to find the correct span element.
@@ -144,6 +144,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
 			
 			var strengthBar = document.createElement("div");
+			strengthBar.className = "strengthBar";
 			strengthBar.id = name + "StrengthBar";
 			strengthBar.style['display'] = "inline-block";
 			strengthBar.style['width'] = (strength*75)+"%";
@@ -153,6 +154,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			strengthBar.style['verticalAlign'] = "text-top";
 			
 			var strengthValue = document.createElement("div");
+			strengthValue.className = "strengthValue";
 			strengthValue.id = name + "StrengthValue";
 			strengthValue.style['display'] = "inline-block";
 			strengthValue.style['width'] = ((1-strength)*75+25)+"%";

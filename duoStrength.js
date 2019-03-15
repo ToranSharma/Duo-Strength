@@ -404,7 +404,8 @@ function handleDataResponse(responseText)
 		// so request the data again after a little wait, but only if still on the main page.
 		if(onMainPage)
 		{
-			setTimeout(function() {httpGetAsync("/users/"+ username, handleDataResponse);}, 100);
+			setTimeout(function() {httpGetAsync(encodeURI(window.location+"users/"+username), handleDataResponse);}, 100);
+			//setTimeout(function() {httpGetAsync("/users/"+ username, handleDataResponse);}, 100);
 		}
 	}
 	else {
@@ -423,7 +424,7 @@ function requestData() // requests data for actively logged in user.
 	if(document.getElementsByClassName("_2R9gT").length != 0) // Check if there is a username element
 	{
 		username = document.getElementsByClassName("_2R9gT")[0].innerHTML;
-		httpGetAsync(encodeURI(window.location+"/users/"+username), handleDataResponse); // asks for data and async calls handle function when ready.
+		httpGetAsync(encodeURI(window.location+"users/"+username), handleDataResponse); // asks for data and async calls handle function when ready.
 	} else
 	{
 		// user not logged in.

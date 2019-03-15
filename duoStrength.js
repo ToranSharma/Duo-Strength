@@ -206,11 +206,24 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	// Found as of 2019-03-15 new UI version no longer has Part 1, Part 2 etc. headings
 	// Trees seem to be consistant so longer need for newUIversion detection
 
-
-	var skillTree = document.getElementsByClassName("i12-l")[0];
-	var topOfTree = document.getElementsByClassName("w8Lxd")[0];
-	// or var topOfTree = skillTree.childNodes[0]
-	var firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
+	if
+		(
+			document.getElementsByClassName("i12-l").length != 0 &&
+			document.getElementsByClassName("w8Lxd").length != 0 &&
+			document.getElementsByClassName("_2GJb6").length != 0
+		) // Has the tree loaded from a page change
+	{
+		var skillTree = document.getElementsByClassName("i12-l")[0];
+		var topOfTree = document.getElementsByClassName("w8Lxd")[0];
+		// or var topOfTree = skillTree.childNodes[0]
+		var firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
+	}
+	else
+	{
+		// body hasn't loaded yet so element not there.
+		setTimeout(displayNeedsStrengthening(needsStrengthening), 500);
+		return false;
+	}
 
 	var strengthenBox; // will be a div to hold list of skills that need strengthenening
 	var needToAddBox = false;

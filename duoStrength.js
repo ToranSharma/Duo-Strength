@@ -15,6 +15,7 @@ var numBonusSkillsInTree = 0;
 var rootElem;
 var dataReactRoot;
 var topBarDiv;
+var topBarMobilePractice;
 
 function resetLanguageFlags()
 {
@@ -206,8 +207,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	// Found as of 2019-03-15 new UI version no longer has Part 1, Part 2 etc. headings
 	// Trees seem to be consistant so longer need for newUIversion detection
 
-	if
-		(
+	if(
 			document.getElementsByClassName("i12-l").length != 0 &&
 			document.getElementsByClassName("w8Lxd").length != 0 &&
 			document.getElementsByClassName("_2GJb6").length != 0
@@ -436,7 +436,7 @@ var childListMutationHandle = function(mutationsList, observer)
 	{
 		if(mutation.target == rootElem)
 		{
-			// root child list has changed so dataReactRoot has probably been replaced, let redinfe it.
+			// root child list has changed so dataReactRoot has probably been replaced, lets redefine it.
 			dataReactRoot = rootElem.childNodes[0];
 		}
 		if(dataReactRoot.childNodes[1].className ==  "_6t5Uh")
@@ -453,7 +453,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 {
 	for (var mutation of mutationsList)
 	{
-		if(topBarDiv.className == "_6t5Uh") // body on main page
+		if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length == 0) // _6t5Uh means we are on body on main page or words page. no _2XW92 means not on words page. So we are on main page.
 		{
 			if (language != "")
 			{
@@ -494,16 +494,33 @@ function init()
 	childListObserver.observe(dataReactRoot,{childList: true});
 	
 	var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
-	// main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
+	// Main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
 	
-	if(mainBodyElemIn3rd)
+	if(mainBodyElemIn3rd) // If main body element is in 3rd place then we are not in a lesson.
 	{
 		topBarDiv = dataReactRoot.childNodes[1];
-		classNameObserver.observe(topBarDiv,{attributes: true});
 
-		if(topBarDiv.className == "_6t5Uh") // if we are on the homepage
+		// topBarMobilePractice either has class _2XW92 or _3IyDY _1NQPL.
+		if(topBarDiv.getElementsByClassName("_3IyDY _1NQPL").length != 0)
 		{
-			if (languageLogo != document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0])
+			topBarMobilePractice = topBarDiv.getElementsByClassName("_3IyDY _1NQPL")[0]; // Class for when on homepage, store and labs
+		}
+		else if(topBarDiv.getElementsByClassName("_2XW92").length != 0)
+		{
+			topBarMobilePractice = topBarDiv.getElementsByClassName("_2XW92")[0]; // Class for when on words page
+		}
+		else
+		{
+			// Element not found or has a class we are not expecting. It should be the 2nd child of topBarDiv so lets just set it as that and hope for the best.
+			topBarMobilePractice = topBarDiv.childNodes[1];
+		}
+
+		classNameObserver.observe(topBarDiv,{attributes: true}); // Observing to see if class of topBarDiv changes to tell if we have switched between main or words page and store or labs page.
+		classNameObserver.observe(topBarMobilePractice,{attributes: true}); // Observing to see if class of topBarMobilePractice changes to tell if we have swtiched between main and words page.
+
+		if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length == 0) // if we are on the homepage. _2XW92 is class of mobile view practice button when on words page. On home page it is _3IyDY _1NQPL.
+		{
+			if(languageLogo != document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0])
 			{
 				languageLogo = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0];
 				classNameObserver.observe(languageLogo,{attributes: true});
@@ -511,6 +528,10 @@ function init()
 			language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
 			checkUIVersion();
 			requestData();
+		}
+		else if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length != 0) // if we are on the words page
+		{
+			// We are on the words page. Don't need to do anything further, we have set up the observer to see if we go back to the main page from here.
 		}
 	} else
 	{

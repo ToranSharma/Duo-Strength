@@ -510,6 +510,13 @@ function init()
 	childListObserver.observe(rootElem,{childList: true});
 	childListObserver.observe(dataReactRoot,{childList: true});
 	
+	if(dataReactRoot.childNodes.length == 1) // If there is only one child of dataReactRoot then we are on the log in page.
+	{
+		// On login page so cannot continue to turn rest of init process.
+		onMainPage = false;
+		return false;
+	}
+
 	var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
 	// Main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
 	

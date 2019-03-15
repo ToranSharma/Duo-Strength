@@ -181,6 +181,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 
 function displayNeedsStrengthening(needsStrengthening) // adds clickable list of skills that need strengthening to top of the tree.
 {
+	/* Old version where newUI had Part headings. Also mAsUf no longer seems to be used.
 	var topOfTree;
 	if(newUIVersion)
 	{
@@ -200,6 +201,17 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 			return false;
 		}
 	}
+	*/
+
+	// Found as of 2019-03-15 new UI version no longer has Part 1, Part 2 etc. headings
+	// Trees seem to be consistant so longer need for newUIversion detection
+
+
+	var skillTree = document.getElementsByClassName("i12-l")[0];
+	var topOfTree = document.getElementsByClassName("w8Lxd")[0];
+	// or var topOfTree = skillTree.childNodes[0]
+	var firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
+
 	var strengthenBox; // will be a div to hold list of skills that need strengthenening
 	var needToAddBox = false;
 	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
@@ -208,6 +220,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox = document.createElement("div");
 		strengthenBox.id = "strengthenBox";
 		strengthenBox.style['textAlign'] = "left";
+		strengthenBox.style['marginBottom'] = "2em";
 	}
 	else
 	{
@@ -263,7 +276,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	}
 	if(needToAddBox)
 	{
-		topOfTree.appendChild(strengthenBox);
+		skillTree.insertBefore(strengthenBox, firstSkillRow);
 	}
 }
 

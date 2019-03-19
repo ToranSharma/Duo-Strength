@@ -293,18 +293,20 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 	var treeLevel = 0;
 
 	var i = 0;
-	while (crownLevelCount[i] == 0 && i < 6)
+	while (crownLevelCount[0][i] == 0 && i < 6)
 	{
 		treeLevel++;
 		i++;
 	}
 
 	var crownLevelContainer = document.getElementsByClassName('aFqnr _1E3L7')[0];
-	var crownTotalContainer = crownLevelContainer.childNodes[1];
+	var crownTotalContainer = crownLevelContainer.getElementsByClassName('nh1S1')[0];
+	crownTotalContainer.style.fontSize = "22px";
 
-	var maximumCrownCountContainer = document.createElement("div");
+	var maximumCrownCountContainer = document.createElement("span");
 	maximumCrownCountContainer.id = "maxCrowns";
 	maximumCrownCountContainer.innerHTML = "/" + maxCrownCount;
+	/*
 	maximumCrownCountContainer.style =	"position:absolute;"
 									+ 	"top: 50%;"
 									+	"right: 0;"
@@ -312,6 +314,7 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 									+	"font-size: 36px;"
 									+	"font-weight: 700;"
 									+	"transform: translateY(-50%);";
+	*/
 
 	var breakdownContainer = document.createElement("div");
 	breakdownContainer.id = "crownLevelBreakdownContainer";
@@ -344,7 +347,7 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 
 	var crownImg = document.createElement("img");
 	crownImg['alt'] = "crown";
-	// Class name _2PyWM used for other samll crowns on skills. Corresponds to height & width 100% and z-index 1.
+	// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
 	crownImg.style = "height: 100%; width: 100%; z-index: 1;";
 	crownImg['src'] = "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
 
@@ -353,9 +356,9 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 
 	if(document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so lets add it.
 	{
-		for(var crownLevel = 0; crownLevel < crownLevelCount.length; crownLevel++)
+		for(var crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
 		{
-			var skillCount = crownLevelCount[crownLevel];
+			var skillCount = crownLevelCount[0][crownLevel];
 			var crownCount = skillCount * crownLevel;
 		
 			levelContainer.id = "crownLevel" + crownLevel + "Count";
@@ -364,6 +367,27 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 			var breakdownListItem = document.createElement("li");
 			breakdownListItem.className = "crownLevelItem";
 			breakdownListItem.innerHTML = skillCount + " skill"+ ((skillCount == 1 )?"":"s") + " at ";
+
+			breakdownListItem.appendChild(imgContainer);
+
+			breakdownListItem.innerHTML += " = " + crownCount + " crown" + ((crownCount == 1 )?"":"s");
+
+			breakdownList.appendChild(breakdownListItem);
+		}
+
+		breakdownList.lastChild['marginBottom'] += "margin-bottom: 1em;";
+
+		for(var crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+		{
+			var skillCount = crownLevelCount[1][crownLevel];
+			var crownCount = skillCount * crownLevel;
+		
+			levelContainer.id = "bonusSkillCrownLevel" + crownLevel + "Count";
+			levelContainer.innerHTML = crownLevel;
+
+			var breakdownListItem = document.createElement("li");
+			breakdownListItem.className = "crownLevelItem";
+			breakdownListItem.innerHTML = skillCount + " bonus skill"+ ((skillCount == 1 )?"":"s") + " at ";
 
 			breakdownListItem.appendChild(imgContainer);
 
@@ -383,11 +407,17 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 	}
 	else // We have already added the breakdown data, just update it.
 	{
-		for(var crownLevel = 0; crownLevel < crownLevelCount.length; crownLevel++)
+		for(var crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
 		{
 			levelContainerElement = document.getElementById("crownLevel" + crownLevel + "Count");
 			levelContainerElement.innerHTML = crownLevel;
 		}
+		for(var crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+		{
+			levelContainerElement = document.getElementById("bonusSkillCrownLevel" + crownLevel + "Count");
+			levelContainerElement.innerHTML = crownLevel;
+		}
+
 
 		document.getElementById("maxCrowns").innerHTML = "/" + maxCrownCount;
 		document.getElementById("treeLevel").innerHTML = treeLevel;
@@ -425,7 +455,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	
 	var strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
 	var needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
- 	var crownLevelCount = Array(6).fill(0); // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
+ 	var crownLevelCount = [Array(6).fill(0),Array(2).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
 	
 	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
 
@@ -465,7 +495,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 			needsStrengthening[0].push(skill);
 		}
 
-		crownLevelCount[skill['progress_v3']['level']]++;
+		crownLevelCount[0][skill['progress_v3']['level']]++;
 	}
 
 	for (var bonusSkill of bonusSkills)
@@ -477,7 +507,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 			needsStrengthening[1].push(bonusSkill);
 		}
 
-		crownLevelCount[bonusSkill['progress_v3']['level']]++;
+		crownLevelCount[1][bonusSkill['progress_v3']['level']]++;
 	}
 
 	addStrengths(strengths); // call function to add these strengths under the skills

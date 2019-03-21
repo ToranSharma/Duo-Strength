@@ -300,7 +300,7 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 	}
 
 	var crownLevelContainer = document.getElementsByClassName('aFqnr _1E3L7')[0];
-	var crownTotalContainer = crownLevelContainer.getElementsByClassName('nh1S1')[0];
+	var crownTotalContainer = crownLevelContainer.getElementsByClassName('_3QZJ_ _2eJB1')[0]; // Was nh1S1, changed as of 2019-03-21
 	crownTotalContainer.style.fontSize = "22px";
 
 	var maximumCrownCountContainer = document.createElement("span");

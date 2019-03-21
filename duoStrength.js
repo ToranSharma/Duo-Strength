@@ -318,7 +318,8 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 
 	var breakdownContainer = document.createElement("div");
 	breakdownContainer.id = "crownLevelBreakdownContainer";
-	breakdownContainer.style = "margin-top: 1em; text-align: left;";
+	breakdownContainer.style =	"margin-top: 1em;"
+							+	"text-align: left;";
 
 	var treeLevelContainer = document.createElement("div");
 	treeLevelContainer.id = "treeLevel";
@@ -326,6 +327,10 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 	treeLevelContainer.innerHTML = treeLevel;
 
 	var breakdownList = document.createElement("ul");
+	breakdownList.id = "breakdownList";
+	breakdownList.style =	"display: grid;"
+						+	"grid-auto-rows: 1.5em;"
+						+	"align-items: center;";
 
 	var imgContainer = document.createElement("div");
 	imgContainer.style = "position: relative;"
@@ -366,6 +371,8 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 
 			var breakdownListItem = document.createElement("li");
 			breakdownListItem.className = "crownLevelItem";
+			breakdownListItem.style =	"display: grid;"
+									+	"grid-template-columns: 1fr 1.5em 1fr;";
 			breakdownListItem.innerHTML = skillCount + " skill"+ ((skillCount == 1 )?"":"s") + " at ";
 
 			breakdownListItem.appendChild(imgContainer);
@@ -387,6 +394,8 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 
 			var breakdownListItem = document.createElement("li");
 			breakdownListItem.className = "crownLevelItem";
+			breakdownListItem.style =	"display: grid;"
+									+	"grid-template-columns: 1fr 1.5em 1fr;";
 			breakdownListItem.innerHTML = skillCount + " bonus skill"+ ((skillCount == 1 )?"":"s") + " at ";
 
 			breakdownListItem.appendChild(imgContainer);

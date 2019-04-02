@@ -1,5 +1,5 @@
-const GOLD = "rgb(248, 176, 45)";
-const RED = "rgb(219, 62, 65)";
+const GOLD = "rgb(250, 217, 29)"; // "rgb(248, 176, 45)" old gold colour
+const RED = "rgb(244, 78, 81)"; // "rgb(219, 62, 65)";  old red colour
 var languageCode = "";
 var languageCodeChanged = false;
 var language = "";

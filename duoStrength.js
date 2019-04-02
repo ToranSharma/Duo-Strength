@@ -334,27 +334,22 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 
 	var imgContainer = document.createElement("div");
 	imgContainer.style = "position: relative;"
-						+"vertical-align: middle;"
 						+"display: inline-block;"
-						+"height: 1.3em;"
-						+"width: 1.3em;"
-						+"top: -0.15em;";
+						+"width: 100%;";
 	
 	var levelContainer = document.createElement("div");
 	levelContainer.style =	"position: absolute;"
 						+	"top: 50%;"
 						+   "left: 50%;"
 						+   "transform: translateX(-50%) translateY(-50%);"
-						+	"margin-top: 10%;"
 						+	"z-index: 2;"
-						+	"font-size: 0.75em;"
-						+	"color: white;";
+						+	"color: #cd7900;"; // new colour for juicy UI look, was white.
 
 	var crownImg = document.createElement("img");
 	crownImg['alt'] = "crown";
 	// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
 	crownImg.style = "height: 100%; width: 100%; z-index: 1;";
-	crownImg['src'] = "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
+	crownImg['src'] = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
 
 	imgContainer.appendChild(crownImg);
 	imgContainer.appendChild(levelContainer);
@@ -372,7 +367,8 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 			var breakdownListItem = document.createElement("li");
 			breakdownListItem.className = "crownLevelItem";
 			breakdownListItem.style =	"display: grid;"
-									+	"grid-template-columns: 1fr 1.5em 1fr;";
+									+	"align-items: center;"
+									+	"grid-template-columns: 1fr 2.5em 1fr;";
 			breakdownListItem.innerHTML = skillCount + " skill"+ ((skillCount == 1 )?"":"s") + " at ";
 
 			breakdownListItem.appendChild(imgContainer);
@@ -395,7 +391,8 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 			var breakdownListItem = document.createElement("li");
 			breakdownListItem.className = "crownLevelItem";
 			breakdownListItem.style =	"display: grid;"
-									+	"grid-template-columns: 1fr 1.5em 1fr;";
+									+	"align-items: center;"
+									+	"grid-template-columns: 1fr 2.5em 1fr;";
 			breakdownListItem.innerHTML = skillCount + " bonus skill"+ ((skillCount == 1 )?"":"s") + " at ";
 
 			breakdownListItem.appendChild(imgContainer);

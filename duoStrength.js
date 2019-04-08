@@ -234,6 +234,14 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		return false;
 	}
 
+	shopButtonFloatedDiv = document.createElement("div");
+	shopButtonFloatedDiv.id = "shopButtonFloatedDiv";
+	shopButtonFloatedDiv.style	= "width: " + document.getElementsByClassName("_1YIzB")[0].offsetWidth + "px;"
+								+ "height: " + document.getElementsByClassName("_1YIzB")[0].offsetHeight + "px;"
+								+ "float: right;"
+								+ "margin-top: -" + document.getElementsByClassName("w8Lxd")[0].offsetHeight + "px;"
+								+ "margin-bottom: 0.5em;";
+
 	var strengthenBox; // will be a div to hold list of skills that need strengthenening
 	var needToAddBox = false;
 	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
@@ -251,7 +259,10 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 
 	var numSkillsToBeStrengthened = needsStrengthening[0].length +needsStrengthening[1].length;
 
-	strengthenBox.innerHTML = "The following " + numSkillsToBeStrengthened +
+	strengthenBox.innerHTML = "";
+	strengthenBox.appendChild(shopButtonFloatedDiv);
+	
+	strengthenBox.innerHTML += "The following " + numSkillsToBeStrengthened +
 								((needsStrengthening[0].length + numBonusSkillsInTree != 1) ? " skills need": " skill needs") +
 								" strengthening: <br/>";
 	

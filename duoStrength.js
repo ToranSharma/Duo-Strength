@@ -1,5 +1,5 @@
-const GOLD = "rgb(250, 217, 29)"; // "rgb(248, 176, 45)" old gold colour
-const RED = "rgb(244, 78, 81)"; // "rgb(219, 62, 65)";  old red colour
+GOLD = "rgb(250, 217, 29)"; // "rgb(248, 176, 45)" old gold colour
+RED = "rgb(244, 78, 81)"; // "rgb(219, 62, 65)";  old red colour
 var languageCode = "";
 var languageCodeChanged = false;
 var language = "";
@@ -9,7 +9,7 @@ var languageLogo;
 
 var username = "";
 var userData = Object();
-var newUIVersion = false;
+var juicyUI = true;
 var numBonusSkillsInTree = 0;
 
 var rootElem;
@@ -432,6 +432,7 @@ function requestData() // requests data for actively logged in user.
 }
 
 function checkUIVersion(){
+	/*	Old version of UI checking for adding of parts and pentagonal checkpoints
 	if (document.getElementsByClassName('_1bcgw').length != 0)
 	{
 		// Seem to be using new version of tree with the pentagonal checkpoint nodes
@@ -440,6 +441,18 @@ function checkUIVersion(){
 	{
 		newUIVersion = false;
 	}
+	*/
+
+	// check for new 'juicy' UI version by testing crown image.
+	if (!document.getElementsByClassName("_2PyWM")[0].src.includes("juicy")) // _2PyWM is class of small crown img for each skill
+	{
+		// if src of crown image isn't the new juicy-crown.svg:
+		juicyUI = false;
+		// change GOLD and RED colours to old versions.
+		GOLD = "rgb(248, 176, 45)";
+		RED = "rgb(219, 62, 65)";
+	}
+
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.

@@ -313,6 +313,171 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	}
 }
 
+function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
+{
+	/*
+		Side bar HTML structure:
+		<div class="_2_lzu">							<-- Side bar container div
+			<div class="aFqnr _1E3L7">					<-- Crown Level Box container div
+				<h2>Crown Level</h2>
+				<div class="_1kQ6y">					<-- Crown image and count container div
+					<img class="_2vQZX" src="..." />	<-- Crown image svg
+					<div class="nh1S1">CROWNCOUNT</div>	<-- Crown count text
+					###################################	<-- /Maximum crown count will be put here.
+				</div>
+				####################################### <-- Crown Level breakdown will be put here.
+			</div>
+			<div class="-X3R5 _2KDjt">...</div>			<-- Advert/ disable ad blocker
+			<div class="_21w25 _1E3L7">...</div>		<-- Daily Goal, xp graph & practice button
+			<div class="_2SCNP _1E3L7">...</div>		<-- Achievements
+			<div class="a5SW0">...</div>				<-- Friends list
+			<div class="a5SW0">...</div>				<-- Duolingo Social Media links
+		</div>
+
+		Note a5SW0 seems to correspond with clear background, and _1E3L7 with whtie background.
+		_1E3L7 is in class name of main tree, which has a white background.
+	*/
+
+	var treeLevel = 0;
+
+	var i = 0;
+	while (crownLevelCount[0][i] == 0 && i < 6)
+	{
+		treeLevel++;
+		i++;
+	}
+
+	var crownLevelContainer = document.getElementsByClassName('aFqnr _1E3L7')[0];
+	var crownTotalContainer = crownLevelContainer.getElementsByClassName('_2eJB1')[0]; // Was nh1S1, changed as of 2019-03-21, _3QZJ_ seems to represent >0 crowns, HY4N- for no crowns.
+	crownTotalContainer.style.fontSize = "22px";
+
+	var maximumCrownCountContainer = document.createElement("span");
+	maximumCrownCountContainer.id = "maxCrowns";
+	maximumCrownCountContainer.innerHTML = "/" + maxCrownCount;
+	/*
+	maximumCrownCountContainer.style =	"position:absolute;"
+									+ 	"top: 50%;"
+									+	"right: 0;"
+									+	"margin-top: 5px;"
+									+	"font-size: 36px;"
+									+	"font-weight: 700;"
+									+	"transform: translateY(-50%);";
+	*/
+
+	var breakdownContainer = document.createElement("div");
+	breakdownContainer.id = "crownLevelBreakdownContainer";
+	breakdownContainer.style =	"margin-top: 1em;"
+							+	"text-align: left;";
+
+	var treeLevelContainer = document.createElement("div");
+	treeLevelContainer.id = "treeLevel";
+	treeLevelContainer.style = "display: inline-block";
+	treeLevelContainer.innerHTML = treeLevel;
+
+	var breakdownList = document.createElement("ul");
+	breakdownList.id = "breakdownList";
+	breakdownList.style =	"display: grid;"
+						+	"grid-auto-rows: 1.5em;"
+						+	"align-items: center;";
+
+	var imgContainer = document.createElement("div");
+	imgContainer.style = "position: relative;"
+						+"display: inline-block;"
+						+"width: 100%;";
+	
+	var levelContainer = document.createElement("div");
+	levelContainer.style =	"position: absolute;"
+						+	"top: 50%;"
+						+   "left: 50%;"
+						+   "transform: translateX(-50%) translateY(-50%);"
+						+	"z-index: 2;"
+						+	"color: #cd7900;"; // new colour for juicy UI look, was white.
+
+	var crownImg = document.createElement("img");
+	crownImg['alt'] = "crown";
+	// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
+	crownImg.style = "height: 100%; width: 100%; z-index: 1;";
+	crownImg['src'] = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
+
+	imgContainer.appendChild(crownImg);
+	imgContainer.appendChild(levelContainer);
+
+	if(document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so lets add it.
+	{
+		for(var crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
+		{
+			var skillCount = crownLevelCount[0][crownLevel];
+			var crownCount = skillCount * crownLevel;
+		
+			levelContainer.id = "crownLevel" + crownLevel + "Count";
+			levelContainer.innerHTML = crownLevel;
+
+			var breakdownListItem = document.createElement("li");
+			breakdownListItem.className = "crownLevelItem";
+			breakdownListItem.style =	"display: grid;"
+									+	"align-items: center;"
+									+	"grid-template-columns: 1fr 2.5em 1fr;";
+			breakdownListItem.innerHTML = skillCount + " skill"+ ((skillCount == 1 )?"":"s") + " at ";
+
+			breakdownListItem.appendChild(imgContainer);
+
+			breakdownListItem.innerHTML += " = " + crownCount + " crown" + ((crownCount == 1 )?"":"s");
+
+			breakdownList.appendChild(breakdownListItem);
+		}
+
+		breakdownList.lastChild['marginBottom'] += "margin-bottom: 1em;";
+
+		for(var crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+		{
+			var skillCount = crownLevelCount[1][crownLevel];
+			var crownCount = skillCount * crownLevel;
+		
+			levelContainer.id = "bonusSkillCrownLevel" + crownLevel + "Count";
+			levelContainer.innerHTML = crownLevel;
+
+			var breakdownListItem = document.createElement("li");
+			breakdownListItem.className = "crownLevelItem";
+			breakdownListItem.style =	"display: grid;"
+									+	"align-items: center;"
+									+	"grid-template-columns: 1fr 2.5em 1fr;";
+			breakdownListItem.innerHTML = skillCount + " bonus skill"+ ((skillCount == 1 )?"":"s") + " at ";
+
+			breakdownListItem.appendChild(imgContainer);
+
+			breakdownListItem.innerHTML += " = " + crownCount + " crown" + ((crownCount == 1 )?"":"s");
+
+			breakdownList.appendChild(breakdownListItem);
+		}
+
+		crownTotalContainer.appendChild(maximumCrownCountContainer);
+
+		breakdownContainer.appendChild(document.createElement("p"))
+		breakdownContainer.lastChild.style = "text-align: center;";
+		breakdownContainer.lastChild.innerHTML = "Your tree is at Level ";
+		breakdownContainer.lastChild.appendChild(treeLevelContainer);
+		breakdownContainer.appendChild(breakdownList);
+		crownLevelContainer.appendChild(breakdownContainer);
+	}
+	else // We have already added the breakdown data, just update it.
+	{
+		for(var crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
+		{
+			levelContainerElement = document.getElementById("crownLevel" + crownLevel + "Count");
+			levelContainerElement.innerHTML = crownLevel;
+		}
+		for(var crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+		{
+			levelContainerElement = document.getElementById("bonusSkillCrownLevel" + crownLevel + "Count");
+			levelContainerElement.innerHTML = crownLevel;
+		}
+
+
+		document.getElementById("maxCrowns").innerHTML = "/" + maxCrownCount;
+		document.getElementById("treeLevel").innerHTML = treeLevel;
+	}
+}
+
 function httpGetAsync(url, responseHandler)
 {
     var xmlHttp = new XMLHttpRequest();
@@ -342,17 +507,17 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		each skill in either skills or bonus_skills has a number or properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
 	
-	var strengths = [[],[]];	// will hold  arry of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
+	var strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
 	var needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
-
+ 	var crownLevelCount = [Array(6).fill(0),Array(2).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
+	
 	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
 
 	var skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	var bonusSkills = userData['language_data'][Object.keys(userData['language_data'])[0]]['bonus_skills'];
+	var bonusSkills = userData['language_data'][languageCode]['bonus_skills'];
 
 	function sortSkills(skill1,skill2)
 	{
-
 		if (skill1['coords_y'] < skill2['coords_y']) // x above y give x
 		{
 			return -1;
@@ -383,7 +548,10 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 			//Add to needs strengthening if nog at 100% and not at 0% i.e. not started
 			needsStrengthening[0].push(skill);
 		}
+
+		crownLevelCount[0][skill['progress_v3']['level']]++;
 	}
+
 	for (var bonusSkill of bonusSkills)
 	{
 		strengths[1].push(bonusSkill['strength']);
@@ -392,14 +560,18 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 			//Add to needs strengthening if nog at 100% and not at 0% i.e. not started
 			needsStrengthening[1].push(bonusSkill);
 		}
+
+		crownLevelCount[1][bonusSkill['progress_v3']['level']]++;
 	}
-	
+
 	addStrengths(strengths); // call function to add these strengths under the skills
 	
 	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
 	{
 		displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
+
+	displayCrownsBreakdown(crownLevelCount, skills.length*5 + bonusSkills.length); // call function to add breakdown of crown levels under crown total.
 
 	// All done displaying what needs doing so let reset and get ready for another change.
 	resetLanguageFlags();

@@ -493,6 +493,42 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 	}
 }
 
+function displayXPBreakdown(data)
+{
+	var container = document.createElement("div");
+	container.className = "_1E3L7";
+	container.id = "XPBox";
+
+	var XPHeader = document.createElement("h2");
+	XPHeader.innerText = data['language_string']+ " XP Level";
+
+	container.appendChild(XPHeader);
+
+	languageLevelContainer = document.createElement("div");
+	languageLevelContainer.className = "_2QmPh";
+	languageLevelContainer.id = "languageLevelContainer";
+
+	var languageLevelElement = document.createElement("p");
+	languageLevelElement.innerText = "Level " + data['level'];
+
+	var languageXPElement = document.createElement("p");
+	languageXPElement.innerText = data['points'] + " XP";
+
+	var languageLevelProgressElement = document.createElement("p");
+	languageLevelProgressElement.innerText = 	(data['level_points']-data['level_progress']) + " XP till level " + (data['level']+1)
+											+	" (" + data['level_progress'] + "/" + data['level_points'] + " XP, "
+											+	(data['level_progress']*100/data['level_points']) + "%)";
+
+
+	languageLevelContainer.appendChild(languageLevelElement);
+	languageLevelContainer.appendChild(languageXPElement);
+	languageLevelContainer.appendChild(languageLevelProgressElement);
+
+	container.appendChild(languageLevelContainer);
+
+	document.getElementsByClassName('aFqnr _1E3L7')[0].parentNode.insertBefore(container, document.getElementsByClassName('aFqnr _1E3L7')[0].nextSibling);
+}
+
 function httpGetAsync(url, responseHandler)
 {
     var xmlHttp = new XMLHttpRequest();
@@ -587,6 +623,17 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	}
 
 	displayCrownsBreakdown(crownLevelCount, skills.length*5 + bonusSkills.length); // call function to add breakdown of crown levels under crown total.
+
+	var XPData =
+	{
+		'language_string':	userData['language_data'][languageCode]['language_string'],
+		'level_progress':	userData['language_data'][languageCode]['level_progress'],
+		'level':			userData['language_data'][languageCode]['level'],
+		'level_points':		userData['language_data'][languageCode]['level_points'],
+		'points':			userData['language_data'][languageCode]['points']
+	}
+
+	displayXPBreakdown(XPData);
 
 	// All done displaying what needs doing so let reset and get ready for another change.
 	resetLanguageFlags();

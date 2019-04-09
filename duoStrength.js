@@ -383,7 +383,9 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 	var imgContainer = document.createElement("div");
 	imgContainer.style = "position: relative;"
 						+"display: inline-block;"
-						+"width: 100%;";
+						+"width: 100%;"
+						+"justify-self:center";
+
 	
 	var levelContainer = document.createElement("div");
 	levelContainer.style =	"position: absolute;"
@@ -416,40 +418,53 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 			breakdownListItem.className = "crownLevelItem";
 			breakdownListItem.style =	"display: grid;"
 									+	"align-items: center;"
-									+	"grid-template-columns: 1fr 2.5em 1fr;";
-			breakdownListItem.innerHTML = skillCount + " skill"+ ((skillCount == 1 )?"":"s") + " at ";
+									+	"justify-items: right;"
+									+	"grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;";
+
+			breakdownListItem.innerHTML =  "<span>" + skillCount + "</span>" + "<span style='justify-self: center;'>skill"+ ((skillCount == 1 )?"":"s") + " at</span>";
 
 			breakdownListItem.appendChild(imgContainer);
 
-			breakdownListItem.innerHTML += " = " + crownCount + " crown" + ((crownCount == 1 )?"":"s");
+			breakdownListItem.innerHTML += "=" +  "<span>" + crownCount  + "</span>" + "<span>crown" + ((crownCount == 1 )?"":"s") + "</span>";
 
 			breakdownList.appendChild(breakdownListItem);
 		}
 
-		breakdownList.lastChild['marginBottom'] += "margin-bottom: 1em;";
 
-		for(var crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
 		{
-			var skillCount = crownLevelCount[1][crownLevel];
-			var crownCount = skillCount * crownLevel;
-		
-			levelContainer.id = "bonusSkillCrownLevel" + crownLevel + "Count";
-			levelContainer.innerHTML = crownLevel;
+			// The tree has some bonus skills so lets display a breakdown of their crown levels.
+			bonusSkillsBreakdownHeader = document.createElement("h3");
+			bonusSkillsBreakdownHeader.innerText = "Bonus Skills";
+			bonusSkillsBreakdownHeader.style =	"margin: 0;"
+											+	"font-size: 100%;"
+											+	"justify-self: center";
 
-			var breakdownListItem = document.createElement("li");
-			breakdownListItem.className = "crownLevelItem";
-			breakdownListItem.style =	"display: grid;"
-									+	"align-items: center;"
-									+	"grid-template-columns: 1fr 2.5em 1fr;";
-			breakdownListItem.innerHTML = skillCount + " bonus skill"+ ((skillCount == 1 )?"":"s") + " at ";
+			breakdownList.appendChild(bonusSkillsBreakdownHeader);
 
-			breakdownListItem.appendChild(imgContainer);
+			for(var crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+			{
+				var skillCount = crownLevelCount[1][crownLevel];
+				var crownCount = skillCount * crownLevel;
+			
+				levelContainer.id = "bonusSkillCrownLevel" + crownLevel + "Count";
+				levelContainer.innerHTML = crownLevel;
 
-			breakdownListItem.innerHTML += " = " + crownCount + " crown" + ((crownCount == 1 )?"":"s");
+				var breakdownListItem = document.createElement("li");
+				breakdownListItem.className = "crownLevelItem";
+				breakdownListItem.style =	"display: grid;"
+										+	"align-items: center;"
+										+	"grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;";
+				
+				breakdownListItem.innerHTML = "<span>" + skillCount + "</span>" + "<span style='justify-self: center;'>skill"+ ((skillCount == 1 )?"":"s") + " at</span>";
 
-			breakdownList.appendChild(breakdownListItem);
+				breakdownListItem.appendChild(imgContainer);
+
+				breakdownListItem.innerHTML += "=" +  "<span>" + crownCount  + "</span>" + "<span>crown" + ((crownCount == 1 )?"":"s") + "</span>";
+
+				breakdownList.appendChild(breakdownListItem);
+			}
 		}
-
 		crownTotalContainer.appendChild(maximumCrownCountContainer);
 
 		breakdownContainer.appendChild(document.createElement("p"))

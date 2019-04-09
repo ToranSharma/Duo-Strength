@@ -46,6 +46,13 @@ function removeNeedsStrengtheningBox()
 	}
 }
 
+
+function removeXPBox()
+{
+	var XPBox = document.getElementById("XPBox");
+	XPBox.parentNode.removeChild(XPBox);
+}
+
 function addStrengths(strengths) // Adds strength bars and percentages under each skill in the tree.
 {
 	/*
@@ -738,6 +745,8 @@ var classNameMutationHandle = function(mutationsList, observer)
 					// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
 					removeStrengthBars();
 					removeNeedsStrengtheningBox();
+					
+					removeXPBox();
 				} else
 				{
 					// language hasn't just changed set flag to false

@@ -46,6 +46,19 @@ function removeNeedsStrengtheningBox()
 	}
 }
 
+function removeCrownsBreakdown()
+{
+	var maxCrowns = document.getElementById("maxCrowns");
+	if(maxCrowns != null) // is null after some language changes.
+	{
+		maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
+		maxCrowns.parentNode.removeChild(maxCrowns);
+	}
+
+	var crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
+	crownLevelBreakdownContainer.parentNode.removeChild(crownLevelBreakdownContainer);
+}
+
 function addStrengths(strengths) // Adds strength bars and percentages under each skill in the tree.
 {
 	/*
@@ -481,12 +494,14 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 			levelContainerElement = document.getElementById("crownLevel" + crownLevel + "Count");
 			levelContainerElement.innerHTML = crownLevel;
 		}
-		for(var crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
 		{
-			levelContainerElement = document.getElementById("bonusSkillCrownLevel" + crownLevel + "Count");
-			levelContainerElement.innerHTML = crownLevel;
+			for(var crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+			{
+				levelContainerElement = document.getElementById("bonusSkillCrownLevel" + crownLevel + "Count");
+				levelContainerElement.innerHTML = crownLevel;
+			}
 		}
-
 
 		document.getElementById("maxCrowns").innerHTML = "/" + maxCrownCount;
 		document.getElementById("treeLevel").innerHTML = treeLevel;
@@ -691,6 +706,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 					// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
 					removeStrengthBars();
 					removeNeedsStrengtheningBox();
+					removeCrownsBreakdown();
 				} else
 				{
 					// language hasn't just changed set flag to false

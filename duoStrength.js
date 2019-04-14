@@ -1,5 +1,7 @@
 GOLD = "rgb(250, 217, 29)"; // "rgb(248, 176, 45)" old gold colour
 RED = "rgb(244, 78, 81)"; // "rgb(219, 62, 65)";  old red colour
+ORANGE = "rgb(255, 150, 0)";
+GREY = "rgb(229, 229, 229)";
 var languageCode = "";
 var languageCodeChanged = false;
 var language = "";
@@ -502,12 +504,13 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 
 function displayXPBreakdown(data)
 {
+	levelProgressPercentage = data['level_progress']*100/data['level_points'];
 	var container = document.createElement("div");
 	container.className = "_1E3L7";
 	container.id = "XPBox";
 
 	var XPHeader = document.createElement("h2");
-	XPHeader.innerText = data['language_string']+ " XP Level";
+	XPHeader.innerText = data['language_string']+ " XP";
 
 	container.appendChild(XPHeader);
 
@@ -515,20 +518,45 @@ function displayXPBreakdown(data)
 	languageLevelContainer.className = "_2QmPh";
 	languageLevelContainer.id = "languageLevelContainer";
 
+
 	var languageLevelElement = document.createElement("p");
 	languageLevelElement.innerText = "Level " + data['level'];
+	languageLevelElement.style = 	"font-size: 175%;"
+								+	"font-weight: bold;"
+								+	"text-align: center;"
+								+	"color: " + ORANGE + ";";
 
-	var languageXPElement = document.createElement("p");
-	languageXPElement.innerText = data['points'] + " XP";
+	var languageXPElement = document.createElement("span");
+	languageXPElement.innerText = data['points'] + " XP - ";
+	languageXPElement.style =	"color: black;"
+							+	"font-weight: normal;";
+	
+	languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
 
+
+	var languageLevelProgressBarContainer = document.createElement("div");
+	languageLevelProgressBarContainer.style =	"height: 0.5em;"
+											+	"width: 100%;"
+											+	"background-color: " + GREY + ";"
+											+	"border-radius: 0.25em;";
+
+	var languageLevelProgressBar = document.createElement("div");
+	languageLevelProgressBar.style =	"height: 100%;"
+									+	"width: " + levelProgressPercentage + "%;"
+									+	"background-color: " + ORANGE + ";"
+									+	"border-radius: 0.25em;";
+
+	languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
 	var languageLevelProgressElement = document.createElement("p");
-	languageLevelProgressElement.innerText = 	(data['level_points']-data['level_progress']) + " XP till level " + (data['level']+1)
-											+	" (" + data['level_progress'] + "/" + data['level_points'] + " XP, "
-											+	(data['level_progress']*100/data['level_points']) + "%)";
+	languageLevelProgressElement.innerHTML = 	(data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1)
+											+	" &middot; (" + data['level_progress'] + "/" + data['level_points'] + " XP - "
+											+	Number(levelProgressPercentage).toFixed(1) + "%)";
 
 
+	
+	
 	languageLevelContainer.appendChild(languageLevelElement);
-	languageLevelContainer.appendChild(languageXPElement);
+	languageLevelContainer.appendChild(languageLevelProgressBarContainer);
 	languageLevelContainer.appendChild(languageLevelProgressElement);
 
 	container.appendChild(languageLevelContainer);

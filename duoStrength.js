@@ -55,6 +55,35 @@ function removeXPBox()
 	XPBox.parentNode.removeChild(XPBox);
 }
 
+function daysToNextLevel(history, xpLeft /*, timezone*/)
+{
+	var xpTotal = 0;
+	var numDays;
+	var firstDate = new Date(history[0].datetime);
+	var lastDate;
+	for (var lesson of history)
+	{
+		xpTotal += lesson.improvement;
+		date = new Date(lesson.datetime);
+		lastDate = date;
+	}
+
+	currentDate = new Date(Date.now());
+
+	if((currentDate-lastDate)/(1000*60*60) > 48)
+	{
+		// been more than 48 hours between last data point and now, therefore we will use now as the last date as at least one day has been missed.
+		lastDate = currentDate;
+	}
+
+	var timePeriod = lastDate - firstDate;
+
+	var xpRate = xpTotal/timePeriod // in units of xp/millisecond
+	xpRate *= 1000*60*60*24 // now in units of xp/day
+
+	return Math.ceil(xpLeft/xpRate);
+}
+
 function addStrengths(strengths) // Adds strength bars and percentages under each skill in the tree.
 {
 	/*
@@ -532,32 +561,54 @@ function displayXPBreakdown(data)
 							+	"font-weight: normal;";
 	
 	languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
-
-
-	var languageLevelProgressBarContainer = document.createElement("div");
-	languageLevelProgressBarContainer.style =	"height: 0.5em;"
-											+	"width: 100%;"
-											+	"background-color: " + GREY + ";"
-											+	"border-radius: 0.25em;";
-
-	var languageLevelProgressBar = document.createElement("div");
-	languageLevelProgressBar.style =	"height: 100%;"
-									+	"width: " + levelProgressPercentage + "%;"
-									+	"background-color: " + ORANGE + ";"
-									+	"border-radius: 0.25em;";
-
-	languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
-	var languageLevelProgressElement = document.createElement("p");
-	languageLevelProgressElement.innerHTML = 	(data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1)
-											+	" &middot; (" + data['level_progress'] + "/" + data['level_points'] + " XP - "
-											+	Number(levelProgressPercentage).toFixed(1) + "%)";
-
-
-	
-	
 	languageLevelContainer.appendChild(languageLevelElement);
-	languageLevelContainer.appendChild(languageLevelProgressBarContainer);
-	languageLevelContainer.appendChild(languageLevelProgressElement);
+
+	if (data['level'] != 25)
+	{
+
+		var nextLevelProgressElement = document.createElement("p");
+		nextLevelProgressElement.style =	"text-align: center;"
+										+	"margin-bottom: 0;";
+		nextLevelProgressElement.innerText = (data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1);
+
+		var languageLevelProgressBarContainer = document.createElement("div");
+		languageLevelProgressBarContainer.style =	"height: 0.5em;"
+												+	"width: 100%;"
+												+	"background-color: " + GREY + ";"
+												+	"border-radius: 0.25em;";
+
+		var languageLevelProgressBar = document.createElement("div");
+		languageLevelProgressBar.style =	"height: 100%;"
+										+	"width: " + levelProgressPercentage + "%;"
+										+	"background-color: " + ORANGE + ";"
+										+	"border-radius: 0.25em;";
+
+		languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
+
+		var currentLevelProgressElement = document.createElement("p");
+		currentLevelProgressElement.style = "text-align: center;";
+		currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
+												+	Number(levelProgressPercentage).toFixed(1) + "%)";
+
+		var projectedNextLevelCompletion = document.createElement("p");
+		projectedNextLevelCompletion.innerHTML =	"At your current rate you will reach the next level in about "
+												+	"<span style='font-weight:bold'>"
+												+	daysToNextLevel(data['history'], data['level_points']-data['level_progress'])
+												+	"</span>"
+												+	" days.";
+
+		languageLevelContainer.appendChild(nextLevelProgressElement);
+		languageLevelContainer.appendChild(languageLevelProgressBarContainer);
+		languageLevelContainer.appendChild(currentLevelProgressElement);
+		languageLevelContainer.appendChild(projectedNextLevelCompletion);
+	}
+	else
+	{
+		// Reached max level
+		var maxLevelMessage = document.createElement("p")
+		maxLevelMessage.innerText = "You have reached the maximum level!";
+		document.getElementById("languageLevelContainer").appendChild(maxLevelMessage);
+	}
 
 	container.appendChild(languageLevelContainer);
 
@@ -665,7 +716,9 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		'level_progress':	userData['language_data'][languageCode]['level_progress'],
 		'level':			userData['language_data'][languageCode]['level'],
 		'level_points':		userData['language_data'][languageCode]['level_points'],
-		'points':			userData['language_data'][languageCode]['points']
+		'points':			userData['language_data'][languageCode]['points'],
+		'history':			userData['language_data'][languageCode]['calendar']
+		//'timezone':			userData['timezone_offset'] seems to not be available for every users, maybe depends on platform use.
 	}
 
 	displayXPBreakdown(XPData);

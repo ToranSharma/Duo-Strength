@@ -841,12 +841,8 @@ var classNameMutationHandle = function(mutationsList, observer)
 					// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
 					removeStrengthBars();
 					removeNeedsStrengtheningBox();
-<<<<<<< HEAD
 					removeCrownsBreakdown();
-=======
-					
 					removeXPBox();
->>>>>>> XP-Level-Box
 				} else
 				{
 					// language hasn't just changed set flag to false

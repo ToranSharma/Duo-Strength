@@ -377,19 +377,18 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	for (var skill of skills)
 	{
 		strengths[0].push(skill['strength']);
-		
-		if(skill['strength'] != 1 && skill['strength'] != 0)
+		if(skill['strength'] != 1 && skill['strength'] != 0 && skill['progress_v3']['level'] != 0)
 		{
-			//Add to needs strengthening if nog at 100% and not at 0% i.e. not started
+			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
 			needsStrengthening[0].push(skill);
 		}
 	}
 	for (var bonusSkill of bonusSkills)
 	{
 		strengths[1].push(bonusSkill['strength']);
-		if(bonusSkill['strength'] != 1 && bonusSkill['strength'] != 0)
+		if(bonusSkill['strength'] != 1 && bonusSkill['strength'] != 0 && bonusSkill['progress_v3']['level'] != 0)
 		{
-			//Add to needs strengthening if nog at 100% and not at 0% i.e. not started
+			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
 			needsStrengthening[1].push(bonusSkill);
 		}
 	}

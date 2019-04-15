@@ -86,6 +86,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		0:	skill icon element (unused currently).
 		1:	skill name element.
 		2:	skill strength between 0 and 1.0.
+		3:	display boolean - false if skill at crown 0, true otherwise.
 	*/
 	var bonusElementsCount = 0;
 	for (var i=0; i<skillElements.length; i++)
@@ -112,15 +113,16 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		if (skillElements[i].parentNode.classList.contains("_1H-7I") || skillElements[i].parentNode.classList.contains("_1--zr"))
 		{
 			// these skill elements are in the bonus skill section.
-			elementContents.push(strengths[1][bonusElementsCount]);
-
+			elementContents.push(strengths[1][bonusElementsCount][0]);
+			elementContents.push(strengths[1][bonusElementsCount][1]);
 			bonusElementsCount ++;
 
 			skills.push(elementContents);
 		} else
 		{
 			// Normal skill
-			elementContents.push(strengths[0][i - bonusElementsCount]);
+			elementContents.push(strengths[0][i - bonusElementsCount][0]);
+			elementContents.push(strengths[0][i - bonusElementsCount][1]);
 			
 			skills.push(elementContents);
 		}
@@ -128,7 +130,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 
 	numBonusSkillsInTree += bonusElementsCount; // update number of bonus elements that were in the tree for use in strengthenBox.
 	
-	var numBarsAdded = 0
+	var numBarsAdded = 0;
 	
 	for (var i = 0; i< skills.length; i++)
 	{
@@ -136,6 +138,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		var nameElement = skills[i][1];
 		var name = nameElement.innerHTML;
 		var strength = skills[i][2]*1.0;
+		var display = (skills[i][3])? "" : "none";
 		
 		if(document.getElementsByClassName("strengthBarHolder").length == numBarsAdded) // if we have only the number of bars added this time round, keep adding new ones.
 		{
@@ -143,6 +146,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			strengthBarHolder.className = "strengthBarHolder";
 			strengthBarHolder.style['width'] = "100%";
 			strengthBarHolder.style['padding'] = "0 5%";
+			strengthBarHolder.style['display'] = display;
 			
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
 			
@@ -178,6 +182,8 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			var strengthValue = document.getElementById(name + "StrengthValue");
 			strengthValue.style['width'] = ((1-strength)*75+25)+"%";
 			strengthValue.innerHTML = strength*100 + "%";
+
+			strengthBar.parentNode.style['display'] = display;
 		}
 	}
 }
@@ -376,7 +382,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 
 	for (var skill of skills)
 	{
-		strengths[0].push(skill['strength']);
+		strengths[0].push([skill['strength'],Boolean(skill['progress_v3']['level'])]);
 		if(skill['strength'] != 1 && skill['strength'] != 0 && skill['progress_v3']['level'] != 0)
 		{
 			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
@@ -385,7 +391,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	}
 	for (var bonusSkill of bonusSkills)
 	{
-		strengths[1].push(bonusSkill['strength']);
+		strengths[1].push([bonusSkill['strength'],Boolean(skill['progress_v3']['level'])]);
 		if(bonusSkill['strength'] != 1 && bonusSkill['strength'] != 0 && bonusSkill['progress_v3']['level'] != 0)
 		{
 			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started

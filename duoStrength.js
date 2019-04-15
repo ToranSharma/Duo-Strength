@@ -467,6 +467,7 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 				breakdownListItem.className = "crownLevelItem";
 				breakdownListItem.style =	"display: grid;"
 										+	"align-items: center;"
+										+	"justify-items: right;"
 										+	"grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;";
 				
 				breakdownListItem.innerHTML = "<span>" + skillCount + "</span>" + "<span style='justify-self: center;'>skill"+ ((skillCount == 1 )?"":"s") + " at</span>";

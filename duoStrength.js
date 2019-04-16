@@ -774,9 +774,25 @@ function displaySuggestion(skills, bonusSkills)
 		link.innerText = randomSuggestion['title'];
 		
 		var fullStrengthMessage = document.createElement("p");
-		fullStrengthMessage.innerText = "Your " + randomSuggestion['language_string'] + " tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level " + (treeLevel + 1) + ": ";
-		fullStrengthMessage.appendChild(link);
-		
+		if (treeLevel == 5)
+		{
+			fullStrengthMessage.innerText = "Your " + randomSuggestion['language_string'] + " tree is fully strengthened and at Level 5! Why not do a <a href='/practice'>general practice</a>";
+		}
+		else if (treeLevel == 0)
+		{
+			link.href = "/skill/" + languageCode + "/" + skillsByCrowns[0][0]['url_title'] + "/";
+			link.innerText = skillsByCrowns[0][0]['title'];
+
+			fullStrengthMessage.innerText = "All the skills that you have learnt so far are fully strengthened. ";
+			fullStrengthMessage.appendChild(link);
+			fullStrengthMessage.innerText += " is the next skill to learn.";
+		}
+		else (treeLevel < 5)
+		{
+			fullStrengthMessage.innerText = "Your " + randomSuggestion['language_string'] + " tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level " + (treeLevel + 1) + ": ";	
+			fullStrengthMessage.appendChild(link);
+		}
+
 		container.appendChild(fullStrengthMessage);
 
 		skillTree.insertBefore(container, firstSkillRow);

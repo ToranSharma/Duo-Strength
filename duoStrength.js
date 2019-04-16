@@ -556,89 +556,148 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 function displayXPBreakdown(data)
 {
 	levelProgressPercentage = data['level_progress']*100/data['level_points'];
-	var container = document.createElement("div");
-	container.className = "_1E3L7";
-	container.id = "XPBox";
-
-	var XPHeader = document.createElement("h2");
-	XPHeader.innerText = data['language_string']+ " XP";
-
-	container.appendChild(XPHeader);
-
-	languageLevelContainer = document.createElement("div");
-	languageLevelContainer.className = "_2QmPh";
-	languageLevelContainer.id = "languageLevelContainer";
 
 
-	var languageLevelElement = document.createElement("p");
-	languageLevelElement.innerText = "Level " + data['level'];
-	languageLevelElement.style = 	"font-size: 175%;"
-								+	"font-weight: bold;"
-								+	"text-align: center;"
-								+	"color: " + ORANGE + ";";
-
-	var languageXPElement = document.createElement("span");
-	languageXPElement.innerText = data['points'] + " XP - ";
-	languageXPElement.style =	"color: black;"
-							+	"font-weight: normal;";
-	
-	languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
-	languageLevelContainer.appendChild(languageLevelElement);
-
-	if (data['level'] != 25)
+	if(document.getElementById("XPBox") == null)
 	{
+		// We haven't made the XP Box yet
 
-		var nextLevelProgressElement = document.createElement("p");
-		nextLevelProgressElement.style =	"text-align: center;"
-										+	"margin-bottom: 0;";
-		nextLevelProgressElement.innerText = (data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1);
+		var container = document.createElement("div");
+		container.className = "_1E3L7";
+		container.id = "XPBox";
 
-		var languageLevelProgressBarContainer = document.createElement("div");
-		languageLevelProgressBarContainer.style =	"height: 0.5em;"
-												+	"width: 100%;"
-												+	"background-color: " + GREY + ";"
-												+	"border-radius: 0.25em;";
+		var XPHeader = document.createElement("h2");
+		XPHeader.innerText = data['language_string']+ " XP";
 
-		var languageLevelProgressBar = document.createElement("div");
-		languageLevelProgressBar.style =	"height: 100%;"
-										+	"width: " + levelProgressPercentage + "%;"
-										+	"background-color: " + ORANGE + ";"
-										+	"border-radius: 0.25em;";
+		container.appendChild(XPHeader);
 
-		languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
+		languageLevelContainer = document.createElement("div");
+		languageLevelContainer.className = "_2QmPh";
 
-		var currentLevelProgressElement = document.createElement("p");
-		currentLevelProgressElement.style = "text-align: center;";
-		currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
-												+	Number(levelProgressPercentage).toFixed(1) + "%)";
+		var languageLevelElement = document.createElement("p");
+		languageLevelElement.id = "xpTotalAndLevel";
+		languageLevelElement.innerText = "Level " + data['level'];
+		languageLevelElement.style = 	"font-size: 175%;"
+									+	"font-weight: bold;"
+									+	"text-align: center;"
+									+	"color: " + ORANGE + ";";
 
-		var daysLeft = daysToNextLevel(data['history'], data['level_points']-data['level_progress']);
-		var projectedNextLevelCompletion = document.createElement("p");
-		projectedNextLevelCompletion.innerHTML =	"At your current rate you will reach the next level in about "
-												+	"<span style='font-weight:bold'>"
-												+	daysLeft
-												+	"</span>"
-												+	" days.";
+		var languageXPElement = document.createElement("span");
+		languageXPElement.innerText = data['points'] + " XP - ";
+		languageXPElement.style =	"color: black;"
+								+	"font-weight: normal;";
+		
+		languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
+		languageLevelContainer.appendChild(languageLevelElement);
 
-		languageLevelContainer.appendChild(nextLevelProgressElement);
-		languageLevelContainer.appendChild(languageLevelProgressBarContainer);
-		languageLevelContainer.appendChild(currentLevelProgressElement);
-		if (daysLeft != -1)
+		if (data['level'] != 25)
 		{
-			languageLevelContainer.appendChild(projectedNextLevelCompletion);
+			var nextLevelProgressElement = document.createElement("p");
+			nextLevelProgressElement.style =	"text-align: center;"
+											+	"margin-bottom: 0;";
+			nextLevelProgressElement.innerText = (data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1);
+
+			var languageLevelProgressBarContainer = document.createElement("div");
+			languageLevelProgressBarContainer.className = "languageLevelProgressBar";
+			languageLevelProgressBarContainer.style =	"height: 0.5em;"
+													+	"width: 100%;"
+													+	"background-color: " + GREY + ";"
+													+	"border-radius: 0.25em;";
+
+			var languageLevelProgressBar = document.createElement("div");
+			languageLevelProgressBar.className = "languageLevelProgressBar";
+			languageLevelProgressBar.style =	"height: 100%;"
+											+	"width: " + levelProgressPercentage + "%;"
+											+	"background-color: " + ORANGE + ";"
+											+	"border-radius: 0.25em;";
+
+			languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
+
+			var currentLevelProgressElement = document.createElement("p");
+			currentLevelProgressElement.style = "text-align: center;";
+			currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
+													+	Number(levelProgressPercentage).toFixed(1) + "%)";
+
+			var daysLeft = daysToNextLevel(data['history'], data['level_points']-data['level_progress']);
+			var projectedNextLevelCompletion = document.createElement("p");
+			projectedNextLevelCompletion.innerHTML =	"At your current rate you will reach the next level in about "
+													+	"<span style='font-weight:bold'>"
+													+	daysLeft
+													+	"</span>"
+													+	" days.";
+
+			languageLevelContainer.appendChild(nextLevelProgressElement);
+			languageLevelContainer.appendChild(languageLevelProgressBarContainer);
+			languageLevelContainer.appendChild(currentLevelProgressElement);
+			if (daysLeft != -1)
+			{
+				languageLevelContainer.appendChild(projectedNextLevelCompletion);
+			}
 		}
+		else
+		{
+			// Reached max level
+			var maxLevelMessage = document.createElement("p");
+			maxLevelMessage.innerText = "You have reached the maximum level!";
+			languageLevelContainer.appendChild(maxLevelMessage);
+		}
+		languageLevelContainer.lastChild.style['marginBottom'] = "0";
+		container.appendChild(languageLevelContainer);
+
+		document.getElementsByClassName('aFqnr _1E3L7')[0].parentNode.insertBefore(container, document.getElementsByClassName('aFqnr _1E3L7')[0].nextSibling);
 	}
 	else
 	{
-		// Reached max level
-		var maxLevelMessage = document.createElement("p")
-		maxLevelMessage.innerText = "You have reached the maximum level!";
-		document.getElementById("languageLevelContainer").appendChild(maxLevelMessage);
+		// We alreayd have the XP Box, lets just update the values
+		var languageLevelElement = document.getElementById("xpTotalAndLevel");
+		languageXPElement = languageLevelElement.childNodes[0];
+		languageXPElement.innerText = data['points'] + " XP - ";
+		languageLevelElement.innerText = "Level " + data['level'];
+		languageLevelElement.insertBefore(languageXPElement,languageLevelElement.childNodes[0]);
+
+		if (languageLevelElement.nextSibling != null)
+		{
+			// Wasn't level 25 ...
+			if (data['level'] != 25)
+			{
+				// ... and still aren't
+				var languageLevelProgressBarContainer = document.getElementsByClassName("languageLevelProgressBar")[0];
+				languageLevelProgressBarContainer.style =	"height: 0.5em;"
+														+	"width: 100%;"
+														+	"background-color: " + GREY + ";"
+														+	"border-radius: 0.25em;";
+
+				var languageLevelProgressBar = document.getElementsByClassName("languageLevelProgressBar")[1];
+				languageLevelProgressBar.style =	"height: 100%;"
+												+	"width: " + levelProgressPercentage + "%;"
+												+	"background-color: " + ORANGE + ";"
+												+	"border-radius: 0.25em;";
+
+				var nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
+				nextLevelProgressElement.innerText = (data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1);
+
+				var currentLevelProgressElement = languageLevelProgressBarContainer.nextSibling;
+				currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
+													+	Number(levelProgressPercentage).toFixed(1) + "%)";
+
+				var daysLeft = daysToNextLevel(data['history'], data['level_points']-data['level_progress']);
+				languageLevelElement.parentNode.lastChild.childNodes[1].innerText = daysLeft;
+			}
+			else
+			{
+				// ... but is now, so lets remove all the irrelevant info
+				while (languageLevelElement.nextSibling != null)
+				{
+					languageLevelElement.parentNode.removeChild(languageLevelElement.nextSibling);
+				}
+
+				var maxLevelMessage = document.createElement("p");
+				maxLevelMessage.style = "margin-bottom: 0";
+				maxLevelMessage.innerText = "You have reached the maximum level!";
+				languageLevelElement.parentNode.appendChild(maxLevelMessage);
+			}
+		}
 	}
-
-	container.appendChild(languageLevelContainer);
-
-	document.getElementsByClassName('aFqnr _1E3L7')[0].parentNode.insertBefore(container, document.getElementsByClassName('aFqnr _1E3L7')[0].nextSibling);
 }
 
 function httpGetAsync(url, responseHandler)
@@ -746,7 +805,6 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		'history':			userData['language_data'][languageCode]['calendar']
 		//'timezone':			userData['timezone_offset'] seems to not be available for every users, maybe depends on platform use.
 	}
-
 	displayXPBreakdown(XPData);
 
 	// All done displaying what needs doing so let reset and get ready for another change.

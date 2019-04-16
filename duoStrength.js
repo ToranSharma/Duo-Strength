@@ -70,6 +70,15 @@ function removeXPBox()
 	}
 }
 
+function removeSuggestion()
+{
+	var suggestionContainer = document.getElementById("fullStrengthMessageContainer");
+	if (suggestionContainer != null)
+	{
+		suggestionContainer.parentNode.removeChild(suggestionContainer);
+	}
+}
+
 function daysToNextLevel(history, xpLeft /*, timezone*/)
 {
 	if (history.length == 0)
@@ -700,6 +709,84 @@ function displayXPBreakdown(data)
 	}
 }
 
+function displaySuggestion(skills, bonusSkills)
+{
+	if (
+			document.getElementsByClassName("i12-l").length != 0 &&
+			document.getElementsByClassName("w8Lxd").length != 0 &&
+			document.getElementsByClassName("_2GJb6").length != 0
+		) // Has the tree loaded from a page change
+	{
+		var skillTree = document.getElementsByClassName("i12-l")[0];
+		var topOfTree = document.getElementsByClassName("w8Lxd")[0];
+		// or var topOfTree = skillTree.childNodes[0]
+		var firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
+	}
+	else
+	{
+		// body hasn't loaded yet so element not there, lets try again after a small wait, but only if we are still on the main page.
+		if(onMainPage)
+		{
+			setTimeout(displaySuggestion(skills, bonusSkills), 500);
+		}
+		else
+		{
+			// swtiched away before we got a chance to try again.
+		}
+		return false;
+	}
+
+	shopButtonFloatedDiv = document.createElement("div");
+	shopButtonFloatedDiv.id = "shopButtonFloatedDiv";
+	shopButtonFloatedDiv.style	= "width: " + document.getElementsByClassName("_1YIzB")[0].offsetWidth + "px;"
+								+ "height: " + document.getElementsByClassName("_1YIzB")[0].offsetHeight + "px;"
+								+ "float: right;"
+								+ "margin-top: -" + document.getElementsByClassName("w8Lxd")[0].offsetHeight + "px;"
+								+ "margin-bottom: 0.5em;";
+
+
+	if (document.getElementById("fullStrengthMessageContainer") == null)
+	{
+		var container = document.createElement("div");
+		container.id = "fullStrengthMessageContainer";
+		container.style = "margin-bottom: 2em;";
+		container.appendChild(shopButtonFloatedDiv);
+
+		skillsByCrowns = [[],[],[],[],[],[]];
+
+		for (var skill of skills)
+		{
+			skillsByCrowns[skill['progress_v3']['level']].push(skill);
+		}
+
+		var treeLevel = 0;
+		var i = 0;
+		while (skillsByCrowns[i].length == 0 && i < 6)
+		{
+			treeLevel++;
+			i++;
+		}
+
+		var randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*skillsByCrowns[treeLevel].length)];
+
+		var link = document.createElement("a");
+		link.href = "/skill/" + languageCode + "/" + randomSuggestion['url_title'] + ((treeLevel == 5) ? "/practice/" : "/");
+		link.innerText = randomSuggestion['title'];
+		
+		var fullStrengthMessage = document.createElement("p");
+		fullStrengthMessage.innerText = "Your " + randomSuggestion['language_string'] + " tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level " + (treeLevel + 1) + ": ";
+		fullStrengthMessage.appendChild(link);
+		
+		container.appendChild(fullStrengthMessage);
+
+		skillTree.insertBefore(container, firstSkillRow);
+	}
+	else
+	{
+		// Already made the box
+	}
+}
+
 function httpGetAsync(url, responseHandler)
 {
     var xmlHttp = new XMLHttpRequest();
@@ -790,7 +877,13 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	
 	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
 	{
+		// Something needs strengthening
 		displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
+	}
+	else
+	{
+		// Nothing that needs strengthening!
+		displaySuggestion(skills);
 	}
 
 	displayCrownsBreakdown(crownLevelCount, skills.length*5 + bonusSkills.length); // call function to add breakdown of crown levels under crown total.
@@ -912,6 +1005,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 					removeNeedsStrengtheningBox();
 					removeCrownsBreakdown();
 					removeXPBox();
+					removeSuggestion();
 				} else
 				{
 					// language hasn't just changed set flag to false

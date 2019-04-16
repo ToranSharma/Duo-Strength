@@ -63,12 +63,19 @@ function removeCrownsBreakdown()
 
 function removeXPBox()
 {
-	var XPBox = document.getElementById("XPBox");
-	XPBox.parentNode.removeChild(XPBox);
+	var xpBox = document.getElementById("XPBox");
+	if (xpBox != null)
+	{
+		xpBox.parentNode.removeChild(xpBox);	
+	}
 }
 
 function daysToNextLevel(history, xpLeft /*, timezone*/)
 {
+	if (history.length == 0)
+	{
+		return -1;
+	}
 	var xpTotal = 0;
 	var numDays;
 	var firstDate = new Date(history[0].datetime);
@@ -82,7 +89,7 @@ function daysToNextLevel(history, xpLeft /*, timezone*/)
 
 	currentDate = new Date(Date.now());
 
-	if((currentDate-lastDate)/(1000*60*60) > 48)
+	if ((currentDate-lastDate)/(1000*60*60) > 48)
 	{
 		// been more than 48 hours between last data point and now, therefore we will use now as the last date as at least one day has been missed.
 		lastDate = currentDate;
@@ -605,17 +612,21 @@ function displayXPBreakdown(data)
 		currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
 												+	Number(levelProgressPercentage).toFixed(1) + "%)";
 
+		var daysLeft = daysToNextLevel(data['history'], data['level_points']-data['level_progress']);
 		var projectedNextLevelCompletion = document.createElement("p");
 		projectedNextLevelCompletion.innerHTML =	"At your current rate you will reach the next level in about "
 												+	"<span style='font-weight:bold'>"
-												+	daysToNextLevel(data['history'], data['level_points']-data['level_progress'])
+												+	daysLeft
 												+	"</span>"
 												+	" days.";
 
 		languageLevelContainer.appendChild(nextLevelProgressElement);
 		languageLevelContainer.appendChild(languageLevelProgressBarContainer);
 		languageLevelContainer.appendChild(currentLevelProgressElement);
-		languageLevelContainer.appendChild(projectedNextLevelCompletion);
+		if (daysLeft != -1)
+		{
+			languageLevelContainer.appendChild(projectedNextLevelCompletion);
+		}
 	}
 	else
 	{

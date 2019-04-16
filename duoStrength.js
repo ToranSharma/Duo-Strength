@@ -766,7 +766,7 @@ function displaySuggestion(skills, bonusSkills)
 			treeLevel++;
 			i++;
 		}
-
+		
 		var randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*skillsByCrowns[treeLevel].length)];
 
 		var link = document.createElement("a");
@@ -783,11 +783,11 @@ function displaySuggestion(skills, bonusSkills)
 			link.href = "/skill/" + languageCode + "/" + skillsByCrowns[0][0]['url_title'] + "/";
 			link.innerText = skillsByCrowns[0][0]['title'];
 
-			fullStrengthMessage.innerText = "All the skills that you have learnt so far are fully strengthened. ";
+			fullStrengthMessage.innerHTML = "All the skills that you have learnt so far are fully strengthened. ";
 			fullStrengthMessage.appendChild(link);
-			fullStrengthMessage.innerText += " is the next skill to learn.";
+			fullStrengthMessage.innerHTML += " is the next skill to learn.";
 		}
-		else (treeLevel < 5)
+		else
 		{
 			fullStrengthMessage.innerText = "Your " + randomSuggestion['language_string'] + " tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level " + (treeLevel + 1) + ": ";	
 			fullStrengthMessage.appendChild(link);

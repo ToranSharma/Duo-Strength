@@ -134,8 +134,9 @@ function daysToNextLevel(history, xpLeft /*, timezone*/)
 	return Math.ceil(xpLeft/xpRate);
 }
 
-function daysToNextCrownLevel(skills)
+function daysToNextCrownLevel()
 {
+	var skills = userData['language_data'][languageCode]['skills'];
 	var treeLevel = crownTreeLevel();
 
 	var practiceTimes = []; // will hold all the individual times a lesson has contributed towards getting to the next crown tree level
@@ -147,7 +148,7 @@ function daysToNextCrownLevel(skills)
 		{
 			lessonsToNextLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
 		}
-		
+
 		var debugInfo = skill['progress_v3_debug_info']['level_progress']; // Seems to be an object with information about when the last time each lexeme was practiced
 		if (debugInfo != null) // Can be null if skill not unlocked or something.
 		{
@@ -188,16 +189,6 @@ function daysToNextCrownLevel(skills)
 	
 	var lessonRate = practiceTimes.length/duration;
 
-	var treeLevel = crownTreeLevel();
-
-	var lessonsToNextLevel = 0;
-	for (var skill of skills)
-	{
-		if(skill['progress_v3']['level'] == 3)
-		{
-			lessonsToNextLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
-		}
-	}
 	console.log(practiceTimes);
 	return Math.ceil(lessonsToNextLevel/lessonRate);
 }
@@ -555,6 +546,13 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 
 	if(document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so lets add it.
 	{
+		crownTotalContainer.appendChild(maximumCrownCountContainer);
+
+		breakdownContainer.appendChild(document.createElement("p"))
+		breakdownContainer.lastChild.style = "text-align: center;";
+		breakdownContainer.lastChild.innerHTML = "Your tree is at Level ";
+		breakdownContainer.lastChild.appendChild(treeLevelContainer);
+
 		for(var crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
 		{
 			var skillCount = crownLevelCount[0][crownLevel];
@@ -615,14 +613,21 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 				breakdownList.appendChild(breakdownListItem);
 			}
 		}
-		crownTotalContainer.appendChild(maximumCrownCountContainer);
-
-		breakdownContainer.appendChild(document.createElement("p"))
-		breakdownContainer.lastChild.style = "text-align: center;";
-		breakdownContainer.lastChild.innerHTML = "Your tree is at Level ";
-		breakdownContainer.lastChild.appendChild(treeLevelContainer);
+		
 		breakdownContainer.appendChild(breakdownList);
 		crownLevelContainer.appendChild(breakdownContainer);
+
+		if (treeLevel != 5)
+		{
+			crownLevelContainer.appendChild(document.createElement("p"));
+			crownLevelContainer.lastChild.innerHTML =	"At your current rate your tree will reach Level "
+													+	(treeLevel + 1) +	" in "
+													+	"<span style='font-weight: bold'>"
+													+	daysToNextCrownLevel()
+													+	"</span>"
+													+	" days";
+			crownLevelContainer.lastChild.style = "margin: 1em 0 0 0;";
+		}
 	}
 	else // We have already added the breakdown data, just update it.
 	{

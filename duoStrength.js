@@ -79,6 +79,28 @@ function removeSuggestion()
 	}
 }
 
+function crownTreeLevel()
+{
+	var skills = userData['language_data'][languageCode]['skills'];
+
+	var skillsByCrowns = [[],[],[],[],[],[]];
+
+	for (var skill of skills)
+	{
+		skillsByCrowns[skill['progress_v3']['level']].push(skill);
+	}
+
+	var treeLevel = 0;
+	var i = 0;
+	while (skillsByCrowns[i].length == 0 && i < 6)
+	{
+		treeLevel++;
+		i++;
+	}
+
+	return treeLevel;
+}
+
 function daysToNextLevel(history, xpLeft /*, timezone*/)
 {
 	if (history.length == 0)
@@ -110,6 +132,74 @@ function daysToNextLevel(history, xpLeft /*, timezone*/)
 	xpRate *= 1000*60*60*24 // now in units of xp/day
 
 	return Math.ceil(xpLeft/xpRate);
+}
+
+function daysToNextCrownLevel(skills)
+{
+	var treeLevel = crownTreeLevel();
+
+	var practiceTimes = []; // will hold all the individual times a lesson has contributed towards getting to the next crown tree level
+	var lessonsToNextLevel = 0;
+
+	for (var skill of skills)
+	{
+		if(skill['progress_v3']['level'] == treeLevel)
+		{
+			lessonsToNextLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
+		}
+		
+		var debugInfo = skill['progress_v3_debug_info']['level_progress']; // Seems to be an object with information about when the last time each lexeme was practiced
+		if (debugInfo != null) // Can be null if skill not unlocked or something.
+		{
+			for (var lexeme of Object.entries(debugInfo))
+			{
+				var info = lexeme[1]; // 0 is lexeme id, 1 is info for that lexeme.
+				console.log(info);
+				var dateArray = info.split("(")[info.split("(").length - 1].split(")")[0].split(", "); // gets an arry of the part of string that is between the last ( and the next ). This is in format "Y", "M", "D", "h", "m", "s", "??????"
+
+				while (dateArray.length < 6)
+				{
+					dateArray.push("0");
+				}
+				var date = new Date(dateArray[0], dateArray[1]-1, dateArray[2], dateArray[3], dateArray[4], dateArray[5]); // dateArray[6]  is some 6 digit number which can't be milliseconds so just ignoring. could possibly be sentence id?
+
+				if (!practiceTimes.find(function (item){return item.getTime() == date.getTime()}) && date.getTime() != (new Date(1970,0,1,0,0,0)).getTime())
+				{
+					practiceTimes.push(date);
+				}
+			}
+		}
+	}
+	practiceTimes.sort(function (a, b)
+		{
+			return (a > b)? 1 : -1;
+		});
+
+	firstDate = practiceTimes[0];
+	lastDate = practiceTimes[practiceTimes.length - 1];
+
+	if(Date() - lastDate > 48*60*60*1000)
+	{
+		lastDate = new Date();
+	}
+
+	duration = lastDate - firstDate; // in milliseconds;
+	duration /= 1000*60*60*24; // in days;
+	
+	var lessonRate = practiceTimes.length/duration;
+
+	var treeLevel = crownTreeLevel();
+
+	var lessonsToNextLevel = 0;
+	for (var skill of skills)
+	{
+		if(skill['progress_v3']['level'] == 3)
+		{
+			lessonsToNextLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
+		}
+	}
+	console.log(practiceTimes);
+	return Math.ceil(lessonsToNextLevel/lessonRate);
 }
 
 function addStrengths(strengths) // Adds strength bars and percentages under each skill in the tree.
@@ -404,14 +494,7 @@ function displayCrownsBreakdown(crownLevelCount, maxCrownCount)
 		_1E3L7 is in class name of main tree, which has a white background.
 	*/
 
-	var treeLevel = 0;
-
-	var i = 0;
-	while (crownLevelCount[0][i] == 0 && i < 6)
-	{
-		treeLevel++;
-		i++;
-	}
+	var  treeLevel = crownTreeLevel();
 
 	var crownLevelContainer = document.getElementsByClassName('aFqnr _1E3L7')[0];
 	var crownTotalContainer = crownLevelContainer.getElementsByClassName('_2eJB1')[0]; // Was nh1S1, changed as of 2019-03-21, _3QZJ_ seems to represent >0 crowns, HY4N- for no crowns.
@@ -752,19 +835,12 @@ function displaySuggestion(skills, bonusSkills)
 		container.style = "margin-bottom: 2em;";
 		container.appendChild(shopButtonFloatedDiv);
 
-		skillsByCrowns = [[],[],[],[],[],[]];
+		var treeLevel = crownTreeLevel();
+		var skillsByCrowns = [[],[],[],[],[],[]];
 
 		for (var skill of skills)
 		{
 			skillsByCrowns[skill['progress_v3']['level']].push(skill);
-		}
-
-		var treeLevel = 0;
-		var i = 0;
-		while (skillsByCrowns[i].length == 0 && i < 6)
-		{
-			treeLevel++;
-			i++;
 		}
 		
 		var randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*skillsByCrowns[treeLevel].length)];

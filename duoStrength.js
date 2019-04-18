@@ -155,9 +155,9 @@ function daysToNextCrownLevel()
 			for (var lexeme of Object.entries(debugInfo))
 			{
 				var info = lexeme[1]; // 0 is lexeme id, 1 is info for that lexeme.
-				console.log(info);
-				var dateArray = info.split("(")[info.split("(").length - 1].split(")")[0].split(", "); // gets an arry of the part of string that is between the last ( and the next ). This is in format "Y", "M", "D", "h", "m", "s", "??????"
-
+				// console.log(info);
+				var dateArray = info.split("(")[2].split(")")[0].split(", "); // gets an arry of the part of string that is between the last ( and the next ). This is in format "Y", "M", "D", "h", "m", "s", "??????"
+				// console.log(dateArray);
 				while (dateArray.length < 6)
 				{
 					dateArray.push("0");

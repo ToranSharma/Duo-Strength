@@ -121,6 +121,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		} else
 		{
 			// Normal skill
+			if (i == 1) console.log(languageCode, i, strengths[0][i - bonusElementsCount]);
 			elementContents.push(strengths[0][i - bonusElementsCount][0]);
 			elementContents.push(strengths[0][i - bonusElementsCount][1]);
 			
@@ -460,7 +461,22 @@ function checkUIVersion(){
 	*/
 
 	// check for new 'juicy' UI version by testing crown image.
-	if (!document.getElementsByClassName("_2PyWM")[0].src.includes("juicy")) // _2PyWM is class of small crown img for each skill
+	var crownElem = document.getElementsByClassName("_2PyWM")[0];
+
+	if (crownElem == null)
+	{
+		if(onMainPage)
+		{
+			console.log("waiting for crown elem to be found");
+			setTimeout(checkUIVersion, 500);
+		}
+		else
+		{
+			// switched away before we got to check again.
+			return false;
+		}
+	}
+	else if (!crownElem.src.includes("juicy")) // _2PyWM is class of small crown img for each skill
 	{
 		// if src of crown image isn't the new juicy-crown.svg:
 		juicyUI = false;
@@ -468,7 +484,6 @@ function checkUIVersion(){
 		GOLD = "rgb(248, 176, 45)";
 		RED = "rgb(219, 62, 65)";
 	}
-
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.

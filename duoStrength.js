@@ -101,7 +101,7 @@ function crownTreeLevel()
 	return treeLevel;
 }
 
-function daysToNextLevel(history, xpLeft /*, timezone*/)
+function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 {
 	if (history.length == 0)
 	{
@@ -715,7 +715,7 @@ function displayXPBreakdown(data)
 			currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
 													+	Number(levelProgressPercentage).toFixed(1) + "%)";
 
-			var daysLeft = daysToNextLevel(data['history'], data['level_points']-data['level_progress']);
+			var daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
 			var projectedNextLevelCompletion = document.createElement("p");
 			projectedNextLevelCompletion.innerHTML =	"At your current rate you will reach the next level in about "
 													+	"<span style='font-weight:bold'>"
@@ -777,7 +777,7 @@ function displayXPBreakdown(data)
 				currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
 													+	Number(levelProgressPercentage).toFixed(1) + "%)";
 
-				var daysLeft = daysToNextLevel(data['history'], data['level_points']-data['level_progress']);
+				var daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
 				languageLevelElement.parentNode.lastChild.childNodes[1].innerText = daysLeft;
 			}
 			else

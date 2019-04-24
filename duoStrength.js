@@ -1,7 +1,6 @@
 GOLD = "rgb(250, 217, 29)"; // "rgb(248, 176, 45)" old gold colour
 RED = "rgb(244, 78, 81)"; // "rgb(219, 62, 65)";  old red colour
 var languageCode = "";
-var languageCodeChanged = false;
 var language = "";
 var languageChanged = false;
 var languageLogo;
@@ -10,7 +9,6 @@ var languageLogo;
 var username = "";
 var userData = Object();
 var juicyUI = true;
-var numBonusSkillsInTree = 0;
 
 var rootElem;
 var dataReactRoot;
@@ -24,8 +22,6 @@ function resetLanguageFlags()
 	// reset to be called after finished successfully displaying everything.
 	// need to be ready for a change so we reset them back to false.
 	languageChanged = false;
-	languageCodeChanged = false;
-	numBonusSkillsInTree = 0;
 }
 
 function removeStrengthBars()
@@ -91,8 +87,8 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 	var bonusElementsCount = 0;
 	for (var i=0; i<skillElements.length; i++)
 	{
-
-		 var elementContents = [
+		if (languageChanged) console.log("languageChanged while processing skill number " +  (i+1));
+		var elementContents = [
 		 	skillElements[i].childNodes[0].childNodes[0],
 		 	skillElements[i].childNodes[0].childNodes[1].getElementsByClassName("_33VdW")[0]
 		 ];
@@ -121,15 +117,12 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		} else
 		{
 			// Normal skill
-			if (i == 1) console.log(languageCode, i, strengths[0][i - bonusElementsCount]);
 			elementContents.push(strengths[0][i - bonusElementsCount][0]);
 			elementContents.push(strengths[0][i - bonusElementsCount][1]);
 			
 			skills.push(elementContents);
 		}
 	}
-
-	numBonusSkillsInTree += bonusElementsCount; // update number of bonus elements that were in the tree for use in strengthenBox.
 	
 	var numBarsAdded = 0;
 	
@@ -264,13 +257,13 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox = document.getElementById("strengthenBox");
 	}
 
-	var numSkillsToBeStrengthened = needsStrengthening[0].length +needsStrengthening[1].length;
+	var numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
 
 	strengthenBox.innerHTML = "";
 	strengthenBox.appendChild(shopButtonFloatedDiv);
 	
 	strengthenBox.innerHTML += "The following " + numSkillsToBeStrengthened +
-								((needsStrengthening[0].length + numBonusSkillsInTree != 1) ? " skills need": " skill needs") +
+								((needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills need": " skill needs") +
 								" strengthening: <br/>";
 	
 	for (var i = 0; i < numSkillsToBeStrengthened - 1; i++)
@@ -352,8 +345,6 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	var strengths = [[],[]];	// will hold  arry of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
 	var needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
 
-	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
-
 	var skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	var bonusSkills = userData['language_data'][Object.keys(userData['language_data'])[0]]['bonus_skills'];
 
@@ -406,32 +397,31 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	{
 		displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
-
-	// All done displaying what needs doing so let reset and get ready for another change.
-	resetLanguageFlags();
 }
 
-function handleDataResponse(responseText)
+function handleDataResponse(responseText, languageOnCall)
 {
 	userData = JSON.parse(responseText); // store response text as JSON object.
-	newDataLanguageCode = Object.keys(userData['language_data'])[0];
-	if((!languageCodeChanged) && languageChanged && newDataLanguageCode == languageCode)
+	var newDataLanguageCode = Object.keys(userData['language_data'])[0];
+	var newDataLanguageString = userData['language_data'][Object.keys(userData['language_data'])[0]]['language_string'];
+	if (languageChanged && newDataLanguageString != language)
 	{
-		// languageCode hasn't been changed yet but we have changed langauge but the data isn't up to date yet.
-		// so request the data again after a little wait, but only if still on the main page.
-		if(onMainPage)
+		// language change has happened but the data isn't up to date yet as it is not matching the current active language
+		// so request the data, but only if still on the main page. Safe to not wait as the httpRequest will take some time.
+		if (onMainPage)
 		{
-			setTimeout(function() {httpGetAsync(encodeURI(window.location+"users/"+username), handleDataResponse);}, 100);
-			//setTimeout(function() {httpGetAsync("/users/"+ username, handleDataResponse);}, 100);
+			requestData(languageOnCall);
 		}
 	}
-	else {
-		languageCodeChanged = true;
+	else
+	{
+		languageCode = newDataLanguageCode;
+		resetLanguageFlags();
 		getStrengths();	// actual processing of the data.
 	}
 }
 
-function requestData() // requests data for actively logged in user.
+function requestData(languageOnCall) // requests data for actively logged in user.
 {
 	if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
 	{
@@ -441,7 +431,21 @@ function requestData() // requests data for actively logged in user.
 	if(document.getElementsByClassName("_2R9gT").length != 0) // Check if there is a username element
 	{
 		username = document.getElementsByClassName("_2R9gT")[0].innerHTML;
-		httpGetAsync(encodeURI(window.location+"users/"+username), handleDataResponse); // asks for data and async calls handle function when ready.
+		httpGetAsync(
+			encodeURI(window.location+"users/"+username),
+			function (responseText)
+			{
+				if (languageOnCall != language)
+				{
+					// current language at time of response is not the language anymore
+					return false;
+				}
+				else
+				{
+					handleDataResponse(responseText, languageOnCall);
+				}
+			}
+		); // asks for data and async calls handle function when ready.
 	} else
 	{
 		// user not logged in.
@@ -467,7 +471,6 @@ function checkUIVersion(){
 	{
 		if(onMainPage)
 		{
-			console.log("waiting for crown elem to be found");
 			setTimeout(checkUIVersion, 500);
 		}
 		else
@@ -516,11 +519,12 @@ var classNameMutationHandle = function(mutationsList, observer)
 			if (language != "")
 			{
 				// language has previously been set so not first time on home page.
-				 if (language != document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML)
+				var topBarLanguage = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
+				if (language != topBarLanguage)
 				{
 					// language has just changed so set flag to true
 					languageChanged = true;
-					language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
+					language = topBarLanguage;
 					// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
 					removeStrengthBars();
 					removeNeedsStrengtheningBox();
@@ -530,7 +534,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 					languageChanged = false;
 				}
 				checkUIVersion(); // here for case of switching language with different UI versions
-				requestData(); // call on attribute change
+				requestData(language); // call on attribute change
 			} else
 			{
 				//language had not been previously set so first time on homepage
@@ -597,7 +601,7 @@ function init()
 			}
 			language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
 			checkUIVersion();
-			requestData();
+			requestData(language);
 		}
 		else if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length != 0) // if we are on the words page
 		{

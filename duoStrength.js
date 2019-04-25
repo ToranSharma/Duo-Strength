@@ -136,6 +136,7 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 
 function daysToNextCrownLevel()
 {
+	/*
 	var skills = userData['language_data'][languageCode]['skills'];
 	var treeLevel = crownTreeLevel();
 
@@ -191,6 +192,62 @@ function daysToNextCrownLevel()
 
 	console.log(practiceTimes);
 	return Math.ceil(lessonsToNextLevel/lessonRate);
+	*/
+	var skills = userData['language_data'][languageCode]['skills'];
+	var treeLevel = crownTreeLevel();
+	var lessonsToNextCrownLevel = 0;
+	for (skill of skills)
+	{
+		lessonTimes = Array();
+		if (skill['progress_v3']['level'] == treeLevel)
+		{
+			lessonsToNextCrownLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
+		}
+		for (lesson of Object.entries(skill['progress_v3_debug_info']['lexeme_ids_by_lesson']))
+		{
+			lexemeID = lesson[1][0];
+			lessonData = skill['progress_v3_debug_info']['level_progress'][lexemeID];
+			dateArray = lessonData.split("(")[2].split(")")[0].split(", ");
+			while (dateArray.length < 6)
+			{
+				dateArray.push("0");
+			}
+			date = new Date(dateArray[0],dateArray[1]-1,dateArray[2],dateArray[3],dateArray[4],dateArray[5]);
+			if (!lessonTimes.find(function (item){return item.getTime() == date.getTime()}) && date.getTime() != (new Date(1970,0,1,0,0,0)).getTime())
+			{
+				lessonTimes.push(date);
+			}
+		}
+		console.log(lessonTimes);
+
+	}
+	console.log("numLessons to level" + (treeLevel+1) + " is " + lessonsToNextCrownLevel);
+
+	var calendar = userData['language_data'][languageCode]['calendar'];
+	console.log(calendar);
+	var practiceTimes = Array();
+
+	for (lesson of calendar)
+	{
+		date = (new Date(lesson['datetime'])).setHours(0,0,0,0);
+		practiceTimes.push(date);
+	}
+
+	console.log(practiceTimes);
+	var numLessons = practiceTimes.length;
+	var firstDate = practiceTimes[0]; // assuming sorted acending.
+	var lastDate = practiceTimes[numLessons-1];
+	var currentDate = new Date();
+	if ((currentDate-lastDate)/(1000*60*60) > 48)
+	{
+		lastDate = currentDate;
+	}
+
+	var timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // in days
+	var lessonRate = numLessons/timePeriod; // in lessons per day
+	console.log("lesson rate is " + lessonRate);
+
+	return Math.ceil(lessonsToNextCrownLevel/lessonRate);
 }
 
 function addStrengths(strengths) // Adds strength bars and percentages under each skill in the tree.

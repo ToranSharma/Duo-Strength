@@ -136,73 +136,14 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 
 function daysToNextCrownLevel()
 {
-	/*
-	var skills = userData['language_data'][languageCode]['skills'];
-	var treeLevel = crownTreeLevel();
-
-	var practiceTimes = []; // will hold all the individual times a lesson has contributed towards getting to the next crown tree level
-	var lessonsToNextLevel = 0;
-
-	for (var skill of skills)
-	{
-		if(skill['progress_v3']['level'] == treeLevel)
-		{
-			lessonsToNextLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
-		}
-
-		var debugInfo = skill['progress_v3_debug_info']['level_progress']; // Seems to be an object with information about when the last time each lexeme was practiced
-		if (debugInfo != null) // Can be null if skill not unlocked or something.
-		{
-			for (var lexeme of Object.entries(debugInfo))
-			{
-				var info = lexeme[1]; // 0 is lexeme id, 1 is info for that lexeme.
-				// console.log(info);
-				var dateArray = info.split("(")[2].split(")")[0].split(", "); // gets an arry of the part of string that is between the last ( and the next ). This is in format "Y", "M", "D", "h", "m", "s", "??????"
-				// console.log(dateArray);
-				while (dateArray.length < 6)
-				{
-					dateArray.push("0");
-				}
-				var date = new Date(dateArray[0], dateArray[1]-1, dateArray[2], dateArray[3], dateArray[4], dateArray[5]); // dateArray[6]  is some 6 digit number which can't be milliseconds so just ignoring. could possibly be sentence id?
-
-				if (!practiceTimes.find(function (item){return item.getTime() == date.getTime()}) && date.getTime() != (new Date(1970,0,1,0,0,0)).getTime())
-				{
-					practiceTimes.push(date);
-				}
-			}
-		}
-	}
-	practiceTimes.sort(function (a, b)
-		{
-			return (a > b)? 1 : -1;
-		});
-
-	firstDate = practiceTimes[0];
-	lastDate = practiceTimes[practiceTimes.length - 1];
-
-	if(Date() - lastDate > 48*60*60*1000)
-	{
-		lastDate = new Date();
-	}
-
-	duration = lastDate - firstDate; // in milliseconds;
-	duration /= 1000*60*60*24; // in days;
-	
-	var lessonRate = practiceTimes.length/duration;
-
-	console.log(practiceTimes);
-	return Math.ceil(lessonsToNextLevel/lessonRate);
-	*/
 	var skills = userData['language_data'][languageCode]['skills'];
 	var treeLevel = crownTreeLevel();
 	var lessonsToNextCrownLevel = 0;
+	var nonContributingLessons = Array();
 	for (skill of skills)
 	{
 		lessonTimes = Array();
-		if (skill['progress_v3']['level'] == treeLevel)
-		{
-			lessonsToNextCrownLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
-		}
+		
 		for (lesson of Object.entries(skill['progress_v3_debug_info']['lexeme_ids_by_lesson']))
 		{
 			lexemeID = lesson[1][0];
@@ -212,40 +153,82 @@ function daysToNextCrownLevel()
 			{
 				dateArray.push("0");
 			}
-			date = new Date(dateArray[0],dateArray[1]-1,dateArray[2],dateArray[3],dateArray[4],dateArray[5]);
-			if (!lessonTimes.find(function (item){return item.getTime() == date.getTime()}) && date.getTime() != (new Date(1970,0,1,0,0,0)).getTime())
+			dateArray.length = 6; // don't want element 6 which is some strange 6 digit number, some sort of id I would guess
+			dateArray[1]--; // month in data is 1-jan 2 feb etc. Date() takes months as 0-jan 1-feb etc.
+			date = new Date(...dateArray);
+			if (!lessonTimes.find(function (item){return item.getTime() == date.getTime()}) && date.getTime() != (new Date(1970,0,1,0,0,0)).getTime()) // if a lesson has never been done then its date is UNIX epoch
 			{
 				lessonTimes.push(date);
 			}
 		}
-		console.log(lessonTimes);
 
+		lessonTimes.sort(function (a, b)
+		{
+			return (a < b)? 1 : -1; // sorted descending.
+		});
+
+		if (skill['progress_v3']['level'] == treeLevel)
+		{
+			lessonsToNextCrownLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
+		}
+		else
+		{
+			numLessonsCompletedAtCrown = skill['level_sessions_finished'];
+			if ((skill['progress_v3']['level'] == treeLevel + 1) && (lessonTimes.length >= numLessonsCompletedAtCrown))
+			{
+				// If there have been more lessons completed on record than the amount done at the next level, then some are relavant.
+				// As lessonTimes are sorted in decending order, we only include keep the number of times that definitely haven't contributed.
+				lessonTimes.length = numLessonsCompletedAtCrown; // effectively trims off lessons that did contribute.
+			}
+			// else all the times in lesson Times should be non contributing.
+			// For skills that are 2 or more crowns above tree level, all practices are likely non contributing.
+			// Exception could be skills with very very few lessons, but even then lessonTimes will likely be only 1 or 2 in length and we can't trim it down any more.
+			nonContributingLessons.push(...lessonTimes); // ... is spread syntax
+		}
 	}
-	console.log("numLessons to level" + (treeLevel+1) + " is " + lessonsToNextCrownLevel);
+	// nonContributingLessons will likely have duplicates if a single early time which is probably when progress_v3 was implemented, so lessons completed before then are set to this date. It should be fine to leave this is but lets get rid of the duplicates.
+	while (nonContributingLessons.length > 1 && (nonContributingLessons[0].getTime() == nonContributingLessons[1].getTime()))
+	{
+		nonContributingLessons.splice(1,1);
+	}
+
+	// Times in progress_v3_debug_info can be a few seconds off in testing, so just test the days.
+	for (time of nonContributingLessons)
+	{
+		time.setHours(0,0,0,0);
+	}
 
 	var calendar = userData['language_data'][languageCode]['calendar'];
-	console.log(calendar);
 	var practiceTimes = Array();
 
 	for (lesson of calendar)
-	{
-		date = (new Date(lesson['datetime'])).setHours(0,0,0,0);
+	{	
+		date = new Date(lesson['datetime']);
+		date.setHours(0,0,0,0);
+		
 		practiceTimes.push(date);
 	}
 
-	console.log(practiceTimes);
 	var numLessons = practiceTimes.length;
 	var firstDate = practiceTimes[0]; // assuming sorted acending.
 	var lastDate = practiceTimes[numLessons-1];
 	var currentDate = new Date();
+
 	if ((currentDate-lastDate)/(1000*60*60) > 48)
 	{
 		lastDate = currentDate;
 	}
 
+	for (time of nonContributingLessons)
+	{
+		if (time >= firstDate)
+		{
+			numLessons --;
+		}
+	}
+
 	var timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // in days
 	var lessonRate = numLessons/timePeriod; // in lessons per day
-	console.log("lesson rate is " + lessonRate);
 
 	return Math.ceil(lessonsToNextCrownLevel/lessonRate);
 }

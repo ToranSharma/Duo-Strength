@@ -509,6 +509,11 @@ var classNameMutationHandle = function(mutationsList, observer)
 		{
 			// it was a language change,
 			languageChanged = true;
+
+			// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
+			removeStrengthBars();
+			removeNeedsStrengtheningBox();
+
 			function checkCurrentLanguage()
 			{
 				var currentLanguage = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3];
@@ -521,9 +526,6 @@ var classNameMutationHandle = function(mutationsList, observer)
 				{
 					// page title has changed to reflect new language
 					language = currentLanguage;
-					// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
-					removeStrengthBars();
-					removeNeedsStrengtheningBox();
 
 					// now get the new data
 					checkUIVersion(); // Just in case.

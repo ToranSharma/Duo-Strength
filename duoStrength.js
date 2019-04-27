@@ -8,7 +8,7 @@ var languageLogo;
 
 var username = "";
 var userData = Object();
-var juicyUI = true;
+var oldUI = false;
 
 var rootElem;
 var dataReactRoot;
@@ -451,7 +451,7 @@ function requestData(languageOnCall) // requests data for actively logged in use
 }
 
 function checkUIVersion(){
-	/*	Old version of UI checking for adding of parts and pentagonal checkpoints
+	/*	Old old version of UI checking for adding of parts and pentagonal checkpoints
 	if (document.getElementsByClassName('_1bcgw').length != 0)
 	{
 		// Seem to be using new version of tree with the pentagonal checkpoint nodes
@@ -461,7 +461,7 @@ function checkUIVersion(){
 		newUIVersion = false;
 	}
 	*/
-
+	/* Old version of UI checking for if using the juicy look. Assuming this is now universal
 	// check for new 'juicy' UI version by testing crown image.
 	var crownElem = document.getElementsByClassName("_2PyWM")[0];
 
@@ -485,6 +485,16 @@ function checkUIVersion(){
 		GOLD = "rgb(248, 176, 45)";
 		RED = "rgb(219, 62, 65)";
 	}
+	*/
+	if (document.getElementsByClassName("_6t5Uh").length != 0) // topBarDiv used to have class _6t5Uh
+	{
+		oldUI = true;
+	}
+	else
+	{
+		oldUI = false; // just in case you change between users who have different UI versions
+	}
+
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.

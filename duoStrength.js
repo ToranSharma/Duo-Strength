@@ -87,7 +87,6 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 	var bonusElementsCount = 0;
 	for (var i=0; i<skillElements.length; i++)
 	{
-		if (languageChanged) console.log("languageChanged while processing skill number " +  (i+1));
 		var elementContents = [
 		 	skillElements[i].childNodes[0].childNodes[0],
 		 	skillElements[i].childNodes[0].childNodes[1].getElementsByClassName("_33VdW")[0]
@@ -493,13 +492,6 @@ var childListMutationHandle = function(mutationsList, observer)
 			// root child list has changed so dataReactRoot has probably been replaced, lets redefine it.
 			dataReactRoot = rootElem.childNodes[0];
 		}
-		if(dataReactRoot.childNodes[1].className ==  "_6t5Uh")
-		{
-			// Top bar div has class for main tree page or words page.
-			topBarDiv = dataReactRoot.childNodes[1]
-			languageChanged = false; // language hasn't changed this update
-			init();
-		}
 	}
 };
 
@@ -507,36 +499,59 @@ var classNameMutationHandle = function(mutationsList, observer)
 {
 	for (var mutation of mutationsList)
 	{
-		if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length == 0) // _6t5Uh means we are on body on main page or words page. no _2XW92 means not on words page. So we are on main page.
+		// check if it was a language change
+		if (mutation.target.parentNode.parentNode == languageLogo)
 		{
-			onMainPage = true;
-			if (language != "")
+			// it was a language change,
+			languageChanged = true;
+			function checkCurrentLanguage()
 			{
-				// language has previously been set so not first time on home page.
-				var topBarLanguage = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
-				if (language != topBarLanguage)
+				var currentLanguage = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3];
+				if (language == currentLanguage)
 				{
-					// language has just changed so set flag to true
-					languageChanged = true;
-					language = topBarLanguage;
+					// page title hasn't updated yet, we need the new language name so lets try this thing again in a bit
+					setTimeout(checkCurrentLanguage, 100);
+				}
+				else
+				{
+					// page title has changed to reflect new language
+					language = currentLanguage;
 					// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
 					removeStrengthBars();
 					removeNeedsStrengtheningBox();
-				} else
-				{
-					// language hasn't just changed set flag to false
-					languageChanged = false;
+
+					// now get the new data
+					checkUIVersion(); // Just in case.
+					requestData(language);
 				}
-				checkUIVersion(); // here for case of switching language with different UI versions
-				requestData(language); // call on attribute change
-			} else
+			}
+			checkCurrentLanguage();
+		}
+		else
+		{
+			// it wasn't a language change
+			languageChanged = false;
+		}
+		
+		// check if we are now on the main page
+		if (topBarDiv.childNodes[0].className.includes("_2lkuX"))
+		{
+			// on main page
+			// check if language has been previously set as we only set it in init if we were on the main page
+			if (language != "")
 			{
-				//language had not been previously set so first time on homepage
+				// language has previously been set so not first time on main page, lets just get some new data.
+				requestData(language);
+			}
+			else
+			{
+				// language was not set so first time on home page, lets run init again
 				init();
 			}
 		}
 		else
 		{
+			// not on main page
 			onMainPage = false;
 		}
 	}
@@ -610,7 +625,7 @@ function init()
 				// need to set up Observer on language logo for language change detection
 				// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
 				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
-				language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3] // not sure how well this will work if not using english as the UI language. Needs more work.
+				language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
 
 				// need to set the username, get this by getting the href of the view more link in the achievements box the anchor element has X8N_G as its identifying class
 				username = document.getElementsByClassName("X8N_G")[0].href.split("/")[3];

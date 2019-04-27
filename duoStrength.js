@@ -214,17 +214,19 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 			document.getElementsByClassName("_2GJb6").length != 0
 		) // Has the tree loaded from a page change
 	{
+		/* currently unused
 		var skillTree = document.getElementsByClassName("i12-l")[0];
+		var firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
+		*/
 		var topOfTree = document.getElementsByClassName("w8Lxd")[0];
 		// or var topOfTree = skillTree.childNodes[0]
-		var firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
 	}
 	else
 	{
 		// body hasn't loaded yet so element not there, lets try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
-			setTimeout(displayNeedsStrengthening(needsStrengthening), 500);
+			setTimeout(function() {displayNeedsStrengthening(needsStrengthening);}, 500);
 		}
 		else
 		{
@@ -233,6 +235,9 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		return false;
 	}
 
+	topOfTree.style['height'] = "auto";
+
+	/* Shop button moved so no longer need the floated div underneath.
 	shopButtonFloatedDiv = document.createElement("div");
 	shopButtonFloatedDiv.id = "shopButtonFloatedDiv";
 	shopButtonFloatedDiv.style	= "width: " + document.getElementsByClassName("_1YIzB")[0].offsetWidth + "px;"
@@ -240,7 +245,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 								+ "float: right;"
 								+ "margin-top: -" + document.getElementsByClassName("w8Lxd")[0].offsetHeight + "px;"
 								+ "margin-bottom: 0.5em;";
-
+	*/
 	var strengthenBox; // will be a div to hold list of skills that need strengthenening
 	var needToAddBox = false;
 	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
@@ -259,7 +264,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	var numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
 
 	strengthenBox.innerHTML = "";
-	strengthenBox.appendChild(shopButtonFloatedDiv);
+	//strengthenBox.appendChild(shopButtonFloatedDiv);
 	
 	strengthenBox.innerHTML += "The following " + numSkillsToBeStrengthened +
 								((needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills need": " skill needs") +
@@ -308,7 +313,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	}
 	if(needToAddBox)
 	{
-		skillTree.insertBefore(strengthenBox, firstSkillRow);
+		topOfTree.append(strengthenBox);
 	}
 }
 
@@ -532,7 +537,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 			// it wasn't a language change
 			languageChanged = false;
 		}
-		
+
 		// check if we are now on the main page
 		if (topBarDiv.childNodes[0].className.includes("_2lkuX"))
 		{

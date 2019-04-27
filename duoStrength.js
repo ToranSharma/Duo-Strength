@@ -428,28 +428,22 @@ function requestData(languageOnCall) // requests data for actively logged in use
 		// If there is already userData and not changing language, display current data while requesting new data.
 		getStrengths(userData);
 	}
-	if(document.getElementsByClassName("_2R9gT").length != 0) // Check if there is a username element
-	{
-		username = document.getElementsByClassName("_2R9gT")[0].innerHTML;
-		httpGetAsync(
-			encodeURI(window.location+"users/"+username),
-			function (responseText)
+
+	httpGetAsync(
+		encodeURI(window.location+"users/"+username),
+		function (responseText)
+		{
+			if (languageOnCall != language)
 			{
-				if (languageOnCall != language)
-				{
-					// current language at time of response is not the language anymore
-					return false;
-				}
-				else
-				{
-					handleDataResponse(responseText, languageOnCall);
-				}
+				// current language at time of response is not the language anymore
+				return false;
 			}
-		); // asks for data and async calls handle function when ready.
-	} else
-	{
-		// user not logged in.
-	}
+			else
+			{
+				handleDataResponse(responseText, languageOnCall);
+			}
+		}
+	); // asks for data and async calls handle function when ready.
 }
 
 function checkUIVersion(){
@@ -565,53 +559,75 @@ function init()
 		onMainPage = false;
 		return false;
 	}
-
-	var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
-	// Main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
-	
-	if(mainBodyElemIn3rd) // If main body element is in 3rd place then we are not in a lesson.
+	else
 	{
-		topBarDiv = dataReactRoot.childNodes[1];
+		// should be logged in
+		var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
+		// Main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
+		// topBarDiv is no longer second, that it is nested a few levels down inside that.
 
-		// topBarMobilePractice either has class _2XW92 or _3IyDY _1NQPL.
-		if(topBarDiv.getElementsByClassName("_3IyDY _1NQPL").length != 0)
+		if(mainBodyElemIn3rd) // If main body element is in 3rd place then we are not in a lesson.
 		{
-			topBarMobilePractice = topBarDiv.getElementsByClassName("_3IyDY _1NQPL")[0]; // Class for when on homepage, store and labs
-		}
-		else if(topBarDiv.getElementsByClassName("_2XW92").length != 0)
-		{
-			topBarMobilePractice = topBarDiv.getElementsByClassName("_2XW92")[0]; // Class for when on words page
-		}
-		else
-		{
-			// Element not found or has a class we are not expecting. It should be the 2nd child of topBarDiv so lets just set it as that and hope for the best.
-			topBarMobilePractice = topBarDiv.childNodes[1];
-		}
+			topBarDiv = dataReactRoot.childNodes[1].childNodes[1].childNodes[1].childNodes[0]; // direct container of the divs holding the navigation butons, has class _3F_8q
 
-		classNameObserver.observe(topBarDiv,{attributes: true}); // Observing to see if class of topBarDiv changes to tell if we have switched between main or words page and store or labs page.
-		classNameObserver.observe(topBarMobilePractice,{attributes: true}); // Observing to see if class of topBarMobilePractice changes to tell if we have swtiched between main and words page.
+			// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
+			numNavButtons = topBarDiv.getElementsByClassName("_3MT82").length;
+			// if numNavButtons = 4 then there is no stories button.
+			// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
 
-		if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length == 0) // if we are on the homepage. _2XW92 is class of mobile view practice button when on words page. On home page it is _3IyDY _1NQPL.
-		{
-			onMainPage = true;
-			if(languageLogo != document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0])
+			var homeNav = topBarDiv.childNodes[0];
+
+			if (numNavButtons == 5)
 			{
-				languageLogo = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[0];
-				classNameObserver.observe(languageLogo,{attributes: true});
+				var storiesNav = topBarDiv.childNodes[2];
+				/* unused/unusable
+				var discussionNav = topBarDiv.childNodes[4];
+				*/
+				var shopNav = topBarDiv.childNodes[6];
+				languageLogo = topBarDiv.childNodes[10];
 			}
-			language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
-			checkUIVersion();
-			requestData(language);
-		}
-		else if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length != 0) // if we are on the words page
+			else
+			{
+				/* unused/unusable
+				var discussionNav = topBarDiv.childNodes[2];
+				*/
+				var shopNav = topBarDiv.childNodes[4];
+				languageLogo = topBarDiv.childNodes[8];
+			}
+			
+			// set up observers for page changes
+			classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
+			/* unused/unusable
+			classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
+			*/
+			classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
+
+			if (homeNav.className.includes("_2lkuX"))
+			{
+				// on home page
+				onMainPage = true;
+
+				// need to set up Observer on language logo for language change detection
+				// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
+				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+				language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3] // not sure how well this will work if not using english as the UI language. Needs more work.
+
+				// need to set the username, get this by getting the href of the view more link in the achievements box the anchor element has X8N_G as its identifying class
+				username = document.getElementsByClassName("X8N_G")[0].href.split("/")[3];
+
+				checkUIVersion();
+				requestData(language);
+			}
+			else
+			{
+				// We are not on the main page. Don't need to do anything further, we have set up the observer to see if we go back to the main page from here.
+				onMainPage = false;
+			}
+		} else
 		{
-			// We are on the words page. Don't need to do anything further, we have set up the observer to see if we go back to the main page from here.
+			// page we are on is most likely a lesson, and we got here from a link in the strengthenBox.
 			onMainPage = false;
 		}
-	} else
-	{
-		// page we are on is most likely a lesson, and we got here from a link in the strengthenBox.
-		onMainPage = false;
 	}
 }
 

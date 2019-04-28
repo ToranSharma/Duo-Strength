@@ -257,6 +257,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox.id = "strengthenBox";
 		strengthenBox.style['textAlign'] = "left";
 		strengthenBox.style['marginBottom'] = "2em";
+		strengthenBox.style['min-height'] = "3em";
 	}
 	else
 	{

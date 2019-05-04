@@ -245,7 +245,6 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		shopButtonFloatedDiv.style	= "width: " + document.getElementsByClassName("_1YIzB")[0].offsetWidth + "px;"
 									+ "height: " + document.getElementsByClassName("_1YIzB")[0].offsetHeight + "px;"
 									+ "float: right;"
-									+ "margin-top: -" + document.getElementsByClassName("w8Lxd")[0].offsetHeight + "px;"
 									+ "margin-bottom: 0.5em;";
 	}
 	var strengthenBox; // will be a div to hold list of skills that need strengthenening

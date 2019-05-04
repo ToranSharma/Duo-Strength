@@ -316,7 +316,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	}
 	if(needToAddBox)
 	{
-		topOfTree.append(strengthenBox);
+		topOfTree.appendChild(strengthenBox);
 	}
 }
 

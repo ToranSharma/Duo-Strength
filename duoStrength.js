@@ -540,7 +540,7 @@ var childListMutationHandle = function(mutationsList, observer)
 			if(dataReactRoot.childNodes[1].className != "BWibf _3MLiB")
 			{
 				// not just changed into a lesson
-				topBarDiv = dataReactRoot.childNodes[1].childNodes[1].childNodes[1].childNodes[0].className;
+				topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[1].childNodes[0].className;
 				languageChanged = false;
 				init();
 			}
@@ -682,17 +682,19 @@ function init()
 	else
 	{
 		// should be logged in
-		var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
+		//var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
+		var mainBodyElemIn4th =  dataReactRoot.childNodes[3].nodeType != 8 && dataReactRoot.childNodes[3].classList.contains("_3MLiB");
 		// Main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
-		// topBarDiv is no longer second, that it is nested a few levels down inside that.
+		// topBarDiv is no longer second, now it is nested a few levels down inside that.
+		// As of v1.0.16 on 2019-05-15, a additional comment node has been added in second position, so topbar now should be in 3rd and main bodyElem in 4th.
 
-		if(mainBodyElemIn3rd) // If main body element is in 3rd place then we are not in a lesson.
+		if(mainBodyElemIn4th) // If main body element is in 3rd place then we are not in a lesson.
 		{
 			checkUIVersion();
 			if (!oldUI)
 			{
 				// Using new white topBar layout
-				topBarDiv = dataReactRoot.childNodes[1].childNodes[1].childNodes[1].childNodes[0]; // direct container of the divs holding the navigation butons, has class _3F_8q
+				topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[1].childNodes[0]; // direct container of the divs holding the navigation butons, has class _3F_8q
 
 				// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
 				numNavButtons = topBarDiv.getElementsByClassName("_3MT82").length;

@@ -17,5 +17,12 @@
 			"matches"	:	["https://www.duolingo.com/*"],
 			"js"		: 	["duoStrength.js"]
 		}
-	]
+	],
+
+	"permissions"		:	["storage"],
+
+	"options_ui"		:	{
+		"page"			:	"options.html",
+		"open_in_tab"	:	false
+	}
 }

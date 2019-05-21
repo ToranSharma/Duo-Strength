@@ -1,28 +1,60 @@
 <!doctype html>
 <html>
+<head>
+	<style>
+		ul
+		{
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		li
+		{
+			display: grid;
+			grid-template-columns: 9fr 1fr;
+			width: 100%;
+		}
+		li:nth-of-type(odd)
+		{
+			background-color: #DDD;
+		}
+	</style>
+</head>
 <body>
 	<h1>Duo Strength Options</h1>
 	<h2>Enable or disable features here</h2>
 	<ul>
 		<li>
-			Option 1
-			<input class="option" id="option1" type="checkbox" checked="true" />
+			Strength Bars
+			<input class="option" id="StrengthBars" type="checkbox" checked="true" />
 		</li>
 		<li>
-			Option 2
-			<input class="option" id="option2" type="checkbox" checked="true" />
+			Needs Strengthening List
+			<input class="option" id="needsStrengtheningList" type="checkbox" checked="true" />
 		</li>
 		<li>
-			Option 3
-			<input class="option" id="option3" type="checkbox" checked="true" />
+			Fully Strengthened Skill Suggestion
+			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
 		</li>
 		<li>
-			Option 4
-			<input class="option" id="option4" type="checkbox" checked="true" />
+			Crowns Maximum
+			<input class="option" id="crownsMaximum" type="checkbox" checked="true" />
 		</li>
 		<li>
-			Option 5
-			<input class="option" id="option5" type="checkbox" checked="true" />
+			Crowns Breakdown
+			<input class="option" id="crownsBreakdown" type="checkbox" checked="true" />
+		</li>
+		<li>
+			Crowns Prediction
+			<input class="option" id="crownsPrediction" type="checkbox" checked="true" />
+		</li>
+		<li>
+			XP Breakdown
+			<input class="option" id="XPBreakdown" type="checkbox" checked="true" />
+		</li>
+		<li>
+			XP Prediction
+			<input class="option" id="XPPrediction" type="checkbox" checked="true" />
 		</li>
 	</ul>
 	<script src="options.js"></script>

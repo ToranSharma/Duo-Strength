@@ -1,7 +1,12 @@
 <!doctype html>
 <html>
 <head>
+	<title>Duo Strength Options</title>
 	<style>
+		body
+		{
+			margin: 2em;
+		}
 		ul
 		{
 			margin: 0;
@@ -13,6 +18,7 @@
 			display: grid;
 			grid-template-columns: 9fr 1fr;
 			width: 100%;
+			margin: 0.2em 0;
 		}
 		li:nth-of-type(odd)
 		{
@@ -57,6 +63,8 @@
 			<input class="option" id="XPPrediction" type="checkbox" checked="true" />
 		</li>
 	</ul>
+	<button id="enableAll">Enable all</button>
+	<button id="disableAll">Disable all</button>
 	<script src="options.js"></script>
 </body>
 </html>

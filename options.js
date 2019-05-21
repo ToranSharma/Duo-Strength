@@ -19,11 +19,22 @@ function getOptions ()
 
 function saveOptions ()
 {
+	console.log("saving");
 	for (element of document.getElementsByClassName("option"))
 	{
 		options[element.id] = element.checked;
 	}
 	chrome.storage.sync.set(options);
+}
+
+function changeAll (checked)
+{
+	for (element of document.getElementsByClassName("option"))
+	{
+		element.checked = checked;
+	}
+	// Interestingly doesn't trigger the change event so need to save manually. This does save on a repeate saves
+	saveOptions ();
 }
 
 window.onload = function ()
@@ -32,5 +43,7 @@ window.onload = function ()
 	{
 		element.addEventListener("change", saveOptions);
 	}
+	document.getElementById("enableAll").onclick = () => changeAll(true);
+	document.getElementById("disableAll").onclick = () => changeAll(false);
 	getOptions();
 }

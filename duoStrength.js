@@ -280,7 +280,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 			strengthenBox.innerHTML += "<a href='/skill/" +
 									languageCode + "/" +
 									needsStrengthening[0][i]['url_title'] +
-									((needsStrengthening[0][i]['progress_v3']['level'] == 5)? "/practice'>":"'>" ) + // 5 crown skill doesn't decay AFAIK so needless but included JIC.
+									((needsStrengthening[0][i]['skill_progress']['level'] == 5)? "/practice'>":"'>" ) + // 5 crown skill doesn't decay AFAIK so needless but included JIC.
 									needsStrengthening[0][i]['title'] + "</a>, ";
 		} else
 		{
@@ -289,7 +289,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 			strengthenBox.innerHTML += "<a href='/skill/" +
 									languageCode + "/" +
 									needsStrengthening[1][bonusSkillIndex]['url_title'] +
-									((needsStrengthening[1][bonusSkillIndex]['progress_v3']['level'] == 1)? "/practice'>":"'>" ) + // 1 crown bonus skill does decay but is on practice not lessons.
+									((needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice'>":"'>" ) + // 1 crown bonus skill does decay but is on practice not lessons.
 									needsStrengthening[1][bonusSkillIndex]['title'] + "</a>, ";
 		}
 		
@@ -302,7 +302,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox.innerHTML += "<a href='/skill/" +
 										languageCode + "/" +
 										needsStrengthening[1][needsStrengthening[1].length - 1]['url_title'] +
-										((needsStrengthening[1][needsStrengthening[1].length - 1]['progress_v3']['level'] == 1)? "/practice'>":"'>" ) +
+										((needsStrengthening[1][needsStrengthening[1].length - 1]['skill_progress']['level'] == 1)? "/practice'>":"'>" ) +
 										needsStrengthening[1][needsStrengthening[1].length - 1]['title'] + "</a>";
 	} else
 	{
@@ -310,7 +310,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox.innerHTML += "<a href='/skill/" +
 										languageCode + "/" +
 										needsStrengthening[0][needsStrengthening[0].length -1]['url_title'] +
-										((needsStrengthening[0][needsStrengthening[0].length -1]['progress_v3']['level'] == 5)? "/practice'>":"'>" ) +
+										((needsStrengthening[0][needsStrengthening[0].length -1]['skill_progress']['level'] == 5)? "/practice'>":"'>" ) +
 										needsStrengthening[0][needsStrengthening[0].length -1]['title'] + "</a>";
 	}
 	if(needToAddBox)
@@ -380,8 +380,8 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 
 	for (var skill of skills)
 	{
-		strengths[0].push([skill['strength'],Boolean(skill['progress_v3']['level'])]);
-		if(skill['strength'] != 1 && skill['strength'] != 0 && skill['progress_v3']['level'] != 0)
+		strengths[0].push([skill['strength'],Boolean(skill['skill_progress']['level'])]);
+		if(skill['strength'] != 1 && skill['strength'] != 0 && skill['skill_progress']['level'] != 0)
 		{
 			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
 			needsStrengthening[0].push(skill);
@@ -389,8 +389,8 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	}
 	for (var bonusSkill of bonusSkills)
 	{
-		strengths[1].push([bonusSkill['strength'],Boolean(skill['progress_v3']['level'])]);
-		if(bonusSkill['strength'] != 1 && bonusSkill['strength'] != 0 && bonusSkill['progress_v3']['level'] != 0)
+		strengths[1].push([bonusSkill['strength'],Boolean(skill['skill_progress']['level'])]);
+		if(bonusSkill['strength'] != 1 && bonusSkill['strength'] != 0 && bonusSkill['skill_progress']['level'] != 0)
 		{
 			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
 			needsStrengthening[1].push(bonusSkill);

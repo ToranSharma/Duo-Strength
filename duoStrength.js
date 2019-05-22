@@ -25,11 +25,23 @@ function retrieveOptions()
 	{
 		if (Object.entries(data).length === 0)
 		{
-			saveOptions();
-			return false;
+			// First time using version with options so nothing is set in storage.
+			options = 
+			{
+				"strengthBars":				true,
+				"needsStrengtheningList":	true,
+				"skillSuggestion":			true,
+				"crownsMaximum":			true,
+				"crownsBreakdown":			true,
+				"crownsPrediction":			true,
+				"XPBreakdown":				true,
+				"XPPrediction":				true
+			};
+			chrome.storage.sync.set(options);
 		}
-		options = data;
-	})
+		else
+			options = data;
+	});
 }
 
 function resetLanguageFlags()
@@ -99,7 +111,7 @@ function crownTreeLevel()
 
 	for (var skill of skills)
 	{
-		skillsByCrowns[skill['progress_v3']['level']].push(skill);
+		skillsByCrowns[skill['skill_progress']['level']].push(skill);
 	}
 
 	var treeLevel = 0;
@@ -180,14 +192,14 @@ function daysToNextCrownLevel()
 			return (a < b)? 1 : -1; // sorted descending.
 		});
 
-		if (skill['progress_v3']['level'] == treeLevel)
+		if (skill['skill_progress']['level'] == treeLevel)
 		{
 			lessonsToNextCrownLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
 		}
 		else
 		{
 			numLessonsCompletedAtCrown = skill['level_sessions_finished'];
-			if ((skill['progress_v3']['level'] == treeLevel + 1) && (lessonTimes.length >= numLessonsCompletedAtCrown))
+			if ((skill['skill_progress']['level'] == treeLevel + 1) && (lessonTimes.length >= numLessonsCompletedAtCrown))
 			{
 				// If there have been more lessons completed on record than the amount done at the next level, then some are relavant.
 				// As lessonTimes are sorted in decending order, we only include keep the number of times that definitely haven't contributed.
@@ -556,12 +568,12 @@ function displayCrownsBreakdown()
 
 	for (var skill of skills)
 	{
-		crownLevelCount[0][skill['progress_v3']['level']]++;
+		crownLevelCount[0][skill['skill_progress']['level']]++;
 	}
 
 	for (var bonusSkill of bonusSkills)
 	{
-		crownLevelCount[1][bonusSkill['progress_v3']['level']]++;
+		crownLevelCount[1][bonusSkill['skill_progress']['level']]++;
 	}
 
 	var maxCrownCount = skills.length*5 + bonusSkills.length;
@@ -1006,7 +1018,7 @@ function displaySuggestion(skills, bonusSkills)
 
 		for (var skill of skills)
 		{
-			skillsByCrowns[skill['progress_v3']['level']].push(skill);
+			skillsByCrowns[skill['skill_progress']['level']].push(skill);
 		}
 		
 		var randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*skillsByCrowns[treeLevel].length)];

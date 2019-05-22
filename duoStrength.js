@@ -788,6 +788,7 @@ function displayXPBreakdown()
 		{
 			container.style = "margin-top: 1em;";
 		}
+		container.style = "color: black;";
 
 		var XPHeader = document.createElement("h2");
 		XPHeader.innerText = data['language_string']+ " XP";
@@ -795,7 +796,7 @@ function displayXPBreakdown()
 		container.appendChild(XPHeader);
 
 		languageLevelContainer = document.createElement("div");
-		languageLevelContainer.className = "_2QmPh";
+		if (oldUI) languageLevelContainer.className = "_2QmPh";
 
 		var languageLevelElement = document.createElement("p");
 		languageLevelElement.id = "xpTotalAndLevel";

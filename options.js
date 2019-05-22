@@ -1,10 +1,10 @@
 var options = Object();
 
-function getOptions ()
+function getOptions()
 {
 	chrome.storage.sync.get(null, function (data)
 	{
-		if (Object.entries(data).length === 0 )
+		if (Object.entries(data).length === 0)
 		{
 			saveOptions();
 			return false;
@@ -17,7 +17,7 @@ function getOptions ()
 	})
 }
 
-function saveOptions ()
+function saveOptions()
 {
 	console.log("saving");
 	for (element of document.getElementsByClassName("option"))
@@ -27,14 +27,14 @@ function saveOptions ()
 	chrome.storage.sync.set(options);
 }
 
-function changeAll (checked)
+function changeAll(checked)
 {
 	for (element of document.getElementsByClassName("option"))
 	{
 		element.checked = checked;
 	}
 	// Interestingly doesn't trigger the change event so need to save manually. This does save on a repeate saves
-	saveOptions ();
+	saveOptions();
 }
 
 window.onload = function ()

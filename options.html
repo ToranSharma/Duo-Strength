@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+	<title>Duo Strength Options</title>
+	<style>
+		body
+		{
+			margin: 2em;
+		}
+		ul
+		{
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		li
+		{
+			display: grid;
+			grid-template-columns: 9fr 1fr;
+			width: 100%;
+			margin: 0.2em 0;
+		}
+		li:nth-of-type(odd)
+		{
+			background-color: #DDD;
+		}
+	</style>
+</head>
+<body>
+	<h1>Duo Strength Options</h1>
+	<h2>Enable or disable features here</h2>
+	<ul>
+		<li>
+			Strength Bars
+			<input class="option" id="strengthBars" type="checkbox" checked="true" />
+		</li>
+		<li>
+			Needs Strengthening List
+			<input class="option" id="needsStrengtheningList" type="checkbox" checked="true" />
+		</li>
+		<li>
+			Fully Strengthened Skill Suggestion
+			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
+		</li>
+		<li>
+			Crowns Maximum
+			<input class="option" id="crownsMaximum" type="checkbox" checked="true" />
+		</li>
+		<li>
+			Crowns Breakdown
+			<input class="option" id="crownsBreakdown" type="checkbox" checked="true" />
+		</li>
+		<li>
+			Crowns Prediction
+			<input class="option" id="crownsPrediction" type="checkbox" checked="true" />
+		</li>
+		<li>
+			XP Breakdown
+			<input class="option" id="XPBreakdown" type="checkbox" checked="true" />
+		</li>
+		<li>
+			XP Prediction
+			<input class="option" id="XPPrediction" type="checkbox" checked="true" />
+		</li>
+	</ul>
+	<button id="enableAll">Enable all</button>
+	<button id="disableAll">Disable all</button>
+	<p>
+		Note that any currently open duolingo pages will need to be refreshed to enable these changes.
+	</p>
+	<script src="options.js"></script>
+</body>
+</html>

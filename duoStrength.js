@@ -7,7 +7,7 @@ var language = "";
 var languageChanged = false;
 var languageLogo;
 
-
+var options = Object();
 var username = "";
 var userData = Object();
 var oldUI = false;
@@ -18,6 +18,19 @@ var topBarDiv;
 var topBarMobilePractice;
 
 var onMainPage;
+
+function retrieveOptions()
+{
+	chrome.storage.sync.get(null, function (data)
+	{
+		if (Object.entries(data).length === 0)
+		{
+			saveOptions();
+			return false;
+		}
+		options = data;
+	})
+}
 
 function resetLanguageFlags()
 {
@@ -419,7 +432,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		// body hasn't loaded yet so element not there, lets try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
-			setTimeout(function() {displayNeedsStrengthening(needsStrengthening);}, 500);
+			setTimeout(function () {displayNeedsStrengthening(needsStrengthening);}, 500);
 		}
 		else
 		{
@@ -568,11 +581,14 @@ function displayCrownsBreakdown()
 		crownLevelContainer.style = 	"flex-wrap: wrap;"
 									+	"justify-content: center;";
 	}
-	crownTotalContainer.style.fontSize = "22px";
+	if (options.crownsMaximum)
+	{
+		crownTotalContainer.style.fontSize = "22px";
 
-	var maximumCrownCountContainer = document.createElement("span");
-	maximumCrownCountContainer.id = "maxCrowns";
-	maximumCrownCountContainer.innerHTML = "/" + maxCrownCount;
+		var maximumCrownCountContainer = document.createElement("span");
+		maximumCrownCountContainer.id = "maxCrowns";
+		maximumCrownCountContainer.innerHTML = "/" + maxCrownCount;
+	}
 	/*
 	maximumCrownCountContainer.style =	"position:absolute;"
 									+ 	"top: 50%;"
@@ -636,7 +652,7 @@ function displayCrownsBreakdown()
 
 	if(document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so lets add it.
 	{
-		crownTotalContainer.appendChild(maximumCrownCountContainer);
+		if (options.crownsMaximum) crownTotalContainer.appendChild(maximumCrownCountContainer);
 
 		breakdownContainer.appendChild(document.createElement("p"))
 		breakdownContainer.lastChild.style = "text-align: center;";
@@ -705,7 +721,7 @@ function displayCrownsBreakdown()
 		}
 		
 		breakdownContainer.appendChild(breakdownList);
-		crownLevelContainer.appendChild(breakdownContainer);
+		if (options.crownsBreakdown) crownLevelContainer.appendChild(breakdownContainer);
 
 		if (treeLevel != 5)
 		{
@@ -735,7 +751,7 @@ function displayCrownsBreakdown()
 								+	"text-align: center;"
 								+	"color: black;";
 			}
-			crownLevelContainer.appendChild(prediction)
+			if (options.crownsPrediction) crownLevelContainer.appendChild(prediction)
 		}
 	}
 	else // We have already added the breakdown data, just update it.
@@ -793,10 +809,10 @@ function displayXPBreakdown()
 		var XPHeader = document.createElement("h2");
 		XPHeader.innerText = data['language_string']+ " XP";
 
-		container.appendChild(XPHeader);
-
 		languageLevelContainer = document.createElement("div");
 		if (oldUI) languageLevelContainer.className = "_2QmPh";
+
+		languageLevelContainer.appendChild(XPHeader);
 
 		var languageLevelElement = document.createElement("p");
 		languageLevelElement.id = "xpTotalAndLevel";
@@ -813,7 +829,8 @@ function displayXPBreakdown()
 		
 		languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
 		languageLevelContainer.appendChild(languageLevelElement);
-
+		if (options.XPBreakdown) container.appendChild(languageLevelContainer);
+		
 		if (data['level'] != 25)
 		{
 			var nextLevelProgressElement = document.createElement("p");
@@ -842,20 +859,23 @@ function displayXPBreakdown()
 			currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
 													+	Number(levelProgressPercentage).toFixed(1) + "%)";
 
-			var daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
-			var projectedNextLevelCompletion = document.createElement("p");
-			projectedNextLevelCompletion.innerHTML =	"At your current rate you will reach the next level in about "
-													+	"<span style='font-weight:bold'>"
-													+	daysLeft
-													+	"</span>"
-													+	" days.";
-
 			languageLevelContainer.appendChild(nextLevelProgressElement);
 			languageLevelContainer.appendChild(languageLevelProgressBarContainer);
 			languageLevelContainer.appendChild(currentLevelProgressElement);
-			if (daysLeft != -1)
+
+
+			var daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
+			var projectedNextLevelCompletion = document.createElement("p");
+			projectedNextLevelCompletion.style = "margin-bottom: 0; text-align: center;"
+			projectedNextLevelCompletion.innerHTML =	"At your current rate you will reach the next level, Level " + (data['level']+1) + ", in about "
+													+	"<span style='font-weight:bold'>"
+													+	daysLeft
+													+	"</span>"
+													+	" days";
+			
+			if (daysLeft != -1 && options.XPPrediction)
 			{
-				languageLevelContainer.appendChild(projectedNextLevelCompletion);
+				container.appendChild(projectedNextLevelCompletion);
 			}
 		}
 		else
@@ -865,8 +885,7 @@ function displayXPBreakdown()
 			maxLevelMessage.innerText = "You have reached the maximum level!";
 			languageLevelContainer.appendChild(maxLevelMessage);
 		}
-		languageLevelContainer.lastChild.style['marginBottom'] = "0";
-		container.appendChild(languageLevelContainer);
+		
 		if (oldUI)
 		{
 			document.getElementsByClassName('aFqnr _1E3L7')[0].parentNode.insertBefore(container, document.getElementsByClassName('aFqnr _1E3L7')[0].nextSibling);
@@ -884,7 +903,7 @@ function displayXPBreakdown()
 		languageXPElement.innerText = data['points'] + " XP - ";
 		languageLevelElement.innerText = "Level " + data['level'];
 		languageLevelElement.insertBefore(languageXPElement,languageLevelElement.childNodes[0]);
-
+		
 		if (languageLevelElement.nextSibling != null)
 		{
 			// Wasn't level 25 ...
@@ -910,8 +929,11 @@ function displayXPBreakdown()
 				currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
 													+	Number(levelProgressPercentage).toFixed(1) + "%)";
 
-				var daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
-				languageLevelElement.parentNode.lastChild.childNodes[1].innerText = daysLeft;
+				if (options.XPPrediction)
+				{
+					var daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
+					languageLevelElement.parentNode.lastChild.childNodes[1].innerText = daysLeft;
+				}
 			}
 			else
 			{
@@ -1103,17 +1125,17 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		}
 	}
 
-	addStrengths(strengths); // call function to add these strengths under the skills
+	if (options.strengthBars) addStrengths(strengths); // call function to add these strengths under the skills
 	
 	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
 	{
 		// Something needs strengthening
-		displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
+		if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
 	else
 	{
 		// Nothing that needs strengthening!
-		displaySuggestion(skills);
+		if (options.skillSuggestion) displaySuggestion(skills);
 	}
 	if (oldUI)	displayCrownsBreakdown(); // call function to add breakdown of crown levels under crown total.
 	if (oldUI)	displayXPBreakdown();
@@ -1425,6 +1447,8 @@ var childListObserver = new MutationObserver(childListMutationHandle);
 
 function init()
 {
+	retrieveOptions();
+
 	rootElem = document.getElementById("root"); // When logging in child list is changed.
 	dataReactRoot = rootElem.childNodes[0]; // When entering or leaving a lesson children change there is a new body so need to detect that to know when to reload the bars.
 	

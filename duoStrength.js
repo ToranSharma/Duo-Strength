@@ -163,64 +163,15 @@ function daysToNextCrownLevel()
 	var skills = userData['language_data'][languageCode]['skills'];
 	var treeLevel = crownTreeLevel();
 	var lessonsToNextCrownLevel = 0;
-	var nonContributingLessons = Array();
+
 	for (skill of skills)
 	{
 		if (skill['locked']) continue;
-		lessonTimes = Array();
 		
-		for (lesson of Object.entries(skill['progress_v3_debug_info']['lexeme_ids_by_lesson']))
-		{
-			lexemeID = lesson[1][0];
-			lessonData = skill['progress_v3_debug_info']['level_progress'][lexemeID];
-			dateArray = lessonData.split("(")[2].split(")")[0].split(", ");
-			while (dateArray.length < 6)
-			{
-				dateArray.push("0");
-			}
-			dateArray.length = 6; // don't want element 6 which is some strange 6 digit number, some sort of id I would guess
-			dateArray[1]--; // month in data is 1-jan 2 feb etc. Date() takes months as 0-jan 1-feb etc.
-			date = new Date(...dateArray);
-			if (!lessonTimes.find(function (item){return item.getTime() == date.getTime()}) && date.getTime() != (new Date(1970,0,1,0,0,0)).getTime()) // if a lesson has never been done then its date is UNIX epoch
-			{
-				lessonTimes.push(date);
-			}
-		}
-
-		lessonTimes.sort(function (a, b)
-		{
-			return (a < b)? 1 : -1; // sorted descending.
-		});
-
 		if (skill['skill_progress']['level'] == treeLevel)
 		{
 			lessonsToNextCrownLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
 		}
-		else
-		{
-			numLessonsCompletedAtCrown = skill['level_sessions_finished'];
-			if ((skill['skill_progress']['level'] == treeLevel + 1) && (lessonTimes.length >= numLessonsCompletedAtCrown))
-			{
-				// If there have been more lessons completed on record than the amount done at the next level, then some are relavant.
-				// As lessonTimes are sorted in decending order, we only include keep the number of times that definitely haven't contributed.
-				lessonTimes.length = numLessonsCompletedAtCrown; // effectively trims off lessons that did contribute.
-			}
-			// else all the times in lesson Times should be non contributing.
-			// For skills that are 2 or more crowns above tree level, all practices are likely non contributing.
-			// Exception could be skills with very very few lessons, but even then lessonTimes will likely be only 1 or 2 in length and we can't trim it down any more.
-			nonContributingLessons.push(...lessonTimes); // ... is spread syntax
-		}
-	}
-	// nonContributingLessons will likely have duplicates if a single early time which is probably when progress_v3 was implemented, so lessons completed before then are set to this date. It should be fine to leave this is but lets get rid of the duplicates.
-	while (nonContributingLessons.length > 1 && (nonContributingLessons[0].getTime() == nonContributingLessons[1].getTime()))
-	{
-		nonContributingLessons.splice(1,1);
-	}
-
-	// Times in progress_v3_debug_info can be a few seconds off in testing, so just test the days.
-	for (time of nonContributingLessons)
-	{
-		time.setHours(0,0,0,0);
 	}
 
 	var calendar = userData['language_data'][languageCode]['calendar'];
@@ -239,18 +190,7 @@ function daysToNextCrownLevel()
 	var lastDate = practiceTimes[numLessons-1];
 	var currentDate = new Date();
 
-	if ((currentDate-lastDate)/(1000*60*60) > 48)
-	{
-		lastDate = currentDate;
-	}
-
-	for (time of nonContributingLessons)
-	{
-		if (time >= firstDate)
-		{
-			numLessons --;
-		}
-	}
+	if ((currentDate-lastDate)/(1000*60*60) > 48) lastDate = currentDate;
 
 	if (numLessons == 0) return -1;
 

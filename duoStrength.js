@@ -37,7 +37,7 @@ function retrieveOptions()
 				"XPBreakdown":				true,
 				"XPPrediction":				true
 			};
-			chrome.storage.sync.set(options);
+			chrome.storage.sync.set({"options": options});
 		}
 		else
 			options = data;

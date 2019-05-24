@@ -2,7 +2,7 @@ var options = Object();
 
 function getOptions()
 {
-	chrome.storage.sync.get(null, function (data)
+	chrome.storage.sync.get("options", function (data)
 	{
 		if (Object.entries(data).length === 0)
 		{
@@ -24,7 +24,7 @@ function saveOptions()
 	{
 		options[element.id] = element.checked;
 	}
-	chrome.storage.sync.set(options);
+	chrome.storage.sync.set({"options": options});
 }
 
 function changeAll(checked)

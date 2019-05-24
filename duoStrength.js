@@ -21,7 +21,7 @@ var onMainPage;
 
 function retrieveOptions()
 {
-	chrome.storage.sync.get(null, function (data)
+	chrome.storage.sync.get(options, function (data)
 	{
 		if (Object.entries(data).length === 0)
 		{

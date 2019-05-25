@@ -21,9 +21,10 @@ var onMainPage;
 
 function retrieveOptions()
 {
-	chrome.storage.sync.get(options, function (data)
+	chrome.storage.sync.get("options", function (data)
 	{
-		if (Object.entries(data).length === 0)
+		items = data.options
+		if (Object.entries(items).length === 0)
 		{
 			// First time using version with options so nothing is set in storage.
 			options = 
@@ -40,7 +41,7 @@ function retrieveOptions()
 			chrome.storage.sync.set({"options": options});
 		}
 		else
-			options = data;
+			options = items;
 	});
 }
 
@@ -426,29 +427,32 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	strengthenBox.innerHTML = "";
 	if (oldUI) strengthenBox.appendChild(shopButtonFloatedDiv);
 	
-	strengthenBox.innerHTML += "The following " + numSkillsToBeStrengthened +
-								((needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills need": " skill needs") +
+	strengthenBox.innerHTML += "Your tree has " + numSkillsToBeStrengthened +
+								((needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill needs") +
 								" strengthening: <br/>";
-	
-	for (var i = 0; i < numSkillsToBeStrengthened - 1; i++)
+
+	numSkillsToShow = Math.min(numSkillsToBeStrengthened, options.needsStrengtheningListLength);
+	for (var i = 0; i < numSkillsToShow - 1; i++)
 	{
 		if (i < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			strengthenBox.innerHTML += "<a href='/skill/" +
-									languageCode + "/" +
-									needsStrengthening[0][i]['url_title'] +
-									((needsStrengthening[0][i]['skill_progress']['level'] == 5)? "/practice'>":"'>" ) + // 5 crown skill doesn't decay AFAIK so needless but included JIC.
-									needsStrengthening[0][i]['title'] + "</a>, ";
+			strengthenBox.innerHTML +=	"<a href='/skill/"
+									+	languageCode + "/"
+									+	needsStrengthening[0][i]['url_title']
+									+	((needsStrengthening[0][i]['skill_progress']['level'] == 5)? "/practice'>":"'>" ) // 5 crown skill DOES decay so note needless
+									+	needsStrengthening[0][i]['title']
+									+	"</a>, ";
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			bonusSkillIndex = i - needsStrengthening[0].length;
-			strengthenBox.innerHTML += "<a href='/skill/" +
-									languageCode + "/" +
-									needsStrengthening[1][bonusSkillIndex]['url_title'] +
-									((needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice'>":"'>" ) + // 1 crown bonus skill does decay but is on practice not lessons.
-									needsStrengthening[1][bonusSkillIndex]['title'] + "</a>, ";
+			strengthenBox.innerHTML +=	"<a href='/skill/"
+									+	languageCode + "/"
+									+	needsStrengthening[1][bonusSkillIndex]['url_title']
+									+	((needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice'>":"'>" ) // 1 crown bonus skill does decay but is a practice not lesson.
+									+	needsStrengthening[1][bonusSkillIndex]['title']
+									+	"</a>, ";
 		}
 		
 	}
@@ -457,20 +461,30 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	if(needsStrengthening[1].length > 0)
 	{
 		// last skill to be displayed is a bonus skill
-		strengthenBox.innerHTML += "<a href='/skill/" +
-										languageCode + "/" +
-										needsStrengthening[1][needsStrengthening[1].length - 1]['url_title'] +
-										((needsStrengthening[1][needsStrengthening[1].length - 1]['skill_progress']['level'] == 1)? "/practice'>":"'>" ) +
-										needsStrengthening[1][needsStrengthening[1].length - 1]['title'] + "</a>";
+		strengthenBox.innerHTML +=	"<a href='/skill/"
+								+	languageCode + "/"
+								+	needsStrengthening[1][needsStrengthening[1].length - 1]['url_title']
+								+	((needsStrengthening[1][needsStrengthening[1].length - 1]['skill_progress']['level'] == 1)? "/practice'>":"'>" )
+								+	needsStrengthening[1][needsStrengthening[1].length - 1]['title']
+								+	"</a>";
 	} else
 	{
 		// last skill to be displayed is a normal skill
-		strengthenBox.innerHTML += "<a href='/skill/" +
-										languageCode + "/" +
-										needsStrengthening[0][needsStrengthening[0].length -1]['url_title'] +
-										((needsStrengthening[0][needsStrengthening[0].length -1]['skill_progress']['level'] == 5)? "/practice'>":"'>" ) +
-										needsStrengthening[0][needsStrengthening[0].length -1]['title'] + "</a>";
+		strengthenBox.innerHTML +=	"<a href='/skill/"
+								+	languageCode + "/"
+								+	needsStrengthening[0][needsStrengthening[0].length -1]['url_title']
+								+	((needsStrengthening[0][needsStrengthening[0].length -1]['skill_progress']['level'] == 5)? "/practice'>":"'>" )
+								+	needsStrengthening[0][needsStrengthening[0].length -1]['title']
+								+	"</a>";
 	}
+	numSkillsLeft = numSkillsToBeStrengthened - numSkillsToShow;
+	if (numSkillsLeft > 0)
+	{
+		strengthenBox.innerHTML +=	" <a href='javascript:false;'>"
+								+	"and " + numSkillsLeft + " more..."
+								+	"</a>";
+	}
+
 	if(needToAddBox)
 	{
 		topOfTree.appendChild(strengthenBox);

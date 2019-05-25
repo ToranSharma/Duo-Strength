@@ -4,15 +4,25 @@ function getOptions()
 {
 	chrome.storage.sync.get("options", function (data)
 	{
-		if (Object.entries(data).length === 0)
+		items = data.options
+		if (Object.entries(items).length === 0)
 		{
 			saveOptions();
 			return false;
 		}
-		options = data;
+		options = items;
 		for (option in options)
 		{
-			document.getElementById(option).checked = options[option];
+			switch (typeof options[option])
+			{
+				case "boolean":
+					document.getElementById(option).checked = options[option];
+					break;
+				case "string":
+					console.log("it was a string!");
+					document.getElementById(option).value = options[option];
+					break;
+			}
 		}
 	})
 }
@@ -22,7 +32,16 @@ function saveOptions()
 	console.log("saving");
 	for (element of document.getElementsByClassName("option"))
 	{
-		options[element.id] = element.checked;
+		switch (element.type)
+		{
+			case 'checkbox':
+				options[element.id] = element.checked;
+				break;
+			case 'number':
+				options[element.id] = element.value;
+				break;
+		}
+		
 	}
 	chrome.storage.sync.set({"options": options});
 }

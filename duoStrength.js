@@ -990,6 +990,8 @@ function displaySuggestion(skills, bonusSkills)
 		container.appendChild(fullStrengthMessage);
 
 		topOfTree.appendChild(container);
+
+		link.focus();
 	}
 	else
 	{

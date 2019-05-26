@@ -19,7 +19,6 @@ function getOptions()
 					document.getElementById(option).checked = options[option];
 					break;
 				case "string":
-					console.log("it was a string!");
 					document.getElementById(option).value = options[option];
 					break;
 			}
@@ -29,7 +28,6 @@ function getOptions()
 
 function saveOptions()
 {
-	console.log("saving");
 	for (element of document.getElementsByClassName("option"))
 	{
 		switch (element.type)
@@ -60,7 +58,15 @@ window.onload = function ()
 {
 	for (element of document.getElementsByClassName("option"))
 	{
-		element.addEventListener("change", saveOptions);
+		if (element.type == "number")
+			element.addEventListener("change", function ()
+				{
+					if (this.value < this.min)
+						this.value = this.defautValue;
+					saveOptions();
+				});
+		else	
+			element.addEventListener("change", saveOptions);
 	}
 	document.getElementById("enableAll").onclick = () => changeAll(true);
 	document.getElementById("disableAll").onclick = () => changeAll(false);

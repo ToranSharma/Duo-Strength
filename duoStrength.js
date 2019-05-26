@@ -462,7 +462,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 								{
 									if (numSkillsToShow == numSkillsToBeStrengthened)
 										return " & "; // Add & if showing every skill in list as the next one is the very last.
-									else if (numSkillsToBeStrengthened == 1)
+									else if (numSkillsToShow == 1)
 										return ""; // If there is only one skill in the list, don't put anything before it.
 									else
 										return ", "; // Otherwise we have put some stuff and there is more coming after so just put a comma.

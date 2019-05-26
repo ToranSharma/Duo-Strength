@@ -1,6 +1,39 @@
 var options = Object();
 
-function getOptions()
+function init()
+{
+	for (element of document.getElementsByClassName("option"))
+	{
+		if (element.parentNode.getElementsByTagName("ul").length !== 0)
+		{
+			subListElements = element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option");
+			if (!element.checked)
+			{
+				for (option of subListElements)
+						option.disabled = true;
+			}
+			element.addEventListener("change", function (event)
+				{
+					for (option of subListElements)
+						option.disabled = !this.checked;
+
+				});
+		}
+		if (element.type == "number")
+			element.addEventListener("change", function ()
+				{
+					if (this.value < this.min)
+						this.value = this.defautValue;
+					saveOptions();
+				});
+		else	
+			element.addEventListener("change", saveOptions);
+	}
+	document.getElementById("enableAll").onclick = () => changeAll(true);
+	document.getElementById("disableAll").onclick = () => changeAll(false);
+}
+
+function getOptions({firstLoad=false}={})
 {
 	chrome.storage.sync.get("options", function (data)
 	{
@@ -23,7 +56,9 @@ function getOptions()
 					break;
 			}
 		}
-	})
+		if (firstLoad)
+			init();
+	});
 }
 
 function saveOptions()
@@ -32,10 +67,10 @@ function saveOptions()
 	{
 		switch (element.type)
 		{
-			case 'checkbox':
+			case "checkbox":
 				options[element.id] = element.checked;
 				break;
-			case 'number':
+			case "number":
 				options[element.id] = element.value;
 				break;
 		}
@@ -48,27 +83,19 @@ function changeAll(checked)
 {
 	for (element of document.getElementsByClassName("option"))
 	{
-		element.checked = checked;
+		switch (element.type)
+		{
+			case "checkbox":
+				element.checked = checked;
+				break;
+			case "number":
+				break;
+		}
+		if (element.parentNode.parentNode.parentNode.tagName == "LI")
+			element.disabled = !checked;
 	}
-	// Interestingly doesn't trigger the change event so need to save manually. This does save on a repeate saves
+	// Interestingly doesn't trigger the change event so need to save manually. This does save on a repeat saves.
 	saveOptions();
 }
 
-window.onload = function ()
-{
-	for (element of document.getElementsByClassName("option"))
-	{
-		if (element.type == "number")
-			element.addEventListener("change", function ()
-				{
-					if (this.value < this.min)
-						this.value = this.defautValue;
-					saveOptions();
-				});
-		else	
-			element.addEventListener("change", saveOptions);
-	}
-	document.getElementById("enableAll").onclick = () => changeAll(true);
-	document.getElementById("disableAll").onclick = () => changeAll(false);
-	getOptions();
-}
+window.onload = () => getOptions({firstLoad:true});

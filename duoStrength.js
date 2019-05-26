@@ -480,9 +480,17 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	numSkillsLeft = numSkillsToBeStrengthened - numSkillsToShow;
 	if (numSkillsLeft > 0)
 	{
-		strengthenBox.innerHTML +=	" <a href='javascript:false;'>"
-								+	"and " + numSkillsLeft + " more..."
-								+	"</a>";
+		showMore = document.createElement("a");
+		showMore.innerHTML = "and " + numSkillsLeft + " more...";
+		showMore.href = "javascript:return false;";
+		showMore.onclick = function () {
+			options.needsStrengtheningListLength += Math.min(numSkillsLeft, options.needsStrengtheningListLength);
+			displayNeedsStrengthening(needsStrengthening);
+		}
+		showMore.title = "Click to show " + Math.min(numSkillsLeft, options.needsStrengtheningListLength) + " more skills";
+
+		strengthenBox.innerHTML += " ";
+		strengthenBox.appendChild(showMore);
 	}
 
 	if(needToAddBox)

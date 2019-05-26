@@ -13,16 +13,27 @@
 			padding: 0;
 			list-style: none;
 		}
+		li > ul
+		{
+			padding-left: 1em;
+			grid-column:span 2;
+		}
 		li
 		{
 			display: grid;
 			grid-template-columns: 9fr 1fr;
 			width: 100%;
 			margin: 0.2em 0;
+			background-color: white;
 		}
 		li:nth-of-type(odd)
 		{
 			background-color: #DDD;
+		}
+		input[type="number"]
+		{
+			box-sizing: border-box;
+			width: 100%;
 		}
 	</style>
 </head>
@@ -31,35 +42,41 @@
 	<h2>Enable or disable features here</h2>
 	<ul>
 		<li>
-			Strength Bars
+			<label for="strengthBars">Strength Bars</label>
 			<input class="option" id="strengthBars" type="checkbox" checked="true" />
 		</li>
 		<li>
-			Needs Strengthening List
+			<label for="needsStrengtheningList">Needs Strengthening List</label>
 			<input class="option" id="needsStrengtheningList" type="checkbox" checked="true" />
+			<ul>
+				<li>
+					<label for="needsStrengtheningListLength">Number of skills shown in list</label>
+					<input class="option" id="needsStrengtheningListLength" type="number" value="10" min="1" />
+				</li>
+			</ul>
 		</li>
 		<li>
-			Fully Strengthened Skill Suggestion
+			<label for="skillSuggestion">Fully Strengthened Skill Suggestion</label>
 			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
 		</li>
 		<li>
-			Crowns Maximum
+			<label for="crownsMaximum">Crowns Maximum</label>
 			<input class="option" id="crownsMaximum" type="checkbox" checked="true" />
 		</li>
 		<li>
-			Crowns Breakdown
+			<label for="crownsBreakdown">Crowns Breakdown</label>
 			<input class="option" id="crownsBreakdown" type="checkbox" checked="true" />
 		</li>
 		<li>
-			Crowns Prediction
+			<label for="crownsPrediction">Crowns Prediction</label>
 			<input class="option" id="crownsPrediction" type="checkbox" checked="true" />
 		</li>
 		<li>
-			XP Breakdown
+			<label for="XPBreakdown">XP Breakdown</label>
 			<input class="option" id="XPBreakdown" type="checkbox" checked="true" />
 		</li>
 		<li>
-			XP Prediction
+			<label for="XPPrediction">XP Prediction</label>
 			<input class="option" id="XPPrediction" type="checkbox" checked="true" />
 		</li>
 	</ul>

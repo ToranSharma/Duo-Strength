@@ -1,28 +1,80 @@
 var options = Object();
 
-function getOptions()
+function init()
+{
+	for (element of document.getElementsByClassName("option"))
+	{
+		if (element.parentNode.getElementsByTagName("ul").length !== 0)
+		{
+			subListElements = element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option");
+			if (!element.checked)
+			{
+				for (option of subListElements)
+						option.disabled = true;
+			}
+			element.addEventListener("change", function (event)
+				{
+					for (option of subListElements)
+						option.disabled = !this.checked;
+
+				});
+		}
+		if (element.type == "number")
+			element.addEventListener("change", function ()
+				{
+					if (this.value < this.min)
+						this.value = this.defautValue;
+					saveOptions();
+				});
+		else	
+			element.addEventListener("change", saveOptions);
+	}
+	document.getElementById("enableAll").onclick = () => changeAll(true);
+	document.getElementById("disableAll").onclick = () => changeAll(false);
+}
+
+function getOptions({firstLoad=false}={})
 {
 	chrome.storage.sync.get("options", function (data)
 	{
-		if (Object.entries(data).length === 0)
+		items = data.options
+		if (Object.entries(items).length === 0)
 		{
 			saveOptions();
 			return false;
 		}
-		options = data;
+		options = items;
 		for (option in options)
 		{
-			document.getElementById(option).checked = options[option];
+			switch (typeof options[option])
+			{
+				case "boolean":
+					document.getElementById(option).checked = options[option];
+					break;
+				case "string":
+					document.getElementById(option).value = options[option];
+					break;
+			}
 		}
-	})
+		if (firstLoad)
+			init();
+	});
 }
 
 function saveOptions()
 {
-	console.log("saving");
 	for (element of document.getElementsByClassName("option"))
 	{
-		options[element.id] = element.checked;
+		switch (element.type)
+		{
+			case "checkbox":
+				options[element.id] = element.checked;
+				break;
+			case "number":
+				options[element.id] = element.value;
+				break;
+		}
+		
 	}
 	chrome.storage.sync.set({"options": options});
 }
@@ -31,19 +83,19 @@ function changeAll(checked)
 {
 	for (element of document.getElementsByClassName("option"))
 	{
-		element.checked = checked;
+		switch (element.type)
+		{
+			case "checkbox":
+				element.checked = checked;
+				break;
+			case "number":
+				break;
+		}
+		if (element.parentNode.parentNode.parentNode.tagName == "LI")
+			element.disabled = !checked;
 	}
-	// Interestingly doesn't trigger the change event so need to save manually. This does save on a repeate saves
+	// Interestingly doesn't trigger the change event so need to save manually. This does save on a repeat saves.
 	saveOptions();
 }
 
-window.onload = function ()
-{
-	for (element of document.getElementsByClassName("option"))
-	{
-		element.addEventListener("change", saveOptions);
-	}
-	document.getElementById("enableAll").onclick = () => changeAll(true);
-	document.getElementById("disableAll").onclick = () => changeAll(false);
-	getOptions();
-}
+window.onload = () => getOptions({firstLoad:true});

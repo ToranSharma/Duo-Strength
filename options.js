@@ -6,17 +6,16 @@ function init()
 	{
 		if (element.parentNode.getElementsByTagName("ul").length !== 0)
 		{
-			subListElements = element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option");
+			
 			if (!element.checked)
 			{
-				for (option of subListElements)
+				for (option of element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option"))
 						option.disabled = true;
 			}
-			element.addEventListener("change", function (event)
+			element.addEventListener("change", function ()
 				{
-					for (option of subListElements)
+					for (option of this.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option"))
 						option.disabled = !this.checked;
-
 				});
 		}
 		if (element.type == "number")

@@ -23,8 +23,7 @@ function retrieveOptions()
 {
 	chrome.storage.sync.get("options", function (data)
 	{
-		items = data.options
-		if (Object.entries(items).length === 0)
+		if (Object.entries(data).length === 0)
 		{
 			// First time using version with options so nothing is set in storage.
 			options = 
@@ -33,16 +32,19 @@ function retrieveOptions()
 				"needsStrengtheningList":		true,
 				"needsStrengtheningListLength":	"10",
 				"skillSuggestion":				true,
+				"crownsInfo":					true,
 				"crownsMaximum":				true,
 				"crownsBreakdown":				true,
 				"crownsPrediction":				true,
+				"XPInfo":						true,
 				"XPBreakdown":					true,
 				"XPPrediction":					true
 			};
 			chrome.storage.sync.set({"options": options});
 		}
 		else
-			options = items;
+
+			options = data.options;
 	});
 }
 
@@ -1160,8 +1162,10 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		// Nothing that needs strengthening!
 		if (options.skillSuggestion) displaySuggestion(skills);
 	}
-	if (oldUI)	displayCrownsBreakdown(); // call function to add breakdown of crown levels under crown total.
-	if (oldUI)	displayXPBreakdown();
+	if (oldUI && options.crownsInfo)
+		displayCrownsBreakdown(); // call function to add breakdown of crown levels under crown total.
+	if (oldUI && options.XPInfo)
+		displayXPBreakdown();
 	// All done displaying what needs doing so let reset and get ready for another change.
 	resetLanguageFlags();
 }
@@ -1327,7 +1331,7 @@ var childListMutationHandle = function(mutationsList, observer)
 			if (mutation.target.getElementsByClassName("_3FM63").length + mutation.target.getElementsByClassName("WZkQ9").length != 0) // _3FM63 for gold crown logo, WZkQ9 for grey when at 0 crowns.
 			{
 				// Crowns has had the change.
-				if (mutation.target.lastChild.className.includes("_3yH6G"))
+				if (mutation.target.lastChild.className.includes("_3yH6G") && options.crownsInfo)
 				{
 					// Pop-up box has just appeared, lets display the Crown breakdown.
 					displayCrownsBreakdown();
@@ -1340,7 +1344,7 @@ var childListMutationHandle = function(mutationsList, observer)
 			if (mutation.target.getElementsByClassName("_2ctH6").length +  mutation.target.getElementsByClassName("_27oya").length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
 			{
 				// Streak/XP has had the change.
-				if (mutation.target.lastChild.className.includes("_3yH6G"))
+				if (mutation.target.lastChild.className.includes("_3yH6G") && options.XPInfo)
 				{
 					// Pop-up box has just appeared, lets display the XP breakdown.
 					displayXPBreakdown();

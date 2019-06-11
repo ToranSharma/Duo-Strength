@@ -1503,8 +1503,16 @@ function init()
 			if (!oldUI)
 			{
 				// Using new white topBar layout
-				topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[1].childNodes[0]; // direct container of the divs holding the navigation butons, has class _3F_8q
 
+				// topBar Div is the direct container holding the navigation butons, has class _3F_8q
+				// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];
+				// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
+				// Safer to use class name, which may also change...
+				// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
+				for (elem of dataReactRoot.getElementsByClassName("_3F_8q"))
+					if (elem.getElementsByTagName("a").length != 0)
+						topBarDiv = elem;
+				
 				// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
 				numNavButtons = topBarDiv.getElementsByClassName("_3MT82").length;
 				// if numNavButtons = 4 then there is no stories button.

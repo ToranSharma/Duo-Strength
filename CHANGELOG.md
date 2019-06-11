@@ -50,6 +50,13 @@ skill.
 default, 10 skills.
 - The number shown can be customised on the options page.
 
+[v1.0.18] - 2019-06-11
+----------------------
+
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.18)
+### Changed
+- Fixed `topBarDiv` definition. It is now found and definied by its `className` rather than its `childNodes` relation to `dataReactRoot`.
+
 [v1.0.17] - 2019-05-22
 ----------------------
 
@@ -262,6 +269,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.0.18]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.17...v1.0.18
 [v1.0.17]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.16...v1.0.17
 [v1.0.16]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.15...v1.0.16
 [v1.0.15]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.14...v1.0.15

@@ -55,7 +55,8 @@ default, 10 skills.
 
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.18)
 ### Changed
-- Fixed `topBarDiv` definition. It is now found and definied by its `className` rather than its `childNodes` relation to `dataReactRoot`.
+- Fixed `topBarDiv` definition. It is now found and definied by its `className` 
+rather than its `childNodes` relation to `dataReactRoot`.
 
 [v1.0.17] - 2019-05-22
 ----------------------

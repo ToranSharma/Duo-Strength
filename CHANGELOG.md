@@ -46,7 +46,7 @@ of the Duo Strength logo or via the extensions details.
 #### Needs Strengthening List
 - Now shows, by default, 10 skills that need strengthening instead of every 
 skill.
-- Addition skills can be displayed by clicking show more. This adds another, by 
+- Additional skills can be displayed by clicking show more. This adds another, by 
 default, 10 skills.
 - The number shown can be customised on the options page.
 

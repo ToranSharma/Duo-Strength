@@ -7,29 +7,54 @@
 		{
 			margin: 2em;
 		}
+
 		ul
 		{
 			margin: 0;
 			padding: 0;
 			list-style: none;
 		}
-		li > ul
-		{
-			padding-left: 1em;
-			grid-column:span 2;
-		}
+
 		li
 		{
 			display: grid;
-			grid-template-columns: 9fr 1fr;
+			grid-template-columns: 1fr 9fr;
 			width: 100%;
 			margin: 0.2em 0;
 			background-color: white;
 		}
+		
+			li > ul
+			{
+				/*padding-left: 1em;*/
+				grid-column:span 2;
+			}
+				li > ul > li
+				{
+					grid-template-columns: 1fr 1fr 8fr;
+					box-sizing: content-box;
+				}
+					li > ul > li:before
+					{
+						content: "";
+						width:75%;
+						border-style: dashed;
+						border-color: black;
+						border-width: 0px 0px 1px 1px;
+						position: relative;
+						top: -50%;
+						left:25%;
+					}
+					li > ul > li:first-child:before
+					{
+						height:80%;
+						top: -34%;
+					}
 		li:nth-of-type(odd)
 		{
-			background-color: #DDD;
+			/*background-color: #DDD;*/
 		}
+
 		input[type="number"]
 		{
 			box-sizing: border-box;
@@ -42,52 +67,52 @@
 	<h2>Enable or disable features here</h2>
 	<ul>
 		<li>
-			<label for="strengthBars">Strength Bars</label>
 			<input class="option" id="strengthBars" type="checkbox" checked="true" />
+			<label for="strengthBars">Strength Bars</label>
 		</li>
 		<li>
-			<label for="needsStrengtheningList">Needs Strengthening List</label>
 			<input class="option" id="needsStrengtheningList" type="checkbox" checked="true" />
+			<label for="needsStrengtheningList">Needs Strengthening List</label>
 			<ul>
 				<li>
-					<label for="needsStrengtheningListLength">Number of skills shown in list</label>
 					<input class="option" id="needsStrengtheningListLength" type="number" value="10" min="1" />
+					<label for="needsStrengtheningListLength">Number of skills shown in list</label>
 				</li>
 			</ul>
 		</li>
 		<li>
-			<label for="skillSuggestion">Fully Strengthened Skill Suggestion</label>
 			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
+			<label for="skillSuggestion">Fully Strengthened Skill Suggestion</label>
 		</li>
 		<li>
-			<label for="crownsInfo">Additional Crowns Information</label>
 			<input class="option" id="crownsInfo" type="checkbox" checked="true" />
+			<label for="crownsInfo">Additional Crowns Information</label>
 			<ul>
 				<li>
-					<label for="crownsMaximum">Crowns Maximum</label>
 					<input class="option" id="crownsMaximum" type="checkbox" checked="true" />
+					<label for="crownsMaximum">Crowns Maximum</label>
 				</li>
 				<li>
-					<label for="crownsBreakdown">Crowns Breakdown</label>
 					<input class="option" id="crownsBreakdown" type="checkbox" checked="true" />
+					<label for="crownsBreakdown">Crowns Breakdown</label>
 				</li>
 				<li>
-					<label for="crownsPrediction">Crowns Prediction</label>
 					<input class="option" id="crownsPrediction" type="checkbox" checked="true" />
+					<label for="crownsPrediction">Crowns Prediction</label>
 				</li>
 			</ul>
 		</li>
 		<li>
-			<label for="XPInfo">Additional XP Info</label>
 			<input class="option" id="XPInfo" type="checkbox" checked="true" />
+			<label for="XPInfo">Additional XP Info</label>
 			<ul>
 				<li>
-					<label for="XPBreakdown">XP Breakdown</label>
 					<input class="option" id="XPBreakdown" type="checkbox" checked="true" />
+					<label for="XPBreakdown">XP Breakdown</label>
 				</li>
 				<li>
-					<label for="XPPrediction">XP Prediction</label>
 					<input class="option" id="XPPrediction" type="checkbox" checked="true" />
+					<label for="XPPrediction">XP Prediction</label>
 				</li>
 			</ul>
 		</li>

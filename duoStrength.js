@@ -1528,6 +1528,8 @@ function init()
 					*/
 					var shopNav = topBarDiv.childNodes[6];
 					languageLogo = topBarDiv.childNodes[10];
+					var crownNav = topBarDiv.childNodes[11];
+					var streakNav = topBarDiv.childNodes[12];
 				}
 				else
 				{
@@ -1536,6 +1538,8 @@ function init()
 					*/
 					var shopNav = topBarDiv.childNodes[4];
 					languageLogo = topBarDiv.childNodes[8];
+					var crownNav = topBarDiv.childNodes[9];
+					var streakNav = topBarDiv.childNodes[10];
 				}
 				
 				// set up observers for page changes
@@ -1546,9 +1550,6 @@ function init()
 				classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
 
 				// set up observers for crown and streak nav hovers
-				var crownNav = topBarDiv.getElementsByClassName("_1SaVi")[0];
-				var streakNav = topBarDiv.getElementsByClassName("_1SaVi")[1];
-
 				childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
 				childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
 

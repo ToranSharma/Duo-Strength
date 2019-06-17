@@ -537,12 +537,15 @@ var childListMutationHandle = function(mutationsList, observer)
 		checkUIVersion();
 		if(!oldUI)
 		{
-			if(dataReactRoot.childNodes[1].className != "BWibf _3MLiB")
+			if (dataReactRoot.childNodes[2].className != "BWibf _3MLiB")
 			{
 				// not just changed into a lesson
-				topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[1].childNodes[0].className;
 				languageChanged = false;
 				init();
+			}
+			else
+			{
+				// we have just entered a lesson in the normal way and we don't need to do anything.
 			}
 		}
 		else

@@ -301,19 +301,33 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			strengthBarHolder.className = "strengthBarHolder";
 			strengthBarHolder.style['width'] = "100%";
 			strengthBarHolder.style['padding'] = "0 5%";
+			strengthBarHolder.style['position'] = "relative";
 			strengthBarHolder.style['display'] = display;
 			
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
-			
+
+			var strengthBarBackground = document.createElement("div");
+			strengthBarBackground.className = "strengthBarBackground";
+			strengthBarBackground.style =	"position: absolute;"
+										+	"display: inline-block;"
+    									+	"width: 67.5%;"
+        								+	"height: 1em;"
+        								+	"top: 0.15em;"
+        								+	"background-color: #e5e5e5;"
+        								+	"border-radius: 0.5em;"
+        								+	"z-index: 1;";
+
 			var strengthBar = document.createElement("div");
 			strengthBar.className = "strengthBar";
 			strengthBar.id = name + "StrengthBar";
 			strengthBar.style['display'] = "inline-block";
+			strengthBar.style['position'] = "relative";
+			strengthBar.style['top'] = "0.15em";
 			strengthBar.style['width'] = (strength*75)+"%";
 			strengthBar.style['height'] = "1em";
 			strengthBar.style['backgroundColor'] = (strength == 1.0 ? GOLD : RED);
 			strengthBar.style['borderRadius'] = "0.5em";
-			strengthBar.style['verticalAlign'] = "text-top";
+			strengthBar.style['zIndex'] = "2";
 			
 			var strengthValue = document.createElement("div");
 			strengthValue.className = "strengthValue";
@@ -323,6 +337,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			strengthValue.style['textAlign'] = "right";
 			strengthValue.innerHTML = strength*100 + "%";
 			
+			strengthBarHolder.appendChild(strengthBarBackground);
 			strengthBarHolder.appendChild(strengthBar);
 			strengthBarHolder.appendChild(strengthValue);
 			

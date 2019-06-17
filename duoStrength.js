@@ -29,6 +29,7 @@ function retrieveOptions()
 			options = 
 			{
 				"strengthBars":					true,
+				"strengthBarBackgrounds":		true, 
 				"needsStrengtheningList":		true,
 				"needsStrengtheningListLength":	"10",
 				"skillSuggestion":				true,
@@ -337,7 +338,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			strengthValue.style['textAlign'] = "right";
 			strengthValue.innerHTML = strength*100 + "%";
 			
-			strengthBarHolder.appendChild(strengthBarBackground);
+			if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground);
 			strengthBarHolder.appendChild(strengthBar);
 			strengthBarHolder.appendChild(strengthValue);
 			

@@ -571,10 +571,10 @@ var classNameMutationHandle = function(mutationsList, observer)
 			// check if it was a language change
 			if (mutation.target.parentNode.parentNode == languageLogo)
 			{
-				// it was a language change,
+				// it was a language change
 				languageChanged = true;
 
-				// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
+				// As the language has just changed, need to wipe the slate clean so no old data is shown after change.
 				removeStrengthBars();
 				removeNeedsStrengtheningBox();
 
@@ -602,28 +602,29 @@ var classNameMutationHandle = function(mutationsList, observer)
 			{
 				// it wasn't a language change
 				languageChanged = false;
-			}
 
-			// check if we are now on the main page
-			if (topBarDiv.childNodes[0].className.includes("_2lkuX"))
-			{
-				// on main page
-				// check if language has been previously set as we only set it in init if we were on the main page
-				if (language != "")
+				// check if we are now on the main page
+				if (topBarDiv.childNodes[0].className.includes("_2lkuX"))
 				{
-					// language has previously been set so not first time on main page, lets just get some new data.
-					requestData(language);
+					// on main page
+					// check if language has been previously set as we only set it in init if we were on the main page
+					onMainPage = true;
+					if (language != "")
+					{
+						// language has previously been set so not first time on main page, lets just get some new data.
+						requestData(language);
+					}
+					else
+					{
+						// language was not set so first time on home page, lets run init again
+						init();
+					}
 				}
 				else
 				{
-					// language was not set so first time on home page, lets run init again
-					init();
+					// not on main page
+					onMainPage = false;
 				}
-			}
-			else
-			{
-				// not on main page
-				onMainPage = false;
 			}
 		}
 		else
@@ -737,7 +738,7 @@ function init()
 				/* unused/unusable
 				classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
 				*/
-				classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
+				//classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
 
 				if (homeNav.className.includes("_2lkuX"))
 				{

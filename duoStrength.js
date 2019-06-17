@@ -319,18 +319,6 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	}
 }
 
-function httpGetAsync(url, responseHandler)
-{
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function()
-	{ 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            responseHandler(xmlHttp.responseText);
-    }
-    xmlHttp.open("GET", url, true); // true for asynchronous 
-	xmlHttp.send(null);
-}
-
 function getStrengths() // parses the data from duolingo.com/users/USERNAME and extracts strengths and skills that need strengthening
 {
 	/*
@@ -403,6 +391,18 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	{
 		displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
+}
+
+function httpGetAsync(url, responseHandler)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function()
+	{ 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            responseHandler(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", url, true); // true for asynchronous 
+	xmlHttp.send(null);
 }
 
 function handleDataResponse(responseText, languageOnCall)

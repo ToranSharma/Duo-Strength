@@ -418,7 +418,7 @@ function httpGetAsync(url, responseHandler)
 	{
 		if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
 		{
-			document.getElementById('userData').innerText = xmlHttp.responseText;		
+			document.getElementById('userData').innerText = "//" + xmlHttp.responseText;		
 		}
 	};
 	xmlHttp.open('GET', '${url}', true);
@@ -429,7 +429,7 @@ function httpGetAsync(url, responseHandler)
 	document.body.appendChild(data);
 	xhrScript = document.createElement("script");
 	xhrScript.id = 'xhrScript';
-	xhrScript.innerHTML =	code;
+	xhrScript.innerHTML = code;
 	document.body.append(xhrScript);
 	
 	function checkData()
@@ -440,7 +440,7 @@ function httpGetAsync(url, responseHandler)
 		}
 		else
 		{
-			responseHandler(data.innerHTML);
+			responseHandler(data.innerHTML.slice(2));
 			document.body.removeChild(document.getElementById('userData'));
 			document.body.removeChild(document.getElementById('xhrScript'));
 		}

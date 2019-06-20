@@ -395,14 +395,52 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 
 function httpGetAsync(url, responseHandler)
 {
+	/* firefox incompatible due to sameSite lax jwt_token to being sent with request...
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function()
 	{ 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             responseHandler(xmlHttp.responseText);
-    }
+    };
     xmlHttp.open("GET", url, true); // true for asynchronous 
 	xmlHttp.send(null);
+	*/
+
+	// Horrible hack but works...
+
+	code = `
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function()
+	{
+		if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+		{
+			document.getElementById('userData').innerText = xmlHttp.responseText;		
+		}
+	};
+	xmlHttp.open('GET', '${url}', true);
+	xmlHttp.send(null);`;
+
+	data = document.createElement('script');
+	data.id = 'userData';
+	document.body.appendChild(data);
+	tempscript = document.createElement("script")
+	tempscript.id = 'tempscript';
+	tempscript.innerHTML =	code;
+	document.body.append(tempscript);
+	function checkData()
+	{
+		if (data.innerHTML == '')
+		{
+			setTimeout(checkData, 100);
+		}
+		else
+		{
+			responseHandler(data.innerHTML);
+			document.body.removeChild(document.getElementById('userData'));
+			document.body.removeChild(document.getElementById('tempscript'));
+		}
+	}
+	checkData();
 }
 
 function handleDataResponse(responseText, languageOnCall)

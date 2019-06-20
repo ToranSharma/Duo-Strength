@@ -46,13 +46,38 @@ of the Duo Strength logo or via the extensions details.
 #### Needs Strengthening List
 - Now shows, by default, 10 skills that need strengthening instead of every 
 skill.
-- Additional skills can be displayed by clicking show more. This adds another, by 
-default, 10 skills.
+- Additional skills can be displayed by clicking show more. This adds another, 
+by default, 10 skills.
 - The number shown can be customised on the options page.
+
+#### Strength Bars
+- Non 100% strength bars now show in grey the width of a full strength bar to 
+make more clear the progress that can be made for that skill.
+- These backgrounds can be toggled on the options page.
+
+[v1.0.20] - 2019-06-20
+----------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.20)
+### Changed
+- Fixed issue on Firefox where the the data only loaded when 
+first loggin in to duolingo, as found in 
+[issue #13](https://github.com/ToranSharma/Duo-Strength/issues/13). Data 
+requests are now executed in the context of the document rather than the 
+exstension.
+
+[v1.0.19] - 2019-06-17
+----------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.19)
+### Changed
+- Fixed handling of moving in and out of lessons. Follows on from v1.0.18 in 
+updating an index that made incorrect after an update from duolingo.
+
+### Removed
+- Unnecessary duplicate requests in a few locations. Should be about half the 
+amount of requests now.
 
 [v1.0.18] - 2019-06-11
 ----------------------
-
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.18)
 ### Changed
 - Fixed `topBarDiv` definition. It is now found and definied by its `className` 
@@ -60,7 +85,6 @@ rather than its `childNodes` relation to `dataReactRoot`.
 
 [v1.0.17] - 2019-05-22
 ----------------------
-
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.17)
 ### Changed
 - Replaced every instance of `progress_3` with `skill_progress`, as duolingo has 
@@ -94,8 +118,8 @@ as found in [issue #12](https://github.com/ToranSharma/Duo-Strength/issues/12).
 when it is true.
 
 ### Changed
-- Repurposed `checkUIVersion` from checking if using the 'juicy' UI (which is now 
-assumed) to checking if the white UI version is in use. This now sets the 
+- Repurposed `checkUIVersion` from checking if using the 'juicy' UI (which is 
+now assumed) to checking if the white UI version is in use. This now sets the 
 `oldUI` flag instead of `juicyUI`.
 - Moved the removal of the old strength bars and strengthening list to earlier 
 in the change language process. This stops any old data from showing up on the 
@@ -149,8 +173,8 @@ of the crown assets. This now sets the `juicyUI` flag instead of the
 ----------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.10)
 ### Added
-- Updated Login screen detection so that an error isn't thrown and the extension runs 
-on first login without needing a refresh.
+- Updated Login screen detection so that an error isn't thrown and the extension
+ runs on first login without needing a refresh.
 
 ### Changed
 - Fixed URL used to request the user data which caused issues in Firefox.
@@ -270,6 +294,8 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.0.20]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.19...v1.0.20
+[v1.0.19]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.18...v1.0.19
 [v1.0.18]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.17...v1.0.18
 [v1.0.17]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.16...v1.0.17
 [v1.0.16]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.15...v1.0.16

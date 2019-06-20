@@ -27,7 +27,7 @@
 			li > ul
 			{
 				/*padding-left: 1em;*/
-				grid-column:span 2;
+				grid-column: span 2;
 			}
 				li > ul > li
 				{
@@ -37,24 +37,28 @@
 					li > ul > li:before
 					{
 						content: "";
-						width:75%;
+						z-index: 1;
+						width: 100%;
 						border-style: dashed;
 						border-color: black;
 						border-width: 0px 0px 1px 1px;
 						position: relative;
 						top: -50%;
-						left:25%;
-					}
-					li > ul > li:first-child:before
-					{
-						height:80%;
-						top: -34%;
+						left: 50%;
 					}
 		li:nth-of-type(odd)
 		{
 			/*background-color: #DDD;*/
 		}
-
+		input
+		{
+			z-index: 2;
+		}
+		input[type="checkbox"]
+		{
+			justify-self: center;
+			width: ;
+		}
 		input[type="number"]
 		{
 			box-sizing: border-box;

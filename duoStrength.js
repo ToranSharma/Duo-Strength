@@ -9,6 +9,7 @@ var languageLogo;
 var username = "";
 var userData = Object();
 var oldUI = false;
+var requestID = 0;
 
 var rootElem;
 var dataReactRoot;
@@ -412,40 +413,44 @@ function httpGetAsync(url, responseHandler)
 	// Back in content script we wait until the data has been written to the body.
 	// We then send it off for processing and remove the inserted elements from the body.
 
-	code = `
-	var xmlHttp = new XMLHttpRequest();
-	xmlHttp.onreadystatechange = function()
-	{
-		if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+
+	code = 
+		`var xmlHttp = new XMLHttpRequest();
+		xmlHttp.onreadystatechange = function()
 		{
-			document.getElementById('userData').innerText = "//" + xmlHttp.responseText;		
-		}
-	};
-	xmlHttp.open('GET', '${url}', true);
-	xmlHttp.send(null);`;
+			if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+			{
+				document.getElementById('userData${requestID}').innerText = "//" + xmlHttp.responseText;		
+			}
+		};
+		xmlHttp.open('GET', '${url}', true);
+		xmlHttp.send(null);`;
+
 
 	data = document.createElement('script');
-	data.id = 'userData';
+	data.id = 'userData' + requestID;
 	document.body.appendChild(data);
+
 	xhrScript = document.createElement("script");
-	xhrScript.id = 'xhrScript';
+	xhrScript.id = 'xhrScript' + requestID;
 	xhrScript.innerHTML = code;
 	document.body.append(xhrScript);
-	
-	function checkData()
+
+	function checkData(id)
 	{
 		if (data.innerHTML == '')
 		{
-			setTimeout(checkData, 50);
+			setTimeout(()=>checkData(id), 50);
 		}
 		else
 		{
 			responseHandler(data.innerHTML.slice(2));
-			document.body.removeChild(document.getElementById('userData'));
-			document.body.removeChild(document.getElementById('xhrScript'));
+			document.body.removeChild(document.getElementById('userData' + id));
+			document.body.removeChild(document.getElementById('xhrScript' + id));
 		}
 	}
-	checkData();
+	checkData(requestID);
+	requestID ++;
 }
 
 function handleDataResponse(responseText, languageOnCall)
@@ -480,7 +485,7 @@ function requestData(languageOnCall) // requests data for actively logged in use
 	if (!oldUI)
 	{
 		httpGetAsync(
-			encodeURI(window.location+"users/"+username),
+			encodeURI(window.location.origin+"/users/"+username),
 			function (responseText)
 			{
 				if (languageOnCall != language)
@@ -502,7 +507,7 @@ function requestData(languageOnCall) // requests data for actively logged in use
 		{
 			username = document.getElementsByClassName("_2R9gT")[0].innerHTML;
 			httpGetAsync(
-				encodeURI(window.location+"users/"+username),
+				encodeURI(window.location.origin+"/users/"+username),
 				function (responseText)
 				{
 					if (languageOnCall != language)

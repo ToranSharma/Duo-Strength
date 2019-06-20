@@ -407,6 +407,10 @@ function httpGetAsync(url, responseHandler)
 	*/
 
 	// Horrible hack but works...
+	// We insert the xhr code into the body so that it excecutes there.
+	// The response text is then inserted into another element in the body.
+	// Back in content script we wait until the data has been written to the body.
+	// We then send it off for processing and remove the inserted elements from the body.
 
 	code = `
 	var xmlHttp = new XMLHttpRequest();
@@ -423,21 +427,22 @@ function httpGetAsync(url, responseHandler)
 	data = document.createElement('script');
 	data.id = 'userData';
 	document.body.appendChild(data);
-	tempscript = document.createElement("script")
-	tempscript.id = 'tempscript';
-	tempscript.innerHTML =	code;
-	document.body.append(tempscript);
+	xhrScript = document.createElement("script");
+	xhrScript.id = 'xhrScript';
+	xhrScript.innerHTML =	code;
+	document.body.append(xhrScript);
+	
 	function checkData()
 	{
 		if (data.innerHTML == '')
 		{
-			setTimeout(checkData, 100);
+			setTimeout(checkData, 50);
 		}
 		else
 		{
 			responseHandler(data.innerHTML);
 			document.body.removeChild(document.getElementById('userData'));
-			document.body.removeChild(document.getElementById('tempscript'));
+			document.body.removeChild(document.getElementById('xhrScript'));
 		}
 	}
 	checkData();

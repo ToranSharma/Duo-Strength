@@ -79,7 +79,7 @@ function retrieveProgressHistory()
 	});
 }
 
-function updateProgressHistory()
+function storeProgressHistory()
 {
 	chrome.storage.sync.get("progress", function (data)
 	{
@@ -163,6 +163,35 @@ function currentProgress()
 	}
 
 	return lessonsToNextCrownLevel;
+}
+
+function updateProgress()
+{
+	entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()]
+
+	if (progress[progress.length-1][0] == entry[0])
+	{
+		// Already have an entry for today.
+		// Check if we went up a crown level last time.
+		if (progress[progress.length-1][1] != progress[progress.length-2][1])
+		{
+			// The last stored entry was the first at the crown level, so lets not overwrite it
+			progress.push(entry)
+		}
+		else
+		{
+			// No it was just a normal entry, lets overwrite it with this update.
+			progress[progress.length-1] = entry;
+		}
+
+	}
+	else
+	{
+		// First one for today, so store it
+		progress.push(entry);
+	}
+
+	storeProgressHistory();
 }
 
 function crownTreeLevel()

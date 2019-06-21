@@ -275,7 +275,7 @@ function daysToNextCrownLevel()
 		{
 			// point from the same level so look at the change in progress
 			progressMade += lastProgress - point[2];
-			lastprogress = point[2];
+			lastProgress = point[2];
 		}
 	}
 	lastDate = progress[progress.length-1][0];

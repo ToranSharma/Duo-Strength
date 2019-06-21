@@ -8,6 +8,7 @@ var languageChanged = false;
 var languageLogo;
 
 var options = Object();
+var progress = Array();
 var username = "";
 var userData = Object();
 var oldUI = false;
@@ -27,7 +28,7 @@ function retrieveOptions()
 		if (Object.entries(data).length === 0)
 		{
 			// First time using version with options so nothing is set in storage.
-			options = 
+			options =
 			{
 				"strengthBars":					true,
 				"strengthBarBackgrounds":		true, 
@@ -45,8 +46,45 @@ function retrieveOptions()
 			chrome.storage.sync.set({"options": options});
 		}
 		else
-
 			options = data.options;
+	});
+}
+
+function retrieveProgressHistory()
+{
+	chrome.storage.sync.get("progress", function (data)
+	{
+		if (Object.entries(data).length === 0)
+		{
+			// First time using version with progress so nothing is set in storage.
+			progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
+			data[username+languageCode] = progress;
+
+			chrome.storage.sync.set({"progress": data});
+		}
+		else if (!data.progress.hasOwnProperty(username + languageCode))
+		{
+			// First time for this user + language combination.
+
+			progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
+
+			data.progress[username+languageCode] = progress;
+			chrome.storage.sync.set({"progress": data.progress});
+		}
+		else
+		{
+			// We have some progress data saved.
+			progress = data.progress[username+languageCode];
+		}
+	});
+}
+
+function updateProgressHistory()
+{
+	chrome.storage.sync.get("progress", function (data)
+	{
+		data.progress[username+languageCode] = progress
+		chrome.storage.sync.set({"progress": data.progress});
 	});
 }
 
@@ -109,6 +147,24 @@ function removeSuggestion()
 	}
 }
 
+function currentProgress()
+{
+	var skills = userData['language_data'][languageCode]['skills'];
+	var treeLevel = crownTreeLevel();
+	var lessonsToNextCrownLevel = 0;
+	for (skill of skills)
+	{
+		if (skill['locked']) continue;
+		
+		if (skill['skill_progress']['level'] == treeLevel)
+		{
+			lessonsToNextCrownLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
+		}
+	}
+
+	return lessonsToNextCrownLevel;
+}
+
 function crownTreeLevel()
 {
 	var skills = userData['language_data'][languageCode]['skills'];
@@ -165,6 +221,47 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 }
 
 function daysToNextCrownLevel()
+{
+	// Update the entry for today
+	// progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
+	// updateProgressHistory();
+
+	numPointsToUse = Math.min(7,progress.length);
+	pointsUsed = 0;
+	progressMade = 0;
+	firstDate = progress[progress.length-numPointsToUse][0];
+	level = progress[progress.length-numPointsToUse][1];
+	lastProgress = progress[progress.length-numPointsToUse][2];
+
+	for (point of progress.slice(1-numPointsToUse))
+	{
+		if (point[1] != level)
+		{
+			// this point is from another level
+			progressMade += lastProgress;
+			lastProgress = point[2];
+			level = point[1];
+		}
+		else
+		{
+			// point from the same level so look at the change in progress
+			progressMade += lastProgress - point[2];
+			lastprogress = point[2];
+		}
+	}
+	lastDate = progress[progress.length-1][0];
+
+	timePeriod = lastDate-firstDate; // in milliseconds
+	timePeriod /= 1000*60*60*24 // in days
+	progressRate = progressMade / timePeriod; // in lessons per day
+
+	if (progressRate != 0)
+		return Math.ceil(lastProgress / progressRate); // in days
+	else
+		return -1;
+}
+
+function daysToNextCrownLevelByCalendar()
 {
 	var skills = userData['language_data'][languageCode]['skills'];
 	var treeLevel = crownTreeLevel();
@@ -766,7 +863,10 @@ function displayCrownsBreakdown()
 		if (treeLevel != 5)
 		{
 			var prediction = document.createElement("p");
-			numDays = daysToNextCrownLevel();
+			if (progress.length > 5)
+				numDays = daysToNextCrownLevel();
+			else
+				numDays = daysToNextCrownLevelByCalendar();
 
 			if (numDays == -1)
 			{
@@ -1558,6 +1658,7 @@ function init()
 	else
 	{
 		// should be logged in
+
 		//var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
 		var mainBodyElemIn4th =  dataReactRoot.childNodes[3].nodeType != 8 && dataReactRoot.childNodes[3].classList.contains("_3MLiB");
 		// Main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
@@ -1570,6 +1671,9 @@ function init()
 			if (!oldUI)
 			{
 				// Using new white topBar layout
+
+				// set username via the href of a link to the profile
+				username = document.querySelector("[data-test = \"profile-tab\"]").href.split("/")[3];
 
 				// topBar Div is the direct container holding the navigation butons, has class _3F_8q
 				// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];
@@ -1629,9 +1733,6 @@ function init()
 					// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
 					classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
 					language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
-
-					// need to set the username, get this by getting the href of the view more link in the achievements box the anchor element has X8N_G as its identifying class
-					username = document.getElementsByClassName("X8N_G")[0].href.split("/")[3];
 
 					checkUIVersion();
 					requestData(language);

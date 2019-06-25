@@ -567,6 +567,9 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 
 function displayCrownsBreakdown()
 {
+	if (Object.entries(userData).length == 0)
+		return false;
+
 	/*
 		Side bar HTML structure:
 		<div class="_2_lzu">							<-- Side bar container div
@@ -817,6 +820,9 @@ function displayCrownsBreakdown()
 
 function displayXPBreakdown()
 {
+	if (Object.entries(userData).length == 0)
+		return false;
+	
 	var data =
 		{
 			'language_string':	userData['language_data'][languageCode]['language_string'],

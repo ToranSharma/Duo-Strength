@@ -3,6 +3,7 @@ RED = "rgb(244, 78, 81)"; // "rgb(219, 62, 65)";  old red colour
 var languageCode = "";
 var language = "";
 var languageChanged = false;
+let languageChangesPending = 0;
 var languageLogo;
 
 
@@ -23,6 +24,7 @@ function resetLanguageFlags()
 	// reset to be called after finished successfully displaying everything.
 	// need to be ready for a change so we reset them back to false.
 	languageChanged = false;
+	languageChangesPending = 0;
 }
 
 function removeStrengthBars()
@@ -326,7 +328,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		Data comes formatted as such:
 		{
 			'language_data': {
-				'es': {
+				'es': { // languageCode
 					...
 					skills			: [...],
 					bonus_skills	: [...],
@@ -334,7 +336,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 				}
 			}
 		}
-		each skill in either skills or bonus_skills has a number or properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
+		each skill in either skills or bonus_skills has a number of properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
 	
 	var strengths = [[],[]];	// will hold  arry of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
@@ -414,115 +416,151 @@ function httpGetAsync(url, responseHandler)
 	// We then send it off for processing and remove the inserted elements from the body.
 
 
-	code = 
-		`var xmlHttp = new XMLHttpRequest();
-		xmlHttp.onreadystatechange = function()
+	let code = 
+		`(function ()
 		{
-			if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+			let xmlHttp = new XMLHttpRequest();
+			xmlHttp.onreadystatechange = function()
 			{
-				document.getElementById('userData${requestID}').innerText = "//" + xmlHttp.responseText;		
-			}
-		};
-		xmlHttp.open('GET', '${url}', true);
-		xmlHttp.send(null);`;
+				if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+				{
+					document.getElementById('userData${requestID}').innerText = "//" + xmlHttp.responseText;		
+				}
+			};
+			xmlHttp.open('GET', '${url+'?id='+requestID}', true);
+			xmlHttp.send(null);
+		})()`;
 
 
-	data = document.createElement('script');
+	let data = document.createElement('script');
 	data.id = 'userData' + requestID;
 	document.body.appendChild(data);
 
-	xhrScript = document.createElement("script");
+	let xhrScript = document.createElement("script");
 	xhrScript.id = 'xhrScript' + requestID;
 	xhrScript.innerHTML = code;
 	document.body.append(xhrScript);
 
 	function checkData(id)
 	{
-		if (data.innerHTML == '')
+		let dataElem = document.getElementById('userData' + id);
+		if (dataElem.innerHTML == '')
 		{
 			setTimeout(()=>checkData(id), 50);
 		}
 		else
 		{
-			responseHandler(data.innerHTML.slice(2));
-			document.body.removeChild(document.getElementById('userData' + id));
+			let newData  = dataElem.innerHTML.slice(2)
+			document.body.removeChild(dataElem);
 			document.body.removeChild(document.getElementById('xhrScript' + id));
+			responseHandler(newData, id);
 		}
 	}
-	checkData(requestID);
-	requestID ++;
+
+	checkData(requestID ++);
 }
 
-function handleDataResponse(responseText, languageOnCall)
+function handleDataResponse(responseText)
 {
 	userData = JSON.parse(responseText); // store response text as JSON object.
 	var newDataLanguageCode = Object.keys(userData['language_data'])[0];
-	var newDataLanguageString = userData['language_data'][Object.keys(userData['language_data'])[0]]['language_string'];
-	if (languageChanged && newDataLanguageString != language)
+	var newDataLanguageString = userData['language_data'][newDataLanguageCode]['language_string'];
+
+	if (language == '')
+	{
+		// no lanuage set , then this must be the first load and we need to set the lanuage now.
+		language = newDataLanguageString;
+	}
+	if (languageChangesPending > 1)
+	{
+		// Multiple language changes happened, we may have eneded up back where we started...
+		// In this case, we set the language to unknown and request the data once more.
+		// This next set of data will be processed and added to the tree.
+		// There is a chance that this data still won't be up to date but the chances are low, hopefully...
+		language = 'unknown';
+		requestData(); // async
+		languageChangesPending = 1;
+		return false;
+
+	}
+	if (languageChanged && newDataLanguageString == language)
 	{
 		// language change has happened but the data isn't up to date yet as it is not matching the current active language
 		// so request the data, but only if still on the main page. Safe to not wait as the httpRequest will take some time.
 		if (onMainPage)
 		{
-			requestData(languageOnCall);
+			requestData();
 		}
+		return false;
 	}
 	else
 	{
 		languageCode = newDataLanguageCode;
+		language = newDataLanguageString;
 		resetLanguageFlags();
 		getStrengths();	// actual processing of the data.
 	}
 }
 
-function requestData(languageOnCall) // requests data for actively logged in user.
+function requestData() // requests data for actively logged in user.
 {
-	if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
+	return new Promise(function (resolve, reject)
 	{
-		// If there is already userData and not changing language, display current data while requesting new data.
-		getStrengths(userData);
-	}
-	if (!oldUI)
-	{
-		httpGetAsync(
-			encodeURI(window.location.origin+"/users/"+username),
-			function (responseText)
-			{
-				if (languageOnCall != language)
-				{
-					// current language at time of response is not the language anymore
-					return false;
-				}
-				else
-				{
-					handleDataResponse(responseText, languageOnCall);
-				}
-			}
-		); // asks for data and async calls handle function when ready.
-	}
-	else
-	{
-		// using old UI requestData method
-		if(document.getElementsByClassName("_2R9gT").length != 0) // Check if there is a username element
+		if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
 		{
-			username = document.getElementsByClassName("_2R9gT")[0].innerHTML;
+			// If there is already userData and not changing language, display current data while requesting new data.
+			getStrengths(userData);
+		}
+		if (!oldUI)
+		{
 			httpGetAsync(
 				encodeURI(window.location.origin+"/users/"+username),
-				function (responseText)
+				function (responseText, responseID)
 				{
-					if (languageOnCall != language)
+					if (languageChangesPending > 1 && responseID != requestID - 1)
 					{
-						// current language at time of response is not the language anymore
-						return false;
+						// More than one changes took place before we could handle the data.
+						// Ordering of responses is not always the same as the ordering of the request,
+						// so we check that the id of the response is to that of the most recent request we have made.
+						// We will clean up the languageChangesPending when we have sucessfully processed a request.
+						resolve();
 					}
 					else
 					{
-						handleDataResponse(responseText, languageOnCall);
+						handleDataResponse(responseText);
+						resolve();
 					}
 				}
 			); // asks for data and async calls handle function when ready.
 		}
-	}
+		else
+		{
+			// using old UI requestData method
+			if(document.getElementsByClassName("_2R9gT").length != 0) // Check if there is a username element
+			{
+				username = document.getElementsByClassName("_2R9gT")[0].innerHTML;
+				httpGetAsync(
+					encodeURI(window.location.origin+"/users/"+username),
+					function (responseText)
+					{
+						if (languageChangesPending > 2)
+						{
+							// More than one changes took place before we could handle the data.
+							// Assuming that the ordering of the request responses are the same as the order of the requests
+							// So we are ignoring all but the last request.
+							languageChangesPending--;
+							reject();
+						}
+						else
+						{
+							handleDataResponse(responseText);
+							resolve();
+						}
+					}
+				); // asks for data and async calls handle function when ready.
+			}
+		}
+	});
 }
 
 function checkUIVersion(){
@@ -621,35 +659,19 @@ var classNameMutationHandle = function(mutationsList, observer)
 			{
 				// it was a language change
 				languageChanged = true;
-
+				languageChangesPending++;
 				// As the language has just changed, need to wipe the slate clean so no old data is shown after change.
 				removeStrengthBars();
 				removeNeedsStrengtheningBox();
 
-				function checkCurrentLanguage()
-				{
-					var currentLanguage = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3];
-					if (language == currentLanguage)
-					{
-						// page title hasn't updated yet, we need the new language name so lets try this thing again in a bit
-						setTimeout(checkCurrentLanguage, 100);
-					}
-					else
-					{
-						// page title has changed to reflect new language
-						language = currentLanguage;
-
-						// now get the new data
-						checkUIVersion(); // Just in case.
-						requestData(language);
-					}
-				}
-				checkCurrentLanguage();
+				// now get the new data
+				checkUIVersion(); // Just in case.
+				requestData();
 			}
 			else
 			{
 				// it wasn't a language change
-				languageChanged = false;
+				// Just in case there is also a language change going on we won't set languageChanged to false.
 
 				// check if we are now on the main page
 				if (topBarDiv.childNodes[0].className.includes("_2lkuX"))
@@ -689,6 +711,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 					{
 						// language has just changed so set flag to true
 						languageChanged = true;
+						languageChangesPending++;
 						language = topBarLanguage;
 						// as the language has just changed, need to wipe the slate clean so no old data is shown after change.
 						removeStrengthBars();
@@ -699,7 +722,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 						languageChanged = false;
 					}
 					checkUIVersion(); // here for case of switching language with different UI versions
-					requestData(language); // call on attribute change
+					requestData(); // call on attribute change
 				} else
 				{
 					//language had not been previously set so first time on homepage
@@ -796,13 +819,23 @@ function init()
 					// need to set up Observer on language logo for language change detection
 					// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
 					classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+
+					/*
 					language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
+					
+					language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
+					We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
+					
+
+					Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
+					*/
+
 
 					// need to set the username, get this by getting the href of the view more link in the achievements box the anchor element has X8N_G as its identifying class
 					username = document.getElementsByClassName("X8N_G")[0].href.split("/")[3];
 
 					checkUIVersion();
-					requestData(language);
+					requestData();
 				}
 				else
 				{
@@ -842,7 +875,7 @@ function init()
 						classNameObserver.observe(languageLogo,{attributes: true});
 					}
 					language = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
-					requestData(language);
+					requestData();
 				}
 				else if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length != 0) // if we are on the words page
 				{

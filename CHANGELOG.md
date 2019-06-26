@@ -55,6 +55,17 @@ by default, 10 skills.
 make more clear the progress that can be made for that skill.
 - These backgrounds can be toggled on the options page.
 
+[v1.0.21] - 2019-06-26
+----------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.21)
+### Changed
+- Fixed language changing issue as described in 
+[issue #14](https://github.com/ToranSharma/Duo-Strength/issues/14).
+- `language` is now set using the requested data rather than from the page itself.
+- The number of active requests is now kept track of to help handle multiple 
+language changes done in quick succession.
+- Fixed handling of language change from pages other than the main page.
+
 [v1.0.20] - 2019-06-20
 ----------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.20)
@@ -294,6 +305,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.0.20]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.20...v1.0.21
 [v1.0.20]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.19...v1.0.20
 [v1.0.19]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.18...v1.0.19
 [v1.0.18]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.17...v1.0.18

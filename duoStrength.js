@@ -671,7 +671,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 			else
 			{
 				// it wasn't a language change
-				languageChanged = false;
+				// Just in case there is also a language change going on we won't set languageChanged to false.
 
 				// check if we are now on the main page
 				if (topBarDiv.childNodes[0].className.includes("_2lkuX"))

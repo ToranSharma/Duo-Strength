@@ -930,7 +930,8 @@ function displayCrownsBreakdown()
 								+	"<span style='font-weight: bold'>"
 								+	numDays
 								+	"</span>"
-								+	" days";
+								+	" days, on "
+								+	new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
 			if (oldUI)
 			{
 				prediction.style = "margin: 1em 0 0 0;";
@@ -1061,7 +1062,8 @@ function displayXPBreakdown()
 													+	"<span style='font-weight:bold'>"
 													+	daysLeft
 													+	"</span>"
-													+	" days";
+													+	" days, on "
+													+	new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString();
 			
 			if (daysLeft != -1 && options.XPPrediction)
 			{

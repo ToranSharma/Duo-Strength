@@ -9,6 +9,7 @@ let languageChangesPending = 0;
 var languageLogo;
 
 var options = Object();
+var progress = Array();
 var username = "";
 var userData = Object();
 var oldUI = false;
@@ -23,32 +24,110 @@ var onMainPage;
 
 function retrieveOptions()
 {
-	chrome.storage.sync.get("options", function (data)
+	return new Promise(function (resolve, reject)
 	{
-		if (Object.entries(data).length === 0)
+		chrome.storage.sync.get("options", function (data)
 		{
-			// First time using version with options so nothing is set in storage.
-			options = 
+			if (Object.entries(data).length === 0)
 			{
-				"strengthBars":					true,
-				"strengthBarBackgrounds":		true, 
-				"needsStrengtheningList":		true,
-				"needsStrengtheningListLength":	"10",
-				"skillSuggestion":				true,
-				"crownsInfo":					true,
-				"crownsMaximum":				true,
-				"crownsBreakdown":				true,
-				"crownsPrediction":				true,
-				"XPInfo":						true,
-				"XPBreakdown":					true,
-				"XPPrediction":					true
-			};
-			chrome.storage.sync.set({"options": options});
+				// First time using version with options so nothing is set in storage.
+				options =
+				{
+					"strengthBars":					true,
+					"strengthBarBackgrounds":		true, 
+					"needsStrengtheningList":		true,
+					"needsStrengtheningListLength":	"10",
+					"skillSuggestion":				true,
+					"crownsInfo":					true,
+					"crownsMaximum":				true,
+					"crownsBreakdown":				true,
+					"crownsPrediction":				true,
+					"XPInfo":						true,
+					"XPBreakdown":					true,
+					"XPPrediction":					true
+				};
+				chrome.storage.sync.set({"options": options});
+			}
+			else
+				options = data.options;
+			resolve();
+		});
+	});
+}
+
+function retrieveProgressHistory()
+{
+	return new Promise(function (resolve,reject)
+	{
+		chrome.storage.sync.get("progress", function (data)
+		{
+			if (Object.entries(data).length === 0)
+			{
+				// First time using version with progress so nothing is set in storage.
+				progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
+				data[username+languageCode] = progress;
+
+				chrome.storage.sync.set({"progress": data});
+			}
+			else if (!data.progress.hasOwnProperty(username + languageCode))
+			{
+				// First time for this user + language combination.
+
+				progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
+
+				data.progress[username+languageCode] = progress;
+				chrome.storage.sync.set({"progress": data.progress});
+			}
+			else
+			{
+				// We have some progress data saved.
+				progress = data.progress[username+languageCode];
+			}
+			resolve();
+		});
+	});
+}
+
+function storeProgressHistory()
+{
+	return new Promise(function (resolve, reject)
+	{
+		chrome.storage.sync.get("progress", function (data)
+		{
+			data.progress[username+languageCode] = progress
+			chrome.storage.sync.set({"progress": data.progress});
+			resolve();
+		});
+	});
+}
+
+function updateProgress()
+{
+	let entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()]
+
+	if (progress[progress.length-1][0] == entry[0])
+	{
+		// Already have an entry for today.
+		// Check if we went up a crown level last time.
+		if (progress[progress.length-1][1] != progress[progress.length-2][1])
+		{
+			// The last stored entry was the first at the crown level, so lets not overwrite it
+			progress.push(entry)
 		}
 		else
+		{
+			// No it was just a normal entry, lets overwrite it with this update.
+			progress[progress.length-1] = entry;
+		}
 
-			options = data.options;
-	});
+	}
+	else
+	{
+		// First one for today, so store it
+		progress.push(entry);
+	}
+
+	storeProgressHistory();
 }
 
 function resetLanguageFlags()
@@ -111,6 +190,29 @@ function removeSuggestion()
 	}
 }
 
+function hasMetGoal()
+{
+	return userData['streak_extended_today'];
+}
+
+function currentProgress()
+{
+	var skills = userData['language_data'][languageCode]['skills'];
+	var treeLevel = crownTreeLevel();
+	var lessonsToNextCrownLevel = 0;
+	for (skill of skills)
+	{
+		if (skill['locked']) continue;
+		
+		if (skill['skill_progress']['level'] == treeLevel)
+		{
+			lessonsToNextCrownLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
+		}
+	}
+
+	return lessonsToNextCrownLevel;
+}
+
 function crownTreeLevel()
 {
 	var skills = userData['language_data'][languageCode]['skills'];
@@ -167,6 +269,52 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 }
 
 function daysToNextCrownLevel()
+{
+	endIndex = progress.length - 1;
+	lastDate = progress[endIndex][0];
+	today = (new Date()).setHours(0,0,0,0);
+	
+	while (!hasMetGoal() && lastDate == today)
+	{
+		lastDate = progress[--endIndex][0];
+	}
+
+	numPointsToUse = 7;
+	startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
+	firstDate = progress[startIndex][0];
+	
+	level = progress[startIndex][1];
+	lastProgress = progress[startIndex][2];
+	progressMade = 0;
+
+	for (point of progress.slice(startIndex + 1, endIndex + 1))
+	{
+		if (point[1] != level)
+		{
+			// this point is from another level
+			progressMade += lastProgress;
+			lastProgress = point[2];
+			level = point[1];
+		}
+		else
+		{
+			// point from the same level so look at the change in progress
+			progressMade += lastProgress - point[2];
+			lastProgress = point[2];
+		}
+	}
+
+	timePeriod = lastDate-firstDate; // in milliseconds
+	timePeriod /= 1000*60*60*24; // in days
+	progressRate = progressMade / timePeriod; // in lessons per day
+
+	if (progressRate != 0)
+		return Math.ceil(lastProgress / progressRate); // in days
+	else
+		return -1;
+}
+
+function daysToNextCrownLevelByCalendar()
 {
 	var skills = userData['language_data'][languageCode]['skills'];
 	var treeLevel = crownTreeLevel();
@@ -476,7 +624,6 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 									+	needsStrengthening[1][bonusSkillIndex]['title']
 									+	"</a>, ";
 		}
-		
 	}
 	strengthenBox.innerHTML = strengthenBox.innerHTML.substring(0, strengthenBox.innerHTML.length - 2);
 	strengthenBox.innerHTML +=	(function ()
@@ -771,7 +918,10 @@ function displayCrownsBreakdown()
 		if (treeLevel != 5)
 		{
 			var prediction = document.createElement("p");
-			numDays = daysToNextCrownLevel();
+			if (progress.length > 5)
+				numDays = daysToNextCrownLevel();
+			else
+				numDays = daysToNextCrownLevelByCalendar();
 
 			if (numDays == -1)
 			{
@@ -785,7 +935,8 @@ function displayCrownsBreakdown()
 								+	"<span style='font-weight: bold'>"
 								+	numDays
 								+	"</span>"
-								+	" days";
+								+	" days, on "
+								+	new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
 			if (oldUI)
 			{
 				prediction.style = "margin: 1em 0 0 0;";
@@ -919,7 +1070,8 @@ function displayXPBreakdown()
 													+	"<span style='font-weight:bold'>"
 													+	daysLeft
 													+	"</span>"
-													+	" days";
+													+	" days, on "
+													+	new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString();
 			
 			if (daysLeft != -1 && options.XPPrediction)
 			{
@@ -1247,7 +1399,7 @@ function httpGetAsync(url, responseHandler)
 	checkData(requestID ++);
 }
 
-function handleDataResponse(responseText)
+async function handleDataResponse(responseText)
 {
 	userData = JSON.parse(responseText); // store response text as JSON object.
 	var newDataLanguageCode = Object.keys(userData['language_data'])[0];
@@ -1285,6 +1437,9 @@ function handleDataResponse(responseText)
 		languageCode = newDataLanguageCode;
 		language = newDataLanguageString;
 		resetLanguageFlags();
+		await retrieveProgressHistory();
+		updateProgress();
+
 		getStrengths();	// actual processing of the data.
 	}
 }
@@ -1568,9 +1723,9 @@ var classNameMutationHandle = function(mutationsList, observer)
 var classNameObserver = new MutationObserver(classNameMutationHandle);
 var childListObserver = new MutationObserver(childListMutationHandle);
 
-function init()
+async function init()
 {
-	retrieveOptions();
+	let optionsLoaded = retrieveOptions();
 
 	rootElem = document.getElementById("root"); // When logging in child list is changed.
 	dataReactRoot = rootElem.childNodes[0]; // When entering or leaving a lesson children change there is a new body so need to detect that to know when to reload the bars.
@@ -1587,6 +1742,7 @@ function init()
 	else
 	{
 		// should be logged in
+
 		//var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
 		var mainBodyElemIn4th =  dataReactRoot.childNodes[3].nodeType != 8 && dataReactRoot.childNodes[3].classList.contains("_3MLiB");
 		// Main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
@@ -1599,6 +1755,9 @@ function init()
 			if (!oldUI)
 			{
 				// Using new white topBar layout
+
+				// set username via the href of a link to the profile
+				username = document.querySelector("[data-test = \"profile-tab\"]").href.split("/")[3];
 
 				// topBar Div is the direct container holding the navigation butons, has class _3F_8q
 				// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];
@@ -1669,10 +1828,9 @@ function init()
 					*/
 
 
-					// need to set the username, get this by getting the href of the view more link in the achievements box the anchor element has X8N_G as its identifying class
-					username = document.getElementsByClassName("X8N_G")[0].href.split("/")[3];
-
 					checkUIVersion();
+
+					await optionsLoaded;
 					requestData();
 				}
 				else

@@ -23,69 +23,110 @@ var onMainPage;
 
 function retrieveOptions()
 {
-	chrome.storage.sync.get("options", function (data)
+	return new Promise(function (resolve, reject)
 	{
-		if (Object.entries(data).length === 0)
+		chrome.storage.sync.get("options", function (data)
 		{
-			// First time using version with options so nothing is set in storage.
-			options =
+			if (Object.entries(data).length === 0)
 			{
-				"strengthBars":					true,
-				"strengthBarBackgrounds":		true, 
-				"needsStrengtheningList":		true,
-				"needsStrengtheningListLength":	"10",
-				"skillSuggestion":				true,
-				"crownsInfo":					true,
-				"crownsMaximum":				true,
-				"crownsBreakdown":				true,
-				"crownsPrediction":				true,
-				"XPInfo":						true,
-				"XPBreakdown":					true,
-				"XPPrediction":					true
-			};
-			chrome.storage.sync.set({"options": options});
-		}
-		else
-			options = data.options;
+				// First time using version with options so nothing is set in storage.
+				options =
+				{
+					"strengthBars":					true,
+					"strengthBarBackgrounds":		true, 
+					"needsStrengtheningList":		true,
+					"needsStrengtheningListLength":	"10",
+					"skillSuggestion":				true,
+					"crownsInfo":					true,
+					"crownsMaximum":				true,
+					"crownsBreakdown":				true,
+					"crownsPrediction":				true,
+					"XPInfo":						true,
+					"XPBreakdown":					true,
+					"XPPrediction":					true
+				};
+				chrome.storage.sync.set({"options": options});
+			}
+			else
+				options = data.options;
+			resolve();
+		});
 	});
 }
 
 function retrieveProgressHistory()
 {
-	chrome.storage.sync.get("progress", function (data)
+	return new Promise(function (resolve,reject)
 	{
-		if (Object.entries(data).length === 0)
+		chrome.storage.sync.get("progress", function (data)
 		{
-			// First time using version with progress so nothing is set in storage.
-			progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
-			data[username+languageCode] = progress;
+			if (Object.entries(data).length === 0)
+			{
+				// First time using version with progress so nothing is set in storage.
+				progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
+				data[username+languageCode] = progress;
 
-			chrome.storage.sync.set({"progress": data});
-		}
-		else if (!data.progress.hasOwnProperty(username + languageCode))
-		{
-			// First time for this user + language combination.
+				chrome.storage.sync.set({"progress": data});
+			}
+			else if (!data.progress.hasOwnProperty(username + languageCode))
+			{
+				// First time for this user + language combination.
 
-			progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
+				progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
 
-			data.progress[username+languageCode] = progress;
-			chrome.storage.sync.set({"progress": data.progress});
-		}
-		else
-		{
-			// We have some progress data saved.
-			progress = data.progress[username+languageCode];
-		}
+				data.progress[username+languageCode] = progress;
+				chrome.storage.sync.set({"progress": data.progress});
+			}
+			else
+			{
+				// We have some progress data saved.
+				progress = data.progress[username+languageCode];
+			}
+			resolve();
+		});
 	});
 }
 
 function storeProgressHistory()
 {
-	chrome.storage.sync.get("progress", function (data)
+	return new Promise(function (resolve, reject)
 	{
-		data.progress[username+languageCode] = progress
-		chrome.storage.sync.set({"progress": data.progress});
+		chrome.storage.sync.get("progress", function (data)
+		{
+			data.progress[username+languageCode] = progress
+			chrome.storage.sync.set({"progress": data.progress});
+			resolve();
+		});
 	});
+}
+
+function updateProgress()
+{
+	let entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()]
+
+	if (progress[progress.length-1][0] == entry[0])
+	{
+		// Already have an entry for today.
+		// Check if we went up a crown level last time.
+		if (progress[progress.length-1][1] != progress[progress.length-2][1])
+		{
+			// The last stored entry was the first at the crown level, so lets not overwrite it
+			progress.push(entry)
+		}
+		else
+		{
+			// No it was just a normal entry, lets overwrite it with this update.
+			progress[progress.length-1] = entry;
+		}
+
+	}
+	else
+	{
+		// First one for today, so store it
+		progress.push(entry);
+	}
+
+	storeProgressHistory();
 }
 
 function resetLanguageFlags()
@@ -147,6 +188,11 @@ function removeSuggestion()
 	}
 }
 
+function hasMetGoal()
+{
+	return userData['streak_extended_today'];
+}
+
 function currentProgress()
 {
 	var skills = userData['language_data'][languageCode]['skills'];
@@ -163,35 +209,6 @@ function currentProgress()
 	}
 
 	return lessonsToNextCrownLevel;
-}
-
-function updateProgress()
-{
-	entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()]
-
-	if (progress[progress.length-1][0] == entry[0])
-	{
-		// Already have an entry for today.
-		// Check if we went up a crown level last time.
-		if (progress[progress.length-1][1] != progress[progress.length-2][1])
-		{
-			// The last stored entry was the first at the crown level, so lets not overwrite it
-			progress.push(entry)
-		}
-		else
-		{
-			// No it was just a normal entry, lets overwrite it with this update.
-			progress[progress.length-1] = entry;
-		}
-
-	}
-	else
-	{
-		// First one for today, so store it
-		progress.push(entry);
-	}
-
-	storeProgressHistory();
 }
 
 function crownTreeLevel()
@@ -251,18 +268,24 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 
 function daysToNextCrownLevel()
 {
-	// Update the entry for today
-	// progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
-	// updateProgressHistory();
+	endIndex = progress.length - 1;
+	lastDate = progress[endIndex][0];
+	today = (new Date()).setHours(0,0,0,0);
+	
+	while (!hasMetGoal() && lastDate == today)
+	{
+		lastDate = progress[--endIndex][0];
+	}
 
-	numPointsToUse = Math.min(7,progress.length);
-	pointsUsed = 0;
+	numPointsToUse = 7;
+	startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
+	firstDate = progress[startIndex][0];
+	
+	level = progress[startIndex][1];
+	lastProgress = progress[startIndex][2];
 	progressMade = 0;
-	firstDate = progress[progress.length-numPointsToUse][0];
-	level = progress[progress.length-numPointsToUse][1];
-	lastProgress = progress[progress.length-numPointsToUse][2];
 
-	for (point of progress.slice(1-numPointsToUse))
+	for (point of progress.slice(startIndex + 1, endIndex + 1))
 	{
 		if (point[1] != level)
 		{
@@ -278,10 +301,9 @@ function daysToNextCrownLevel()
 			lastProgress = point[2];
 		}
 	}
-	lastDate = progress[progress.length-1][0];
 
 	timePeriod = lastDate-firstDate; // in milliseconds
-	timePeriod /= 1000*60*60*24 // in days
+	timePeriod /= 1000*60*60*24; // in days
 	progressRate = progressMade / timePeriod; // in lessons per day
 
 	if (progressRate != 0)
@@ -600,7 +622,6 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 									+	needsStrengthening[1][bonusSkillIndex]['title']
 									+	"</a>, ";
 		}
-		
 	}
 	strengthenBox.innerHTML = strengthenBox.innerHTML.substring(0, strengthenBox.innerHTML.length - 2);
 	strengthenBox.innerHTML +=	(function ()
@@ -1363,7 +1384,7 @@ function httpGetAsync(url, responseHandler)
 	requestID ++;
 }
 
-function handleDataResponse(responseText, languageOnCall)
+async function handleDataResponse(responseText, languageOnCall)
 {
 	userData = JSON.parse(responseText); // store response text as JSON object.
 	var newDataLanguageCode = Object.keys(userData['language_data'])[0];
@@ -1381,6 +1402,9 @@ function handleDataResponse(responseText, languageOnCall)
 	{
 		languageCode = newDataLanguageCode;
 		resetLanguageFlags();
+		await retrieveProgressHistory();
+		updateProgress();
+
 		getStrengths();	// actual processing of the data.
 	}
 }
@@ -1668,9 +1692,9 @@ var classNameMutationHandle = function(mutationsList, observer)
 var classNameObserver = new MutationObserver(classNameMutationHandle);
 var childListObserver = new MutationObserver(childListMutationHandle);
 
-function init()
+async function init()
 {
-	retrieveOptions();
+	let optionsLoaded = retrieveOptions();
 
 	rootElem = document.getElementById("root"); // When logging in child list is changed.
 	dataReactRoot = rootElem.childNodes[0]; // When entering or leaving a lesson children change there is a new body so need to detect that to know when to reload the bars.
@@ -1764,6 +1788,7 @@ function init()
 					language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
 
 					checkUIVersion();
+					await optionsLoaded;
 					requestData(language);
 				}
 				else

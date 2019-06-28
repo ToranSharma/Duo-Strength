@@ -1214,6 +1214,20 @@ function displaySuggestion(skills, bonusSkills)
 		var link = document.createElement("a");
 		link.href = "/skill/" + languageCode + "/" + randomSuggestion['url_title'] + ((treeLevel == 5) ? "/practice/" : "/");
 		link.innerText = randomSuggestion['title'];
+		link.style.color = 'blue';
+		link.addEventListener('focus',
+			function(event)
+			{
+				event.target.style.fontWeight = 'bold';
+				event.target.style.textDecoration = 'underline';
+			});
+
+		link.addEventListener('blur',
+			function(event)
+			{
+				event.target.style.fontWeight = 'normal';
+				event.target.style.textDecoration = 'none';
+			});
 		
 		var fullStrengthMessage = document.createElement("p");
 		if (treeLevel == 5)
@@ -1231,7 +1245,7 @@ function displaySuggestion(skills, bonusSkills)
 		}
 		else
 		{
-			fullStrengthMessage.innerText = "Your " + randomSuggestion['language_string'] + " tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level " + (treeLevel + 1) + ": ";	
+			fullStrengthMessage.innerText = "Your " + language + " tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level " + (treeLevel + 1) + ": ";	
 			fullStrengthMessage.appendChild(link);
 		}
 

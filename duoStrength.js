@@ -95,7 +95,11 @@ function updateProgress()
 {
 	let entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()]
 
-	if (progress.length != 0 && progress[progress.length-1][0] == entry[0])
+	if (progress.length == 0)
+	{
+		progress.push(entry);
+	}
+	else if (progress[progress.length-1][0] == entry[0])
 	{
 		// Already have an entry for today.
 		// If there is a entry before that, check if we went up a crown level then.
@@ -113,11 +117,24 @@ function updateProgress()
 	}
 	else
 	{
-		// First entry, or first for today, so store it.
-		progress.push(entry);
+		// First entry for today.
+		// Check if any progress has been made since we last stored a entry.
+
+		if (entry[1] != progress[progress.length-1][1] || entry[2] != progress[progress.length-1][2])
+		{
+			// This entry's progress or crown data is different so some progress has been made,
+			// Let's save it.
+			progress.push(entry);
+		} 
+		else
+		{
+			// No change since the laste entry so we will no save it.
+			return false;
+		}
 	}
 
 	storeProgressHistory();
+	return true;
 }
 
 function resetLanguageFlags()

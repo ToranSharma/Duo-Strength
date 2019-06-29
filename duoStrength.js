@@ -61,22 +61,10 @@ function retrieveProgressHistory()
 	{
 		chrome.storage.sync.get("progress", function (data)
 		{
-			if (Object.entries(data).length === 0)
+			if (Object.entries(data).length === 0 || !data.progress.hasOwnProperty(username + languageCode))
 			{
-				// First time using version with progress so nothing is set in storage.
-				progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
-				data[username+languageCode] = progress;
-
-				chrome.storage.sync.set({"progress": data});
-			}
-			else if (!data.progress.hasOwnProperty(username + languageCode))
-			{
-				// First time for this user + language combination.
-
-				progress.push([(new Date()).setHours(0,0,0,0), crownTreeLevel(),currentProgress()]);
-
-				data.progress[username+languageCode] = progress;
-				chrome.storage.sync.set({"progress": data.progress});
+				// No progress data or none for this user+lang combination
+				updateProgress();
 			}
 			else
 			{
@@ -94,7 +82,9 @@ function storeProgressHistory()
 	{
 		chrome.storage.sync.get("progress", function (data)
 		{
-			data.progress[username+languageCode] = progress
+			if (Object.entries(data).length === 0)
+				data['progress'] = {};
+			data.progress[username+languageCode] = progress;
 			chrome.storage.sync.set({"progress": data.progress});
 			resolve();
 		});
@@ -105,11 +95,11 @@ function updateProgress()
 {
 	let entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()]
 
-	if (progress[progress.length-1][0] == entry[0])
+	if (progress.length != 0 && progress[progress.length-1][0] == entry[0])
 	{
 		// Already have an entry for today.
-		// Check if we went up a crown level last time.
-		if (progress[progress.length-1][1] != progress[progress.length-2][1])
+		// If there is a entry before that, check if we went up a crown level then.
+		if (progress.length > 1 && progress[progress.length-1][1] != progress[progress.length-2][1])
 		{
 			// The last stored entry was the first at the crown level, so lets not overwrite it
 			progress.push(entry)
@@ -123,7 +113,7 @@ function updateProgress()
 	}
 	else
 	{
-		// First one for today, so store it
+		// First entry, or first for today, so store it.
 		progress.push(entry);
 	}
 

@@ -1,26 +1,26 @@
-GOLD = "rgb(250, 217, 29)"; // "rgb(248, 176, 45)" old gold colour
-RED = "rgb(244, 78, 81)"; // "rgb(219, 62, 65)";  old red colour
-ORANGE = "rgb(255, 150, 0)";
-GREY = "rgb(229, 229, 229)";
-var languageCode = "";
-var language = "";
-var languageChanged = false;
+let GOLD = "rgb(250, 217, 29)"; // "rgb(248, 176, 45)" old gold colour
+let RED = "rgb(244, 78, 81)"; // "rgb(219, 62, 65)";  old red colour
+let ORANGE = "rgb(255, 150, 0)";
+let GREY = "rgb(229, 229, 229)";
+let languageCode = "";
+let language = "";
+let languageChanged = false;
 let languageChangesPending = 0;
-var languageLogo;
+let languageLogo;
 
-var options = Object();
-var progress = Array();
-var username = "";
-var userData = Object();
-var oldUI = false;
-var requestID = 0;
+let options = Object();
+let progress = Array();
+let username = "";
+let userData = Object();
+let oldUI = false;
+let requestID = 0;
 
-var rootElem;
-var dataReactRoot;
-var topBarDiv;
-var topBarMobilePractice;
+let rootElem;
+let dataReactRoot;
+let topBarDiv;
+let topBarMobilePractice;
 
-var onMainPage;
+let onMainPage;
 
 function retrieveOptions()
 {
@@ -147,8 +147,8 @@ function resetLanguageFlags()
 
 function removeStrengthBars()
 {
-	var bars = document.getElementsByClassName("strengthBarHolder");
-	for (var bar of bars)
+	let bars = document.getElementsByClassName("strengthBarHolder");
+	for (let bar of bars)
 	{
 		bar.parentNode.removeChild(bar);
 	}
@@ -156,7 +156,7 @@ function removeStrengthBars()
 
 function removeNeedsStrengtheningBox()
 {
-	var strengthenBox = document.getElementById("strengthenBox");
+	let strengthenBox = document.getElementById("strengthenBox");
 	if(strengthenBox != null) // could be null if changed from old to new UI and the topOfTree div gets removed.
 	{
 		strengthenBox.parentNode.removeChild(strengthenBox);
@@ -165,23 +165,23 @@ function removeNeedsStrengtheningBox()
 
 function removeCrownsBreakdown()
 {
-	var maxCrowns = document.getElementById("maxCrowns");
+	let maxCrowns = document.getElementById("maxCrowns");
 	if(maxCrowns != null) // is null after some language changes.
 	{
 		maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
 		maxCrowns.parentNode.removeChild(maxCrowns);
 	}
 
-	var crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
+	let crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
 	if (crownLevelBreakdownContainer != null) crownLevelBreakdownContainer.parentNode.removeChild(crownLevelBreakdownContainer);
 
-	var treeCrownLevelPrediction = document.getElementById("treeCrownLevelPrediction");
+	let treeCrownLevelPrediction = document.getElementById("treeCrownLevelPrediction");
 	if (treeCrownLevelPrediction != null) treeCrownLevelPrediction.parentNode.removeChild(treeCrownLevelPrediction);
 }
 
 function removeXPBox()
 {
-	var xpBox = document.getElementById("XPBox");
+	let xpBox = document.getElementById("XPBox");
 	if (xpBox != null)
 	{
 		xpBox.parentNode.removeChild(xpBox);	
@@ -190,7 +190,7 @@ function removeXPBox()
 
 function removeSuggestion()
 {
-	var suggestionContainer = document.getElementById("fullStrengthMessageContainer");
+	let suggestionContainer = document.getElementById("fullStrengthMessageContainer");
 	if (suggestionContainer != null)
 	{
 		suggestionContainer.parentNode.removeChild(suggestionContainer);
@@ -204,10 +204,10 @@ function hasMetGoal()
 
 function currentProgress()
 {
-	var skills = userData['language_data'][languageCode]['skills'];
-	var treeLevel = crownTreeLevel();
-	var lessonsToNextCrownLevel = 0;
-	for (skill of skills)
+	let skills = userData['language_data'][languageCode]['skills'];
+	let treeLevel = crownTreeLevel();
+	let lessonsToNextCrownLevel = 0;
+	for (let skill of skills)
 	{
 		if (skill['locked']) continue;
 		
@@ -222,17 +222,17 @@ function currentProgress()
 
 function crownTreeLevel()
 {
-	var skills = userData['language_data'][languageCode]['skills'];
+	let skills = userData['language_data'][languageCode]['skills'];
 
-	var skillsByCrowns = [[],[],[],[],[],[]];
+	let skillsByCrowns = [[],[],[],[],[],[]];
 
-	for (var skill of skills)
+	for (let skill of skills)
 	{
 		skillsByCrowns[skill['skill_progress']['level']].push(skill);
 	}
 
-	var treeLevel = 0;
-	var i = 0;
+	let treeLevel = 0;
+	let i = 0;
 	while (skillsByCrowns[i].length == 0 && i < 6)
 	{
 		treeLevel++;
@@ -248,18 +248,18 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 	{
 		return -1;
 	}
-	var xpTotal = 0;
-	var numDays;
-	var firstDate = new Date(history[0].datetime);
-	var lastDate;
-	for (var lesson of history)
+	let xpTotal = 0;
+	let numDays;
+	let firstDate = new Date(history[0].datetime);
+	let lastDate;
+	for (let lesson of history)
 	{
 		xpTotal += lesson.improvement;
-		date = new Date(lesson.datetime);
+		let date = new Date(lesson.datetime);
 		lastDate = date;
 	}
 
-	currentDate = new Date(Date.now());
+	let currentDate = new Date(Date.now());
 
 	if ((currentDate-lastDate)/(1000*60*60) > 48)
 	{
@@ -267,9 +267,9 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 		lastDate = currentDate;
 	}
 
-	var timePeriod = lastDate - firstDate;
+	let timePeriod = lastDate - firstDate;
 
-	var xpRate = xpTotal/timePeriod // in units of xp/millisecond
+	let xpRate = xpTotal/timePeriod // in units of xp/millisecond
 	xpRate *= 1000*60*60*24 // now in units of xp/day
 
 	return Math.ceil(xpLeft/xpRate);
@@ -277,24 +277,24 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 
 function daysToNextCrownLevel()
 {
-	endIndex = progress.length - 1;
-	lastDate = progress[endIndex][0];
-	today = (new Date()).setHours(0,0,0,0);
+	let endIndex = progress.length - 1;
+	let lastDate = progress[endIndex][0];
+	let today = (new Date()).setHours(0,0,0,0);
 	
 	while (!hasMetGoal() && lastDate == today)
 	{
 		lastDate = progress[--endIndex][0];
 	}
 
-	numPointsToUse = 7;
-	startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
-	firstDate = progress[startIndex][0];
+	let numPointsToUse = 7;
+	let startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
+	let firstDate = progress[startIndex][0];
 	
-	level = progress[startIndex][1];
-	lastProgress = progress[startIndex][2];
-	progressMade = 0;
+	let level = progress[startIndex][1];
+	let lastProgress = progress[startIndex][2];
+	let progressMade = 0;
 
-	for (point of progress.slice(startIndex + 1, endIndex + 1))
+	for (let point of progress.slice(startIndex + 1, endIndex + 1))
 	{
 		if (point[1] != level)
 		{
@@ -311,9 +311,9 @@ function daysToNextCrownLevel()
 		}
 	}
 
-	timePeriod = lastDate-firstDate; // in milliseconds
+	let timePeriod = lastDate-firstDate; // in milliseconds
 	timePeriod /= 1000*60*60*24; // in days
-	progressRate = progressMade / timePeriod; // in lessons per day
+	let progressRate = progressMade / timePeriod; // in lessons per day
 
 	if (progressRate != 0)
 		return Math.ceil(lastProgress / progressRate); // in days
@@ -323,11 +323,11 @@ function daysToNextCrownLevel()
 
 function daysToNextCrownLevelByCalendar()
 {
-	var skills = userData['language_data'][languageCode]['skills'];
-	var treeLevel = crownTreeLevel();
-	var lessonsToNextCrownLevel = 0;
+	let skills = userData['language_data'][languageCode]['skills'];
+	let treeLevel = crownTreeLevel();
+	let lessonsToNextCrownLevel = 0;
 
-	for (skill of skills)
+	for (let skill of skills)
 	{
 		if (skill['locked']) continue;
 		
@@ -337,34 +337,35 @@ function daysToNextCrownLevelByCalendar()
 		}
 	}
 
-	var calendar = userData['language_data'][languageCode]['calendar'];
-	var practiceTimes = Array();
+	let calendar = userData['language_data'][languageCode]['calendar'];
+	let practiceTimes = Array();
 
-	for (lesson of calendar)
+	for (let lesson of calendar)
 	{	
-		date = new Date(lesson['datetime']);
+		let date = new Date(lesson['datetime']);
 		date.setHours(0,0,0,0);
 		
 		practiceTimes.push(date);
 	}
 
-	var numLessons = practiceTimes.length;
-	var firstDate = practiceTimes[0]; // assuming sorted acending.
-	var lastDate = practiceTimes[numLessons-1];
-	var currentDate = new Date();
+	let numLessons = practiceTimes.length;
+	let firstDate = practiceTimes[0]; // assuming sorted acending.
+	let lastDate = practiceTimes[numLessons-1];
+	let currentDate = new Date();
 
 	if ((currentDate-lastDate)/(1000*60*60) > 48) lastDate = currentDate;
 
 	if (numLessons == 0) return -1;
 
-	var timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // in days
-	var lessonRate = numLessons/timePeriod; // in lessons per day
+	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // in days
+	let lessonRate = numLessons/timePeriod; // in lessons per day
 
 	return Math.ceil(lessonsToNextCrownLevel/lessonRate);
 }
 
-function addStrengths(strengths) // Adds strength bars and percentages under each skill in the tree.
+function addStrengths(strengths)
 {
+	// Adds strength bars and percentages under each skill in the tree.
 	/*
 		The structure of skill tree is as follows:
 		<div class="_2GJb6"> 												<-- container for row of skills, has classes _1H-7I and _1--zr if bonus skill row
@@ -396,8 +397,8 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		</div>
 	*/
 
-	var skillElements = document.getElementsByClassName('Af4up'); // Af4up is class of skill containing element, may change.
-	var skills = Array();
+	let skillElements = document.getElementsByClassName('Af4up'); // Af4up is class of skill containing element, may change.
+	let skills = Array();
 	/*
 		Each element of skills array will be an array with the following information:
 		0:	skill icon element (unused currently).
@@ -405,10 +406,10 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		2:	skill strength between 0 and 1.0.
 		3:	display boolean - false if skill at crown 0, true otherwise.
 	*/
-	var bonusElementsCount = 0;
-	for (var i=0; i<skillElements.length; i++)
+	let bonusElementsCount = 0;
+	for (let i=0; i<skillElements.length; i++)
 	{
-		var elementContents = [
+		let elementContents = [
 		 	skillElements[i].childNodes[0].childNodes[0],
 		 	skillElements[i].childNodes[0].childNodes[1].getElementsByClassName("_33VdW")[0]
 		 ];
@@ -416,7 +417,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		/* old way of finding name element before new containers
 
 		// name is a span element, normally it is the last element but if the skill is clicked then a new div is created with the start lesson button etc below the name plate. So need to find the correct span element.
-		for (var spanElement of Array.from(skillElements[i].childNodes[0].getElementsByTagName('span')))
+		for (let spanElement of Array.from(skillElements[i].childNodes[0].getElementsByTagName('span')))
 		{
 			if (spanElement.parentNode == elementContents[0].parentNode)
 			{
@@ -444,19 +445,19 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		}
 	}
 	
-	var numBarsAdded = 0;
+	let numBarsAdded = 0;
 	
-	for (var i = 0; i< skills.length; i++)
+	for (let i = 0; i< skills.length; i++)
 	{
-		var iconElement = skills[i][0];
-		var nameElement = skills[i][1];
-		var name = nameElement.innerHTML;
-		var strength = skills[i][2]*1.0;
-		var display = (skills[i][3])? "" : "none";
+		let iconElement = skills[i][0];
+		let nameElement = skills[i][1];
+		let name = nameElement.innerHTML;
+		let strength = skills[i][2]*1.0;
+		let display = (skills[i][3])? "" : "none";
 		
 		if(document.getElementsByClassName("strengthBarHolder").length == numBarsAdded) // if we have only the number of bars added this time round, keep adding new ones.
 		{
-			var strengthBarHolder = document.createElement("div");
+			let strengthBarHolder = document.createElement("div");
 			strengthBarHolder.className = "strengthBarHolder";
 			strengthBarHolder.style['width'] = "100%";
 			strengthBarHolder.style['padding'] = "0 5%";
@@ -465,7 +466,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
 
-			var strengthBarBackground = document.createElement("div");
+			let strengthBarBackground = document.createElement("div");
 			strengthBarBackground.className = "strengthBarBackground";
 			strengthBarBackground.style =	"position: absolute;"
 										+	"display: inline-block;"
@@ -476,7 +477,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
         								+	"border-radius: 0.5em;"
         								+	"z-index: 1;";
 
-			var strengthBar = document.createElement("div");
+			let strengthBar = document.createElement("div");
 			strengthBar.className = "strengthBar";
 			strengthBar.id = name + "StrengthBar";
 			strengthBar.style['display'] = "inline-block";
@@ -488,7 +489,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			strengthBar.style['borderRadius'] = "0.5em";
 			strengthBar.style['zIndex'] = "2";
 			
-			var strengthValue = document.createElement("div");
+			let strengthValue = document.createElement("div");
 			strengthValue.className = "strengthValue";
 			strengthValue.id = name + "StrengthValue";
 			strengthValue.style['display'] = "inline-block";
@@ -504,11 +505,11 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			
 		} else // we already have the elements made prerviously, just update their values.
 		{
-			var strengthBar = document.getElementById(name + "StrengthBar");
+			let strengthBar = document.getElementById(name + "StrengthBar");
 			strengthBar.style['width'] = (strength*75)+"%";
 			strengthBar.style['backgroundColor'] = (strength == 1.0 ? GOLD : RED);
 			
-			var strengthValue = document.getElementById(name + "StrengthValue");
+			let strengthValue = document.getElementById(name + "StrengthValue");
 			strengthValue.style['width'] = ((1-strength)*75+25)+"%";
 			strengthValue.innerHTML = strength*100 + "%";
 
@@ -517,10 +518,11 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 	}
 }
 
-function displayNeedsStrengthening(needsStrengthening) // adds clickable list of skills that need strengthening to top of the tree.
+function displayNeedsStrengthening(needsStrengthening)
 {
+	// adds clickable list of skills that need strengthening to top of the tree.
 	/* Old version where newUI had Part headings. Also mAsUf no longer seems to be used.
-	var topOfTree;
+	let topOfTree;
 	if(newUIVersion)
 	{
 		topOfTree = document.getElementsByClassName('_2GJb6')[0]; // top of tree is first row which has part 1.
@@ -543,7 +545,10 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 
 	// Found as of 2019-03-15 new UI version no longer has Part 1, Part 2 etc. headings
 	// Trees seem to be consistant so longer need for newUIversion detection
+	// let skillTree;
+	// let firstSkillRow;
 
+	let topOfTree;
 	if(
 			document.getElementsByClassName("i12-l").length != 0 &&
 			document.getElementsByClassName("w8Lxd").length != 0 &&
@@ -551,11 +556,11 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		) // Has the tree loaded from a page change
 	{
 		/* currently unused
-		var skillTree = document.getElementsByClassName("i12-l")[0];
-		var firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
+		skillTree = document.getElementsByClassName("i12-l")[0];
+		firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
 		*/
-		var topOfTree = document.getElementsByClassName("w8Lxd")[0];
-		// or var topOfTree = skillTree.childNodes[0]
+		topOfTree = document.getElementsByClassName("w8Lxd")[0];
+		// or topOfTree = skillTree.childNodes[0]
 	}
 	else
 	{
@@ -576,15 +581,15 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	if(oldUI)
 	{
 		// Shop button moved in new UI so only needed if using the UI blue topBar layout.
-		shopButtonFloatedDiv = document.createElement("div");
+		let shopButtonFloatedDiv = document.createElement("div");
 		shopButtonFloatedDiv.id = "shopButtonFloatedDiv";
 		shopButtonFloatedDiv.style	= "width: " + document.getElementsByClassName("_1YIzB")[0].offsetWidth + "px;"
 									+ "height: " + document.getElementsByClassName("_1YIzB")[0].offsetHeight + "px;"
 									+ "float: right;"
 									+ "margin-bottom: 0.5em;";
 	}
-	var strengthenBox; // will be a div to hold list of skills that need strengthenening
-	var needToAddBox = false;
+	let strengthenBox; // will be a div to hold list of skills that need strengthenening
+	let needToAddBox = false;
 	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
 	{
 		needToAddBox = true;
@@ -599,7 +604,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		strengthenBox = document.getElementById("strengthenBox");
 	}
 
-	var numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
+	let numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
 
 	strengthenBox.innerHTML = "";
 	if (oldUI) strengthenBox.appendChild(shopButtonFloatedDiv);
@@ -608,8 +613,8 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 								((needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill needs") +
 								" strengthening: <br/>";
 
-	numSkillsToShow = Math.min(numSkillsToBeStrengthened, options.needsStrengtheningListLength);
-	for (var i = 0; i < numSkillsToShow - 1; i++)
+	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, options.needsStrengtheningListLength);
+	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
 		if (i < needsStrengthening[0].length)
 		{
@@ -623,7 +628,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
-			bonusSkillIndex = i - needsStrengthening[0].length;
+			let bonusSkillIndex = i - needsStrengthening[0].length;
 			strengthenBox.innerHTML +=	"<a href='/skill/"
 									+	languageCode + "/"
 									+	needsStrengthening[1][bonusSkillIndex]['url_title']
@@ -669,7 +674,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 	else
 	{
 		// some skills that need to be strengthened are not being shown, so the last one we are showing is just the next one in the order we have
-		lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
+		let lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
 		if (lastIndexToBeShown < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
@@ -682,7 +687,7 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
-			bonusSkillIndex = lastIndexToBeShown - needsStrengthening[0].length;
+			let bonusSkillIndex = lastIndexToBeShown - needsStrengthening[0].length;
 			strengthenBox.innerHTML +=	"<a href='/skill/"
 									+	languageCode + "/"
 									+	needsStrengthening[1][bonusSkillIndex]['url_title']
@@ -691,15 +696,15 @@ function displayNeedsStrengthening(needsStrengthening) // adds clickable list of
 									+	"</a>, ";
 		}
 
-		numSkillsLeft = numSkillsToBeStrengthened - numSkillsToShow;
+		let numSkillsLeft = numSkillsToBeStrengthened - numSkillsToShow;
 
 		// Add a clickable element to show more skills in the list.
 		// We are going to add on another needsStrengtheningListLength number of skills to the list, but as we are going to change this amount to lengthen the list, we need to original saved in storage.
 	 	chrome.storage.sync.get("options", function (data)
 	 	{
-			numExtraSkillsOnShowMore = Math.min(numSkillsLeft, data.options.needsStrengtheningListLength);
+			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, data.options.needsStrengtheningListLength);
 
-			showMore = document.createElement("a");
+			let showMore = document.createElement("a");
 			showMore.innerHTML = numSkillsLeft + " more...";
 			showMore.href = "javascript:;";
 
@@ -748,43 +753,48 @@ function displayCrownsBreakdown()
 		Note a5SW0 seems to correspond with clear background, and _1E3L7 with whtie background.
 		_1E3L7 is in class name of main tree, which has a white background.
 	*/
-	var skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	var bonusSkills = userData['language_data'][languageCode]['bonus_skills'];
+	let skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
+	let bonusSkills = userData['language_data'][languageCode]['bonus_skills'];
 
-	var crownLevelCount = [Array(6).fill(0),Array(2).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
+	let crownLevelCount = [Array(6).fill(0),Array(2).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
 
-	for (var skill of skills)
+	for (let skill of skills)
 	{
 		crownLevelCount[0][skill['skill_progress']['level']]++;
 	}
 
-	for (var bonusSkill of bonusSkills)
+	for (let bonusSkill of bonusSkills)
 	{
 		crownLevelCount[1][bonusSkill['skill_progress']['level']]++;
 	}
 
-	var maxCrownCount = skills.length*5 + bonusSkills.length;
+	let maxCrownCount = skills.length*5 + bonusSkills.length;
 
-	var  treeLevel = crownTreeLevel();
+	let  treeLevel = crownTreeLevel();
+
+	let crownLevelContainer;
+	let crownTotalContainer;
 
 	if (oldUI)
 	{
-		var crownLevelContainer = document.getElementsByClassName('aFqnr _1E3L7')[0];
-		var crownTotalContainer = crownLevelContainer.getElementsByClassName('_2eJB1')[0]; // Was nh1S1, changed as of 2019-03-21, _3QZJ_ seems to represent >0 crowns, HY4N- for no crowns.
+		crownLevelContainer = document.getElementsByClassName('aFqnr _1E3L7')[0];
+		crownTotalContainer = crownLevelContainer.getElementsByClassName('_2eJB1')[0]; // Was nh1S1, changed as of 2019-03-21, _3QZJ_ seems to represent >0 crowns, HY4N- for no crowns.
 	}
 	else
 	{
-		var crownLevelContainer = document.getElementsByClassName('NugKJ _55Inr')[0];
-		var crownTotalContainer = crownLevelContainer.getElementsByClassName('_2boWj')[0];
+		crownLevelContainer = document.getElementsByClassName('NugKJ _55Inr')[0];
+		crownTotalContainer = crownLevelContainer.getElementsByClassName('_2boWj')[0];
 
 		crownLevelContainer.style = 	"flex-wrap: wrap;"
 									+	"justify-content: center;";
 	}
+
+	let maximumCrownCountContainer;
 	if (options.crownsMaximum)
 	{
 		crownTotalContainer.style.fontSize = "22px";
 
-		var maximumCrownCountContainer = document.createElement("span");
+		maximumCrownCountContainer = document.createElement("span");
 		maximumCrownCountContainer.id = "maxCrowns";
 		maximumCrownCountContainer.innerHTML = "/" + maxCrownCount;
 	}
@@ -798,7 +808,7 @@ function displayCrownsBreakdown()
 									+	"transform: translateY(-50%);";
 	*/
 
-	var breakdownContainer = document.createElement("div");
+	let breakdownContainer = document.createElement("div");
 	breakdownContainer.id = "crownLevelBreakdownContainer";
 	if (oldUI)
 	{
@@ -814,25 +824,25 @@ function displayCrownsBreakdown()
 								+	"color: black;";
 	}
 
-	var treeLevelContainer = document.createElement("div");
+	let treeLevelContainer = document.createElement("div");
 	treeLevelContainer.id = "treeLevel";
 	treeLevelContainer.style = "display: inline-block";
 	treeLevelContainer.innerHTML = treeLevel;
 
-	var breakdownList = document.createElement("ul");
+	let breakdownList = document.createElement("ul");
 	breakdownList.id = "breakdownList";
 	breakdownList.style =	"display: grid;"
 						+	"grid-auto-rows: 1.5em;"
 						+	"align-items: center;";
 
-	var imgContainer = document.createElement("div");
+	let imgContainer = document.createElement("div");
 	imgContainer.style = "position: relative;"
 						+"display: inline-block;"
 						+"width: 100%;"
 						+"justify-self:center";
 
 	
-	var levelContainer = document.createElement("div");
+	let levelContainer = document.createElement("div");
 	levelContainer.style =	"position: absolute;"
 						+	"top: 50%;"
 						+   "left: 50%;"
@@ -840,7 +850,7 @@ function displayCrownsBreakdown()
 						+	"z-index: 2;"
 						+	"color: #cd7900;"; // new colour for juicy UI look, was white.
 
-	var crownImg = document.createElement("img");
+	let crownImg = document.createElement("img");
 	crownImg['alt'] = "crown";
 	// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
 	crownImg.style = "height: 100%; width: 100%; z-index: 1;";
@@ -858,15 +868,15 @@ function displayCrownsBreakdown()
 		breakdownContainer.lastChild.innerHTML = "Your tree is at Level&nbsp;";
 		breakdownContainer.lastChild.appendChild(treeLevelContainer);
 
-		for(var crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
+		for(let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
 		{
-			var skillCount = crownLevelCount[0][crownLevel];
-			var crownCount = skillCount * crownLevel;
+			let skillCount = crownLevelCount[0][crownLevel];
+			let crownCount = skillCount * crownLevel;
 		
 			levelContainer.id = "crownLevel" + crownLevel + "Count";
 			levelContainer.innerHTML = crownLevel;
 
-			var breakdownListItem = document.createElement("li");
+			let breakdownListItem = document.createElement("li");
 			breakdownListItem.className = "crownLevelItem";
 			breakdownListItem.style =	"display: grid;"
 									+	"align-items: center;"
@@ -886,7 +896,7 @@ function displayCrownsBreakdown()
 		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
 		{
 			// The tree has some bonus skills so lets display a breakdown of their crown levels.
-			bonusSkillsBreakdownHeader = document.createElement("h3");
+			let bonusSkillsBreakdownHeader = document.createElement("h3");
 			bonusSkillsBreakdownHeader.innerText = "Bonus Skills";
 			bonusSkillsBreakdownHeader.style =	"margin: 0;"
 											+	"font-size: 100%;"
@@ -894,15 +904,15 @@ function displayCrownsBreakdown()
 
 			breakdownList.appendChild(bonusSkillsBreakdownHeader);
 
-			for(var crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+			for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
 			{
-				var skillCount = crownLevelCount[1][crownLevel];
-				var crownCount = skillCount * crownLevel;
+				let skillCount = crownLevelCount[1][crownLevel];
+				let crownCount = skillCount * crownLevel;
 			
 				levelContainer.id = "bonusSkillCrownLevel" + crownLevel + "Count";
 				levelContainer.innerHTML = crownLevel;
 
-				var breakdownListItem = document.createElement("li");
+				let breakdownListItem = document.createElement("li");
 				breakdownListItem.className = "crownLevelItem";
 				breakdownListItem.style =	"display: grid;"
 										+	"align-items: center;"
@@ -924,7 +934,8 @@ function displayCrownsBreakdown()
 
 		if (treeLevel != 5)
 		{
-			var prediction = document.createElement("p");
+			let prediction = document.createElement("p");
+			let numDays;
 			if (progress.length > 5)
 				numDays = daysToNextCrownLevel();
 			else
@@ -959,16 +970,16 @@ function displayCrownsBreakdown()
 	}
 	else // We have already added the breakdown data, just update it.
 	{
-		for(var crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
+		for(let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
 		{
-			levelContainerElement = document.getElementById("crownLevel" + crownLevel + "Count");
+			let levelContainerElement = document.getElementById("crownLevel" + crownLevel + "Count");
 			levelContainerElement.innerHTML = crownLevel;
 		}
 		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
 		{
-			for(var crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+			for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
 			{
-				levelContainerElement = document.getElementById("bonusSkillCrownLevel" + crownLevel + "Count");
+				let levelContainerElement = document.getElementById("bonusSkillCrownLevel" + crownLevel + "Count");
 				levelContainerElement.innerHTML = crownLevel;
 			}
 		}
@@ -983,7 +994,7 @@ function displayXPBreakdown()
 	if (Object.entries(userData).length == 0)
 		return false;
 	
-	var data =
+	let data =
 		{
 			'language_string':	userData['language_data'][languageCode]['language_string'],
 			'level_progress':	userData['language_data'][languageCode]['level_progress'],
@@ -994,13 +1005,13 @@ function displayXPBreakdown()
 			//'timezone':			userData['timezone_offset'] seems to not be available for every users, maybe depends on platform use.
 		}
 
-	levelProgressPercentage = data['level_progress']*100/data['level_points'];
+	let levelProgressPercentage = data['level_progress']*100/data['level_points'];
 
 	if(document.getElementById("XPBox") == null)
 	{
 		// We haven't made the XP Box yet
 
-		var container = document.createElement("div");
+		let container = document.createElement("div");
 		container.id = "XPBox";
 		if (oldUI)
 		{
@@ -1012,15 +1023,15 @@ function displayXPBreakdown()
 		}
 		container.style = "color: black;";
 
-		var XPHeader = document.createElement("h2");
+		let XPHeader = document.createElement("h2");
 		XPHeader.innerText = data['language_string']+ " XP";
 
-		languageLevelContainer = document.createElement("div");
+		let languageLevelContainer = document.createElement("div");
 		if (oldUI) languageLevelContainer.className = "_2QmPh";
 
 		languageLevelContainer.appendChild(XPHeader);
 
-		var languageLevelElement = document.createElement("p");
+		let languageLevelElement = document.createElement("p");
 		languageLevelElement.id = "xpTotalAndLevel";
 		languageLevelElement.innerText = "Level " + data['level'];
 		languageLevelElement.style = 	"font-size: 175%;"
@@ -1028,7 +1039,7 @@ function displayXPBreakdown()
 									+	"text-align: center;"
 									+	"color: " + ORANGE + ";";
 
-		var languageXPElement = document.createElement("span");
+		let languageXPElement = document.createElement("span");
 		languageXPElement.innerText = data['points'] + " XP - ";
 		languageXPElement.style =	"color: black;"
 								+	"font-weight: normal;";
@@ -1039,19 +1050,19 @@ function displayXPBreakdown()
 		
 		if (data['level'] != 25)
 		{
-			var nextLevelProgressElement = document.createElement("p");
+			let nextLevelProgressElement = document.createElement("p");
 			nextLevelProgressElement.style =	"text-align: center;"
 											+	"margin-bottom: 0;";
 			nextLevelProgressElement.innerText = (data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1);
 
-			var languageLevelProgressBarContainer = document.createElement("div");
+			let languageLevelProgressBarContainer = document.createElement("div");
 			languageLevelProgressBarContainer.className = "languageLevelProgressBar";
 			languageLevelProgressBarContainer.style =	"height: 0.5em;"
 													+	"width: 100%;"
 													+	"background-color: " + GREY + ";"
 													+	"border-radius: 0.25em;";
 
-			var languageLevelProgressBar = document.createElement("div");
+			let languageLevelProgressBar = document.createElement("div");
 			languageLevelProgressBar.className = "languageLevelProgressBar";
 			languageLevelProgressBar.style =	"height: 100%;"
 											+	"width: " + levelProgressPercentage + "%;"
@@ -1060,7 +1071,7 @@ function displayXPBreakdown()
 
 			languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
 
-			var currentLevelProgressElement = document.createElement("p");
+			let currentLevelProgressElement = document.createElement("p");
 			currentLevelProgressElement.style = "text-align: center;";
 			currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
 													+	Number(levelProgressPercentage).toFixed(1) + "%)";
@@ -1070,8 +1081,8 @@ function displayXPBreakdown()
 			languageLevelContainer.appendChild(currentLevelProgressElement);
 
 
-			var daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
-			var projectedNextLevelCompletion = document.createElement("p");
+			let daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
+			let projectedNextLevelCompletion = document.createElement("p");
 			projectedNextLevelCompletion.style = "margin-bottom: 0; text-align: center;"
 			projectedNextLevelCompletion.innerHTML =	"At your current rate you will reach the next level, Level " + (data['level']+1) + ", in about "
 													+	"<span style='font-weight:bold'>"
@@ -1088,7 +1099,7 @@ function displayXPBreakdown()
 		else
 		{
 			// Reached max level
-			var maxLevelMessage = document.createElement("p");
+			let maxLevelMessage = document.createElement("p");
 			maxLevelMessage.innerText = "You have reached the maximum level!";
 			languageLevelContainer.appendChild(maxLevelMessage);
 		}
@@ -1105,8 +1116,8 @@ function displayXPBreakdown()
 	else
 	{
 		// We alreayd have the XP Box, lets just update the values
-		var languageLevelElement = document.getElementById("xpTotalAndLevel");
-		languageXPElement = languageLevelElement.childNodes[0];
+		let languageLevelElement = document.getElementById("xpTotalAndLevel");
+		let languageXPElement = languageLevelElement.childNodes[0];
 		languageXPElement.innerText = data['points'] + " XP - ";
 		languageLevelElement.innerText = "Level " + data['level'];
 		languageLevelElement.insertBefore(languageXPElement,languageLevelElement.childNodes[0]);
@@ -1117,28 +1128,28 @@ function displayXPBreakdown()
 			if (data['level'] != 25)
 			{
 				// ... and still aren't
-				var languageLevelProgressBarContainer = document.getElementsByClassName("languageLevelProgressBar")[0];
+				let languageLevelProgressBarContainer = document.getElementsByClassName("languageLevelProgressBar")[0];
 				languageLevelProgressBarContainer.style =	"height: 0.5em;"
 														+	"width: 100%;"
 														+	"background-color: " + GREY + ";"
 														+	"border-radius: 0.25em;";
 
-				var languageLevelProgressBar = document.getElementsByClassName("languageLevelProgressBar")[1];
+				let languageLevelProgressBar = document.getElementsByClassName("languageLevelProgressBar")[1];
 				languageLevelProgressBar.style =	"height: 100%;"
 												+	"width: " + levelProgressPercentage + "%;"
 												+	"background-color: " + ORANGE + ";"
 												+	"border-radius: 0.25em;";
 
-				var nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
+				let nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
 				nextLevelProgressElement.innerText = (data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1);
 
-				var currentLevelProgressElement = languageLevelProgressBarContainer.nextSibling;
+				let currentLevelProgressElement = languageLevelProgressBarContainer.nextSibling;
 				currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
 													+	Number(levelProgressPercentage).toFixed(1) + "%)";
 
 				if (options.XPPrediction)
 				{
-					var daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
+					let daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
 					languageLevelElement.parentNode.lastChild.childNodes[1].innerText = daysLeft;
 				}
 			}
@@ -1150,7 +1161,7 @@ function displayXPBreakdown()
 					languageLevelElement.parentNode.removeChild(languageLevelElement.nextSibling);
 				}
 
-				var maxLevelMessage = document.createElement("p");
+				let maxLevelMessage = document.createElement("p");
 				maxLevelMessage.style = "margin-bottom: 0";
 				maxLevelMessage.innerText = "You have reached the maximum level!";
 				languageLevelElement.parentNode.appendChild(maxLevelMessage);
@@ -1161,6 +1172,10 @@ function displayXPBreakdown()
 
 function displaySuggestion(skills, bonusSkills)
 {
+	// let skillTree;
+	// let firstSkillRow
+
+	let topOfTree;
 	if (
 			document.getElementsByClassName("i12-l").length != 0 &&
 			document.getElementsByClassName("w8Lxd").length != 0 &&
@@ -1168,11 +1183,11 @@ function displaySuggestion(skills, bonusSkills)
 		) // Has the tree loaded from a page change
 	{
 		/* currently unused
-		var skillTree = document.getElementsByClassName("i12-l")[0];
-		var firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
+		skillTree = document.getElementsByClassName("i12-l")[0];
+		firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
 		*/
-		var topOfTree = document.getElementsByClassName("w8Lxd")[0];
-		// or var topOfTree = skillTree.childNodes[0]
+		topOfTree = document.getElementsByClassName("w8Lxd")[0];
+		// or topOfTree = skillTree.childNodes[0]
 	}
 	else
 	{
@@ -1190,6 +1205,7 @@ function displaySuggestion(skills, bonusSkills)
 
 	topOfTree.style['height'] = "auto";
 
+	let shopButtonFloatedDiv;
 	if (oldUI)
 	{
 		shopButtonFloatedDiv = document.createElement("div");
@@ -1202,23 +1218,23 @@ function displaySuggestion(skills, bonusSkills)
 
 	if (document.getElementById("fullStrengthMessageContainer") == null)
 	{
-		var container = document.createElement("div");
+		let container = document.createElement("div");
 		container.id = "fullStrengthMessageContainer";
 		container.style = "margin-bottom: 2em;";
 
 		if (oldUI) container.appendChild(shopButtonFloatedDiv);
 
-		var treeLevel = crownTreeLevel();
-		var skillsByCrowns = [[],[],[],[],[],[]];
+		let treeLevel = crownTreeLevel();
+		let skillsByCrowns = [[],[],[],[],[],[]];
 
-		for (var skill of skills)
+		for (let skill of skills)
 		{
 			skillsByCrowns[skill['skill_progress']['level']].push(skill);
 		}
 		
-		var randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*skillsByCrowns[treeLevel].length)];
+		let randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*skillsByCrowns[treeLevel].length)];
 
-		var link = document.createElement("a");
+		let link = document.createElement("a");
 		link.href = "/skill/" + languageCode + "/" + randomSuggestion['url_title'] + ((treeLevel == 5) ? "/practice/" : "/");
 		link.innerText = randomSuggestion['title'];
 		link.style.color = 'blue';
@@ -1236,7 +1252,7 @@ function displaySuggestion(skills, bonusSkills)
 				event.target.style.textDecoration = 'none';
 			});
 		
-		var fullStrengthMessage = document.createElement("p");
+		let fullStrengthMessage = document.createElement("p");
 		if (treeLevel == 5)
 		{
 			fullStrengthMessage.innerText = "Your " + randomSuggestion['language_string'] + " tree is fully strengthened and at Level 5! Why not do a <a href='/practice'>general practice</a>";
@@ -1268,8 +1284,9 @@ function displaySuggestion(skills, bonusSkills)
 	}
 }
 
-function getStrengths() // parses the data from duolingo.com/users/USERNAME and extracts strengths and skills that need strengthening
+function getStrengths()
 {
+	// parses the data from duolingo.com/users/USERNAME and extracts strengths and skills that need strengthening
 	/*
 		Data comes formatted as such:
 		{
@@ -1285,13 +1302,13 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		each skill in either skills or bonus_skills has a number of properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
 	
-	var strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
-	var needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
+	let strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
+	let needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
 	
 	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
 
-	var skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	var bonusSkills = userData['language_data'][languageCode]['bonus_skills'];
+	let skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
+	let bonusSkills = userData['language_data'][languageCode]['bonus_skills'];
 
 	function sortSkills(skill1,skill2)
 	{
@@ -1316,7 +1333,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 	skills.sort(sortSkills);
 	bonusSkills.sort(sortSkills);
 
-	for (var skill of skills)
+	for (let skill of skills)
 	{
 		strengths[0].push([skill['strength'],Boolean(skill['skill_progress']['level'])]);
 		if(skill['strength'] != 1 && skill['strength'] != 0 && skill['skill_progress']['level'] != 0)
@@ -1326,7 +1343,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 		}
 	}
 
-	for (var bonusSkill of bonusSkills)
+	for (let bonusSkill of bonusSkills)
 	{
 		strengths[1].push([bonusSkill['strength'],Boolean(skill['skill_progress']['level'])]);
 		if(bonusSkill['strength'] != 1 && bonusSkill['strength'] != 0 && bonusSkill['skill_progress']['level'] != 0)
@@ -1359,7 +1376,7 @@ function getStrengths() // parses the data from duolingo.com/users/USERNAME and 
 function httpGetAsync(url, responseHandler)
 {
 	/* firefox incompatible due to sameSite lax jwt_token to being sent with request...
-    var xmlHttp = new XMLHttpRequest();
+    let xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function()
 	{ 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
@@ -1423,8 +1440,8 @@ function httpGetAsync(url, responseHandler)
 async function handleDataResponse(responseText)
 {
 	userData = JSON.parse(responseText); // store response text as JSON object.
-	var newDataLanguageCode = Object.keys(userData['language_data'])[0];
-	var newDataLanguageString = userData['language_data'][newDataLanguageCode]['language_string'];
+	let newDataLanguageCode = Object.keys(userData['language_data'])[0];
+	let newDataLanguageString = userData['language_data'][newDataLanguageCode]['language_string'];
 
 	if (language == '')
 	{
@@ -1465,8 +1482,9 @@ async function handleDataResponse(responseText)
 	}
 }
 
-function requestData() // requests data for actively logged in user.
+function requestData()
 {
+	// requests data for actively logged in user.
 	return new Promise(function (resolve, reject)
 	{
 		if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
@@ -1526,7 +1544,8 @@ function requestData() // requests data for actively logged in user.
 	});
 }
 
-function checkUIVersion(){
+function checkUIVersion()
+{
 	/*	Old old version of UI checking for adding of parts and pentagonal checkpoints
 	if (document.getElementsByClassName('_1bcgw').length != 0)
 	{
@@ -1539,7 +1558,7 @@ function checkUIVersion(){
 	*/
 	/* Old version of UI checking for if using the juicy look. Assuming this is now universal
 	// check for new 'juicy' UI version by testing crown image.
-	var crownElem = document.getElementsByClassName("_2PyWM")[0];
+	let crownElem = document.getElementsByClassName("_2PyWM")[0];
 
 	if (crownElem == null)
 	{
@@ -1574,9 +1593,9 @@ function checkUIVersion(){
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
-var childListMutationHandle = function(mutationsList, observer)
+let childListMutationHandle = function(mutationsList, observer)
 {
-	for (var mutation of mutationsList)
+	for (let mutation of mutationsList)
 	{
 		checkUIVersion();
 		if (mutation.target == rootElem)
@@ -1644,9 +1663,9 @@ var childListMutationHandle = function(mutationsList, observer)
 	}
 };
 
-var classNameMutationHandle = function(mutationsList, observer)
+let classNameMutationHandle = function(mutationsList, observer)
 {
-	for (var mutation of mutationsList)
+	for (let mutation of mutationsList)
 	{
 		checkUIVersion();
 		if(!oldUI)
@@ -1706,7 +1725,7 @@ var classNameMutationHandle = function(mutationsList, observer)
 				if (language != "")
 				{
 					// language has previously been set so not first time on home page.
-					var topBarLanguage = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
+					let topBarLanguage = document.getElementsByClassName("_3I51r _2OF7V")[0].childNodes[1].innerHTML;
 					if (language != topBarLanguage)
 					{
 						// language has just changed so set flag to true
@@ -1741,8 +1760,8 @@ var classNameMutationHandle = function(mutationsList, observer)
 	}
 };
 
-var classNameObserver = new MutationObserver(classNameMutationHandle);
-var childListObserver = new MutationObserver(childListMutationHandle);
+let classNameObserver = new MutationObserver(classNameMutationHandle);
+let childListObserver = new MutationObserver(childListMutationHandle);
 
 async function init()
 {
@@ -1764,8 +1783,8 @@ async function init()
 	{
 		// should be logged in
 
-		//var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
-		var mainBodyElemIn4th =  dataReactRoot.childNodes[3].nodeType != 8 && dataReactRoot.childNodes[3].classList.contains("_3MLiB");
+		// let mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
+		let mainBodyElemIn4th =  dataReactRoot.childNodes[3].nodeType != 8 && dataReactRoot.childNodes[3].classList.contains("_3MLiB");
 		// Main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
 		// topBarDiv is no longer second, now it is nested a few levels down inside that.
 		// As of v1.0.16 on 2019-05-15, a additional comment node has been added in second position, so topbar now should be in 3rd and main bodyElem in 4th.
@@ -1785,37 +1804,43 @@ async function init()
 				// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
 				// Safer to use class name, which may also change...
 				// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
-				for (elem of dataReactRoot.getElementsByClassName("_3F_8q"))
+				for (let elem of dataReactRoot.getElementsByClassName("_3F_8q"))
 					if (elem.getElementsByTagName("a").length != 0)
 						topBarDiv = elem;
 				
 				// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
-				numNavButtons = topBarDiv.getElementsByClassName("_3MT82").length;
+				let numNavButtons = topBarDiv.getElementsByClassName("_3MT82").length;
 				// if numNavButtons = 4 then there is no stories button.
 				// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
 
-				var homeNav = topBarDiv.childNodes[0];
+				let homeNav = topBarDiv.childNodes[0];
+
+				let storiesNav;
+				// let discussionNav;
+				let shopNav;
+				let crownNav;
+				let streakNav;
 
 				if (numNavButtons == 5)
 				{
-					var storiesNav = topBarDiv.childNodes[2];
+					storiesNav = topBarDiv.childNodes[2];
 					/* unused/unusable
-					var discussionNav = topBarDiv.childNodes[4];
+					discussionNav = topBarDiv.childNodes[4];
 					*/
-					var shopNav = topBarDiv.childNodes[6];
+					shopNav = topBarDiv.childNodes[6];
 					languageLogo = topBarDiv.childNodes[10];
-					var crownNav = topBarDiv.childNodes[11];
-					var streakNav = topBarDiv.childNodes[12];
+					crownNav = topBarDiv.childNodes[11];
+					streakNav = topBarDiv.childNodes[12];
 				}
 				else
 				{
 					/* unused/unusable
-					var discussionNav = topBarDiv.childNodes[2];
+					discussionNav = topBarDiv.childNodes[2];
 					*/
-					var shopNav = topBarDiv.childNodes[4];
+					shopNav = topBarDiv.childNodes[4];
 					languageLogo = topBarDiv.childNodes[8];
-					var crownNav = topBarDiv.childNodes[9];
-					var streakNav = topBarDiv.childNodes[10];
+					crownNav = topBarDiv.childNodes[9];
+					streakNav = topBarDiv.childNodes[10];
 				}
 				
 				// set up observers for page changes

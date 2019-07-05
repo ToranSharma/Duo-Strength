@@ -1262,9 +1262,9 @@ function displaySuggestion(skills, bonusSkills)
 			link.href = "/skill/" + languageCode + "/" + skillsByCrowns[0][0]['url_title'] + "/";
 			link.innerText = skillsByCrowns[0][0]['title'];
 
-			fullStrengthMessage.innerHTML = "All the skills that you have learnt so far are fully strengthened. ";
+			fullStrengthMessage.innerText = "All the skills that you have learnt so far are fully strengthened. ";
+			fullStrengthMessage.innerText += "The next skill to learn is: ";
 			fullStrengthMessage.appendChild(link);
-			fullStrengthMessage.innerHTML += " is the next skill to learn.";
 		}
 		else
 		{
@@ -1345,7 +1345,7 @@ function getStrengths()
 
 	for (let bonusSkill of bonusSkills)
 	{
-		strengths[1].push([bonusSkill['strength'],Boolean(skill['skill_progress']['level'])]);
+		strengths[1].push([bonusSkill['strength'],Boolean(bonusSkill['skill_progress']['level'])]);
 		if(bonusSkill['strength'] != 1 && bonusSkill['strength'] != 0 && bonusSkill['skill_progress']['level'] != 0)
 		{
 			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started

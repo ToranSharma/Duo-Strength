@@ -459,42 +459,54 @@ function addStrengths(strengths)
 		{
 			let strengthBarHolder = document.createElement("div");
 			strengthBarHolder.className = "strengthBarHolder";
-			strengthBarHolder.style['width'] = "100%";
-			strengthBarHolder.style['padding'] = "0 5%";
-			strengthBarHolder.style['position'] = "relative";
-			strengthBarHolder.style['display'] = display;
+			strengthBarHolder.style = 
+			`
+				width: 100%;
+				padding: 0 5%;
+				position: relative;
+				display: ${display};
+			`;
 			
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
 
 			let strengthBarBackground = document.createElement("div");
 			strengthBarBackground.className = "strengthBarBackground";
-			strengthBarBackground.style =	"position: absolute;"
-										+	"display: inline-block;"
-    									+	"width: 67.5%;"
-        								+	"height: 1em;"
-        								+	"top: 0.15em;"
-        								+	"background-color: #e5e5e5;"
-        								+	"border-radius: 0.5em;"
-        								+	"z-index: 1;";
+			strengthBarBackground.style =
+			`
+				position: absolute;
+				display: inline-block;
+				width: 67.5%;
+				height: 1em;
+				top: 0.15em;
+				background-color: #e5e5e5;
+				border-radius: 0.5em;
+				z-index: 1;
+			`;
 
 			let strengthBar = document.createElement("div");
 			strengthBar.className = "strengthBar";
 			strengthBar.id = name + "StrengthBar";
-			strengthBar.style['display'] = "inline-block";
-			strengthBar.style['position'] = "relative";
-			strengthBar.style['top'] = "0.15em";
-			strengthBar.style['width'] = (strength*75)+"%";
-			strengthBar.style['height'] = "1em";
-			strengthBar.style['backgroundColor'] = (strength == 1.0 ? GOLD : RED);
-			strengthBar.style['borderRadius'] = "0.5em";
-			strengthBar.style['zIndex'] = "2";
+			strengthBar.style = 
+			`
+				display: inline-block;
+				position: relative;
+				top: 0.15em;
+				width: ${strength*75}%;
+				height: 1em;
+				background-color: ${strength == 1.0 ? GOLD : RED};
+				border-radius: 0.5em;
+				z-index: 2;
+			`;
 			
 			let strengthValue = document.createElement("div");
 			strengthValue.className = "strengthValue";
 			strengthValue.id = name + "StrengthValue";
-			strengthValue.style['display'] = "inline-block";
-			strengthValue.style['width'] = ((1-strength)*75+25)+"%";
-			strengthValue.style['textAlign'] = "right";
+			strengthValue.style = 
+			`
+				display: inline-block;
+				width: ${(1-strength)*75+25}%;
+				text-align: right;
+			`;
 			strengthValue.innerHTML = strength*100 + "%";
 			
 			if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground);
@@ -583,11 +595,15 @@ function displayNeedsStrengthening(needsStrengthening)
 		// Shop button moved in new UI so only needed if using the UI blue topBar layout.
 		let shopButtonFloatedDiv = document.createElement("div");
 		shopButtonFloatedDiv.id = "shopButtonFloatedDiv";
-		shopButtonFloatedDiv.style	= "width: " + document.getElementsByClassName("_1YIzB")[0].offsetWidth + "px;"
-									+ "height: " + document.getElementsByClassName("_1YIzB")[0].offsetHeight + "px;"
-									+ "float: right;"
-									+ "margin-bottom: 0.5em;";
+		shopButtonFloatedDiv.style =
+		`
+			width: ${document.getElementsByClassName("_1YIzB")[0].offsetWidth}px;
+			height: ${document.getElementsByClassName("_1YIzB")[0].offsetHeight}px;
+			float: right;
+			margin-bottom: 0.5em;
+		`;
 	}
+
 	let strengthenBox; // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;
 	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
@@ -595,9 +611,12 @@ function displayNeedsStrengthening(needsStrengthening)
 		needToAddBox = true;
 		strengthenBox = document.createElement("div");
 		strengthenBox.id = "strengthenBox";
-		strengthenBox.style['textAlign'] = "left";
-		strengthenBox.style['marginBottom'] = "2em";
-		strengthenBox.style['min-height'] = "3em";
+		strengthenBox.style =
+		`
+			text-align: left;
+			margin-bottom 2em;
+			min-height: 3em;
+		`;
 	}
 	else
 	{
@@ -785,8 +804,11 @@ function displayCrownsBreakdown()
 		crownLevelContainer = document.getElementsByClassName('NugKJ _55Inr')[0];
 		crownTotalContainer = crownLevelContainer.getElementsByClassName('_2boWj')[0];
 
-		crownLevelContainer.style = 	"flex-wrap: wrap;"
-									+	"justify-content: center;";
+		crownLevelContainer.style =
+		`
+			flex-wrap: wrap;
+			justify-content: center;
+		`;
 	}
 
 	let maximumCrownCountContainer;
@@ -812,16 +834,22 @@ function displayCrownsBreakdown()
 	breakdownContainer.id = "crownLevelBreakdownContainer";
 	if (oldUI)
 	{
-		breakdownContainer.style =	"margin-top: 1em;"
-								+	"text-align: left;"
-								+	"color: black;";
+		breakdownContainer.style =
+		`
+			margin-top: 1em;
+			text-align: left;
+			color: black;
+		`;
 	}
 	else
 	{
-		breakdownContainer.style =	"margin: 1em 1em 0 1em;"
-								+	"text-align: left;"
-								+	"flex-grow: 1;"
-								+	"color: black;";
+		breakdownContainer.style =
+		`
+			margin: 1em 1em 0 1em;
+			text-align: left;
+			flex-grow: 1;
+			color: black;
+		`;
 	}
 
 	let treeLevelContainer = document.createElement("div");
@@ -831,29 +859,42 @@ function displayCrownsBreakdown()
 
 	let breakdownList = document.createElement("ul");
 	breakdownList.id = "breakdownList";
-	breakdownList.style =	"display: grid;"
-						+	"grid-auto-rows: 1.5em;"
-						+	"align-items: center;";
-
+	breakdownList.style =
+	`
+		display: grid;
+		grid-auto-rows: 1.5em;
+		align-items: center;
+	`;
+	
 	let imgContainer = document.createElement("div");
-	imgContainer.style = "position: relative;"
-						+"display: inline-block;"
-						+"width: 100%;"
-						+"justify-self:center";
-
+	imgContainer.style =
+	`
+		position: relative;
+		display: inline-block;
+		width: 100%;
+		justify-self:center;
+	`;
 	
 	let levelContainer = document.createElement("div");
-	levelContainer.style =	"position: absolute;"
-						+	"top: 50%;"
-						+   "left: 50%;"
-						+   "transform: translateX(-50%) translateY(-50%);"
-						+	"z-index: 2;"
-						+	"color: #cd7900;"; // new colour for juicy UI look, was white.
+	levelContainer.style =
+	`
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+		z-index: 2;
+		color: #cd7900;
+	`;
 
 	let crownImg = document.createElement("img");
 	crownImg['alt'] = "crown";
 	// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
-	crownImg.style = "height: 100%; width: 100%; z-index: 1;";
+	crownImg.style =
+	`
+		height: 100%;
+		width: 100%;
+		z-index: 1;
+	`;
 	crownImg['src'] = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
 
 	imgContainer.appendChild(crownImg);
@@ -878,10 +919,13 @@ function displayCrownsBreakdown()
 
 			let breakdownListItem = document.createElement("li");
 			breakdownListItem.className = "crownLevelItem";
-			breakdownListItem.style =	"display: grid;"
-									+	"align-items: center;"
-									+	"justify-items: right;"
-									+	"grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;";
+			breakdownListItem.style =
+			`
+				display: grid;
+				align-items: center;
+				justify-items: right;
+				grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
+			`;
 
 			breakdownListItem.innerHTML =  "<span>" + skillCount + "</span>" + "<span style='justify-self: center;'>skill"+ ((skillCount == 1 )?"":"s") + " at</span>";
 
@@ -898,9 +942,12 @@ function displayCrownsBreakdown()
 			// The tree has some bonus skills so lets display a breakdown of their crown levels.
 			let bonusSkillsBreakdownHeader = document.createElement("h3");
 			bonusSkillsBreakdownHeader.innerText = "Bonus Skills";
-			bonusSkillsBreakdownHeader.style =	"margin: 0;"
-											+	"font-size: 100%;"
-											+	"justify-self: center";
+			bonusSkillsBreakdownHeader.style =
+			`
+				margin: 0;
+				font-size: 100%;
+				justify-self: center
+			`;
 
 			breakdownList.appendChild(bonusSkillsBreakdownHeader);
 
@@ -914,10 +961,13 @@ function displayCrownsBreakdown()
 
 				let breakdownListItem = document.createElement("li");
 				breakdownListItem.className = "crownLevelItem";
-				breakdownListItem.style =	"display: grid;"
-										+	"align-items: center;"
-										+	"justify-items: right;"
-										+	"grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;";
+				breakdownListItem.style =
+				`
+					display: grid;
+					align-items: center;
+					justify-items: right;
+					grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
+				`;
 				
 				breakdownListItem.innerHTML = "<span>" + skillCount + "</span>" + "<span style='justify-self: center;'>skill"+ ((skillCount == 1 )?"":"s") + " at</span>";
 
@@ -961,9 +1011,12 @@ function displayCrownsBreakdown()
 			}
 			else
 			{
-				prediction.style =	"margin: 1em;"
-								+	"text-align: center;"
-								+	"color: black;";
+				prediction.style =
+				`
+					margin: 1em;
+					text-align: center;
+					color: black;
+				`;
 			}
 			if (options.crownsPrediction) crownLevelContainer.appendChild(prediction)
 		}
@@ -1034,15 +1087,21 @@ function displayXPBreakdown()
 		let languageLevelElement = document.createElement("p");
 		languageLevelElement.id = "xpTotalAndLevel";
 		languageLevelElement.innerText = "Level " + data['level'];
-		languageLevelElement.style = 	"font-size: 175%;"
-									+	"font-weight: bold;"
-									+	"text-align: center;"
-									+	"color: " + ORANGE + ";";
+		languageLevelElement.style =
+		`
+			font-size: 175%;
+			font-weight: bold;
+			text-align: center;
+			color: ${ORANGE};
+		`;
 
 		let languageXPElement = document.createElement("span");
 		languageXPElement.innerText = data['points'] + " XP - ";
-		languageXPElement.style =	"color: black;"
-								+	"font-weight: normal;";
+		languageXPElement.style =
+		`
+			color: black;
+			font-weight: normal;
+		`;
 		
 		languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
 		languageLevelContainer.appendChild(languageLevelElement);
@@ -1051,23 +1110,32 @@ function displayXPBreakdown()
 		if (data['level'] != 25)
 		{
 			let nextLevelProgressElement = document.createElement("p");
-			nextLevelProgressElement.style =	"text-align: center;"
-											+	"margin-bottom: 0;";
+			nextLevelProgressElement.style =
+			`
+				text-align: center;
+				margin-bottom: 0;
+			`;
 			nextLevelProgressElement.innerText = (data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1);
 
 			let languageLevelProgressBarContainer = document.createElement("div");
 			languageLevelProgressBarContainer.className = "languageLevelProgressBar";
-			languageLevelProgressBarContainer.style =	"height: 0.5em;"
-													+	"width: 100%;"
-													+	"background-color: " + GREY + ";"
-													+	"border-radius: 0.25em;";
+			languageLevelProgressBarContainer.style =
+			`
+				height: 0.5em;
+				width: 100%;
+				background-color: ${GREY}";
+				border-radius: 0.25em;
+			`;
 
 			let languageLevelProgressBar = document.createElement("div");
 			languageLevelProgressBar.className = "languageLevelProgressBar";
-			languageLevelProgressBar.style =	"height: 100%;"
-											+	"width: " + levelProgressPercentage + "%;"
-											+	"background-color: " + ORANGE + ";"
-											+	"border-radius: 0.25em;";
+			languageLevelProgressBar.style =
+			`
+				height: 100%;
+				width: ${levelProgressPercentage}%;
+				background-color: ${ORANGE};
+				border-radius: 0.25em;
+			`;
 
 			languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
 
@@ -1083,7 +1151,11 @@ function displayXPBreakdown()
 
 			let daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
 			let projectedNextLevelCompletion = document.createElement("p");
-			projectedNextLevelCompletion.style = "margin-bottom: 0; text-align: center;"
+			projectedNextLevelCompletion.style =
+			`
+				margin-bottom: 0;
+				text-align: center;
+			`;
 			projectedNextLevelCompletion.innerHTML =	"At your current rate you will reach the next level, Level " + (data['level']+1) + ", in about "
 													+	"<span style='font-weight:bold'>"
 													+	daysLeft
@@ -1129,16 +1201,22 @@ function displayXPBreakdown()
 			{
 				// ... and still aren't
 				let languageLevelProgressBarContainer = document.getElementsByClassName("languageLevelProgressBar")[0];
-				languageLevelProgressBarContainer.style =	"height: 0.5em;"
-														+	"width: 100%;"
-														+	"background-color: " + GREY + ";"
-														+	"border-radius: 0.25em;";
+				languageLevelProgressBarContainer.style =
+				`
+					height: 0.5em;
+					width: 100%;
+					background-color: ${GREY};
+					border-radius: 0.25em;
+				`;
 
 				let languageLevelProgressBar = document.getElementsByClassName("languageLevelProgressBar")[1];
-				languageLevelProgressBar.style =	"height: 100%;"
-												+	"width: " + levelProgressPercentage + "%;"
-												+	"background-color: " + ORANGE + ";"
-												+	"border-radius: 0.25em;";
+				languageLevelProgressBar.style =
+				`
+					height: 100%;
+					width: ${levelProgressPercentage}%;
+					background-color: ${ORANGE};
+					border-radius: 0.25em;
+				`;
 
 				let nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
 				nextLevelProgressElement.innerText = (data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1);
@@ -1210,10 +1288,13 @@ function displaySuggestion(skills, bonusSkills)
 	{
 		shopButtonFloatedDiv = document.createElement("div");
 		shopButtonFloatedDiv.id = "shopButtonFloatedDiv";
-		shopButtonFloatedDiv.style	= "width: " + document.getElementsByClassName("_1YIzB")[0].offsetWidth + "px;"
-									+ "height: " + document.getElementsByClassName("_1YIzB")[0].offsetHeight + "px;"
-									+ "float: right;"
-									+ "margin-bottom: 0.5em;";
+		shopButtonFloatedDiv.style =
+		`
+			width: ${document.getElementsByClassName("_1YIzB")[0].offsetWidth}px;
+			height: ${document.getElementsByClassName("_1YIzB")[0].offsetHeight}px;
+			float: right;
+			margin-bottom: 0.5em;
+		`;
 	}
 
 	if (document.getElementById("fullStrengthMessageContainer") == null)

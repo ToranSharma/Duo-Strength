@@ -628,9 +628,11 @@ function displayNeedsStrengthening(needsStrengthening)
 	strengthenBox.innerHTML = "";
 	if (oldUI) strengthenBox.appendChild(shopButtonFloatedDiv);
 	
-	strengthenBox.innerHTML += "Your tree has " + numSkillsToBeStrengthened +
-								((needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill needs") +
-								" strengthening: <br/>";
+	strengthenBox.innerHTML +=
+	`
+		Your tree has ${numSkillsToBeStrengthened} 
+		${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"} strengthening: <br/>
+	`;
 
 	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, options.needsStrengtheningListLength);
 	for (let i = 0; i < numSkillsToShow - 1; i++)
@@ -638,26 +640,16 @@ function displayNeedsStrengthening(needsStrengthening)
 		if (i < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			strengthenBox.innerHTML +=	"<a href='/skill/"
-									+	languageCode + "/"
-									+	needsStrengthening[0][i]['url_title']
-									+	((needsStrengthening[0][i]['skill_progress']['level'] == 5)? "/practice'>":"'>" ) // 5 crown skill DOES decay so note needless
-									+	needsStrengthening[0][i]['title']
-									+	"</a>, ";
+			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[0][i]['url_title']}${(needsStrengthening[0][i]['skill_progress']['level'] == 5)? "/practice":""}'>${needsStrengthening[0][i]['title']}</a>, `;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = i - needsStrengthening[0].length;
-			strengthenBox.innerHTML +=	"<a href='/skill/"
-									+	languageCode + "/"
-									+	needsStrengthening[1][bonusSkillIndex]['url_title']
-									+	((needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice'>":"'>" ) // 1 crown bonus skill does decay but is a practice not lesson.
-									+	needsStrengthening[1][bonusSkillIndex]['title']
-									+	"</a>, ";
+			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex]['url_title']}${(needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice":""}'>${needsStrengthening[1][bonusSkillIndex]['title']}</a>, `;
 		}
 	}
 	strengthenBox.innerHTML = strengthenBox.innerHTML.substring(0, strengthenBox.innerHTML.length - 2);
-	strengthenBox.innerHTML +=	(function ()
+	strengthenBox.innerHTML +=	(function()
 								{
 									if (numSkillsToShow == numSkillsToBeStrengthened)
 										return " & "; // Add & if showing every skill in list as the next one is the very last.
@@ -673,21 +665,11 @@ function displayNeedsStrengthening(needsStrengthening)
 		if(needsStrengthening[1].length > 0)
 		{
 			// last skill to be displayed is a bonus skill
-			strengthenBox.innerHTML +=	"<a href='/skill/"
-									+	languageCode + "/"
-									+	needsStrengthening[1][needsStrengthening[1].length - 1]['url_title']
-									+	((needsStrengthening[1][needsStrengthening[1].length - 1]['skill_progress']['level'] == 1)? "/practice'>":"'>" )
-									+	needsStrengthening[1][needsStrengthening[1].length - 1]['title']
-									+	"</a>";
+			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[1][needsStrengthening[1].length - 1]['url_title']}${(needsStrengthening[1][needsStrengthening[1].length - 1]['skill_progress']['level'] == 1)? "/practice":""}'>${needsStrengthening[1][needsStrengthening[1].length - 1]['title']}</a>`;
 		} else
 		{
 			// last skill to be displayed is a normal skill
-			strengthenBox.innerHTML +=	"<a href='/skill/"
-									+	languageCode + "/"
-									+	needsStrengthening[0][needsStrengthening[0].length -1]['url_title']
-									+	((needsStrengthening[0][needsStrengthening[0].length -1]['skill_progress']['level'] == 5)? "/practice'>":"'>" )
-									+	needsStrengthening[0][needsStrengthening[0].length -1]['title']
-									+	"</a>";
+			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[0][needsStrengthening[0].length -1]['url_title']}${(needsStrengthening[0][needsStrengthening[0].length -1]['skill_progress']['level'] == 5)? "/practice":""}'>${needsStrengthening[0][needsStrengthening[0].length -1]['title']}</a>`;
 		}
 	}
 	else
@@ -697,22 +679,12 @@ function displayNeedsStrengthening(needsStrengthening)
 		if (lastIndexToBeShown < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			strengthenBox.innerHTML +=	"<a href='/skill/"
-									+	languageCode + "/"
-									+	needsStrengthening[0][lastIndexToBeShown]['url_title']
-									+	((needsStrengthening[0][lastIndexToBeShown]['skill_progress']['level'] == 5)? "/practice'>":"'>" ) // 5 crown skill DOES decay so note needless
-									+	needsStrengthening[0][lastIndexToBeShown]['title']
-									+	"</a>, ";
+			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[0][lastIndexToBeShown]['url_title']}${(needsStrengthening[0][lastIndexToBeShown]['skill_progress']['level'] == 5)? "/practice":""}'>${needsStrengthening[0][lastIndexToBeShown]['title']}</a>, `;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = lastIndexToBeShown - needsStrengthening[0].length;
-			strengthenBox.innerHTML +=	"<a href='/skill/"
-									+	languageCode + "/"
-									+	needsStrengthening[1][bonusSkillIndex]['url_title']
-									+	((needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice'>":"'>" ) // 1 crown bonus skill does decay but is a practice not lesson.
-									+	needsStrengthening[1][bonusSkillIndex]['title']
-									+	"</a>, ";
+			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex]['url_title']}${(needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice":""}'>${needsStrengthening[1][bonusSkillIndex]['title']}</a>, `;
 		}
 
 		let numSkillsLeft = numSkillsToBeStrengthened - numSkillsToShow;
@@ -821,13 +793,16 @@ function displayCrownsBreakdown()
 		maximumCrownCountContainer.innerHTML = "/" + maxCrownCount;
 	}
 	/*
-	maximumCrownCountContainer.style =	"position:absolute;"
-									+ 	"top: 50%;"
-									+	"right: 0;"
-									+	"margin-top: 5px;"
-									+	"font-size: 36px;"
-									+	"font-weight: 700;"
-									+	"transform: translateY(-50%);";
+	maximumCrownCountContainer.style =
+	`
+		position:absolute;
+		top: 50%;
+		right: 0;
+		margin-top: 5px;
+		font-size: 36px;
+		font-weight: 700;
+		transform: translateY(-50%);
+	`;
 	*/
 
 	let breakdownContainer = document.createElement("div");
@@ -927,11 +902,28 @@ function displayCrownsBreakdown()
 				grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 			`;
 
-			breakdownListItem.innerHTML =  "<span>" + skillCount + "</span>" + "<span style='justify-self: center;'>skill"+ ((skillCount == 1 )?"":"s") + " at</span>";
+			breakdownListItem.innerHTML =
+			`
+				<span>
+					${skillCount}
+				</span>
+				<span style='justify-self: center;'>
+					skill${(skillCount == 1 )?"":"s"} at
+				</span>
+			`;
 
 			breakdownListItem.appendChild(imgContainer);
 
-			breakdownListItem.innerHTML += "=" +  "<span>" + crownCount  + "</span>" + "<span>crown" + ((crownCount == 1 )?"":"s") + "</span>";
+			breakdownListItem.innerHTML +=
+			`
+				=
+				<span>
+					${crownCount}
+				</span>
+				<span>
+					crown${(crownCount == 1 )?"":"s"}
+				</span>
+			`;
 
 			breakdownList.appendChild(breakdownListItem);
 		}
@@ -969,11 +961,28 @@ function displayCrownsBreakdown()
 					grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 				`;
 				
-				breakdownListItem.innerHTML = "<span>" + skillCount + "</span>" + "<span style='justify-self: center;'>skill"+ ((skillCount == 1 )?"":"s") + " at</span>";
+				breakdownListItem.innerHTML =
+				`
+					<span>
+						${skillCount}
+					</span>
+					<span style='justify-self: center;'>
+						skill${(skillCount == 1 )?"":"s"} at
+					</span>
+				`;
 
 				breakdownListItem.appendChild(imgContainer);
 
-				breakdownListItem.innerHTML += "=" +  "<span>" + crownCount  + "</span>" + "<span>crown" + ((crownCount == 1 )?"":"s") + "</span>";
+				breakdownListItem.innerHTML +=
+				`
+					=
+					<span>
+						${crownCount}
+					</span>
+					<span>
+						crown${(crownCount == 1 )?"":"s"}
+					</span>
+				`;
 
 				breakdownList.appendChild(breakdownListItem);
 			}
@@ -998,13 +1007,16 @@ function displayCrownsBreakdown()
 			}
 
 			prediction.id = "treeCrownLevelPrediction";
-			prediction.innerHTML =	"At your current rate your tree will reach Level&nbsp;"
-								+	(treeLevel + 1) +	" in "
-								+	"<span style='font-weight: bold'>"
-								+	numDays
-								+	"</span>"
-								+	" days, on "
-								+	new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
+			prediction.innerHTML =
+			`
+				At your current rate your tree will reach Level&nbsp;${treeLevel + 1} in
+				<span style='font-weight: bold'>
+					${numDays}
+				</span>
+				days, on
+				${new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString()}
+			`;
+
 			if (oldUI)
 			{
 				prediction.style = "margin: 1em 0 0 0;";
@@ -1115,7 +1127,7 @@ function displayXPBreakdown()
 				text-align: center;
 				margin-bottom: 0;
 			`;
-			nextLevelProgressElement.innerText = (data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1);
+			nextLevelProgressElement.innerText = `${data['level_points']-data['level_progress']} XP till Level ${data['level']+1}`;
 
 			let languageLevelProgressBarContainer = document.createElement("div");
 			languageLevelProgressBarContainer.className = "languageLevelProgressBar";
@@ -1123,7 +1135,7 @@ function displayXPBreakdown()
 			`
 				height: 0.5em;
 				width: 100%;
-				background-color: ${GREY}";
+				background-color: ${GREY};
 				border-radius: 0.25em;
 			`;
 
@@ -1141,8 +1153,7 @@ function displayXPBreakdown()
 
 			let currentLevelProgressElement = document.createElement("p");
 			currentLevelProgressElement.style = "text-align: center;";
-			currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
-													+	Number(levelProgressPercentage).toFixed(1) + "%)";
+			currentLevelProgressElement.innerText = `(${data['level_progress']}/${data['level_points']} XP - ${Number(levelProgressPercentage).toFixed(1)}%)`;
 
 			languageLevelContainer.appendChild(nextLevelProgressElement);
 			languageLevelContainer.appendChild(languageLevelProgressBarContainer);
@@ -1156,12 +1167,14 @@ function displayXPBreakdown()
 				margin-bottom: 0;
 				text-align: center;
 			`;
-			projectedNextLevelCompletion.innerHTML =	"At your current rate you will reach the next level, Level " + (data['level']+1) + ", in about "
-													+	"<span style='font-weight:bold'>"
-													+	daysLeft
-													+	"</span>"
-													+	" days, on "
-													+	new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString();
+			projectedNextLevelCompletion.innerHTML =
+			`
+				At your current rate you will reach the next level, Level&nbsp;${data['level']+1}, in about
+				<span style='font-weight:bold'>
+					${daysLeft}
+				</span>
+				days, on ${new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString()}
+			`;
 			
 			if (daysLeft != -1 && options.XPPrediction)
 			{
@@ -1219,11 +1232,13 @@ function displayXPBreakdown()
 				`;
 
 				let nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
-				nextLevelProgressElement.innerText = (data['level_points']-data['level_progress']) + " XP till Level " + (data['level']+1);
+				nextLevelProgressElement.innerText = `${data['level_points']-data['level_progress']} XP till Level ${data['level']+1}`;
 
 				let currentLevelProgressElement = languageLevelProgressBarContainer.nextSibling;
-				currentLevelProgressElement.innerText =	"(" + data['level_progress'] + "/" + data['level_points'] + " XP - "
-													+	Number(levelProgressPercentage).toFixed(1) + "%)";
+				currentLevelProgressElement.innerText =
+				`
+					(${data['level_progress']}/${data['level_points']} XP - ${Number(levelProgressPercentage).toFixed(1)}%)
+				`;
 
 				if (options.XPPrediction)
 				{
@@ -1336,7 +1351,13 @@ function displaySuggestion(skills, bonusSkills)
 		let fullStrengthMessage = document.createElement("p");
 		if (treeLevel == 5)
 		{
-			fullStrengthMessage.innerText = "Your " + randomSuggestion['language_string'] + " tree is fully strengthened and at Level 5! Why not do a <a href='/practice'>general practice</a>";
+			fullStrengthMessage.innerHTML =
+			`
+				Your ${language} tree is fully strengthened and at Level 5! Why not do a
+				<a href='/practice'>
+					general practice
+				</a>
+			`;
 		}
 		else if (treeLevel == 0)
 		{
@@ -1349,7 +1370,7 @@ function displaySuggestion(skills, bonusSkills)
 		}
 		else
 		{
-			fullStrengthMessage.innerText = "Your " + language + " tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level " + (treeLevel + 1) + ": ";	
+			fullStrengthMessage.innerHTML = `Your ${language} tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level&nbsp;${treeLevel + 1}: `;	
 			fullStrengthMessage.appendChild(link);
 		}
 

@@ -833,7 +833,7 @@ function init()
 
 
 					// need to set the username, get this by getting the href of the view more link in the achievements box the anchor element has X8N_G as its identifying class
-					username = document.getElementsByClassName("X8N_G")[0].href.split("/")[3];
+					username = document.querySelector("[data-test = \"profile-tab\"]").href.split("/")[3];
 
 					checkUIVersion();
 					requestData();

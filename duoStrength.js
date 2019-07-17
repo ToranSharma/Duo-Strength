@@ -13,7 +13,7 @@ var oldUI = false;
 var requestID = 0;
 
 var rootElem;
-var dataReactRoot;
+var rootChild;
 var topBarDiv;
 var topBarMobilePractice;
 
@@ -107,8 +107,10 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 		}
 		*/
 
-
-		if (skillElements[i].parentNode.classList.contains("_1H-7I") || skillElements[i].parentNode.classList.contains("_1--zr"))
+		// Check if this skill is in the bonus skill section.
+		// In the bonus skill section if the row is sandwiched between two divs with class _32Q0j, that contain an hr.
+		if (skillElements[i].parentNode.parentNode.previousSibling != null && skillElements[i].parentNode.parentNode.nextSibling != null
+			&& skillElements[i].parentNode.parentNode.previousSibling.className == "_32Q0j" && skillElements[i].parentNode.parentNode.nextSibling.className == "_32Q0j")
 		{
 			// these skill elements are in the bonus skill section.
 			elementContents.push(strengths[1][bonusElementsCount][0]);
@@ -618,13 +620,14 @@ var childListMutationHandle = function(mutationsList, observer)
 	{
 		if(mutation.target == rootElem)
 		{
-			// root child list has changed so dataReactRoot has probably been replaced, lets redefine it.
-			dataReactRoot = rootElem.childNodes[0];
+			// root child list has changed so rootChild has probably been replaced, lets redefine it.
+			rootChild = rootElem.childNodes[0];
 		}
 		checkUIVersion();
 		if(!oldUI)
 		{
-			if (dataReactRoot.childNodes[2].className != "BWibf _3MLiB")
+			// Check if there is both the topbar and the main page elem.
+			if (rootChild.childElementCount == 2)
 			{
 				// not just changed into a lesson
 				languageChanged = false;
@@ -637,10 +640,10 @@ var childListMutationHandle = function(mutationsList, observer)
 		}
 		else
 		{
-			if(dataReactRoot.childNodes[1].className ==  "_6t5Uh")
+			if(rootChild.childNodes[1].className ==  "_6t5Uh")
 			{
 				// Top bar div has class for main tree page or words page.
-				topBarDiv = dataReactRoot.childNodes[1]
+				topBarDiv = rootChild.childNodes[1]
 				languageChanged = false; // language hasn't changed this update
 				init();
 			}
@@ -744,12 +747,15 @@ var childListObserver = new MutationObserver(childListMutationHandle);
 function init()
 {
 	rootElem = document.getElementById("root"); // When logging in child list is changed.
-	dataReactRoot = rootElem.childNodes[0]; // When entering or leaving a lesson children change there is a new body so need to detect that to know when to reload the bars.
-	
+	/*
+		data-react attribute seems to have been removed as of 2019-07-17
+		dataReactRoot = rootElem.childNodes[0]; // When entering or leaving a lesson children change there is a new body so need to detect that to know when to reload the bars.
+	*/
+	rootChild = rootElem.childNodes[0];
 	childListObserver.observe(rootElem,{childList: true});
-	childListObserver.observe(dataReactRoot,{childList: true});
+	childListObserver.observe(rootChild,{childList: true});
 	
-	if(dataReactRoot.childNodes.length == 1) // If there is only one child of dataReactRoot then we are on the log in page.
+	if(rootChild.childNodes.length == 1) // If there is only one child of dataReactRoot then we are on the log in page.
 	{
 		// On login page so cannot continue to turn rest of init process.
 		onMainPage = false;
@@ -758,13 +764,15 @@ function init()
 	else
 	{
 		// should be logged in
-		//var mainBodyElemIn3rd = !dataReactRoot.childNodes[1].classList.contains("_3MLiB") && dataReactRoot.childNodes[2].classList.contains("_3MLiB");
-		var mainBodyElemIn4th =  dataReactRoot.childNodes[3].nodeType != 8 && dataReactRoot.childNodes[3].classList.contains("_3MLiB");
-		// Main body container element has class _3MLiB. If in second place, there is no topbar Div, if it is in thrid place, then second should be topBarDiv.
-		// topBarDiv is no longer second, now it is nested a few levels down inside that.
-		// As of v1.0.16 on 2019-05-15, a additional comment node has been added in second position, so topbar now should be in 3rd and main bodyElem in 4th.
+		
+		/*
+			As of 2019-07-17 comment nodes have been removed, so testing of position of main body element is simpler.
+			Main body container element has class _3MLiB. If it is the first child, there is no topbar Div, if it is second place, then second should be a topBarDiv.
+			As no comment nodes before or after, can just check the number of children.
+			If there are two children, then we have both a top bar and the main page, otherwise it is probably just the main page with no top bar.
+		*/		
 
-		if(mainBodyElemIn4th) // If main body element is in 3rd place then we are not in a lesson.
+		if(rootChild.childElementCount == 2)
 		{
 			checkUIVersion();
 			if (!oldUI)
@@ -776,7 +784,7 @@ function init()
 				// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
 				// Safer to use class name, which may also change...
 				// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
-				for (elem of dataReactRoot.getElementsByClassName("_3F_8q"))
+				for (elem of rootChild.childNodes[0].getElementsByClassName("_3F_8q"))
 					if (elem.getElementsByTagName("a").length != 0)
 						topBarDiv = elem;
 				
@@ -847,7 +855,7 @@ function init()
 			else
 			{
 				// using old blue topBar layout
-				topBarDiv = dataReactRoot.childNodes[1];
+				topBarDiv = rootChild.childNodes[1];
 
 				// topBarMobilePractice either has class _2XW92 or _3IyDY _1NQPL.
 				if(topBarDiv.getElementsByClassName("_3IyDY _1NQPL").length != 0)

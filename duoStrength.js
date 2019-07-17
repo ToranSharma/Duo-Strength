@@ -144,6 +144,7 @@ function addStrengths(strengths) // Adds strength bars and percentages under eac
 			strengthBarHolder.style['padding'] = "0 5%";
 			strengthBarHolder.style['display'] = display;
 			
+			nameElement.parentNode.style['width'] = "100%";
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
 			
 			var strengthBar = document.createElement("div");

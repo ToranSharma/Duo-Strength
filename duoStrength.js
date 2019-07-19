@@ -105,12 +105,12 @@ function updateProgress()
 		// If there is a entry before that, check if we went up a crown level then.
 		if (progress.length > 1 && progress[progress.length-1][1] != progress[progress.length-2][1])
 		{
-			// The last stored entry was the first at the crown level, so lets not overwrite it
+			// The last stored entry was the first at the crown level, so let's not overwrite it
 			progress.push(entry)
 		}
 		else
 		{
-			// No it was just a normal entry, lets overwrite it with this update.
+			// No it was just a normal entry, let's overwrite it with this update.
 			progress[progress.length-1] = entry;
 		}
 
@@ -579,7 +579,7 @@ function displayNeedsStrengthening(needsStrengthening)
 	}
 	else
 	{
-		// body hasn't loaded yet so element not there, lets try again after a small wait, but only if we are still on the main page.
+		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
 			setTimeout(function () {displayNeedsStrengthening(needsStrengthening);}, 500);
@@ -878,7 +878,7 @@ function displayCrownsBreakdown()
 	imgContainer.appendChild(crownImg);
 	imgContainer.appendChild(levelContainer);
 
-	if(document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so lets add it.
+	if(document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so let's add it.
 	{
 		if (options.crownsMaximum) crownTotalContainer.appendChild(maximumCrownCountContainer);
 
@@ -934,7 +934,7 @@ function displayCrownsBreakdown()
 
 		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
 		{
-			// The tree has some bonus skills so lets display a breakdown of their crown levels.
+			// The tree has some bonus skills so let's display a breakdown of their crown levels.
 			let bonusSkillsBreakdownHeader = document.createElement("h3");
 			bonusSkillsBreakdownHeader.innerText = "Bonus Skills";
 			bonusSkillsBreakdownHeader.style =
@@ -1203,7 +1203,7 @@ function displayXPBreakdown()
 	}
 	else
 	{
-		// We alreayd have the XP Box, lets just update the values
+		// We alreayd have the XP Box, let's just update the values
 		let languageLevelElement = document.getElementById("xpTotalAndLevel");
 		let languageXPElement = languageLevelElement.childNodes[0];
 		languageXPElement.innerText = data['points'] + " XP - ";
@@ -1251,7 +1251,7 @@ function displayXPBreakdown()
 			}
 			else
 			{
-				// ... but is now, so lets remove all the irrelevant info
+				// ... but is now, so let's remove all the irrelevant info
 				while (languageLevelElement.nextSibling != null)
 				{
 					languageLevelElement.parentNode.removeChild(languageLevelElement.nextSibling);
@@ -1287,7 +1287,7 @@ function displaySuggestion(skills, bonusSkills)
 	}
 	else
 	{
-		// body hasn't loaded yet so element not there, lets try again after a small wait, but only if we are still on the main page.
+		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
 			setTimeout(displaySuggestion(skills, bonusSkills), 500);
@@ -1742,9 +1742,9 @@ let childListMutationHandle = function(mutationsList, observer)
 			if (mutation.target.getElementsByClassName("_3FM63").length + mutation.target.getElementsByClassName("WZkQ9").length != 0) // _3FM63 for gold crown logo, WZkQ9 for grey when at 0 crowns.
 			{
 				// Crowns has had the change.
-				if (mutation.target.lastChild.className.includes("_3yH6G") && options.crownsInfo)
+				if (options.crownsInfo && mutation.target.lastChild.nodeName == 'DIV')
 				{
-					// Pop-up box has just appeared, lets display the Crown breakdown.
+					// Pop-up box, which is a div, has just appeared as the last child, let's display the Crown breakdown.
 					displayCrownsBreakdown();
 				}
 				else
@@ -1755,9 +1755,9 @@ let childListMutationHandle = function(mutationsList, observer)
 			if (mutation.target.getElementsByClassName("_2ctH6").length +  mutation.target.getElementsByClassName("_27oya").length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
 			{
 				// Streak/XP has had the change.
-				if (mutation.target.lastChild.className.includes("_3yH6G") && options.XPInfo)
+				if (options.XPInfo && mutation.target.lastChild.nodeName == 'DIV')
 				{
-					// Pop-up box has just appeared, lets display the XP breakdown.
+					// Pop-up box, which is a div, has just appeared as the last child, let's display the XP breakdown.
 					displayXPBreakdown();
 				}
 				else
@@ -1806,12 +1806,12 @@ let classNameMutationHandle = function(mutationsList, observer)
 					onMainPage = true;
 					if (language != "")
 					{
-						// language has previously been set so not first time on main page, lets just get some new data.
+						// language has previously been set so not first time on main page, let's just get some new data.
 						requestData(language);
 					}
 					else
 					{
-						// language was not set so first time on home page, lets run init again
+						// language was not set so first time on home page, let's run init again
 						init();
 					}
 				}
@@ -2010,7 +2010,7 @@ async function init()
 				}
 				else
 				{
-					// Element not found or has a class we are not expecting. It should be the 2nd child of topBarDiv so lets just set it as that and hope for the best.
+					// Element not found or has a class we are not expecting. It should be the 2nd child of topBarDiv so let's just set it as that and hope for the best.
 					topBarMobilePractice = topBarDiv.childNodes[1];
 				}
 

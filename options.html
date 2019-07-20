@@ -57,10 +57,24 @@
 		input[type="checkbox"]
 		{
 			justify-self: center;
-			width: ;
 		}
 		input[type="number"]
 		{
+			box-sizing: border-box;
+			width: 100%;
+		}
+
+		.hasSelect
+		{
+			grid-template-columns: 1fr 4.5fr 4.5fr;
+		}
+			.hasSelect label
+			{
+				padding-left: 1em;
+			}
+		select
+		{
+			z-index: 2;
 			box-sizing: border-box;
 			width: 100%;
 		}
@@ -87,6 +101,16 @@
 				<li>
 					<input class="option" id="needsStrengtheningListLength" type="number" value="10" min="1" />
 					<label for="needsStrengtheningListLength">Number of skills shown in list</label>
+				</li>
+				<li class="hasSelect">
+					<select class="option" id="needsStrengtheningListSortOrder" type="number">
+						<option value="0" selected="true">Tree Order</option>
+						<option value="1">Reverse Tree Order</option>
+						<option value="2">Alphabetical</option>
+						<option value="3">Reverse Alphabetical</option>
+						<option value="4">Random</option>
+					</select>
+					<label for="needsStrengtheningListSortOrder">Order of skills in list</label>
 				</li>
 			</ul>
 		</li>

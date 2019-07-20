@@ -463,9 +463,10 @@ function addStrengths(strengths)
 			strengthBarHolder.className = "strengthBarHolder";
 			strengthBarHolder.style = 
 			`
-				width: 100%;
-				padding: 0 5%;
+				width: 120%;
+				height: 1.4em;
 				position: relative;
+				left: -10%;
 				display: ${display};
 			`;
 			
@@ -478,9 +479,9 @@ function addStrengths(strengths)
 			`
 				position: absolute;
 				display: inline-block;
-				width: 67.5%;
+				width: 85%;
 				height: 1em;
-				top: 0.15em;
+				left: 0;
 				background-color: #e5e5e5;
 				border-radius: 0.5em;
 				z-index: 1;
@@ -492,9 +493,9 @@ function addStrengths(strengths)
 			strengthBar.style = 
 			`
 				display: inline-block;
-				position: relative;
-				top: 0.15em;
-				width: ${strength*75}%;
+				position: absolute;
+				left: 0;
+				width: ${strength*85}%;
 				height: 1em;
 				background-color: ${strength == 1.0 ? GOLD : RED};
 				border-radius: 0.5em;
@@ -507,7 +508,9 @@ function addStrengths(strengths)
 			strengthValue.style = 
 			`
 				display: inline-block;
-				width: ${(1-strength)*75+25}%;
+				position: absolute;
+				left: 85%;
+				z-index: 3;
 				text-align: right;
 			`;
 			strengthValue.innerHTML = strength*100 + "%";

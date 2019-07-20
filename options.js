@@ -6,7 +6,6 @@ function init()
 	{
 		if (element.parentNode.getElementsByTagName("ul").length !== 0)
 		{
-			
 			if (!element.checked)
 			{
 				for (option of element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option"))
@@ -64,16 +63,21 @@ function saveOptions()
 {
 	for (element of document.getElementsByClassName("option"))
 	{
-		switch (element.type)
+		if (element.tagName = "INPUT")
 		{
-			case "checkbox":
-				options[element.id] = element.checked;
-				break;
-			case "number":
-				options[element.id] = element.value;
-				break;
+			switch (element.type)
+			{
+				case "checkbox":
+					options[element.id] = element.checked;
+					break;
+				case "number":
+					options[element.id] = element.value;
+					break;
+				case "select-one":
+					options[element.id] = element.value;
+					break;
+			}
 		}
-		
 	}
 	chrome.storage.sync.set({"options": options});
 }
@@ -88,6 +92,8 @@ function changeAll(checked)
 				element.checked = checked;
 				break;
 			case "number":
+				break;
+			case "select-one":
 				break;
 		}
 		if (element.parentNode.parentNode.parentNode.tagName == "LI")

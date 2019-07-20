@@ -33,18 +33,19 @@ function retrieveOptions()
 				// First time using version with options so nothing is set in storage.
 				options =
 				{
-					"strengthBars":					true,
-					"strengthBarBackgrounds":		true, 
-					"needsStrengtheningList":		true,
-					"needsStrengtheningListLength":	"10",
-					"skillSuggestion":				true,
-					"crownsInfo":					true,
-					"crownsMaximum":				true,
-					"crownsBreakdown":				true,
-					"crownsPrediction":				true,
-					"XPInfo":						true,
-					"XPBreakdown":					true,
-					"XPPrediction":					true
+					"strengthBars":						true,
+					"strengthBarBackgrounds":			true, 
+					"needsStrengtheningList":			true,
+					"needsStrengtheningListLength":		"10",
+					"needsStrengtheningListSortOrder":	"0",
+					"skillSuggestion":					true,
+					"crownsInfo":						true,
+					"crownsMaximum":					true,
+					"crownsBreakdown":					true,
+					"crownsPrediction":					true,
+					"XPInfo":							true,
+					"XPBreakdown":						true,
+					"XPPrediction":						true
 				};
 				chrome.storage.sync.set({"options": options});
 			}
@@ -536,7 +537,7 @@ function addStrengths(strengths)
 	}
 }
 
-function displayNeedsStrengthening(needsStrengthening)
+function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 {
 	// adds clickable list of skills that need strengthening to top of the tree.
 	/* Old version where newUI had Part headings. Also mAsUf no longer seems to be used.
@@ -593,6 +594,56 @@ function displayNeedsStrengthening(needsStrengthening)
 		}
 		return false;
 	}
+
+	/*
+		Sort the list based on the option saved:
+		0: Tree order - no need to sort
+		1: Reverse Tree order - just reverse both arrays
+		2: Alphabetical
+		3: Reverse Aphabetical
+		4: Random
+	*/
+	function sortSkillsAlphabetical(a, b)
+	{
+		return (a['title'] < b['title']) ? -1 : 1;
+	};
+
+	function shuffle(array)
+	{
+		let numUnshuffled = array.length;
+		while (numUnshuffled > 0)
+		{
+			let randomIndex = Math.floor(Math.random() * numUnshuffled--);
+			let endElem = array[numUnshuffled];
+			array[numUnshuffled] = array[randomIndex];
+			array[randomIndex] = endElem;
+		}
+	}
+
+	if (needsSorting)
+		switch (options.needsStrengtheningListSortOrder)
+		{
+			case "0":
+				break;
+			case "1":
+				needsStrengthening[0].reverse();
+				needsStrengthening[1].reverse();
+				break;
+			case "2":
+				needsStrengthening[0].sort(sortSkillsAlphabetical);
+				needsStrengthening[1].sort(sortSkillsAlphabetical);
+				break;
+			case "3":
+				needsStrengthening[0].sort(sortSkillsAlphabetical);
+				needsStrengthening[1].sort(sortSkillsAlphabetical);
+				needsStrengthening[0].reverse();
+				needsStrengthening[1].reverse();
+				break;
+			case "4":
+				shuffle(needsStrengthening[0]);
+				shuffle(needsStrengthening[1]);
+				break;
+		}
 
 	topOfTree.style['height'] = "auto";
 
@@ -707,7 +758,7 @@ function displayNeedsStrengthening(needsStrengthening)
 
 			showMore.onclick = function () {
 				options.needsStrengtheningListLength = String(+options.needsStrengtheningListLength + +numExtraSkillsOnShowMore);
-				displayNeedsStrengthening(needsStrengthening);
+				displayNeedsStrengthening(needsStrengthening, false);
 			}
 			
 			showMore.title = "Click to show " + numExtraSkillsOnShowMore + " more skill" + ((numExtraSkillsOnShowMore != 1)? "s": "");
@@ -1465,7 +1516,7 @@ function getStrengths()
 	
 	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
 	{
-		// Something needs strengthening
+		// Something needs strengthening.
 		if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
 	else

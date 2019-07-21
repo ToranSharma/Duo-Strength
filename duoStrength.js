@@ -39,6 +39,7 @@ function retrieveOptions()
 					"needsStrengtheningListLength":		"10",
 					"needsStrengtheningListSortOrder":	"0",
 					"skillSuggestion":					true,
+					"skillSuggestionMethod":			"0",
 					"crownsInfo":						true,
 					"crownsMaximum":					true,
 					"crownsBreakdown":					true,
@@ -1385,7 +1386,25 @@ function displaySuggestion(skills, bonusSkills)
 			skillsByCrowns[skill['skill_progress']['level']].push(skill);
 		}
 		
-		let randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*skillsByCrowns[treeLevel].length)];
+		let randomSuggestion;
+		/*
+
+			0: Random
+			1: First
+			2: Last
+		*/
+		switch (options.skillSuggestionMethod)
+		{
+			case "0":
+				randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*skillsByCrowns[treeLevel].length)];
+				break;
+			case "1":
+				randomSuggestion = skillsByCrowns[treeLevel][0];
+				break;
+			case "2":
+				randomSuggestion = skillsByCrowns[treeLevel][skillsByCrowns[treeLevel].length-1];
+				break;
+		}
 
 		let link = document.createElement("a");
 		link.href = "/skill/" + languageCode + "/" + randomSuggestion['url_title'] + ((treeLevel == 5) ? "/practice/" : "/");

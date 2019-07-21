@@ -9,7 +9,7 @@ Changelog
 #### Crowns info
 - Additional crowns information for the current tree to the crowns pop-up menu 
 or crowns side box depending of UI version.
-- Display of maximum possible number of crowns along side total crowns earned.
+- Display of maximum possible number of crowns alongside total crowns earned.
 - Display of tree's 'Crown Tree Level', the minimum number of crowns achieved 
 for any normal skill in the tree.
 - Breakdown of how many skills are at each crown level and how many crowns they 
@@ -32,7 +32,7 @@ level.
 - Displays a random skill of the lowest crown level as a practice suggestion if 
 the the tree is fully strengthened.
 - Focus is set on skill suggestion so that on exiting a lesson, return can be 
-hit to take you to into practicing the suggested skill.
+hit to take you into practicing the suggested skill.
 
 #### Options page
 - Options page which is accessible via the 
@@ -55,13 +55,32 @@ by default, 10 skills.
 make more clear the progress that can be made for that skill.
 - These backgrounds can be toggled on the options page.
 
+[v1.0.22] - 2019-07-18
+----------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.22)
+### Changed
+- Fixed detection of if there exists the `topBarDiv` and thus if we are in a
+lesson or not. This is in response to duolingo's removal of comment nodes in 
+the tree.
+- Fixed styling of strength bars where the width of the holder had matched the 
+length of the title of the skill.
+- Detection of bonus skill section of the tree updated to match new structure 
+where the section is now marked by being sandwiched between two `div`s 
+containing an `hr` rather than the row having a different class.
+- Renamed `dataReactRoot` to `rootChild` as the data-react attribute has been 
+removed from the element.
+- `username` is now set by the end of the `href` of the profile tab button, 
+rather than from the `href` of the achievement link. This allows the username 
+to be set when the achievement box is not there, e.g. when in mobile layout.
+
 [v1.0.21] - 2019-06-26
 ----------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.21)
 ### Changed
 - Fixed language changing issue as described in 
 [issue #14](https://github.com/ToranSharma/Duo-Strength/issues/14).
-- `language` is now set using the requested data rather than from the page itself.
+- `language` is now set using the requested data rather than from the page 
+itself.
 - The number of active requests is now kept track of to help handle multiple 
 language changes done in quick succession.
 - Fixed handling of language change from pages other than the main page.
@@ -71,10 +90,10 @@ language changes done in quick succession.
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.20)
 ### Changed
 - Fixed issue on Firefox where the the data only loaded when 
-first loggin in to duolingo, as found in 
+first logging in to duolingo, as found in 
 [issue #13](https://github.com/ToranSharma/Duo-Strength/issues/13). Data 
 requests are now executed in the context of the document rather than the 
-exstension.
+extension.
 
 [v1.0.19] - 2019-06-17
 ----------------------
@@ -91,7 +110,7 @@ amount of requests now.
 ----------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.18)
 ### Changed
-- Fixed `topBarDiv` definition. It is now found and definied by its `className` 
+- Fixed `topBarDiv` definition. It is now found and defined by its `className` 
 rather than its `childNodes` relation to `dataReactRoot`.
 
 [v1.0.17] - 2019-05-22
@@ -245,7 +264,7 @@ which caused the extension not to display.
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.4)
 ### Added
 - Duo Strength to the Firefox Add-ons Store.
-- Detection of the login screen, so that the exstension loads when logging in 
+- Detection of the login screen, so that the extension loads when logging in 
 without having to refresh the page.
 
 ### Changed
@@ -305,7 +324,8 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
-[v1.0.20]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.20...v1.0.21
+[v1.0.22]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.21...v1.0.22
+[v1.0.21]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.20...v1.0.21
 [v1.0.20]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.19...v1.0.20
 [v1.0.19]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.18...v1.0.19
 [v1.0.18]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.17...v1.0.18

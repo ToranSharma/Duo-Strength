@@ -1831,60 +1831,79 @@ let childListMutationHandle = function(mutationsList, observer)
 
 let classNameMutationHandle = function(mutationsList, observer)
 {
-	for (let mutation of mutationsList)
+	checkUIVersion();
+	if (!oldUI)
 	{
-		checkUIVersion();
-		if(!oldUI)
+		/*
+			First we go through all the mutations to check if any of them are a language change.
+			If there has been a language change, then we will just deal with that.
+			This is the deal with the case that the script loaded on a page other than the main page, where when a language changes then happens,
+			we are also changed to the main page, triggering the page change mutation.
+		*/
+		let pageChanged = false;
+		for (let mutation of mutationsList)
 		{
-			// check if it was a language change
 			if (mutation.target.parentNode.parentNode == languageLogo)
 			{
 				// it was a language change
 				languageChanged = true;
 				languageChangesPending++;
-				// As the language has just changed, need to wipe the slate clean so no old data is shown after change.
-				removeStrengthBars();
-				removeNeedsStrengtheningBox();
-				removeCrownsBreakdown();
-				removeXPBox();
-				removeSuggestion();
-
-				// now get the new data
-				checkUIVersion(); // Just in case.
-				requestData();
 			}
 			else
 			{
-				// it wasn't a language change
-				// Just in case there is also a language change going on we won't set languageChanged to false.
+				// this mutation is not a language change, so it must be a page change.
+				pageChanged = true;
+			}
+		}
+		if (languageChanged)
+		{
+			// Now we deal with the language change.
+			// As the language has just changed, need to wipe the slate clean so no old data is shown after change.
+			removeStrengthBars();
+			removeNeedsStrengtheningBox();
+			removeCrownsBreakdown();
+			removeXPBox();
+			removeSuggestion();
 
-				// check if we are now on the main page
-				if (topBarDiv.childNodes[0].className.includes("_2lkuX"))
+			// now get the new data
+			checkUIVersion(); // Just in case.
+			requestData();
+		}
+		if (pageChanged)
+		{
+			// There has been a page change, either to or from the main page.
+			// Just in case there is also a language change still going on we won't set languageChanged to false.
+
+			// check if we are now on the main page
+			if (topBarDiv.childNodes[0].className.includes("_2lkuX"))
+			{
+				// on main page
+				// check if language has been previously set as we only set it in init if we were on the main page
+				onMainPage = true;
+				if (language != "")
 				{
-					// on main page
-					// check if language has been previously set as we only set it in init if we were on the main page
-					onMainPage = true;
-					if (language != "")
-					{
-						// language has previously been set so not first time on main page, let's just get some new data.
-						requestData(language);
-					}
-					else
-					{
-						// language was not set so first time on home page, let's run init again
-						init();
-					}
+					// language has previously been set so not first time on main page, let's just get some new data.
+					requestData(language);
 				}
 				else
 				{
-					// not on main page
-					onMainPage = false;
+					// language was not set so first time on home page, let's run init again
+					init();
 				}
 			}
+			else
+			{
+				// not on main page, don't need to do anything other than set the flag.
+				onMainPage = false;
+			}
 		}
-		else
+	}
+	else
+	{
+		// oldUI
+		for (let mutation of mutationsList)
 		{
-			// old UI page nad language handling
+			// old UI page and language handling
 			if(topBarDiv.className == "_6t5Uh" && document.getElementsByClassName("_2XW92").length == 0) // _6t5Uh means we are on body on main page or words page. no _2XW92 means not on words page. So we are on main page.
 			{
 				onMainPage = true;
@@ -2028,31 +2047,28 @@ async function init()
 				{
 					// on home page
 					onMainPage = true;
-
-					// need to set up Observer on language logo for language change detection
-					// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
-					classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
-
-					/*
-					language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
-					
-					language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
-					We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
-					
-
-					Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
-					*/
-
-					checkUIVersion();
-
-					await optionsLoaded;
-					requestData();
 				}
 				else
-				{
-					// We are not on the main page. Don't need to do anything further, we have set up the observer to see if we go back to the main page from here.
 					onMainPage = false;
-				}
+
+				// need to set up Observer on language logo for language change detection
+				// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
+				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+
+				/*
+				language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
+				
+				language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
+				We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
+				
+
+				Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
+				*/
+
+				checkUIVersion();
+
+				await optionsLoaded;
+				requestData();
 			}
 			else
 			{

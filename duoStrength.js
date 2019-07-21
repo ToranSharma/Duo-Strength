@@ -1793,7 +1793,13 @@ let childListMutationHandle = function(mutationsList, observer)
 		else if (mutation.target.className == "_3gtu3 _1-Eux iDKFi")
 		{
 			// Crown or streak pop up box has appeared or dissapeared.
-			if (mutation.target.getElementsByClassName("_3FM63").length + mutation.target.getElementsByClassName("WZkQ9").length != 0) // _3FM63 for gold crown logo, WZkQ9 for grey when at 0 crowns.
+
+			if (languageChanged)
+			{
+				// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
+				continue;
+			}
+			else if (mutation.target.getElementsByClassName("_3FM63").length + mutation.target.getElementsByClassName("WZkQ9").length != 0) // _3FM63 for gold crown logo, WZkQ9 for grey when at 0 crowns.
 			{
 				// Crowns has had the change.
 				if (options.crownsInfo && mutation.target.lastChild.nodeName == 'DIV')

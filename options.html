@@ -66,7 +66,7 @@
 
 		.hasSelect
 		{
-			grid-template-columns: 1fr 4.5fr 4.5fr;
+			grid-template-columns: 3em fit-content(100%) 1fr;
 		}
 			.hasSelect label
 			{
@@ -76,7 +76,7 @@
 		{
 			z-index: 2;
 			box-sizing: border-box;
-			width: 100%;
+			width: fit-content;
 		}
 		select:disabled
 		{
@@ -107,7 +107,7 @@
 					<label for="needsStrengtheningListLength">Number of skills shown in list</label>
 				</li>
 				<li class="hasSelect">
-					<select class="option" id="needsStrengtheningListSortOrder" type="number">
+					<select class="option" id="needsStrengtheningListSortOrder">
 						<option value="0" selected="true">Tree Order</option>
 						<option value="1">Reverse Tree Order</option>
 						<option value="2">Alphabetical</option>
@@ -120,7 +120,17 @@
 		</li>
 		<li>
 			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
-			<label for="skillSuggestion">Fully Strengthened Skill Suggestion</label>
+			<label for="skillSuggestion">Fully Strengthened Tree Skill Suggestion</label>
+			<ul>
+				<li class="hasSelect">
+					<select class="option" id= "skillSuggestionMethod">
+						<option value="0" selected="true">Random</option>
+						<option value="1">First</option>
+						<option vlaue="2">Last</option>
+					</select>
+					<label for="skillSuggestionMethod"> Skill at the current crown level</label>
+				</li>
+			</ul>
 		</li>
 		<li>
 			<input class="option" id="crownsInfo" type="checkbox" checked="true" />

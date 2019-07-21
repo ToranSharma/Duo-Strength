@@ -29,10 +29,12 @@ percentage and raw numbers of this progress.
 level.
 
 #### Skill suggestions
-- Displays a random skill of the lowest crown level as a practice suggestion if 
-the the tree is fully strengthened.
+- Displays a, by default, random skill of the lowest crown level as a practice 
+suggestion if the the tree is fully strengthened.
 - Focus is set on skill suggestion so that on exiting a lesson, return can be 
 hit to take you into practicing the suggested skill.
+- The method for selecting the suggested skill can be customised on the options 
+page.
 
 #### Options page
 - Options page which is accessible via the 
@@ -49,6 +51,7 @@ skill.
 - Additional skills can be displayed by clicking show more. This adds another, 
 by default, 10 skills.
 - The number shown can be customised on the options page.
+- The order in which the list is sorted can be customised on the options page.
 
 #### Strength Bars
 - Non 100% strength bars now show in grey the width of a full strength bar to 

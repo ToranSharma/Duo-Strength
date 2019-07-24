@@ -22,6 +22,7 @@
 			width: 100%;
 			margin: 0.2em 0;
 			background-color: white;
+			position: relative;
 		}
 		
 			li > ul
@@ -58,6 +59,8 @@
 		input[type="checkbox"]
 		{
 			justify-self: center;
+			margin: 0;
+			align-self: center;
 		}
 		input[type="number"]
 		{
@@ -83,6 +86,17 @@
 		{
 			background-color: rgb(235, 235, 228);
 		}
+		.dummy
+		{
+			position: absolute;
+			grid-column-start: 1;
+			left: calc(3.5em + 1px);
+			box-shadow: inset 0px 0px 0 20px white;
+		}
+		button
+		{
+			width: 6em;
+		}
 	</style>
 </head>
 <body>
@@ -94,6 +108,7 @@
 			<label for="strengthBars">Strength Bars</label>
 			<ul>
 				<li>
+					<input class="dummy" type="checkbox" />
 					<input class="option" id="strengthBarBackgrounds" type="checkbox" checked="true" />
 					<label for="needsStrengtheningListLength">Grey background showing width of a full bar</label>
 				</li>
@@ -138,14 +153,17 @@
 			<label for="crownsInfo">Additional Crowns Information</label>
 			<ul>
 				<li>
+					<input class="dummy" type="checkbox" />
 					<input class="option" id="crownsMaximum" type="checkbox" checked="true" />
 					<label for="crownsMaximum">Crowns Maximum</label>
 				</li>
 				<li>
+					<input class="dummy" type="checkbox" />
 					<input class="option" id="crownsBreakdown" type="checkbox" checked="true" />
 					<label for="crownsBreakdown">Crowns Breakdown</label>
 				</li>
 				<li>
+					<input class="dummy" type="checkbox" />
 					<input class="option" id="crownsPrediction" type="checkbox" checked="true" />
 					<label for="crownsPrediction">Crowns Prediction</label>
 				</li>
@@ -156,10 +174,12 @@
 			<label for="XPInfo">Additional XP Info</label>
 			<ul>
 				<li>
+					<input class="dummy" type="checkbox" />
 					<input class="option" id="XPBreakdown" type="checkbox" checked="true" />
 					<label for="XPBreakdown">XP Breakdown</label>
 				</li>
 				<li>
+					<input class="dummy" type="checkbox" />
 					<input class="option" id="XPPrediction" type="checkbox" checked="true" />
 					<label for="XPPrediction">XP Prediction</label>
 				</li>

@@ -211,7 +211,7 @@ function currentProgress()
 	let lessonsToNextCrownLevel = 0;
 	for (let skill of skills)
 	{
-		if (skill['locked']) continue;
+		//if (skill['locked']) continue;
 		
 		if (skill['skill_progress']['level'] == treeLevel)
 		{
@@ -331,7 +331,7 @@ function daysToNextCrownLevelByCalendar()
 
 	for (let skill of skills)
 	{
-		if (skill['locked']) continue;
+		//if (skill['locked']) continue;
 		
 		if (skill['skill_progress']['level'] == treeLevel)
 		{
@@ -1883,7 +1883,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 			removeCrownsBreakdown();
 			removeXPBox();
 			removeSuggestion();
-
+			progress = [];
 			// now get the new data
 			checkUIVersion(); // Just in case.
 			requestData();

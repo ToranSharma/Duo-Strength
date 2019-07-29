@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+<head>
+	<title>Duo Strength Options</title>
+	<style>
+		body
+		{
+			margin: 2em;
+		}
+
+		ul
+		{
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		li
+		{
+			display: grid;
+			grid-template-columns: 3em 1fr;
+			width: 100%;
+			margin: 0.2em 0;
+			background-color: white;
+			position: relative;
+		}
+		
+			li > ul
+			{
+				/*padding-left: 1em;*/
+				grid-column: span 2;
+			}
+				li > ul > li
+				{
+					grid-template-columns: 3em 3em 1fr;
+					box-sizing: content-box;
+				}
+					li > ul > li:before
+					{
+						content: "";
+						z-index: 1;
+						width: 100%;
+						height: calc(100% + 0.2em);
+						border-style: dashed;
+						border-color: black;
+						border-width: 0px 0px 1px 1px;
+						position: relative;
+						top: calc(-50% - 1px - 0.2em);
+						left: calc(50% - 0.5px);
+					}
+		li:nth-of-type(odd)
+		{
+			/*background-color: #DDD;*/
+		}
+		input
+		{
+			z-index: 2;
+		}
+		input[type="checkbox"]
+		{
+			justify-self: center;
+			margin: 0;
+			align-self: center;
+		}
+		input[type="number"]
+		{
+			box-sizing: border-box;
+			width: 100%;
+		}
+
+		.hasSelect
+		{
+			grid-template-columns: 3em fit-content(100%) 1fr;
+		}
+			.hasSelect label
+			{
+				padding-left: 1em;
+			}
+		select
+		{
+			z-index: 2;
+			box-sizing: border-box;
+			width: fit-content;
+		}
+		select:disabled
+		{
+			background-color: rgb(235, 235, 228);
+		}
+		.dummy
+		{
+			position: absolute;
+			grid-column-start: 1;
+			left: calc(3.5em + 1px);
+			box-shadow: inset 0px 0px 0 20px white;
+		}
+		button
+		{
+			width: 6em;
+		}
+	</style>
+</head>
+<body>
+	<h1>Duo Strength Options</h1>
+	<h2>Enable or disable features here</h2>
+	<ul>
+		<li>
+			<input class="option" id="strengthBars" type="checkbox" checked="true" />
+			<label for="strengthBars">Strength Bars</label>
+			<ul>
+				<li>
+					<input class="dummy" type="checkbox" />
+					<input class="option" id="strengthBarBackgrounds" type="checkbox" checked="true" />
+					<label for="needsStrengtheningListLength">Grey background showing width of a full bar</label>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<input class="option" id="needsStrengtheningList" type="checkbox" checked="true" />
+			<label for="needsStrengtheningList">Needs Strengthening List</label>
+			<ul>
+				<li>
+					<input class="option" id="needsStrengtheningListLength" type="number" value="10" min="1" />
+					<label for="needsStrengtheningListLength">Number of skills shown in list</label>
+				</li>
+				<li class="hasSelect">
+					<select class="option" id="needsStrengtheningListSortOrder">
+						<option value="0" selected="true">Tree Order</option>
+						<option value="1">Reverse Tree Order</option>
+						<option value="2">Alphabetical</option>
+						<option value="3">Reverse Alphabetical</option>
+						<option value="4">Random</option>
+					</select>
+					<label for="needsStrengtheningListSortOrder">Order of skills in list</label>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
+			<label for="skillSuggestion">Fully Strengthened Tree Skill Suggestion</label>
+			<ul>
+				<li class="hasSelect">
+					<select class="option" id= "skillSuggestionMethod">
+						<option value="0" selected="true">Random</option>
+						<option value="1">First</option>
+						<option value="2">Last</option>
+					</select>
+					<label for="skillSuggestionMethod"> Skill at the current crown level</label>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<input class="option" id="crownsInfo" type="checkbox" checked="true" />
+			<label for="crownsInfo">Additional Crowns Information</label>
+			<ul>
+				<li>
+					<input class="dummy" type="checkbox" />
+					<input class="option" id="crownsMaximum" type="checkbox" checked="true" />
+					<label for="crownsMaximum">Crowns Maximum</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" />
+					<input class="option" id="crownsBreakdown" type="checkbox" checked="true" />
+					<label for="crownsBreakdown">Crowns Breakdown</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" />
+					<input class="option" id="crownsPrediction" type="checkbox" checked="true" />
+					<label for="crownsPrediction">Crowns Prediction</label>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<input class="option" id="XPInfo" type="checkbox" checked="true" />
+			<label for="XPInfo">Additional XP Info</label>
+			<ul>
+				<li>
+					<input class="dummy" type="checkbox" />
+					<input class="option" id="XPBreakdown" type="checkbox" checked="true" />
+					<label for="XPBreakdown">XP Breakdown</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" />
+					<input class="option" id="XPPrediction" type="checkbox" checked="true" />
+					<label for="XPPrediction">XP Prediction</label>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	<button id="enableAll">Enable all</button>
+	<button id="disableAll">Disable all</button>
+	<p>
+		Note that any currently open duolingo pages will need to be refreshed to enable these changes.
+	</p>
+	<script src="options.js"></script>
+</body>
+</html>

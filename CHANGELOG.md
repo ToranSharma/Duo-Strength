@@ -3,12 +3,17 @@ Changelog
 
 [Unreleased]
 ------------
+-
+
+[v1.1.0] - 2019-07-29
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.0)
 ### Added
 - This CHANGELOG.
 
 #### Crowns info
 - Additional crowns information for the current tree to the crowns pop-up menu 
-or crowns side box depending of UI version.
+or crowns side box depending on the UI version.
 - Display of maximum possible number of crowns alongside total crowns earned.
 - Display of tree's 'Crown Tree Level', the minimum number of crowns achieved 
 for any normal skill in the tree.
@@ -19,7 +24,7 @@ contribute to the total crown count.
 
 #### XP info
 - Additional XP information for the current language to the Streak/Daily Goal 
-pop-up menu or in a new side box depending of UI version.
+pop-up menu or in a new side box depending on the UI version.
 - Display of total XP earned for the current language.
 - Display of language level for the current language.
 - Display of XP remaining to the next language level.
@@ -30,7 +35,8 @@ level.
 
 #### Skill suggestions
 - Displays a, by default, random skill of the lowest crown level as a practice 
-suggestion if the the tree is fully strengthened.
+suggestion if the tree is completed and fully strengthened.
+- Displays the next skill to be learnt on incomplete, fully strengthened trees.
 - Focus is set on skill suggestion so that on exiting a lesson, return can be 
 hit to take you into practicing the suggested skill.
 - The method for selecting the suggested skill can be customised on the options 
@@ -38,13 +44,15 @@ page.
 
 #### Options page
 - Options page which is accessible via the 
-[right click context menu](http://toransharma.com/i/2019-06-05_16-24-54.png) 
+[right click context menu](https://toransharma.com/i/Duo%20Strength%20v1.1%20context%20menu.png) 
 of the Duo Strength logo or via the extensions details. 
 - Ability to enable or disable every feature and feature component.
 - Ability to customise the behaviour of some features.
 - Enable and disable all buttons.
 
 ### Changed
+- Updated README screenshots and text to include new features.
+
 #### Needs Strengthening List
 - Now shows, by default, 10 skills that need strengthening instead of every 
 skill.
@@ -57,6 +65,12 @@ by default, 10 skills.
 - Non 100% strength bars now show in grey the width of a full strength bar to 
 make more clear the progress that can be made for that skill.
 - These backgrounds can be toggled on the options page.
+
+## Depreciated
+- Support of old UI version with the blue top navigation bar is being removed. 
+All users should have been moved to the new UI version with the white 
+navigation bar. Handling of the old UI will be removed in v1.1.1 to simplify 
+the code.
 
 [v1.0.22] - 2019-07-18
 ----------------------
@@ -327,6 +341,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.22...v1.1.0
 [v1.0.22]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.21...v1.0.22
 [v1.0.21]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.20...v1.0.21
 [v1.0.20]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.19...v1.0.20

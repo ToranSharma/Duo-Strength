@@ -526,11 +526,10 @@ function addStrengths(strengths)
 		} else // we already have the elements made prerviously, just update their values.
 		{
 			let strengthBar = document.getElementById(name + "StrengthBar");
-			strengthBar.style['width'] = (strength*75)+"%";
+			strengthBar.style['width'] = (strength*85)+"%";
 			strengthBar.style['backgroundColor'] = (strength == 1.0 ? GOLD : RED);
 			
 			let strengthValue = document.getElementById(name + "StrengthValue");
-			strengthValue.style['width'] = ((1-strength)*75+25)+"%";
 			strengthValue.innerHTML = strength*100 + "%";
 
 			strengthBar.parentNode.style['display'] = display;

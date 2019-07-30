@@ -331,8 +331,6 @@ function daysToNextCrownLevelByCalendar()
 
 	for (let skill of skills)
 	{
-		//if (skill['locked']) continue;
-		
 		if (skill['skill_progress']['level'] == treeLevel)
 		{
 			lessonsToNextCrownLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
@@ -340,24 +338,37 @@ function daysToNextCrownLevelByCalendar()
 	}
 
 	let calendar = userData['language_data'][languageCode]['calendar'];
+	if (calendar.length == 0)
+		return -1;
+
 	let practiceTimes = Array();
+
+	let currentDate = (new Date()).setHours(0,0,0,0);	
 
 	for (let lesson of calendar)
 	{	
-		let date = new Date(lesson['datetime']);
-		date.setHours(0,0,0,0);
-		
-		practiceTimes.push(date);
+		let date = (new Date(lesson['datetime'])).setHours(0,0,0,0);
+		if (date == currentDate && !hasMetGoal)
+		{
+			// if the lesson is from today and the goal hasn't been met, then let's not include it
+			continue;
+		}
+		else
+		{
+			practiceTimes.push(date);
+		}
 	}
 
 	let numLessons = practiceTimes.length;
 	let firstDate = practiceTimes[0]; // assuming sorted acending.
 	let lastDate = practiceTimes[numLessons-1];
-	let currentDate = new Date();
 
-	if ((currentDate-lastDate)/(1000*60*60) > 48) lastDate = currentDate;
-
-	if (numLessons == 0) return -1;
+	if (lastDate != currentDate)
+	{
+		// lastDate isn't today, it would only be today if we have met our goal for today
+		// we therefore set the lastDate to yesterday, in case that wasn't already it and no lessons were completed yesterday.
+		lastDate = currentDate - (24*60*60*1000);
+	}
 
 	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // in days
 	let lessonRate = numLessons/timePeriod; // in lessons per day

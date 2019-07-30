@@ -251,28 +251,28 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 		return -1;
 	}
 	let xpTotal = 0;
-	let numDays;
-	let firstDate = new Date(history[0].datetime);
+	
+	let firstDate = (new Date(history[0].datetime)).setHours(0,0,0,0);
 	let lastDate;
+
 	for (let lesson of history)
 	{
 		xpTotal += lesson.improvement;
-		let date = new Date(lesson.datetime);
+		let date = (new Date(lesson.datetime)).setHours(0,0,0,0);
 		lastDate = date;
 	}
 
-	let currentDate = new Date(Date.now());
+	let currentDate = (new Date()).setHours(0,0,0,0);
 
-	if ((currentDate-lastDate)/(1000*60*60) > 48)
+	if (lastDate != currentDate || !hasMetGoal())
 	{
-		// been more than 48 hours between last data point and now, therefore we will use now as the last date as at least one day has been missed.
-		lastDate = currentDate;
+		// lastDate isn't today or it is and the goal hasn't been met, so we don't include today in the calculation, use yesterday
+		lastDate = currentDate - (24*60*60*1000);
 	}
 
-	let timePeriod = lastDate - firstDate;
+	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // number of days, inclusive of start and end.
 
-	let xpRate = xpTotal/timePeriod // in units of xp/millisecond
-	xpRate *= 1000*60*60*24 // now in units of xp/day
+	let xpRate = xpTotal/timePeriod // in units of xp/day
 
 	return Math.ceil(xpLeft/xpRate);
 }

@@ -646,6 +646,12 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 			margin-bottom 2em;
 			min-height: 3em;
 		`;
+		if (topOfTree.getElementsByClassName("_27CnM").length != 0)
+		{
+			// If there is the IN BETA label, make it relative, not aboslute.
+			topOfTree.getElementsByClassName("_27CnM")[0].style['position'] = 'relative';
+			strengthenBox.style['margin-top'] = "0.5em";
+		}
 	}
 	else
 	{
@@ -1267,7 +1273,12 @@ function displaySuggestion(skills, bonusSkills)
 		let container = document.createElement("div");
 		container.id = "fullStrengthMessageContainer";
 		container.style = "margin-bottom: 2em;";
-
+		if (topOfTree.getElementsByClassName("_27CnM").length != 0)
+		{
+			// If there is the IN BETA label, make it relative, not absolute.
+			topOfTree.getElementsByClassName("_27CnM")[0].style['position'] = 'relative';
+			container.style['margin-top'] = "0.5em";
+		}
 		let treeLevel = crownTreeLevel();
 		let skillsByCrowns = [[],[],[],[],[],[]];
 

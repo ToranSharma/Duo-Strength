@@ -5,6 +5,20 @@ Changelog
 ------------
 -
 
+[v1.1.1] - 2019-07-30
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.1)
+### Changed
+- Method for calculating current rate of XP gain reworked to count whole days, 
+the method also only includes XP gained today if the goal has been met.
+- Tweaked calendar method for calculating days to next crown level to only 
+include any progress from today if the goal has been met.
+
+### Removed
+- Old UI (blue top navigation bar) detection and handling. It is assumed that 
+all users have been changed to the new UI (white top naviagtion bar), so no 
+users should be affected.
+
 [v1.1.0] - 2019-07-29
 ---------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.0)
@@ -341,6 +355,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.22...v1.1.0
 [v1.0.22]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.21...v1.0.22
 [v1.0.21]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.20...v1.0.21

@@ -5,6 +5,20 @@ Changelog
 ------------
 -
 
+[v1.1.2] - 2019-07-31
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.2)
+### Added
+- Option to show or hide rows in the crowns breakdown, that have no skills at 
+that level.
+
+### Changed
+- Added detection for IN BETA label at the top of beta trees so that the needs 
+strengthening list or skill suggestion will be shown below this now.
+- Options are now initially set to defauls and overwritten by the stored 
+values. This allows any new options to be set to on first use, then saved in 
+storage.
+
 [v1.1.1] - 2019-07-30
 ---------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.1)
@@ -355,6 +369,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.22...v1.1.0
 [v1.0.22]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.21...v1.0.22

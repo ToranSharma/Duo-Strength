@@ -27,10 +27,8 @@ function retrieveOptions()
 	{
 		chrome.storage.sync.get("options", function (data)
 		{
-			if (Object.entries(data).length === 0)
-			{
-				// First time using version with options so nothing is set in storage.
-				options =
+			// Set options to default settings
+			options =
 				{
 					"strengthBars":						true,
 					"strengthBarBackgrounds":			true, 
@@ -42,15 +40,27 @@ function retrieveOptions()
 					"crownsInfo":						true,
 					"crownsMaximum":					true,
 					"crownsBreakdown":					true,
+					"crownsBreakdownShowZerosRows":		true,
 					"crownsPrediction":					true,
 					"XPInfo":							true,
 					"XPBreakdown":						true,
 					"XPPrediction":						true
 				};
-				chrome.storage.sync.set({"options": options});
+			if (Object.entries(data).length === 0)
+			{
+				// First time using version with options so nothing is set in storage.
 			}
 			else
-				options = data.options;
+			{
+				// We have loaded some options,
+				// let's apply them individually in case new options have been added since last on the options page
+				for (option in data.options)
+				{
+					options[option] = data.options[option];
+				}
+			}
+			// Now let's save the options for next time.
+			chrome.storage.sync.set({"options": options});
 			resolve();
 		});
 	});
@@ -646,6 +656,12 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 			margin-bottom 2em;
 			min-height: 3em;
 		`;
+		if (topOfTree.getElementsByClassName("_27CnM").length != 0)
+		{
+			// If there is the IN BETA label, make it relative, not aboslute.
+			topOfTree.getElementsByClassName("_27CnM")[0].style['position'] = 'relative';
+			strengthenBox.style['margin-top'] = "0.5em";
+		}
 	}
 	else
 	{
@@ -872,6 +888,10 @@ function displayCrownsBreakdown()
 		for(let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
 		{
 			let skillCount = crownLevelCount[0][crownLevel];
+
+			if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
+				continue;
+
 			let crownCount = skillCount * crownLevel;
 		
 			levelContainer.id = "crownLevel" + crownLevel + "Count";
@@ -1267,7 +1287,12 @@ function displaySuggestion(skills, bonusSkills)
 		let container = document.createElement("div");
 		container.id = "fullStrengthMessageContainer";
 		container.style = "margin-bottom: 2em;";
-
+		if (topOfTree.getElementsByClassName("_27CnM").length != 0)
+		{
+			// If there is the IN BETA label, make it relative, not absolute.
+			topOfTree.getElementsByClassName("_27CnM")[0].style['position'] = 'relative';
+			container.style['margin-top'] = "0.5em";
+		}
 		let treeLevel = crownTreeLevel();
 		let skillsByCrowns = [[],[],[],[],[],[]];
 

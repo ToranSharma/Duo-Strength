@@ -27,7 +27,6 @@
 		
 			li > ul
 			{
-				/*padding-left: 1em;*/
 				grid-column: span 2;
 			}
 				li > ul > li
@@ -35,7 +34,7 @@
 					grid-template-columns: 3em 3em 1fr;
 					box-sizing: content-box;
 				}
-					li > ul > li:before
+					li > ul > li::before
 					{
 						content: "";
 						z-index: 1;
@@ -48,13 +47,28 @@
 						top: calc(-50% - 1px - 0.2em);
 						left: calc(50% - 0.5px);
 					}
-		li:nth-of-type(odd)
-		{
-			/*background-color: #DDD;*/
-		}
+					li > ul > li > ul
+					{
+						grid-column: 2 / span 2;
+					}
+					li > ul > li > ul::after
+					{
+						content: "";
+						z-index: 1;
+						height: 50%;
+						width: 1em;
+						border-style: dashed;
+						border-color: black;
+						border-width: 0px 0px 0px 1px;
+						position: absolute;
+						top: calc(25% - 2px);
+						left: calc(1.5em - 0.5px);
+						grid-column: 1;
+					}
+
 		input
 		{
-			z-index: 2;
+			z-index: 3;
 		}
 		input[type="checkbox"]
 		{
@@ -78,7 +92,7 @@
 			}
 		select
 		{
-			z-index: 2;
+			z-index: 3;
 			box-sizing: border-box;
 			width: fit-content;
 		}
@@ -91,6 +105,7 @@
 			position: absolute;
 			grid-column-start: 1;
 			left: calc(3.5em + 1px);
+			top: 1.5px;
 			box-shadow: inset 0px 0px 0 20px white;
 		}
 		button
@@ -108,7 +123,7 @@
 			<label for="strengthBars">Strength Bars</label>
 			<ul>
 				<li>
-					<input class="dummy" type="checkbox" />
+					<input class="dummy" type="checkbox" disabled="true" />
 					<input class="option" id="strengthBarBackgrounds" type="checkbox" checked="true" />
 					<label for="needsStrengtheningListLength">Grey background showing width of a full bar</label>
 				</li>
@@ -153,17 +168,24 @@
 			<label for="crownsInfo">Additional Crowns Information</label>
 			<ul>
 				<li>
-					<input class="dummy" type="checkbox" />
+					<input class="dummy" type="checkbox" disabled="true" />
 					<input class="option" id="crownsMaximum" type="checkbox" checked="true" />
 					<label for="crownsMaximum">Crowns Maximum</label>
 				</li>
 				<li>
-					<input class="dummy" type="checkbox" />
+					<input class="dummy" type="checkbox" disabled="true" />
 					<input class="option" id="crownsBreakdown" type="checkbox" checked="true" />
 					<label for="crownsBreakdown">Crowns Breakdown</label>
+					<ul>
+						<li>
+							<input class="dummy" type="checkbox" disabled="true" />
+							<input class="option" id="crownsBreakdownShowZerosRows" type="checkbox" checked="true;">
+							<label for="crownsBreakdownShowZerosRows">Show rows with zero skills</label>
+						</li>
+					</ul>
 				</li>
 				<li>
-					<input class="dummy" type="checkbox" />
+					<input class="dummy" type="checkbox" disabled="true" />
 					<input class="option" id="crownsPrediction" type="checkbox" checked="true" />
 					<label for="crownsPrediction">Crowns Prediction</label>
 				</li>
@@ -174,12 +196,12 @@
 			<label for="XPInfo">Additional XP Info</label>
 			<ul>
 				<li>
-					<input class="dummy" type="checkbox" />
+					<input class="dummy" type="checkbox" disabled="true" />
 					<input class="option" id="XPBreakdown" type="checkbox" checked="true" />
 					<label for="XPBreakdown">XP Breakdown</label>
 				</li>
 				<li>
-					<input class="dummy" type="checkbox" />
+					<input class="dummy" type="checkbox" disabled="true" />
 					<input class="option" id="XPPrediction" type="checkbox" checked="true" />
 					<label for="XPPrediction">XP Prediction</label>
 				</li>

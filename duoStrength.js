@@ -42,6 +42,7 @@ function retrieveOptions()
 					"crownsInfo":						true,
 					"crownsMaximum":					true,
 					"crownsBreakdown":					true,
+					"crownsBreakdownShowZerosRows":		true,
 					"crownsPrediction":					true,
 					"XPInfo":							true,
 					"XPBreakdown":						true,
@@ -878,6 +879,10 @@ function displayCrownsBreakdown()
 		for(let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
 		{
 			let skillCount = crownLevelCount[0][crownLevel];
+
+			if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
+				continue;
+
 			let crownCount = skillCount * crownLevel;
 		
 			levelContainer.id = "crownLevel" + crownLevel + "Count";

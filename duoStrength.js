@@ -27,10 +27,8 @@ function retrieveOptions()
 	{
 		chrome.storage.sync.get("options", function (data)
 		{
-			if (Object.entries(data).length === 0)
-			{
-				// First time using version with options so nothing is set in storage.
-				options =
+			// Set options to default settings
+			options =
 				{
 					"strengthBars":						true,
 					"strengthBarBackgrounds":			true, 
@@ -48,10 +46,21 @@ function retrieveOptions()
 					"XPBreakdown":						true,
 					"XPPrediction":						true
 				};
-				chrome.storage.sync.set({"options": options});
+			if (Object.entries(data).length === 0)
+			{
+				// First time using version with options so nothing is set in storage.
 			}
 			else
-				options = data.options;
+			{
+				// We have loaded some options,
+				// let's apply them individually in case new options have been added since last on the options page
+				for (option in data.options)
+				{
+					options[option] = data.options[option];
+				}
+			}
+			// Now let's save the options for next time.
+			chrome.storage.sync.set({"options": options});
 			resolve();
 		});
 	});

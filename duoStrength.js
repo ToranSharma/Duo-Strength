@@ -951,6 +951,10 @@ function displayCrownsBreakdown()
 			for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
 			{
 				let skillCount = crownLevelCount[1][crownLevel];
+
+				if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
+				continue;
+
 				let crownCount = skillCount * crownLevel;
 			
 				levelContainer.id = "bonusSkillCrownLevel" + crownLevel + "Count";

@@ -951,6 +951,10 @@ function displayCrownsBreakdown()
 			for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
 			{
 				let skillCount = crownLevelCount[1][crownLevel];
+
+				if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
+				continue;
+
 				let crownCount = skillCount * crownLevel;
 			
 				levelContainer.id = "bonusSkillCrownLevel" + crownLevel + "Count";
@@ -1055,7 +1059,8 @@ function displayCrownsBreakdown()
 
 function displayXPBreakdown()
 {
-	if (Object.entries(userData).length == 0)
+	if (Object.entries(userData).length == 0
+		|| (document.getElementsByClassName('yRM09').length === 0 && document.getElementsByClassName("_1Ygk_").length === 0))
 		return false;
 	
 	let data =
@@ -1179,8 +1184,18 @@ function displayXPBreakdown()
 			maxLevelMessage.innerText = "You have reached the maximum level!";
 			languageLevelContainer.appendChild(maxLevelMessage);
 		}
-		
-		document.getElementsByClassName('yRM09')[0].appendChild(container);
+		if (document.getElementsByClassName('yRM09').length != 0)
+		{
+			document.getElementsByClassName('yRM09')[0].appendChild(container);
+		}
+		else if (document.getElementsByClassName("_1Ygk_").length != 0)
+		{
+			document.getElementsByClassName("_1Ygk_")[0].appendChild(container);
+		}
+		else
+		{
+			// Neither is about so we just don't do anything. Shouldn't get to this point as we should have exited the function at the start.
+		}
 	}
 	else
 	{
@@ -1448,6 +1463,8 @@ function getStrengths()
 
 	if (options.strengthBars) addStrengths(strengths); // call function to add these strengths under the skills
 	
+	if (options.XPInfo) displayXPBreakdown();
+
 	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
 	{
 		// Something needs strengthening.
@@ -1607,6 +1624,10 @@ function requestData()
 
 /*
 Currently there is only one UI versions known to be in use.
+
+2019-08-01 the Daily goal box has been moved for some users to the side bar.
+This is just handled in the displayXPBreadown function.
+
 function checkUIVersion()
 {
 

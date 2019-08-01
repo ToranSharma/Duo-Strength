@@ -5,6 +5,16 @@ Changelog
 ------------
 -
 
+[v1.1.3] - 2019-08-01
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.3)
+### Added
+- Added support for users that have had the Daily Goal box moved from the streak 
+pop-up box to the side bar.
+
+### Changed
+- Applied hide zeros rows options to bonus skill rows in crowns breakdown.
+
 [v1.1.2] - 2019-07-31
 ---------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.2)
@@ -369,7 +379,8 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
-[v1.1.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.1...v1.1.2
+[v1.1.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.2...v1.1.3
+[v1.1.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.22...v1.1.0
 [v1.0.22]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.21...v1.0.22

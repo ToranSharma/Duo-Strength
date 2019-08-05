@@ -694,10 +694,10 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	strengthenBox.innerHTML = strengthenBox.innerHTML.substring(0, strengthenBox.innerHTML.length - 2);
 	strengthenBox.innerHTML +=	(function()
 								{
-									if (numSkillsToShow == numSkillsToBeStrengthened)
-										return " & "; // Add & if showing every skill in list as the next one is the very last.
-									else if (numSkillsToShow == 1)
+									if (numSkillsToShow == 1)
 										return ""; // If there is only one skill in the list, don't put anything before it.
+									else if (numSkillsToShow == numSkillsToBeStrengthened)
+										return " & "; // Add & if we have put some stuff and showing every skill in list so the next one is the very last.
 									else
 										return ", "; // Otherwise we have put some stuff and there is more coming after so just put a comma.
 								})();

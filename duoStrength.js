@@ -645,6 +645,7 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 
 	let strengthenBox; // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;
+
 	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
 	{
 		needToAddBox = true;
@@ -653,7 +654,7 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 		strengthenBox.style =
 		`
 			text-align: left;
-			margin-bottom 2em;
+			margin-bottom: 2em;
 			min-height: 3em;
 		`;
 		if (topOfTree.getElementsByClassName("_27CnM").length != 0)
@@ -661,6 +662,11 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 			// If there is the IN BETA label, make it relative, not aboslute.
 			topOfTree.getElementsByClassName("_27CnM")[0].style['position'] = 'relative';
 			strengthenBox.style['margin-top'] = "0.5em";
+		}
+		else
+		{
+			// Not being pushed down by the IN BETA lable, so lets make room fro the TRY PLUS button to the right.
+			strengthenBox.style['width'] = "80%";
 		}
 	}
 	else
@@ -671,6 +677,7 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	let numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
 
 	strengthenBox.innerHTML = "";
+
 	strengthenBox.innerHTML +=
 	`
 		Your tree has ${numSkillsToBeStrengthened} 
@@ -1307,6 +1314,11 @@ function displaySuggestion(skills, bonusSkills)
 			// If there is the IN BETA label, make it relative, not absolute.
 			topOfTree.getElementsByClassName("_27CnM")[0].style['position'] = 'relative';
 			container.style['margin-top'] = "0.5em";
+		}
+		else
+		{
+			// Not being pushed down by the IN BETA lable, so lets make room fro the TRY PLUS button to the right.
+			container.style['width'] = "80%";
 		}
 		let treeLevel = crownTreeLevel();
 		let skillsByCrowns = [[],[],[],[],[],[]];

@@ -1803,7 +1803,8 @@ async function init()
 			// Using new white topBar layout
 
 			// set username via the href of a link to the profile
-			username = document.querySelector("[data-test = \"profile-tab\"]").href.split("/")[3];
+			let profileTabHrefParts = document.querySelector("[data-test = \"profile-tab\"]").href.split("/")
+			username = profileTabHrefParts[profileTabHrefParts.length - 1];
 
 			// topBar Div is the direct container holding the navigation butons, has class _3F_8q
 			// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];

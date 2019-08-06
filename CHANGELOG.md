@@ -5,6 +5,18 @@ Changelog
 ------------
 -
 
+[v1.1.3] - 2019-08-06
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.4)
+### Fixed
+- Definition of the username from the url of the profile tab. Now makes sure to 
+just use the text after the last `/`.
+
+### Added
+- Handling of the new TRY PLUS button at the top of the skill tree. Any 
+information displayed at the top of the tree now has its width limited so that 
+it doens't overlap with the button.
+
 [v1.1.3] - 2019-08-01
 ---------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.3)

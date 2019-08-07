@@ -16,10 +16,12 @@ let requestID = 0;
 
 let rootElem;
 let rootChild;
+let mainBody;
 let topBarDiv;
-let topBarMobilePractice;
+let mobileTopBarDiv;
 
 let onMainPage;
+let inMobileLayout;
 
 function retrieveOptions()
 {
@@ -654,19 +656,33 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 		strengthenBox.style =
 		`
 			text-align: left;
-			margin-bottom: 2em;
-			min-height: 3em;
+			margin: 0 0 2em 0;
+			min-height: 3em
 		`;
+		if (inMobileLayout)
+			strengthenBox.style['margin'] = "0.5em 1em 0.5em 1em";
+
 		if (topOfTree.getElementsByClassName("_27CnM").length != 0)
 		{
 			// If there is the IN BETA label, make it relative, not aboslute.
 			topOfTree.getElementsByClassName("_27CnM")[0].style['position'] = 'relative';
-			strengthenBox.style['margin-top'] = "0.5em";
+			if (inMobileLayout)
+				strengthenBox.style['margin-top'] = "1.5em";
+			else
+				strengthenBox.style['margin-top'] = "0.5em";
 		}
 		else
 		{
-			// Not being pushed down by the IN BETA lable, so lets make room fro the TRY PLUS button to the right.
-			strengthenBox.style['width'] = "80%";
+			// Not being pushed down by the IN BETA label,
+			if (inMobileLayout)
+			{
+				// In mobile layout so we don't need to make room for the try plus button.
+			}
+			else
+			{
+				// In desktop layout so let's make room for the TRY PLUS button to the right.
+				strengthenBox.style['width'] = "calc(100% - 119px)";	
+			}
 		}
 	}
 	else
@@ -701,10 +717,10 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	strengthenBox.innerHTML = strengthenBox.innerHTML.substring(0, strengthenBox.innerHTML.length - 2);
 	strengthenBox.innerHTML +=	(function()
 								{
-									if (numSkillsToShow == numSkillsToBeStrengthened)
-										return " & "; // Add & if showing every skill in list as the next one is the very last.
-									else if (numSkillsToShow == 1)
+									if (numSkillsToShow == 1)
 										return ""; // If there is only one skill in the list, don't put anything before it.
+									else if (numSkillsToShow == numSkillsToBeStrengthened)
+										return " & "; // Add & if we have put some stuff and showing every skill in list so the next one is the very last.
 									else
 										return ", "; // Otherwise we have put some stuff and there is more coming after so just put a comma.
 								})();
@@ -792,7 +808,11 @@ function displayCrownsBreakdown()
 	let treeLevel = crownTreeLevel();
 
 	let crownLevelContainer;
-	crownLevelContainer = document.getElementsByClassName('NugKJ _55Inr')[0];
+	if (inMobileLayout)
+		crownLevelContainer = document.getElementsByClassName('NugKJ _55Inr')[1];
+	else
+		crownLevelContainer = document.getElementsByClassName('NugKJ _55Inr')[0];
+
 	crownLevelContainer.style =
 	`
 		flex-wrap: wrap;
@@ -1193,10 +1213,22 @@ function displayXPBreakdown()
 		}
 		if (document.getElementsByClassName('yRM09').length != 0)
 		{
-			document.getElementsByClassName('yRM09')[0].appendChild(container);
+			// If there is a Daily Goal box pop-up box, put the breakdown in that
+			if (inMobileLayout)
+				document.getElementsByClassName('yRM09')[1].appendChild(container);
+			else
+				document.getElementsByClassName('yRM09')[0].appendChild(container);
+			
+			// Reduce gap between XP graph and streak info.
+			container.parentNode.getElementsByClassName('_3qiOl TTBxS w341j')[0].style['margin-top'] = "-2em";
+			container.style['margin-top'] = "0";
+			container.parentNode.style['padding-top'] = "0.5em";
+			container.parentNode.style['padding-bottom'] = "0";
+
 		}
 		else if (document.getElementsByClassName("_1Ygk_").length != 0)
 		{
+			// If there is a Daily Goal box in the sidebar put the breakdown in that
 			document.getElementsByClassName("_1Ygk_")[0].appendChild(container);
 		}
 		else
@@ -1308,17 +1340,32 @@ function displaySuggestion(skills, bonusSkills)
 	{
 		let container = document.createElement("div");
 		container.id = "fullStrengthMessageContainer";
-		container.style = "margin-bottom: 2em;";
+		if (inMobileLayout)
+			container.style = "margin: 0.5em 1em 0.5em 1em;";
+		else
+			container.style = "margin: 0 0 2em 0;";
+
 		if (topOfTree.getElementsByClassName("_27CnM").length != 0)
 		{
 			// If there is the IN BETA label, make it relative, not absolute.
 			topOfTree.getElementsByClassName("_27CnM")[0].style['position'] = 'relative';
-			container.style['margin-top'] = "0.5em";
+			if (inMobileLayout)
+				container.style['margin-top'] = "1.5em";
+			else
+				container.style['margin-top'] = "0.5em";
 		}
 		else
 		{
-			// Not being pushed down by the IN BETA lable, so lets make room fro the TRY PLUS button to the right.
-			container.style['width'] = "80%";
+			// Not being pushed down by the IN BETA label.
+			if (inMobileLayout)
+			{
+				// In mobile layout so we don't need to make room for the try plus button.
+			}
+			else
+			{
+				// In desktop layout so let's make room for the TRY PLUS button to the right.
+				container.style['width'] = "calc(100% - 119px)";
+			}
 		}
 		let treeLevel = crownTreeLevel();
 		let skillsByCrowns = [[],[],[],[],[],[]];
@@ -1671,7 +1718,68 @@ let childListMutationHandle = function(mutationsList, observer)
 				// we have just entered a lesson in the normal way and we don't need to do anything.
 			}
 		}
-		else if (mutation.target.className == "_3gtu3 _1-Eux iDKFi")
+		else if (mutation.target == mainBody)
+		{
+			// Switched between mobile and desktop layouts.
+
+			// Set appropriate styling to need strengthing list or skill suggestion
+			let mobileMargin = "0.5em 1em 0.5em 1em";
+			let desktopMargin = "0 0 2em 0";
+
+			let mobileWidth = "auto";
+			let desktopWidth = "calc(100% - 119px)";
+
+			if (document.getElementsByClassName("_27CnM").length != 0)
+			{
+				// There is an IN BETA label
+				mobileMargin = "1.5em 1em 0.5em 1em";
+				desktopMargin = "0.5em 1em 2em 1em";
+				desktopWidth = "auto";
+			}
+
+
+			let sidebarClass = "_2_lzu";
+
+			if (document.getElementsByClassName(sidebarClass).length == 0)
+			{
+				// No sidebar so we are in mobile layout.
+				inMobileLayout = true;
+
+				if (document.getElementById("strengthenBox") != null)
+				{
+					document.getElementById("strengthenBox").style['margin'] = mobileMargin;
+					document.getElementById("strengthenBox").style['width'] = mobileWidth;
+				}
+				if (document.getElementById("fullStrengthMessageContainer") != null)
+				{
+					document.getElementById("fullStrengthMessageContainer").style['margin'] = mobileMargin;
+					document.getElementById("fullStrengthMessageContainer").style['width'] = mobileWidth;
+				}
+				
+			}
+			else
+			{
+				// There is a sidebar so we are in normal desktop layout.
+				inMobileLayout = false;
+
+				if (document.getElementById("strengthenBox") != null)
+				{
+					document.getElementById("strengthenBox").style['margin'] = desktopMargin;
+					document.getElementById("strengthenBox").style['width'] = desktopWidth;
+					
+				}
+				if (document.getElementById("fullStrengthMessageContainer") != null)
+				{
+					document.getElementById("fullStrengthMessageContainer").style['margin'] = desktopMargin;
+					document.getElementById("fullStrengthMessageContainer").style['width'] = desktopWidth;
+				}
+				
+
+				// Try and add the XP box again as the sidebar has come back
+				if (options.XPInfo) displayXPBreakdown();
+			}
+		}
+		else if (mutation.target.className == "_3gtu3 _1-Eux iDKFi") // Applies to both mobile and desktop layout streak and crowns icons.
 		{
 			// Crown or streak pop up box has appeared or dissapeared.
 
@@ -1680,7 +1788,7 @@ let childListMutationHandle = function(mutationsList, observer)
 				// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
 				continue;
 			}
-			else if (mutation.target.getElementsByClassName("_3FM63").length + mutation.target.getElementsByClassName("WZkQ9").length != 0) // _3FM63 for gold crown logo, WZkQ9 for grey when at 0 crowns.
+			else if (mutation.target.getElementsByClassName("WZkQ9").length + mutation.target.getElementsByClassName("_3FM63").length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
 			{
 				// Crowns has had the change.
 				if (options.crownsInfo && mutation.target.lastChild.nodeName == 'DIV')
@@ -1790,9 +1898,17 @@ async function init()
 		dataReactRoot = rootElem.childNodes[0]; // When entering or leaving a lesson children change there is a new body so need to detect that to know when to reload the bars.
 	*/
 	rootChild = rootElem.childNodes[0];
-	childListObserver.observe(rootElem,{childList: true});
-	childListObserver.observe(rootChild,{childList: true});
+	childListObserver.observe(rootElem,{childList: true}); // Observing for changes to its children to detect logging in and out?
+	childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
 	
+	mainBody = rootChild.lastChild.firstChild;
+	childListObserver.observe(mainBody,{childList:true}); // Observing for changes to its children to detect moving between mobile and desktop layout.
+
+	if (mainBody.getElementsByClassName("_2_lzu").length == 0)
+		inMobileLayout = true;
+	else
+		inMobileLayout = false;
+
 	if(rootChild.childNodes.length == 1) // If there is only one child of rootChild then we are on the log in page.
 	{
 		// On login page so cannot continue to turn rest of init process.
@@ -1823,9 +1939,8 @@ async function init()
 			// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
 			// Safer to use class name, which may also change...
 			// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
-			for (let elem of rootChild.getElementsByClassName("_3F_8q"))
-				if (elem.getElementsByTagName("a").length != 0)
-					topBarDiv = elem;
+			topBarDiv = rootChild.getElementsByClassName("_3F_8q")[0];
+			mobileTopBarDiv = rootChild.getElementsByClassName("_3F_8q")[1];
 			
 			// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
 			let numNavButtons = topBarDiv.getElementsByClassName("_3MT82").length;

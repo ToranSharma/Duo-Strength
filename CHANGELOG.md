@@ -3,7 +3,8 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Changed
+- Replaced all uses of duolingo class name strings with constants.
 
 [v1.1.5] - 2019-08-07
 ---------------------

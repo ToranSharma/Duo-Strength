@@ -3,9 +3,27 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Fixed
+- Detection and definition of element at the top of the skill tree after a 
+change in class name between in beta trees and fully developed trees.
 
-[v1.1.3] - 2019-08-06
+### Changed
+- Replaced all uses of duolingo class name strings with constants.
+
+[v1.1.5] - 2019-08-07
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.5)
+### Added
+- Detection of mobile layout, where the device or window width is smaller than 
+700px wide.
+- Handling of the mobile layout to all relevant functions.
+- Detection and handling of moving between mobile and desktop layouts.
+
+### Fixed
+- Handling of needs strengthening lists with just one skill. The preceding `&` 
+is no longer added.
+
+[v1.1.4] - 2019-08-06
 ---------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.4)
 ### Fixed
@@ -391,6 +409,8 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.4...v1.1.5
+[v1.1.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.3...v1.1.4
 [v1.1.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.2...v1.1.3
 [v1.1.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.0...v1.1.1

@@ -1,7 +1,33 @@
-let GOLD = "rgb(250, 217, 29)"; // "rgb(248, 176, 45)" old gold colour
-let RED = "rgb(244, 78, 81)"; // "rgb(219, 62, 65)";  old red colour
-let ORANGE = "rgb(255, 150, 0)";
-let GREY = "rgb(229, 229, 229)";
+const GOLD = "rgb(250, 217, 29)";
+const RED = "rgb(244, 78, 81)";
+const ORANGE = "rgb(255, 150, 0)";
+const GREY = "rgb(229, 229, 229)";
+
+// Duolingo class names:
+const SKILL_CONTAINER = "Af4up";
+const SKILL_NAME = "_33VdW";
+const BONUS_SKILL_DIVIDER = "_32Q0j";
+const TREE_CONTAINER = "i12-l";
+const TOP_OF_TREE_WITH_IN_BETA = "w8Lxd";
+const TOP_OF_TREE = "_3rABk";
+const SKILL_ROW = "_2GJb6";
+const SKILL_COLUMN = "QmbDT";
+const IN_BETA_LABEL = "_27CnM";
+const CROWN_POPUP_CONTAINER = "NugKJ _55Inr";
+const CROWN_TOTAL_CONTAINER = "_2boWj";
+const DAILY_GOAL_POPUP_CONTAINER = "yRM09";
+const DAILY_GOAL_SIDEBAR_CONATINER = "_1Ygk_";
+const XP_GRAPH_CONTAINER = "_3qiOl TTBxS w341j";
+const SIDEBAR = "_2_lzu";
+const POPUP_ICON = "_3gtu3 _1-Eux iDKFi";
+const GOLD_CROWN = "WZkQ9";
+const GREY_CROWN = "_3FM63";
+const COLOURED_FLAME = "_2ctH6";
+const GREY_FLAME = "_27oya";
+const ACTIVE_TAB = "_2lkuX";
+const TOP_BAR = "_3F_8q";
+const NAVIGATION_BUTTON = "_3MT82";
+
 let languageCode = "";
 let language = "";
 let languageChanged = false;
@@ -393,7 +419,7 @@ function addStrengths(strengths)
 	/*
 		The structure of skill tree is as follows:
 		<div class="_2GJb6"> 												<-- container for row of skills, has classes _1H-7I and _1--zr if bonus skill row
-			<a class="Af4up" href="javascript:;"> 							<-- container for individuale skill
+			<a class="Af4up" href="javascript:;"> 							<-- container for individual skill
 				<div class="_2albn">
 					<div>														<-- possibly new container as of 2019-03-01 holds skill icon and progress ring
 						<div class="_3zkuO _39IKr">     						<-- progress ring container
@@ -421,7 +447,7 @@ function addStrengths(strengths)
 		</div>
 	*/
 
-	let skillElements = document.getElementsByClassName('Af4up'); // Af4up is class of skill containing element, may change.
+	let skillElements = document.getElementsByClassName(SKILL_CONTAINER); // Af4up is class of skill containing element, may change.
 	let skills = Array();
 	/*
 		Each element of skills array will be an array with the following information:
@@ -435,7 +461,7 @@ function addStrengths(strengths)
 	{
 		let elementContents = [
 		 	skillElements[i].childNodes[0].childNodes[0],
-		 	skillElements[i].childNodes[0].childNodes[1].getElementsByClassName("_33VdW")[0]
+		 	skillElements[i].childNodes[0].childNodes[1].getElementsByClassName(SKILL_NAME)[0]
 		 ];
 
 		/* old way of finding name element before new containers
@@ -453,7 +479,7 @@ function addStrengths(strengths)
 		// Check if this skill is in the bonus skill section.
 		// In the bonus skill section if the row is sandwiched between two divs with class _32Q0j, that contain an hr.
 		if (skillElements[i].parentNode.parentNode.previousSibling != null && skillElements[i].parentNode.parentNode.nextSibling != null
-			&& skillElements[i].parentNode.parentNode.previousSibling.className == "_32Q0j" && skillElements[i].parentNode.parentNode.nextSibling.className == "_32Q0j")
+			&& skillElements[i].parentNode.parentNode.previousSibling.className == BONUS_SKILL_DIVIDER && skillElements[i].parentNode.parentNode.nextSibling.className == BONUS_SKILL_DIVIDER)
 		{
 			// these skill elements are in the bonus skill section.
 			elementContents.push(strengths[1][bonusElementsCount][0]);
@@ -567,17 +593,20 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	// let firstSkillRow;
 	let topOfTree;
 	if(
-			document.getElementsByClassName("i12-l").length != 0 &&
-			document.getElementsByClassName("w8Lxd").length != 0 &&
-			document.getElementsByClassName("_2GJb6").length != 0
+			document.getElementsByClassName(TREE_CONTAINER).length != 0 &&
+			document.getElementsByClassName(SKILL_ROW).length != 0 &&
+			(
+				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
+				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
+			)
+
 		) // Has the tree loaded from a page change
 	{
 		/* currently unused
-		skillTree = document.getElementsByClassName("i12-l")[0];
-		firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
+		skillTree = document.getElementsByClassName(TREE_CONTAINER)[0];
+		firstSkillRow = document.getElementsByClassName(SKILL_ROW)[0];
 		*/
-		topOfTree = document.getElementsByClassName("w8Lxd")[0];
-		// or topOfTree = skillTree.childNodes[0]
+		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].childNodes[0];
 	}
 	else
 	{
@@ -644,6 +673,7 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 		}
 
 	topOfTree.style['height'] = "auto";
+	topOfTree.style['width'] = "100%";
 
 	let strengthenBox; // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;
@@ -662,10 +692,10 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 		if (inMobileLayout)
 			strengthenBox.style['margin'] = "0.5em 1em 0.5em 1em";
 
-		if (topOfTree.getElementsByClassName("_27CnM").length != 0)
+		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length != 0)
 		{
 			// If there is the IN BETA label, make it relative, not aboslute.
-			topOfTree.getElementsByClassName("_27CnM")[0].style['position'] = 'relative';
+			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style['position'] = 'relative';
 			if (inMobileLayout)
 				strengthenBox.style['margin-top'] = "1.5em";
 			else
@@ -809,9 +839,9 @@ function displayCrownsBreakdown()
 
 	let crownLevelContainer;
 	if (inMobileLayout)
-		crownLevelContainer = document.getElementsByClassName('NugKJ _55Inr')[1];
+		crownLevelContainer = document.getElementsByClassName(CROWN_POPUP_CONTAINER)[1];
 	else
-		crownLevelContainer = document.getElementsByClassName('NugKJ _55Inr')[0];
+		crownLevelContainer = document.getElementsByClassName(CROWN_POPUP_CONTAINER)[0];
 
 	crownLevelContainer.style =
 	`
@@ -820,7 +850,7 @@ function displayCrownsBreakdown()
 	`;
 	
 	let crownTotalContainer;
-	crownTotalContainer = crownLevelContainer.getElementsByClassName('_2boWj')[0];
+	crownTotalContainer = crownLevelContainer.getElementsByClassName(CROWN_TOTAL_CONTAINER)[0];
 
 
 	let maximumCrownCountContainer;
@@ -1087,7 +1117,7 @@ function displayCrownsBreakdown()
 function displayXPBreakdown()
 {
 	if (Object.entries(userData).length == 0
-		|| (document.getElementsByClassName('yRM09').length === 0 && document.getElementsByClassName("_1Ygk_").length === 0))
+		|| (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length === 0 && document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER).length === 0))
 		return false;
 	
 	let data =
@@ -1211,25 +1241,25 @@ function displayXPBreakdown()
 			maxLevelMessage.innerText = "You have reached the maximum level!";
 			languageLevelContainer.appendChild(maxLevelMessage);
 		}
-		if (document.getElementsByClassName('yRM09').length != 0)
+		if (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length != 0)
 		{
 			// If there is a Daily Goal box pop-up box, put the breakdown in that
 			if (inMobileLayout)
-				document.getElementsByClassName('yRM09')[1].appendChild(container);
+				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[1].appendChild(container);
 			else
-				document.getElementsByClassName('yRM09')[0].appendChild(container);
+				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[0].appendChild(container);
 			
 			// Reduce gap between XP graph and streak info.
-			container.parentNode.getElementsByClassName('_3qiOl TTBxS w341j')[0].style['margin-top'] = "-2em";
+			container.parentNode.getElementsByClassName(XP_GRAPH_CONTAINER)[0].style['margin-top'] = "-2em";
 			container.style['margin-top'] = "0";
 			container.parentNode.style['padding-top'] = "0.5em";
 			container.parentNode.style['padding-bottom'] = "0";
 
 		}
-		else if (document.getElementsByClassName("_1Ygk_").length != 0)
+		else if (document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER).length != 0)
 		{
 			// If there is a Daily Goal box in the sidebar put the breakdown in that
-			document.getElementsByClassName("_1Ygk_")[0].appendChild(container);
+			document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER)[0].appendChild(container);
 		}
 		else
 		{
@@ -1308,17 +1338,19 @@ function displaySuggestion(skills, bonusSkills)
 
 	let topOfTree;
 	if (
-			document.getElementsByClassName("i12-l").length != 0 &&
-			document.getElementsByClassName("w8Lxd").length != 0 &&
-			document.getElementsByClassName("_2GJb6").length != 0
+			document.getElementsByClassName(TREE_CONTAINER).length != 0 &&
+			document.getElementsByClassName(SKILL_ROW).length != 0 &&
+			(
+				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
+				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
+			)
 		) // Has the tree loaded from a page change
 	{
 		/* currently unused
-		skillTree = document.getElementsByClassName("i12-l")[0];
-		firstSkillRow = document.getElementsByClassName("_2GJb6")[0];
+		skillTree = document.getElementsByClassName(TREE_CONTAINER)[0];
+		firstSkillRow = document.getElementsByClassName(SKILL_ROW)[0];
 		*/
-		topOfTree = document.getElementsByClassName("w8Lxd")[0];
-		// or topOfTree = skillTree.childNodes[0]
+		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].childNodes[0];
 	}
 	else
 	{
@@ -1335,6 +1367,7 @@ function displaySuggestion(skills, bonusSkills)
 	}
 
 	topOfTree.style['height'] = "auto";
+	topOfTree.style['width'] = "100%";
 
 	if (document.getElementById("fullStrengthMessageContainer") == null)
 	{
@@ -1345,10 +1378,10 @@ function displaySuggestion(skills, bonusSkills)
 		else
 			container.style = "margin: 0 0 2em 0;";
 
-		if (topOfTree.getElementsByClassName("_27CnM").length != 0)
+		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length != 0)
 		{
 			// If there is the IN BETA label, make it relative, not absolute.
-			topOfTree.getElementsByClassName("_27CnM")[0].style['position'] = 'relative';
+			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style['position'] = 'relative';
 			if (inMobileLayout)
 				container.style['margin-top'] = "1.5em";
 			else
@@ -1729,7 +1762,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			let mobileWidth = "auto";
 			let desktopWidth = "calc(100% - 119px)";
 
-			if (document.getElementsByClassName("_27CnM").length != 0)
+			if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
 			{
 				// There is an IN BETA label
 				mobileMargin = "1.5em 1em 0.5em 1em";
@@ -1737,10 +1770,7 @@ let childListMutationHandle = function(mutationsList, observer)
 				desktopWidth = "auto";
 			}
 
-
-			let sidebarClass = "_2_lzu";
-
-			if (document.getElementsByClassName(sidebarClass).length == 0)
+			if (document.getElementsByClassName(SIDEBAR).length == 0)
 			{
 				// No sidebar so we are in mobile layout.
 				inMobileLayout = true;
@@ -1779,7 +1809,7 @@ let childListMutationHandle = function(mutationsList, observer)
 				if (options.XPInfo) displayXPBreakdown();
 			}
 		}
-		else if (mutation.target.className == "_3gtu3 _1-Eux iDKFi") // Applies to both mobile and desktop layout streak and crowns icons.
+		else if (mutation.target.className == POPUP_ICON) // Applies to both mobile and desktop layout streak and crowns icons.
 		{
 			// Crown or streak pop up box has appeared or dissapeared.
 
@@ -1788,7 +1818,7 @@ let childListMutationHandle = function(mutationsList, observer)
 				// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
 				continue;
 			}
-			else if (mutation.target.getElementsByClassName("WZkQ9").length + mutation.target.getElementsByClassName("_3FM63").length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
+			else if (mutation.target.getElementsByClassName(GOLD_CROWN).length + mutation.target.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
 			{
 				// Crowns has had the change.
 				if (options.crownsInfo && mutation.target.lastChild.nodeName == 'DIV')
@@ -1801,7 +1831,7 @@ let childListMutationHandle = function(mutationsList, observer)
 					// Pop-up box disappeared
 				}
 			}
-			if (mutation.target.getElementsByClassName("_2ctH6").length +  mutation.target.getElementsByClassName("_27oya").length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
+			if (mutation.target.getElementsByClassName(COLOURED_FLAME).length +  mutation.target.getElementsByClassName(GREY_FLAME).length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
 			{
 				// Streak/XP has had the change.
 				if (options.XPInfo && mutation.target.lastChild.nodeName == 'DIV')
@@ -1861,7 +1891,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 		// Just in case there is also a language change still going on we won't set languageChanged to false.
 
 		// check if we are now on the main page
-		if (topBarDiv.childNodes[0].className.includes("_2lkuX"))
+		if (topBarDiv.childNodes[0].className.includes(ACTIVE_TAB))
 		{
 			// on main page
 			// check if language has been previously set as we only set it in init if we were on the main page
@@ -1904,7 +1934,7 @@ async function init()
 	mainBody = rootChild.lastChild.firstChild;
 	childListObserver.observe(mainBody,{childList:true}); // Observing for changes to its children to detect moving between mobile and desktop layout.
 
-	if (mainBody.getElementsByClassName("_2_lzu").length == 0)
+	if (mainBody.getElementsByClassName(SIDEBAR).length == 0)
 		inMobileLayout = true;
 	else
 		inMobileLayout = false;
@@ -1939,11 +1969,11 @@ async function init()
 			// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
 			// Safer to use class name, which may also change...
 			// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
-			topBarDiv = rootChild.getElementsByClassName("_3F_8q")[0];
-			mobileTopBarDiv = rootChild.getElementsByClassName("_3F_8q")[1];
+			topBarDiv = rootChild.getElementsByClassName(TOP_BAR)[0];
+			mobileTopBarDiv = rootChild.getElementsByClassName(TOP_BAR)[1];
 			
 			// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
-			let numNavButtons = topBarDiv.getElementsByClassName("_3MT82").length;
+			let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
 			// if numNavButtons = 4 then there is no stories button.
 			// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
 
@@ -1988,7 +2018,7 @@ async function init()
 			childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
 			childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
 
-			if (homeNav.className.includes("_2lkuX"))
+			if (homeNav.className.includes(ACTIVE_TAB))
 			{
 				// on home page
 				onMainPage = true;

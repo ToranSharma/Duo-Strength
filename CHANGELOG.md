@@ -3,6 +3,11 @@ Changelog
 
 [Unreleased]
 ------------
+-
+
+[v1.1.6] - 2019-08-16
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.6)
 ### Fixed
 - Detection and definition of element at the top of the skill tree after a 
 change in class name between in beta trees and fully developed trees.
@@ -409,6 +414,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.5...v1.1.6
 [v1.1.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.4...v1.1.5
 [v1.1.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.3...v1.1.4
 [v1.1.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.2...v1.1.3

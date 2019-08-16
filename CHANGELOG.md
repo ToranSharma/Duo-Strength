@@ -3,6 +3,10 @@ Changelog
 
 [Unreleased]
 ------------
+### Fixed
+- Detection and definition of element at the top of the skill tree after a 
+change in class name between in beta trees and fully developed trees.
+
 ### Changed
 - Replaced all uses of duolingo class name strings with constants.
 

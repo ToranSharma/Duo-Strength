@@ -8,7 +8,8 @@ const SKILL_CONTAINER = "Af4up";
 const SKILL_NAME = "_33VdW";
 const BONUS_SKILL_DIVIDER = "_32Q0j";
 const TREE_CONTAINER = "i12-l";
-const TOP_OF_TREE = "w8Lxd";
+const TOP_OF_TREE_WITH_IN_BETA = "w8Lxd";
+const TOP_OF_TREE = "_3rABk";
 const SKILL_ROW = "_2GJb6";
 const SKILL_COLUMN = "QmbDT";
 const IN_BETA_LABEL = "_27CnM";
@@ -593,16 +594,19 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	let topOfTree;
 	if(
 			document.getElementsByClassName(TREE_CONTAINER).length != 0 &&
-			document.getElementsByClassName(TOP_OF_TREE).length != 0 &&
-			document.getElementsByClassName(SKILL_ROW).length != 0
+			document.getElementsByClassName(SKILL_ROW).length != 0 &&
+			(
+				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
+				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
+			)
+
 		) // Has the tree loaded from a page change
 	{
 		/* currently unused
 		skillTree = document.getElementsByClassName(TREE_CONTAINER)[0];
 		firstSkillRow = document.getElementsByClassName(SKILL_ROW)[0];
 		*/
-		topOfTree = document.getElementsByClassName(TOP_OF_TREE)[0];
-		// or topOfTree = skillTree.childNodes[0]
+		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].childNodes[0];
 	}
 	else
 	{
@@ -669,6 +673,7 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 		}
 
 	topOfTree.style['height'] = "auto";
+	topOfTree.style['width'] = "100%";
 
 	let strengthenBox; // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;
@@ -1334,16 +1339,18 @@ function displaySuggestion(skills, bonusSkills)
 	let topOfTree;
 	if (
 			document.getElementsByClassName(TREE_CONTAINER).length != 0 &&
-			document.getElementsByClassName(TOP_OF_TREE).length != 0 &&
-			document.getElementsByClassName(SKILL_ROW).length != 0
+			document.getElementsByClassName(SKILL_ROW).length != 0 &&
+			(
+				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
+				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
+			)
 		) // Has the tree loaded from a page change
 	{
 		/* currently unused
 		skillTree = document.getElementsByClassName(TREE_CONTAINER)[0];
 		firstSkillRow = document.getElementsByClassName(SKILL_ROW)[0];
 		*/
-		topOfTree = document.getElementsByClassName(TOP_OF_TREE)[0];
-		// or topOfTree = skillTree.childNodes[0]
+		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].childNodes[0];
 	}
 	else
 	{
@@ -1360,6 +1367,7 @@ function displaySuggestion(skills, bonusSkills)
 	}
 
 	topOfTree.style['height'] = "auto";
+	topOfTree.style['width'] = "100%";
 
 	if (document.getElementById("fullStrengthMessageContainer") == null)
 	{

@@ -574,7 +574,7 @@ function addStrengths(strengths)
 			
 			numBarsAdded ++; // added a bar so increment counter.
 			
-		} else // we already have the elements made prerviously, just update their values.
+		} else // we already have the elements made previously, just update their values.
 		{
 			let strengthBar = document.getElementById(name + "StrengthBar");
 			strengthBar.style['width'] = (strength*100)+"%";

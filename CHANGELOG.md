@@ -1,6 +1,12 @@
 Changelog
 =========
 
+[v1.1.7] - 2019-08-18
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.7)
+### Changed
+- Strength bar is shorthened; strength text is put on the center of the strength bar.
+
 [Unreleased]
 ------------
 ### Fixed

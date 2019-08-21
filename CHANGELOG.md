@@ -3,7 +3,10 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Changed
+- Crowns prediction is now considers the number of lessons left at the time of 
+calculation instead of the last count used in caluclating the rate. This makes 
+the prediction more accurate when the daily goal has yet to be met.
 
 [v1.1.6] - 2019-08-16
 ---------------------

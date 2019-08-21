@@ -355,7 +355,7 @@ function daysToNextCrownLevel()
 	let progressRate = progressMade / timePeriod; // in lessons per day
 
 	if (progressRate != 0)
-		return Math.ceil(lastProgress / progressRate); // in days
+		return Math.ceil(currentProgress() / progressRate); // in days
 	else
 		return -1;
 }

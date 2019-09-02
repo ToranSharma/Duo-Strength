@@ -132,7 +132,7 @@ function storeProgressHistory()
 
 function updateProgress()
 {
-	let entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()]
+	let entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()];
 
 	if (progress.length == 0)
 	{
@@ -513,10 +513,9 @@ function addStrengths(strengths)
 			strengthBarHolder.className = "strengthBarHolder";
 			strengthBarHolder.style = 
 			`
-				width: 120%;
+				width: 100%;
 				height: 1.4em;
 				position: relative;
-				left: -10%;
 				display: ${display};
 			`;
 			
@@ -529,7 +528,7 @@ function addStrengths(strengths)
 			`
 				position: absolute;
 				display: inline-block;
-				width: 85%;
+				width: 100%;
 				height: 1em;
 				left: 0;
 				background-color: #e5e5e5;
@@ -545,7 +544,7 @@ function addStrengths(strengths)
 				display: inline-block;
 				position: absolute;
 				left: 0;
-				width: ${strength*85}%;
+				width: ${strength*100}%;
 				height: 1em;
 				background-color: ${strength == 1.0 ? GOLD : RED};
 				border-radius: 0.5em;
@@ -557,11 +556,13 @@ function addStrengths(strengths)
 			strengthValue.id = name + "StrengthValue";
 			strengthValue.style = 
 			`
-				display: inline-block;
-				position: absolute;
-				left: 85%;
-				z-index: 3;
+				position: relative;
+				width: 95%;
 				text-align: right;
+				vertical-align: middle;
+				font-size: 75%;
+				z-index: 3;
+				margin: auto;
 			`;
 			strengthValue.innerHTML = strength*100 + "%";
 			
@@ -571,10 +572,10 @@ function addStrengths(strengths)
 			
 			numBarsAdded ++; // added a bar so increment counter.
 			
-		} else // we already have the elements made prerviously, just update their values.
+		} else // we already have the elements made previously, just update their values.
 		{
 			let strengthBar = document.getElementById(name + "StrengthBar");
-			strengthBar.style['width'] = (strength*85)+"%";
+			strengthBar.style['width'] = (strength*100)+"%";
 			strengthBar.style['backgroundColor'] = (strength == 1.0 ? GOLD : RED);
 			
 			let strengthValue = document.getElementById(name + "StrengthValue");

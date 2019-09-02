@@ -7,6 +7,8 @@ Changelog
 - Crowns prediction is now considers the number of lessons left at the time of 
 calculation instead of the last count used in caluclating the rate. This makes 
 the prediction more accurate when the daily goal has yet to be met.
+- Strength bars are now aligned with the skill above them, and the strength 
+value is inside the bar itself.
 
 [v1.1.6] - 2019-08-16
 ---------------------

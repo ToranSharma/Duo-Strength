@@ -16,6 +16,7 @@ value is inside the bar itself.
 ### Fixed
 - Detection and definition of element at the top of the skill tree after a 
 change in class name between in beta trees and fully developed trees.
+- Added handling of new container element around each skill.
 
 ### Changed
 - Replaced all uses of duolingo class name strings with constants.

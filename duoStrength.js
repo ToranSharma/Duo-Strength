@@ -132,7 +132,7 @@ function storeProgressHistory()
 
 function updateProgress()
 {
-	let entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()]
+	let entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()];
 
 	if (progress.length == 0)
 	{
@@ -355,7 +355,7 @@ function daysToNextCrownLevel()
 	let progressRate = progressMade / timePeriod; // in lessons per day
 
 	if (progressRate != 0)
-		return Math.ceil(lastProgress / progressRate); // in days
+		return Math.ceil(currentProgress() / progressRate); // in days
 	else
 		return -1;
 }
@@ -420,27 +420,29 @@ function addStrengths(strengths)
 		The structure of skill tree is as follows:
 		<div class="_2GJb6"> 												<-- container for row of skills, has classes _1H-7I and _1--zr if bonus skill row
 			<a class="Af4up" href="javascript:;"> 							<-- container for individual skill
-				<div class="_2albn">
-					<div>														<-- possibly new container as of 2019-03-01 holds skill icon and progress ring
-						<div class="_3zkuO _39IKr">     						<-- progress ring container
-							<div class="_2xGPj">								<-- progress ring container
-								<svg>...</svg>          						<-- progress ring svg
+				<div class="_1fneo" tab-index="0">							<-- new container as of 2019-09-03, unknown function
+					<div class="_2albn">
+						<div>													<-- possibly new container as of 2019-03-01 holds skill icon and progress ring
+							<div class="_3zkuO _39IKr">     					<-- progress ring container
+								<div class="_2xGPj">							<-- progress ring container
+									<svg>...</svg>          					<-- progress ring svg
+								</div>
 							</div>
+							<span class="_1z_vo _3hKMG ewiWc _2vstG">			<-- skill icon background
+								<span class="..."></span>						<-- skill icon
+								<div clas ="_26l3y">...</div>					<-- skill crowns logo and number
+							</span>
 						</div>
-						<span class="_1z_vo _3hKMG ewiWc _2vstG">				<-- skill icon background
-							<span class="..."></span>							<-- skill icon
-							<div clas ="_26l3y">...</div>						<-- skill crowns logo and number
-						</span>
-					</div>
-					<div>														<-- another possibly new container as of 2019-03-01 holds skill name
-						####################################################	<-- Strength Bar to be inserted here
-						<span class="_378Tf _3qO9M _33VdW">Skill Name</span>	<-- Skill name
-					</div>
+						<div>													<-- another possibly new container as of 2019-03-01 holds skill name
+							####################################################<-- Strength Bar to be inserted here
+							<span class="_378Tf _3qO9M _33VdW">Skill Name</span><-- Skill name
+						</div>
 
-					####### when skill clicked on new div below is appended ##########
-					<div class="_2EYQL _2HujR _1ZY-H gqrCU ewiWc">				<-- popup box backgorund
-						<div>...</div>											<-- popup box info container
-						::after													<-- popup box 'speach bubble' style arrow at top
+						####### when skill clicked on new div below is appended ##########
+						<div class="_2EYQL _2HujR _1ZY-H gqrCU ewiWc">			<-- popup box backgorund
+							<div>...</div>										<-- popup box info container
+							::after												<-- popup box 'speach bubble' style arrow at top
+						</div>
 					</div>
 				</div>
 			</a>
@@ -460,8 +462,8 @@ function addStrengths(strengths)
 	for (let i=0; i<skillElements.length; i++)
 	{
 		let elementContents = [
-		 	skillElements[i].childNodes[0].childNodes[0],
-		 	skillElements[i].childNodes[0].childNodes[1].getElementsByClassName(SKILL_NAME)[0]
+		 	skillElements[i].childNodes[0].childNodes[0].childNodes[0],
+		 	skillElements[i].childNodes[0].childNodes[0].childNodes[1].getElementsByClassName(SKILL_NAME)[0]
 		 ];
 
 		/* old way of finding name element before new containers
@@ -513,10 +515,9 @@ function addStrengths(strengths)
 			strengthBarHolder.className = "strengthBarHolder";
 			strengthBarHolder.style = 
 			`
-				width: 120%;
+				width: 100%;
 				height: 1.4em;
 				position: relative;
-				left: -10%;
 				display: ${display};
 			`;
 			
@@ -529,7 +530,7 @@ function addStrengths(strengths)
 			`
 				position: absolute;
 				display: inline-block;
-				width: 85%;
+				width: 100%;
 				height: 1em;
 				left: 0;
 				background-color: #e5e5e5;
@@ -545,7 +546,7 @@ function addStrengths(strengths)
 				display: inline-block;
 				position: absolute;
 				left: 0;
-				width: ${strength*85}%;
+				width: ${strength*100}%;
 				height: 1em;
 				background-color: ${strength == 1.0 ? GOLD : RED};
 				border-radius: 0.5em;
@@ -557,11 +558,13 @@ function addStrengths(strengths)
 			strengthValue.id = name + "StrengthValue";
 			strengthValue.style = 
 			`
-				display: inline-block;
-				position: absolute;
-				left: 85%;
-				z-index: 3;
+				position: relative;
+				width: 95%;
 				text-align: right;
+				vertical-align: middle;
+				font-size: 75%;
+				z-index: 3;
+				margin: auto;
 			`;
 			strengthValue.innerHTML = strength*100 + "%";
 			
@@ -571,10 +574,10 @@ function addStrengths(strengths)
 			
 			numBarsAdded ++; // added a bar so increment counter.
 			
-		} else // we already have the elements made prerviously, just update their values.
+		} else // we already have the elements made previously, just update their values.
 		{
 			let strengthBar = document.getElementById(name + "StrengthBar");
-			strengthBar.style['width'] = (strength*85)+"%";
+			strengthBar.style['width'] = (strength*100)+"%";
 			strengthBar.style['backgroundColor'] = (strength == 1.0 ? GOLD : RED);
 			
 			let strengthValue = document.getElementById(name + "StrengthValue");
@@ -1268,7 +1271,7 @@ function displayXPBreakdown()
 	}
 	else
 	{
-		// We alreayd have the XP Box, let's just update the values
+		// We already have the XP Box, let's just update the values
 		let languageLevelElement = document.getElementById("xpTotalAndLevel");
 		let languageXPElement = languageLevelElement.childNodes[0];
 		languageXPElement.innerText = data['points'] + " XP - ";

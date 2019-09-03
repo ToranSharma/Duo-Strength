@@ -3,9 +3,24 @@ Changelog
 
 [Unreleased]
 ------------
+-
+[v1.1.7] - 2019-09-03
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.7)
+### Changed
+- Crowns prediction is now considers the number of lessons left at the time of 
+calculation instead of the last count used in caluclating the rate. This makes 
+the prediction more accurate when the daily goal has yet to be met.
+- Strength bars are now aligned with the skill above them, and the strength 
+value is inside the bar itself.
+
+[v1.1.6] - 2019-08-16
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.6)
 ### Fixed
 - Detection and definition of element at the top of the skill tree after a 
 change in class name between in beta trees and fully developed trees.
+- Added handling of new container element around each skill.
 
 ### Changed
 - Replaced all uses of duolingo class name strings with constants.
@@ -409,6 +424,8 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.6...v1.1.7
+[v1.1.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.5...v1.1.6
 [v1.1.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.4...v1.1.5
 [v1.1.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.3...v1.1.4
 [v1.1.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.2...v1.1.3

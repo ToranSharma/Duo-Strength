@@ -3,6 +3,10 @@ Changelog
 
 [Unreleased]
 ------------
+-
+[v1.1.7] - 2019-09-03
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.7)
 ### Changed
 - Crowns prediction is now considers the number of lessons left at the time of 
 calculation instead of the last count used in caluclating the rate. This makes 
@@ -420,6 +424,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.6...v1.1.7
 [v1.1.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.5...v1.1.6
 [v1.1.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.4...v1.1.5
 [v1.1.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.3...v1.1.4

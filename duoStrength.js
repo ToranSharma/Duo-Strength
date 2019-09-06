@@ -5,6 +5,7 @@ const GREY = "rgb(229, 229, 229)";
 
 // Duolingo class names:
 const SKILL_CONTAINER = "Af4up";
+const SKILL_CONTAINER_CHILD = "_1fneo";
 const SKILL_NAME = "_33VdW";
 const BONUS_SKILL_DIVIDER = "_32Q0j";
 const TREE_CONTAINER = "i12-l";
@@ -449,7 +450,13 @@ function addStrengths(strengths)
 		</div>
 	*/
 
-	let skillElements = document.getElementsByClassName(SKILL_CONTAINER); // Af4up is class of skill containing element, may change.
+	let skillElements = Array.from(document.getElementsByClassName(SKILL_CONTAINER)); // Af4up is class of skill containing element, may change.
+	// Some trees have another container element as a child of elements with class SKILL_CONTAINER.
+	// Let's check to see if this is the case, if it is we will set a flag true and add in the extra childNodes[0].
+	
+	let useChildContainer = false;
+	if (skillElements[0].getElementsByClassName(SKILL_CONTAINER_CHILD).length != 0) useChildContainer = true;
+
 	let skills = Array();
 	/*
 		Each element of skills array will be an array with the following information:
@@ -461,11 +468,21 @@ function addStrengths(strengths)
 	let bonusElementsCount = 0;
 	for (let i=0; i<skillElements.length; i++)
 	{
-		let elementContents = [
-		 	skillElements[i].childNodes[0].childNodes[0].childNodes[0],
-		 	skillElements[i].childNodes[0].childNodes[0].childNodes[1].getElementsByClassName(SKILL_NAME)[0]
-		 ];
-
+		let elementContents;
+		if (!useChildContainer)
+		{
+			elementContents = [
+		 		skillElements[i].childNodes[0].childNodes[0],
+		 		skillElements[i].childNodes[0].childNodes[1].getElementsByClassName(SKILL_NAME)[0]
+			 ];
+		}
+		else
+		{ // use extra childNodes[0] on skillElements[i]
+			elementContents = [
+		 		skillElements[i].childNodes[0].childNodes[0].childNodes[0],
+		 		skillElements[i].childNodes[0].childNodes[0].childNodes[1].getElementsByClassName(SKILL_NAME)[0]
+			 ];
+		}
 		/* old way of finding name element before new containers
 
 		// name is a span element, normally it is the last element but if the skill is clicked then a new div is created with the start lesson button etc below the name plate. So need to find the correct span element.
@@ -1226,10 +1243,13 @@ function displayXPBreakdown()
 			projectedNextLevelCompletion.innerHTML =
 			`
 				At your current rate you will reach the next level, Level&nbsp;${data['level']+1}, in about
-				<span style='font-weight:bold'>
+				<span id="XPPrediction" style='font-weight:bold'>
 					${daysLeft}
 				</span>
-				days, on ${new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString()}
+				days, on
+				<span id="XPPredictionDate">
+					${new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString()}
+				</span>
 			`;
 			
 			if (daysLeft != -1 && options.XPPrediction)
@@ -1271,65 +1291,69 @@ function displayXPBreakdown()
 	}
 	else
 	{
-		// We already have the XP Box, let's just update the values
-		let languageLevelElement = document.getElementById("xpTotalAndLevel");
-		let languageXPElement = languageLevelElement.childNodes[0];
-		languageXPElement.innerText = data['points'] + " XP - ";
-		languageLevelElement.innerText = "Level " + data['level'];
-		languageLevelElement.insertBefore(languageXPElement,languageLevelElement.childNodes[0]);
-		
-		if (languageLevelElement.nextSibling != null)
+		// We already have the XP Box, let's just update the values, if we want a breakdown.
+		if (options.XPBreakdown)
 		{
-			// Wasn't level 25 ...
-			if (data['level'] != 25)
+			let languageLevelElement = document.getElementById("xpTotalAndLevel");
+			let languageXPElement = languageLevelElement.childNodes[0];
+			languageXPElement.innerText = data['points'] + " XP - ";
+			languageLevelElement.innerText = "Level " + data['level'];
+			languageLevelElement.insertBefore(languageXPElement,languageLevelElement.childNodes[0]);
+			
+			if (languageLevelElement.nextSibling != null)
 			{
-				// ... and still aren't
-				let languageLevelProgressBarContainer = document.getElementsByClassName("languageLevelProgressBar")[0];
-				languageLevelProgressBarContainer.style =
-				`
-					height: 0.5em;
-					width: 100%;
-					background-color: ${GREY};
-					border-radius: 0.25em;
-				`;
-
-				let languageLevelProgressBar = document.getElementsByClassName("languageLevelProgressBar")[1];
-				languageLevelProgressBar.style =
-				`
-					height: 100%;
-					width: ${levelProgressPercentage}%;
-					background-color: ${ORANGE};
-					border-radius: 0.25em;
-				`;
-
-				let nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
-				nextLevelProgressElement.innerText = `${data['level_points']-data['level_progress']} XP till Level ${data['level']+1}`;
-
-				let currentLevelProgressElement = languageLevelProgressBarContainer.nextSibling;
-				currentLevelProgressElement.innerText =
-				`
-					(${data['level_progress']}/${data['level_points']} XP - ${Number(levelProgressPercentage).toFixed(1)}%)
-				`;
-
-				if (options.XPPrediction)
+				// Wasn't level 25 ...
+				if (data['level'] != 25)
 				{
-					let daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
-					languageLevelElement.parentNode.lastChild.childNodes[1].innerText = daysLeft;
+					// ... and still aren't
+					let languageLevelProgressBarContainer = document.getElementsByClassName("languageLevelProgressBar")[0];
+					languageLevelProgressBarContainer.style =
+					`
+						height: 0.5em;
+						width: 100%;
+						background-color: ${GREY};
+						border-radius: 0.25em;
+					`;
+
+					let languageLevelProgressBar = document.getElementsByClassName("languageLevelProgressBar")[1];
+					languageLevelProgressBar.style =
+					`
+						height: 100%;
+						width: ${levelProgressPercentage}%;
+						background-color: ${ORANGE};
+						border-radius: 0.25em;
+					`;
+
+					let nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
+					nextLevelProgressElement.innerText = `${data['level_points']-data['level_progress']} XP till Level ${data['level']+1}`;
+
+					let currentLevelProgressElement = languageLevelProgressBarContainer.nextSibling;
+					currentLevelProgressElement.innerText =
+					`
+						(${data['level_progress']}/${data['level_points']} XP - ${Number(levelProgressPercentage).toFixed(1)}%)
+					`;
+
+				}
+				else
+				{
+					// ... but is now, so let's remove all the irrelevant info
+					while (languageLevelElement.nextSibling != null)
+					{
+						languageLevelElement.parentNode.removeChild(languageLevelElement.nextSibling);
+					}
+
+					let maxLevelMessage = document.createElement("p");
+					maxLevelMessage.style = "margin-bottom: 0";
+					maxLevelMessage.innerText = "You have reached the maximum level!";
+					languageLevelElement.parentNode.appendChild(maxLevelMessage);
 				}
 			}
-			else
-			{
-				// ... but is now, so let's remove all the irrelevant info
-				while (languageLevelElement.nextSibling != null)
-				{
-					languageLevelElement.parentNode.removeChild(languageLevelElement.nextSibling);
-				}
-
-				let maxLevelMessage = document.createElement("p");
-				maxLevelMessage.style = "margin-bottom: 0";
-				maxLevelMessage.innerText = "You have reached the maximum level!";
-				languageLevelElement.parentNode.appendChild(maxLevelMessage);
-			}
+		}
+		if (options.XPPrediction && document.getElementById("XPPredicition")!= null)
+		{
+			let daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
+			document.getElementById("XPPrediction").innerText = daysLeft;
+			document.getElementById("XPPredictionDate").innerText = new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString();
 		}
 	}
 }

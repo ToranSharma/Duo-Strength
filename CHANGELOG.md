@@ -4,6 +4,16 @@ Changelog
 [Unreleased]
 ------------
 -
+
+[v1.1.8] - 2019-09-06
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.8)
+### Fixed
+- Added check to see if skills have two container elements, and uses the 
+inner most container.
+- XP prediction is now fully separate from the XP breakdown and updates 
+correctly.
+
 [v1.1.7] - 2019-09-03
 ---------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.7)
@@ -424,6 +434,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.7...v1.1.8
 [v1.1.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.6...v1.1.7
 [v1.1.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.5...v1.1.6
 [v1.1.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.4...v1.1.5

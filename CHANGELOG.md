@@ -11,6 +11,8 @@ Changelog
 ### Fixed
 - Added check to see if skills have two container elements, and uses the 
 inner most container.
+- XP prediction is now fully separate from the XP breakdown and updates 
+correctly.
 
 [v1.1.7] - 2019-09-03
 ---------------------

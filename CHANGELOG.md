@@ -5,6 +5,19 @@ Changelog
 ------------
 -
 
+[v1.1.9] - 2019-09-08
+---------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.9)
+### Changed
+- Modified how the name element of each skill is selected to be more 
+general. It now is defined as the first (and likely only) element with the 
+class name defined in `SKILL_NAME` that is a child of each element with 
+class name defined in `SKILL_CONTAINER`. Similarly the icon element is 
+selected by class name, not its relative relation to the container element.
+
+### Fixed
+- Fixed display suggestion to correctly try again after a wait if the page hasn't loaded fully yet.
+
 [v1.1.8] - 2019-09-06
 ---------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.8)
@@ -434,6 +447,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.8...v1.1.9
 [v1.1.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.7...v1.1.8
 [v1.1.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.6...v1.1.7
 [v1.1.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.5...v1.1.6

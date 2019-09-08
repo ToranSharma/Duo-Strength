@@ -6,6 +6,7 @@ const GREY = "rgb(229, 229, 229)";
 // Duolingo class names:
 const SKILL_CONTAINER = "Af4up";
 const SKILL_CONTAINER_CHILD = "_1fneo";
+const SKILL_ICON = "_2969E";
 const SKILL_NAME = "_33VdW";
 const BONUS_SKILL_DIVIDER = "_32Q0j";
 const TREE_CONTAINER = "i12-l";
@@ -451,12 +452,7 @@ function addStrengths(strengths)
 	*/
 
 	let skillElements = Array.from(document.getElementsByClassName(SKILL_CONTAINER)); // Af4up is class of skill containing element, may change.
-	// Some trees have another container element as a child of elements with class SKILL_CONTAINER.
-	// Let's check to see if this is the case, if it is we will set a flag true and add in the extra childNodes[0].
 	
-	let useChildContainer = false;
-	if (skillElements[0].getElementsByClassName(SKILL_CONTAINER_CHILD).length != 0) useChildContainer = true;
-
 	let skills = Array();
 	/*
 		Each element of skills array will be an array with the following information:
@@ -468,21 +464,11 @@ function addStrengths(strengths)
 	let bonusElementsCount = 0;
 	for (let i=0; i<skillElements.length; i++)
 	{
-		let elementContents;
-		if (!useChildContainer)
-		{
-			elementContents = [
-		 		skillElements[i].childNodes[0].childNodes[0],
-		 		skillElements[i].childNodes[0].childNodes[1].getElementsByClassName(SKILL_NAME)[0]
-			 ];
-		}
-		else
-		{ // use extra childNodes[0] on skillElements[i]
-			elementContents = [
-		 		skillElements[i].childNodes[0].childNodes[0].childNodes[0],
-		 		skillElements[i].childNodes[0].childNodes[0].childNodes[1].getElementsByClassName(SKILL_NAME)[0]
-			 ];
-		}
+		let elementContents = [
+			skillElements[i].getElementsByClassName(SKILL_ICON)[0],
+			skillElements[i].getElementsByClassName(SKILL_NAME)[0]
+		 ];
+
 		/* old way of finding name element before new containers
 
 		// name is a span element, normally it is the last element but if the skill is clicked then a new div is created with the start lesson button etc below the name plate. So need to find the correct span element.
@@ -1384,7 +1370,7 @@ function displaySuggestion(skills, bonusSkills)
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
-			setTimeout(displaySuggestion(skills, bonusSkills), 500);
+			setTimeout(function(){displaySuggestion(skills, bonusSkills)}, 50);
 		}
 		else
 		{

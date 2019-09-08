@@ -1370,7 +1370,7 @@ function displaySuggestion(skills, bonusSkills)
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
-			setTimeout(displaySuggestion(skills, bonusSkills), 500);
+			setTimeout(function(){displaySuggestion(skills, bonusSkills)}, 50);
 		}
 		else
 		{

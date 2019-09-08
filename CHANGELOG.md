@@ -15,6 +15,9 @@ class name defined in `SKILL_NAME` that is a child of each element with
 class name defined in `SKILL_CONTAINER`. Similarly the icon element is 
 selected by class name, not its relative relation to the container element.
 
+### Fixed
+- Fixed display suggestion to correctly try again after a wait if the page hasn't loaded fully yet.
+
 [v1.1.8] - 2019-09-06
 ---------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.8)

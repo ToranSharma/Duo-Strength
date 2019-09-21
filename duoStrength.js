@@ -45,6 +45,7 @@ let requestID = 0;
 let rootElem;
 let rootChild;
 let mainBody;
+let mainBodyContainer;
 let topBarDiv;
 let mobileTopBarDiv;
 
@@ -1764,6 +1765,16 @@ let childListMutationHandle = function(mutationsList, observer)
 				// we have just entered a lesson in the normal way and we don't need to do anything.
 			}
 		}
+		else if (mutation.target == mainBodyContainer)
+		{
+			// mainBodyContainer childlist changed, so the mainBody element must have been replaced.
+			mainBody = mainBodyContainer.firstChild;
+
+
+			// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks
+
+			classNameMutationHandle(mutationsList, null);
+		}
 		else if (mutation.target == mainBody)
 		{
 			// Switched between mobile and desktop layouts.
@@ -1904,7 +1915,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 		// Just in case there is also a language change still going on we won't set languageChanged to false.
 
 		// check if we are now on the main page
-		if (topBarDiv.childNodes[0].className.includes(ACTIVE_TAB))
+		if (topBarDiv.childNodes[0].className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
 		{
 			// on main page
 			// check if language has been previously set as we only set it in init if we were on the main page
@@ -1944,9 +1955,12 @@ async function init()
 	childListObserver.observe(rootElem,{childList: true}); // Observing for changes to its children to detect logging in and out?
 	childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
 	
-	mainBody = rootChild.lastChild.firstChild;
+	mainBodyContainer = rootChild.lastChild;
+	mainBody = mainBodyContainer.firstChild;
+	
+	childListObserver.observe(mainBodyContainer, {childList:true}); // Observing for changes to its children to detect if the mainBody element has been replaced.
 	childListObserver.observe(mainBody,{childList:true}); // Observing for changes to its children to detect moving between mobile and desktop layout.
-
+	
 	if (mainBody.getElementsByClassName(SIDEBAR).length == 0)
 		inMobileLayout = true;
 	else
@@ -2025,14 +2039,15 @@ async function init()
 			/* unused/unusable
 			classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
 			*/
-			//classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
+			classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
 
 			// set up observers for crown and streak nav hovers
 			childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
 			childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
 
-			if (homeNav.className.includes(ACTIVE_TAB))
+			if (homeNav.className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
 			{
+				// Seems as though the main page is now at /learn and the tab is not active, but we leave the check in case
 				// on home page
 				onMainPage = true;
 			}

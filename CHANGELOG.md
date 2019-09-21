@@ -4,6 +4,14 @@ Changelog
 [Unreleased]
 ------------
 -
+[v1.1.10] - 2019-09-21
+----------------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.10)
+### Fixed
+- Page change detection has been updated to include addition checks which 
+allow for the current lack of the active tab class being applied to the 
+learn tab. This is expected to be added back by duolingo so the current 
+detection methods using class name changes on the learn tab.
 
 [v1.1.9] - 2019-09-08
 ---------------------
@@ -16,7 +24,8 @@ class name defined in `SKILL_CONTAINER`. Similarly the icon element is
 selected by class name, not its relative relation to the container element.
 
 ### Fixed
-- Fixed display suggestion to correctly try again after a wait if the page hasn't loaded fully yet.
+- Fixed display suggestion to correctly try again after a wait if the page 
+hasn't loaded fully yet.
 
 [v1.1.8] - 2019-09-06
 ---------------------
@@ -447,6 +456,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.9...v1.1.10
 [v1.1.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.8...v1.1.9
 [v1.1.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.7...v1.1.8
 [v1.1.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.6...v1.1.7

@@ -1771,9 +1771,12 @@ let childListMutationHandle = function(mutationsList, observer)
 			mainBody = mainBodyContainer.firstChild;
 
 
-			// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks
-
-			classNameMutationHandle(mutationsList, null);
+			// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks.
+			// But also make sure than this page hasn't removed to top bar, if it has just stop.
+			if (topBarDiv != null)
+				classNameMutationHandle(mutationsList, null);
+			else
+				return false;
 		}
 		else if (mutation.target == mainBody)
 		{

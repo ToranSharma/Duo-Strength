@@ -3,7 +3,10 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Fixed
+- Added check to new page change detection to catch pages that don't have 
+a `topBarDiv`. This was causing an error on the login page and others.
+
 [v1.1.10] - 2019-09-21
 ----------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.10)

@@ -1013,12 +1013,30 @@ function displayCrownsBreakdown()
 	else
 		crownLevelContainer = document.getElementsByClassName(CROWN_POPUP_CONTAINER)[0];
 
-	crownLevelContainer.style =
-	`
-		flex-wrap: wrap;
-		justify-content: center;
-	`;
-	
+	if (!inMobileLayout)
+	{
+		crownLevelContainer.style =
+		`
+			flex-wrap: wrap;
+			justify-content: center;
+			overflow-y: auto;
+			max-height: calc(100vh - ${(70+20)}px);
+		`
+	}
+	else
+	{
+		crownLevelContainer.style =
+		`
+			flex-wrap: wrap;
+			justify-content: center;
+		`
+
+		crownLevelContainer.parentNode.style =
+		`
+			overflow-y: auto;
+			max-height: calc(100vh - ${(58+90)}px);
+		`
+	}
 	let crownTotalContainer;
 	crownTotalContainer = crownLevelContainer.getElementsByClassName(CROWN_TOTAL_CONTAINER)[0];
 
@@ -1111,7 +1129,7 @@ function displayCrownsBreakdown()
 
 
 		// Generate a graph for the data.
-		let graph = graphSVG(crownsEarnedInWeek);
+		let graph = inMobileLayout ? graphSVG(crownsEarnedInWeek, 3) : graphSVG(crownsEarnedInWeek);
 		graph.width = "100%";
 		graph.style.margin = "0 1em";
 

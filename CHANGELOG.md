@@ -3,7 +3,7 @@ Changelog
 
 [Unreleased]
 ------------
-# Added
+### Added
 - Graph to the crowns info popup box showing the number of crowns earned 
 each day for the past week.
 - Option to enable and disable this graph.
@@ -11,6 +11,11 @@ each day for the past week.
 ### Fixed
 - Added check to new page change detection to catch pages that don't have 
 a `topBarDiv`. This was causing an error on the login page and others.
+
+### Changed
+- Crowns info popup box now has a maximum height, and overflowing 
+content is now visible via a scroll bar. The max height is tailored to 
+both mobile and desktop layouts.
 
 [v1.1.10] - 2019-09-21
 ----------------------

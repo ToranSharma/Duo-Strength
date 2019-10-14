@@ -4,8 +4,8 @@ Changelog
 [Unreleased]
 ------------
 ### Added
-- Graph to the crowns info popup box showing the number of crowns earned 
-each day for the past week.
+- Graph to the crowns info popup box showing the number of crown level 
+contributing lessons done each day for the past week.
 - Option to enable and disable this graph.
 
 ### Fixed

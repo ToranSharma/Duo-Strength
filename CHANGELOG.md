@@ -3,6 +3,11 @@ Changelog
 
 [Unreleased]
 ------------
+# Added
+- Graph to the crowns info popup box showing the number of crowns earned 
+each day for the past week.
+- Option to enable and disable this graph.
+
 ### Fixed
 - Added check to new page change detection to catch pages that don't have 
 a `topBarDiv`. This was causing an error on the login page and others.

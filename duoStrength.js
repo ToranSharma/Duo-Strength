@@ -1021,7 +1021,7 @@ function displayCrownsBreakdown()
 			justify-content: center;
 			overflow-y: auto;
 			max-height: calc(100vh - ${(70+20)}px);
-		`
+		`;
 	}
 	else
 	{
@@ -1029,13 +1029,13 @@ function displayCrownsBreakdown()
 		`
 			flex-wrap: wrap;
 			justify-content: center;
-		`
+		`;
 
 		crownLevelContainer.parentNode.style =
 		`
 			overflow-y: auto;
 			max-height: calc(100vh - ${(58+90)}px);
-		`
+		`;
 	}
 	let crownTotalContainer;
 	crownTotalContainer = crownLevelContainer.getElementsByClassName(CROWN_TOTAL_CONTAINER)[0];
@@ -1402,8 +1402,11 @@ function displayXPBreakdown()
 
 		let container = document.createElement("div");
 		container.id = "XPBox";
-		container.style['margin-top'] = "1em";
-		container.style['color'] = "black";
+		container.style = 
+		`
+			margin-top: 1em;
+			color: black;
+		`;
 
 		let XPHeader = document.createElement("h2");
 		XPHeader.innerText = data['language_string']+ " XP";
@@ -1515,12 +1518,22 @@ function displayXPBreakdown()
 			else
 				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[0].appendChild(container);
 			
-			// Reduce gap between XP graph and streak info.
-			container.parentNode.getElementsByClassName(XP_GRAPH_CONTAINER)[0].style['margin-top'] = "-2em";
-			container.style['margin-top'] = "0";
-			container.parentNode.style['padding-top'] = "0.5em";
-			container.parentNode.style['padding-bottom'] = "0";
-
+			if(!inMobileLayout)
+			{
+				container.parentNode.style =
+				`
+					overflow-y: auto;
+					max-height: calc(100vh - ${(58+90)}px);
+				`;
+			}
+			else
+			{
+				container.parentNode.parentNode.style =
+				`
+					overflow-y: auto;
+					max-height: calc(100vh - ${(58+90)}px);
+				`;
+			}
 		}
 		else if (document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER).length != 0)
 		{

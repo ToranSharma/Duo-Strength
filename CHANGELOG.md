@@ -16,6 +16,8 @@ a `topBarDiv`. This was causing an error on the login page and others.
 - Crowns info popup box now has a maximum height, and overflowing 
 content is now visible via a scroll bar. The max height is tailored to 
 both mobile and desktop layouts.
+- When in the mobile layout, the XP popup box now also has a maximum 
+height, with overflowing content visible via a scroll bar.
 
 [v1.1.10] - 2019-09-21
 ----------------------

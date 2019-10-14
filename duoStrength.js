@@ -490,6 +490,18 @@ function graphSVG(data, ratio=1.5)
 		yLabels.appendChild(label);
 	}
 
+	let yTitle = document.createElementNS(svgns, "text");
+	yTitle.textContent = "# Lessons Towards Next Level";
+	yTitle.setAttributeNS(null, "id", "yTitle");
+	yTitle.setAttributeNS(null, "x", "0");
+	yTitle.setAttributeNS(null, "y", `${0.5*height}`);
+	yTitle.setAttributeNS(null, "text-anchor", "middle");
+	yTitle.setAttributeNS(null, "alignment-baseline", "text-before-edge");
+	yTitle.setAttributeNS(null, "transform-origin", `0 ${0.5*height}`);
+	yTitle.setAttributeNS(null, "transform", "rotate(-90)");
+	yTitle.setAttributeNS(null, "font-size", 0.068*height);
+	labels.appendChild(yTitle);
+
 	for (let i = 0; i < 7; i++)
 	{
 		let x = String(i*(100-20)/6 + 15);
@@ -565,7 +577,7 @@ function graphSVG(data, ratio=1.5)
 		point.setAttributeNS(null, "r", "1.25");
 		
 		let title = document.createElementNS(svgns, "title");
-		title.textContent = `${data[i]} crown${data[i]!=1?"s":""}`;
+		title.textContent = `${data[i]} crown level contributing lesson${data[i]!=1?"s":""}`;
 
 		if (data[i] == 0)
 			point.setAttributeNS(null, "fill", "white");
@@ -1129,7 +1141,7 @@ function displayCrownsBreakdown()
 
 
 		// Generate a graph for the data.
-		let graph = inMobileLayout ? graphSVG(crownsEarnedInWeek, 3) : graphSVG(crownsEarnedInWeek);
+		let graph = graphSVG(crownsEarnedInWeek);
 		graph.width = "100%";
 		graph.style.margin = "0 1em";
 

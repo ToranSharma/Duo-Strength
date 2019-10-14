@@ -70,6 +70,7 @@ function retrieveOptions()
 					"skillSuggestionMethod":			"0",
 					"crownsInfo":						true,
 					"crownsMaximum":					true,
+					"crownsGraph":						true,
 					"crownsBreakdown":					true,
 					"crownsBreakdownShowZerosRows":		true,
 					"crownsPrediction":					true,
@@ -1045,75 +1046,79 @@ function displayCrownsBreakdown()
 	*/
 
 	// Add crowns progress graph
-
-	let crownsEarnedInWeek = [];
-	// will hold number of crowns earned each day for seven days
-	// crownsEarnedInWeek[0] : week ago;
-	// crownsEarnedInWeek[6] : today;
-
-	let dateToday = (new Date()).setHours(0,0,0,0);
-	let msInDay = 24*60*60*1000;
-	
-	let day = dateToday;
-	let i = progress.length - 1; // used to index into progress
-	while (day > dateToday - 7*msInDay && i > 0)
+	if (options.crownsGraph)
 	{
-		// Loop through the last week backwards.
-		// Also stop if we run out of progress entries to use.
+		let crownsEarnedInWeek = [];
+		// will hold number of crowns earned each day for seven days
+		// crownsEarnedInWeek[0] : week ago;
+		// crownsEarnedInWeek[6] : today;
 
-		if (progress[i][0] == day)
+		let dateToday = (new Date()).setHours(0,0,0,0);
+		let msInDay = 24*60*60*1000;
+		
+		let day = dateToday;
+		let i = progress.length - 1; // used to index into progress
+		while (day > dateToday - 7*msInDay && i > 0)
 		{
-			// If there is progress for the day we are testing
-			// prepend the array with the change in number of crowns left
-			// compared to the previous progress entry
-
-			crownsEarnedInWeek.unshift(progress[i-1][2] - progress[i][2]);
-			i--;
+			// Loop through the last week backwards.
+			// Also stop if we run out of progress entries to use.
 
 			if (progress[i][0] == day)
 			{
-				// If the previous progress entry is from the same day
-				// a level boundary was crossed.
-				// This progress entry then holds the number of crowns left
-				// at the time of getting to the next crown level.
+				// If there is progress for the day we are testing
+				// prepend the array with the change in number of crowns left
+				// compared to the previous progress entry
 
-				// We then add the remaining number of crowns from the previous
-				// progress entry that must have been earned to level up
-				//
-				crownsEarnedInWeek[0] = crownsEarnedInWeek[0] + progress[i-1][2];
+				crownsEarnedInWeek.unshift(progress[i-1][2] - progress[i][2]);
 				i--;
+
+				if (progress[i][0] == day)
+				{
+					// If the previous progress entry is from the same day
+					// a level boundary was crossed.
+					// This progress entry then holds the number of crowns left
+					// at the time of getting to the next crown level.
+
+					// We then add the remaining number of crowns from the previous
+					// progress entry that must have been earned to level up
+					//
+					crownsEarnedInWeek[0] = crownsEarnedInWeek[0] + progress[i-1][2];
+					i--;
+				}
 			}
+			else
+			{
+				// The progress entry isn't for the day we are testing,
+				// so no crowns were earned on that day.
+
+				crownsEarnedInWeek.unshift(0);
+
+				// Note we don't decrement i as we haven't used the info in this
+				// progress entry.
+			}
+			
+			// decrement the timestamp by a day
+			day = day - msInDay;
 		}
-		else
+
+		while (crownsEarnedInWeek.length != 7)
 		{
-			// The progress entry isn't for the day we are testing,
-			// so no crowns were earned on that day.
+			// If we ran out of progress entries for a whole week
+			// we will fill the rest with zeros.
 
 			crownsEarnedInWeek.unshift(0);
-
-			// Note we don't decrement i as we haven't used the info in this
-			// progress entry.
 		}
-		
-		// decrement the timestamp by a day
-		day = day - msInDay;
+
+
+		// Generate a graph for the data.
+		let graph = graphSVG(crownsEarnedInWeek);
+		graph.width = "100%";
+		graph.style.margin = "0 1em";
+
+		crownLevelContainer.appendChild(graph);
 	}
 
-	while (crownsEarnedInWeek.length != 7)
-	{
-		// If we ran out of progress entries for a whole week
-		// we will fill the rest with zeros.
-
-		crownsEarnedInWeek.unshift(0);
-	}
-
-
-	// Generate a graph for the data.
-	let graph = graphSVG(crownsEarnedInWeek);
-	graph.width = "100%";
-	graph.style.margin = "0 1em";
-
-	crownLevelContainer.appendChild(graph);
+	// Add breakdown table
 
 	let breakdownContainer = document.createElement("div");
 	breakdownContainer.id = "crownLevelBreakdownContainer";

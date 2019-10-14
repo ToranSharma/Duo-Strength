@@ -3,7 +3,11 @@ Changelog
 
 [Unreleased]
 ------------
--
+# Added
+- Graph to the crowns info popup box showing the number of crowns earned 
+each day for the past week.
+- Option to enable and disable this graph.
+
 [v1.1.10] - 2019-09-21
 ----------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.10)

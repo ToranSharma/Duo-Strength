@@ -3,6 +3,11 @@ Changelog
 
 [Unreleased]
 ------------
+-
+
+[v1.1.11] - 2019-10-19
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.11)
 ### Added
 - Graph to the crowns info popup box showing the number of crown level 
 contributing lessons done each day for the past week.
@@ -476,6 +481,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.11]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.10...v1.1.11
 [v1.1.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.9...v1.1.10
 [v1.1.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.8...v1.1.9
 [v1.1.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.7...v1.1.8

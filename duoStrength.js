@@ -1855,11 +1855,13 @@ function getStrengths()
 	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
 	{
 		// Something needs strengthening.
+		removeSuggestion(); // Remove the suggestion box if there happens to be one.
 		if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
 	else
 	{
 		// Nothing that needs strengthening!
+		removeNeedsStrengtheningBox(); // Remove the needStrengthingBox if there happns to be one.
 		if (options.skillSuggestion) displaySuggestion(skills);
 	}
 

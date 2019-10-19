@@ -11,6 +11,11 @@ contributing lessons done each day for the past week.
 ### Fixed
 - Added check to new page change detection to catch pages that don't have 
 a `topBarDiv`. This was causing an error on the login page and others.
+- Needs strengthening list is removed (if there is one) before adding 
+a skill suggestion (and vice versa). This fixes a bug where if a user goes 
+from having skills that need strengthening to none, without a page refresh 
+(e.g. they didn't use the list itself), then the needs strengthing list would 
+remain after the skill suggestion is added.
 
 ### Changed
 - Crowns info popup box now has a maximum height, and overflowing 

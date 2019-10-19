@@ -70,6 +70,7 @@ function retrieveOptions()
 					"skillSuggestionMethod":			"0",
 					"crownsInfo":						true,
 					"crownsMaximum":					true,
+					"crownsGraph":						true,
 					"crownsBreakdown":					true,
 					"crownsBreakdownShowZerosRows":		true,
 					"crownsPrediction":					true,
@@ -414,6 +415,180 @@ function daysToNextCrownLevelByCalendar()
 	let lessonRate = numLessons/timePeriod; // in lessons per day
 
 	return Math.ceil(lessonsToNextCrownLevel/lessonRate);
+}
+
+function graphSVG(data, ratio=1.5)
+{
+	// Generates an svg of a graph with the data passed in.
+	// ratio controls the aspect ratio of the graph
+	
+	// max is the next multiple of 4 equal to or above the largest value
+	// in data, with a minimum value of 4.
+	let max = Math.max(4, Math.ceil(Math.max(...data)/4) * 4);
+	let height = 100/ratio;
+	
+	let svgns = "http://www.w3.org/2000/svg";
+	let xmlns = "http://www.w3.org/2000/xmlns/";
+	let graph = document.createElementNS(svgns,"svg");
+	graph.setAttributeNS(xmlns, "xmlns", svgns);
+	graph.setAttributeNS(null, "id", "graph");
+	graph.setAttributeNS(null, "width", "100%");
+	graph.setAttributeNS(null, "viewBox", "0 0 100 " + String(height));
+	
+	// Visible area is a rect of width 100 and aspect ratio specified in ratio
+	
+	// We leave a 5% gap above and to the right of the graph.
+	// The graph area iself starts 15% from the left and bottom edges.
+	// So the graph itself is a rect of width 80 in the same aspect ratio.
+
+	/* Draw horizontal grid lines */
+
+	let gridLines = document.createElementNS(svgns, "g");
+	gridLines.setAttributeNS(null, "id", "gridLines");
+	gridLines.setAttributeNS(null, "stroke", "lightgrey");
+	gridLines.setAttributeNS(null, "stroke-width", "0.5");
+
+	for (let i = 0; i < 5; i++)
+	{
+		let y = String(i*(height*0.80)/4 + 0.05*height);
+		let line = document.createElementNS(svgns, "line");
+		line.setAttributeNS(null, "x1", "15");
+		line.setAttributeNS(null, "y1", y);
+		line.setAttributeNS(null, "x2", "95");
+		line.setAttributeNS(null, "y2", y);
+
+		gridLines.appendChild(line);
+	}
+	graph.appendChild(gridLines);
+
+	/* Draw Axis labels */
+
+	let labels = document.createElementNS(svgns, "g");
+	labels.setAttributeNS(null, "id", "labels");
+	labels.setAttributeNS(null, "font-size", String(Math.min(6,0.1*height)));
+	labels.setAttributeNS(null, "font-family", "sans-serif");
+	
+	let yLabels = document.createElementNS(svgns, "g");
+	yLabels.setAttributeNS(null, "id", "yLabels");
+	yLabels.setAttributeNS(null, "text-anchor", "end");
+
+	let xLabels = document.createElementNS(svgns, "g");
+	xLabels.setAttributeNS(null, "id", "xLabels");
+	xLabels.setAttributeNS(null, "text-anchor", "middle");
+
+
+	for (let i = 0; i < 5; i++)
+	{
+		let y = String(i*(height*0.8)/4 + 0.05*height);
+
+		let label = document.createElementNS(svgns, "text");
+		label.textContent = max - i*max/4;
+		label.setAttributeNS(null, "x", "10");
+		label.setAttributeNS(null, "y", y);
+		label.setAttributeNS(null, "alignment-baseline", "middle");
+
+		yLabels.appendChild(label);
+	}
+
+	let yTitle = document.createElementNS(svgns, "text");
+	yTitle.textContent = "# Lessons Towards Next Level";
+	yTitle.setAttributeNS(null, "id", "yTitle");
+	yTitle.setAttributeNS(null, "x", "0");
+	yTitle.setAttributeNS(null, "y", `${0.5*height}`);
+	yTitle.setAttributeNS(null, "text-anchor", "middle");
+	yTitle.setAttributeNS(null, "alignment-baseline", "text-before-edge");
+	yTitle.setAttributeNS(null, "transform-origin", `0 ${0.5*height}`);
+	yTitle.setAttributeNS(null, "transform", "rotate(-90)");
+	yTitle.setAttributeNS(null, "font-size", 0.068*height);
+	labels.appendChild(yTitle);
+
+	for (let i = 0; i < 7; i++)
+	{
+		let x = String(i*(100-20)/6 + 15);
+
+		let label = document.createElementNS(svgns, "text");
+		label.textContent = 
+			(new Date(
+					(new Date()).getTime() - (6-i)*1000*60*60*24
+				)
+			 )
+			.toLocaleDateString(undefined,
+				{
+					weekday: "narrow"
+				});
+
+		label.setAttributeNS(null, "x", x);
+		label.setAttributeNS(null, "y", String(height));
+
+		xLabels.appendChild(label);
+	}
+	labels.appendChild(yLabels);	
+	labels.appendChild(xLabels);
+
+	graph.appendChild(labels);
+
+	/* Draw area under points */
+
+	let area = document.createElementNS(svgns, "polygon");
+	area.setAttributeNS(null, "id", "area");
+	area.setAttributeNS(null, "fill", "orange");
+	area.setAttributeNS(null, "fill-opacity", "0.1");
+	area.setAttributeNS(null, "stoke", "none");
+
+	let pointCoords = "";
+
+	for (let i = 0; i < 7; i++)
+	{	
+		let x = String(i*(100-20)/6 + 15);
+		let y = String((height*0.8)*(1 - data[i]/max) + 0.05*height);
+		pointCoords += `${x},${y} `;
+	}
+	area.setAttributeNS(null, "points", `${pointCoords} 95,${0.85*height} 15,${0.85*height}`);
+
+	graph.appendChild(area);
+
+	/* Draw line between points*/
+
+	let line = document.createElementNS(svgns, "polyline");
+	line.setAttributeNS(null, "id", "line");
+	line.setAttributeNS(null, "stroke", "orange");
+	line.setAttributeNS(null, "stroke-width", "0.5");
+	line.setAttributeNS(null, "stroke-opacity", "0.8");
+	line.setAttributeNS(null, "fill", "none");
+	line.setAttributeNS(null, "points", pointCoords);
+
+	graph.appendChild(line);
+
+	/* Plot Points */
+
+	let points = document.createElementNS(svgns, "g");
+	points.setAttributeNS(null, "id", "points");
+	points.setAttributeNS(null, "stroke", "orange");
+	points.setAttributeNS(null, "stroke-width", "0.75");
+	points.setAttributeNS(null, "fill", "orange");
+
+	for (let i = 0; i < 7; i++)
+	{
+		let coords = pointCoords.split(" ")[i].split(",");
+
+		let point = document.createElementNS(svgns, "circle");
+		point.setAttributeNS(null, "cx", coords[0]);
+		point.setAttributeNS(null, "cy", coords[1]);
+		point.setAttributeNS(null, "r", "1.25");
+		
+		let title = document.createElementNS(svgns, "title");
+		title.textContent = `${data[i]} crown level contributing lesson${data[i]!=1?"s":""}`;
+
+		if (data[i] == 0)
+			point.setAttributeNS(null, "fill", "white");
+
+		point.appendChild(title);
+		points.appendChild(point);
+	}
+	
+	graph.appendChild(points);
+
+	return graph;
 }
 
 function addStrengths(strengths)
@@ -850,12 +1025,30 @@ function displayCrownsBreakdown()
 	else
 		crownLevelContainer = document.getElementsByClassName(CROWN_POPUP_CONTAINER)[0];
 
-	crownLevelContainer.style =
-	`
-		flex-wrap: wrap;
-		justify-content: center;
-	`;
-	
+	if (!inMobileLayout)
+	{
+		crownLevelContainer.style =
+		`
+			flex-wrap: wrap;
+			justify-content: center;
+			overflow-y: auto;
+			max-height: calc(100vh - ${(70+20)}px);
+		`;
+	}
+	else
+	{
+		crownLevelContainer.style =
+		`
+			flex-wrap: wrap;
+			justify-content: center;
+		`;
+
+		crownLevelContainer.parentNode.style =
+		`
+			overflow-y: auto;
+			max-height: calc(100vh - ${(58+90)}px);
+		`;
+	}
 	let crownTotalContainer;
 	crownTotalContainer = crownLevelContainer.getElementsByClassName(CROWN_TOTAL_CONTAINER)[0];
 
@@ -881,6 +1074,81 @@ function displayCrownsBreakdown()
 		transform: translateY(-50%);
 	`;
 	*/
+
+	// Add crowns progress graph
+	if (options.crownsGraph)
+	{
+		let crownsEarnedInWeek = [];
+		// will hold number of crowns earned each day for seven days
+		// crownsEarnedInWeek[0] : week ago;
+		// crownsEarnedInWeek[6] : today;
+
+		let dateToday = (new Date()).setHours(0,0,0,0);
+		let msInDay = 24*60*60*1000;
+		
+		let day = dateToday;
+		let i = progress.length - 1; // used to index into progress
+		while (day > dateToday - 7*msInDay && i > 0)
+		{
+			// Loop through the last week backwards.
+			// Also stop if we run out of progress entries to use.
+
+			if (progress[i][0] == day)
+			{
+				// If there is progress for the day we are testing
+				// prepend the array with the change in number of crowns left
+				// compared to the previous progress entry
+
+				crownsEarnedInWeek.unshift(progress[i-1][2] - progress[i][2]);
+				i--;
+
+				if (progress[i][0] == day)
+				{
+					// If the previous progress entry is from the same day
+					// a level boundary was crossed.
+					// This progress entry then holds the number of crowns left
+					// at the time of getting to the next crown level.
+
+					// We then add the remaining number of crowns from the previous
+					// progress entry that must have been earned to level up
+					//
+					crownsEarnedInWeek[0] = crownsEarnedInWeek[0] + progress[i-1][2];
+					i--;
+				}
+			}
+			else
+			{
+				// The progress entry isn't for the day we are testing,
+				// so no crowns were earned on that day.
+
+				crownsEarnedInWeek.unshift(0);
+
+				// Note we don't decrement i as we haven't used the info in this
+				// progress entry.
+			}
+			
+			// decrement the timestamp by a day
+			day = day - msInDay;
+		}
+
+		while (crownsEarnedInWeek.length != 7)
+		{
+			// If we ran out of progress entries for a whole week
+			// we will fill the rest with zeros.
+
+			crownsEarnedInWeek.unshift(0);
+		}
+
+
+		// Generate a graph for the data.
+		let graph = graphSVG(crownsEarnedInWeek);
+		graph.width = "100%";
+		graph.style.margin = "0 1em";
+
+		crownLevelContainer.appendChild(graph);
+	}
+
+	// Add breakdown table
 
 	let breakdownContainer = document.createElement("div");
 	breakdownContainer.id = "crownLevelBreakdownContainer";
@@ -1146,8 +1414,11 @@ function displayXPBreakdown()
 
 		let container = document.createElement("div");
 		container.id = "XPBox";
-		container.style['margin-top'] = "1em";
-		container.style['color'] = "black";
+		container.style = 
+		`
+			margin-top: 1em;
+			color: black;
+		`;
 
 		let XPHeader = document.createElement("h2");
 		XPHeader.innerText = data['language_string']+ " XP";
@@ -1259,12 +1530,22 @@ function displayXPBreakdown()
 			else
 				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[0].appendChild(container);
 			
-			// Reduce gap between XP graph and streak info.
-			container.parentNode.getElementsByClassName(XP_GRAPH_CONTAINER)[0].style['margin-top'] = "-2em";
-			container.style['margin-top'] = "0";
-			container.parentNode.style['padding-top'] = "0.5em";
-			container.parentNode.style['padding-bottom'] = "0";
-
+			if(!inMobileLayout)
+			{
+				container.parentNode.style =
+				`
+					overflow-y: auto;
+					max-height: calc(100vh - ${(58+90)}px);
+				`;
+			}
+			else
+			{
+				container.parentNode.parentNode.style =
+				`
+					overflow-y: auto;
+					max-height: calc(100vh - ${(58+90)}px);
+				`;
+			}
 		}
 		else if (document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER).length != 0)
 		{
@@ -1574,11 +1855,13 @@ function getStrengths()
 	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
 	{
 		// Something needs strengthening.
+		removeSuggestion(); // Remove the suggestion box if there happens to be one.
 		if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 	}
 	else
 	{
 		// Nothing that needs strengthening!
+		removeNeedsStrengtheningBox(); // Remove the needStrengthingBox if there happns to be one.
 		if (options.skillSuggestion) displaySuggestion(skills);
 	}
 
@@ -1771,9 +2054,12 @@ let childListMutationHandle = function(mutationsList, observer)
 			mainBody = mainBodyContainer.firstChild;
 
 
-			// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks
-
-			classNameMutationHandle(mutationsList, null);
+			// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks.
+			// But also make sure than this page hasn't removed to top bar, if it has just stop.
+			if (topBarDiv != null)
+				classNameMutationHandle(mutationsList, null);
+			else
+				return false;
 		}
 		else if (mutation.target == mainBody)
 		{

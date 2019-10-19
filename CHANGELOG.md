@@ -4,6 +4,31 @@ Changelog
 [Unreleased]
 ------------
 -
+
+[v1.1.11] - 2019-10-19
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.11)
+### Added
+- Graph to the crowns info popup box showing the number of crown level 
+contributing lessons done each day for the past week.
+- Option to enable and disable this graph.
+
+### Fixed
+- Added check to new page change detection to catch pages that don't have 
+a `topBarDiv`. This was causing an error on the login page and others.
+- Needs strengthening list is removed (if there is one) before adding 
+a skill suggestion (and vice versa). This fixes a bug where if a user goes 
+from having skills that need strengthening to none, without a page refresh 
+(e.g. they didn't use the list itself), then the needs strengthing list would 
+remain after the skill suggestion is added.
+
+### Changed
+- Crowns info popup box now has a maximum height, and overflowing 
+content is now visible via a scroll bar. The max height is tailored to 
+both mobile and desktop layouts.
+- When in the mobile layout, the XP popup box now also has a maximum 
+height, with overflowing content visible via a scroll bar.
+
 [v1.1.10] - 2019-09-21
 ----------------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.10)
@@ -456,6 +481,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.11]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.10...v1.1.11
 [v1.1.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.9...v1.1.10
 [v1.1.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.8...v1.1.9
 [v1.1.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.7...v1.1.8

@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v1.1.12] - 2019-11-07
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.12)
+### Fixed
+- Fixed class name change for cronws info popup window.
+- Fixed styles for crowns logo and blurb in crowns info popup window.
+
 [v1.1.11] - 2019-10-19
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.11)
@@ -481,6 +488,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.1.12]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.11...v1.1.12
 [v1.1.11]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.10...v1.1.11
 [v1.1.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.9...v1.1.10
 [v1.1.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.8...v1.1.9

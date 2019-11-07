@@ -15,7 +15,9 @@ const TOP_OF_TREE = "_3rABk";
 const SKILL_ROW = "_2GJb6";
 const SKILL_COLUMN = "QmbDT";
 const IN_BETA_LABEL = "_27CnM";
-const CROWN_POPUP_CONTAINER = "NugKJ _55Inr";
+const CROWN_POPUP_CONTAINER = "NugKJ";
+const CROWN_LOGO_CONTAINER = "_3uwBi";
+const CROWN_DESCRIPTION_CONTAINER = "_27NkX";
 const CROWN_TOTAL_CONTAINER = "_2boWj";
 const DAILY_GOAL_POPUP_CONTAINER = "yRM09";
 const DAILY_GOAL_SIDEBAR_CONATINER = "_1Ygk_";
@@ -1049,6 +1051,12 @@ function displayCrownsBreakdown()
 			max-height: calc(100vh - ${(58+90)}px);
 		`;
 	}
+	let crownLogoContainer = document.getElementsByClassName(CROWN_LOGO_CONTAINER)[inMobileLayout? 1 : 0];
+	let crownDescriptionContainer = document.getElementsByClassName(CROWN_DESCRIPTION_CONTAINER)[inMobileLayout ? 1 : 0];
+
+	crownLogoContainer.style['transform'] = 'scale(1.7)';
+	crownDescriptionContainer.style['width'] = '50%';
+
 	let crownTotalContainer;
 	crownTotalContainer = crownLevelContainer.getElementsByClassName(CROWN_TOTAL_CONTAINER)[0];
 
@@ -1056,7 +1064,7 @@ function displayCrownsBreakdown()
 	let maximumCrownCountContainer;
 	if (options.crownsMaximum)
 	{
-		crownTotalContainer.style.fontSize = "22px";
+		crownTotalContainer.style.fontSize = "15px";
 
 		maximumCrownCountContainer = document.createElement("span");
 		maximumCrownCountContainer.id = "maxCrowns";

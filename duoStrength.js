@@ -31,6 +31,10 @@ const GREY_FLAME = "_27oya";
 const ACTIVE_TAB = "_2lkuX";
 const TOP_BAR = "_3F_8q";
 const NAVIGATION_BUTTON = "_3MT82";
+const QUESTION_CONTAINER = "_14lWn";
+const LOGIN_PAGE = "_3nlUH";
+const LESSON = "BWibf _3MLiB";
+const LESSON_MAIN_SECTION = "_2-1wu";
 
 let languageCode = "";
 let language = "";
@@ -2031,6 +2035,19 @@ function checkUIVersion()
 }
 */
 
+function hideTranslationText()
+{
+	const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
+	const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
+
+	if (questionTypeString.includes("translate"))
+	{
+		const hintSentence = questionContainer.querySelector("[data-test=\"hint-sentence\"]");
+		hintSentence.style['filter'] = "blur(0.3em)";
+		hintSentence.onclick = () => {hintSentence.style['filter'] = "unset";};
+	}
+}
+
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
 let childListMutationHandle = function(mutationsList, observer)
 {
@@ -2053,7 +2070,10 @@ let childListMutationHandle = function(mutationsList, observer)
 			}
 			else
 			{
-				// we have just entered a lesson in the normal way and we don't need to do anything.
+				// Entered a lesson in the normal way, through the skill tree.
+				// Need to set up observer on lessonMainSection for when the first question loads
+
+				childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0], {childList:true});
 			}
 		}
 		else if (mutation.target == mainBodyContainer)
@@ -2163,6 +2183,22 @@ let childListMutationHandle = function(mutationsList, observer)
 				}
 			}
 		}
+		else if (mutation.target.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
+		{
+			// Question section loaded.
+
+			// Run check for translation type question
+			hideTranslationText();
+
+			// Set up mutation observer for question change
+			childListObserver.observe(mutation.target.firstChild, {childList:true});
+		}
+		else if (mutation.target.parentNode.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
+		{
+			// Run check for translation type question
+
+			hideTranslationText();
+		}
 	}
 };
 
@@ -2259,116 +2295,136 @@ async function init()
 		inMobileLayout = true;
 	else
 		inMobileLayout = false;
-
-	if(rootChild.childNodes.length == 1) // If there is only one child of rootChild then we are on the log in page.
+	
+	if (rootChild.firstChild.className === LOGIN_PAGE)
 	{
-		// On login page so cannot continue to turn rest of init process.
+		// On login page so cannot continue to run rest of init process.
 		onMainPage = false;
 		return false;
 	}
 	else
 	{
 		// should be logged in
-		
-		/*
-			As of 2019-07-17 comment nodes have been removed, so testing of position of main body element is simpler.
-			Main body container element has class _3MLiB. If it is the first child, there is no topbar Div, if it is second place, then second should be a topBarDiv.
-			As no comment nodes before or after, can just check the number of children.
-			If there are two children, then we have both a top bar and the main page, otherwise it is probably just the main page with no top bar.
-		*/
+		// now test to see if we are in a lesson or not
 
-		if(rootChild.childElementCount == 2)
+		if (rootChild.firstChild.className == LESSON)
 		{
-			// Using new white topBar layout
+			// in a lesson
+			// we probably got here from a link in the needs strengthenin list
 
-			// set username via the href of a link to the profile
-			let profileTabHrefParts = document.querySelector("[data-test = \"profile-tab\"]").href.split("/")
-			username = profileTabHrefParts[profileTabHrefParts.length - 1];
+			onMainPage = false;
 
-			// topBar Div is the direct container holding the navigation butons, has class _3F_8q
-			// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];
-			// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
-			// Safer to use class name, which may also change...
-			// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
-			topBarDiv = rootChild.getElementsByClassName(TOP_BAR)[0];
-			mobileTopBarDiv = rootChild.getElementsByClassName(TOP_BAR)[1];
-			
-			// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
-			let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
-			// if numNavButtons = 4 then there is no stories button.
-			// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+			const lessonMainSection = document.getElementsByClassName(LESSON_MAIN_SECTION)[0];
 
-			let homeNav = topBarDiv.childNodes[0];
+			// There is a loading animation inside lessonMainSection before the first question,
+			// so let's add a childList mutaion observer to lessonMainSection and run the checks then.
 
-			let storiesNav;
-			// let discussionNav;
-			let shopNav;
-			let crownNav;
-			let streakNav;
-
-			if (numNavButtons == 5)
-			{
-				storiesNav = topBarDiv.childNodes[2];
-				/* unused/unusable
-				discussionNav = topBarDiv.childNodes[4];
-				*/
-				shopNav = topBarDiv.childNodes[6];
-				languageLogo = topBarDiv.childNodes[10];
-				crownNav = topBarDiv.childNodes[11];
-				streakNav = topBarDiv.childNodes[12];
-			}
-			else
-			{
-				/* unused/unusable
-				discussionNav = topBarDiv.childNodes[2];
-				*/
-				shopNav = topBarDiv.childNodes[4];
-				languageLogo = topBarDiv.childNodes[8];
-				crownNav = topBarDiv.childNodes[9];
-				streakNav = topBarDiv.childNodes[10];
-			}
-			
-			// set up observers for page changes
-			classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
-			/* unused/unusable
-			classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
-			*/
-			classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
-
-			// set up observers for crown and streak nav hovers
-			childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
-			childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
-
-			if (homeNav.className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
-			{
-				// Seems as though the main page is now at /learn and the tab is not active, but we leave the check in case
-				// on home page
-				onMainPage = true;
-			}
-			else
-				onMainPage = false;
-
-			// need to set up Observer on language logo for language change detection
-			// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
-			classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
-
-			/*
-			language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
-			
-			language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
-			We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
-			
-
-			Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
-			*/
-
-			await optionsLoaded;
-			requestData();
+			childListObserver.observe(lessonMainSection, {childList: true});
 		}
 		else
 		{
-			// page we are on is most likely a lesson, and we got here from a link in the strengthenBox.
-			onMainPage = false;
+			// not in a lesson
+			/*
+				Main body container element has class _3MLiB.
+				If it is the first child, there is no topBarDiv and it is the only child of rootChild,
+				if it is second place, then the first child should be a topBarDiv and there are two children of rootChild.
+				So it is enough to just test for the number of children of rootChild to check for a topBarDiv.
+			*/
+
+			if (rootChild.childElementCount == 1)
+			{
+				// no topBarDiv so nothing left to do
+				onMainPage = false;
+				return false;
+			}
+			else
+			{
+				// there is a topBarDiv so we can continue to process the page to workout what to do
+
+				// set username via the href of a link to the profile
+				let profileTabHrefParts = document.querySelector("[data-test = \"profile-tab\"]").href.split("/")
+				username = profileTabHrefParts[profileTabHrefParts.length - 1];
+
+				// topBar Div is the direct container holding the navigation butons, has class _3F_8q
+				// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];
+				// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
+				// Safer to use class name, which may also change...
+				// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
+				topBarDiv = rootChild.getElementsByClassName(TOP_BAR)[0];
+				mobileTopBarDiv = rootChild.getElementsByClassName(TOP_BAR)[1];
+				
+				// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
+				let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
+				// if numNavButtons = 4 then there is no stories button.
+				// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+
+				let homeNav = topBarDiv.childNodes[0];
+
+				let storiesNav;
+				// let discussionNav;
+				let shopNav;
+				let crownNav;
+				let streakNav;
+
+				if (numNavButtons == 5)
+				{
+					storiesNav = topBarDiv.childNodes[2];
+					/* unused/unusable
+					discussionNav = topBarDiv.childNodes[4];
+					*/
+					shopNav = topBarDiv.childNodes[6];
+					languageLogo = topBarDiv.childNodes[10];
+					crownNav = topBarDiv.childNodes[11];
+					streakNav = topBarDiv.childNodes[12];
+				}
+				else
+				{
+					/* unused/unusable
+					discussionNav = topBarDiv.childNodes[2];
+					*/
+					shopNav = topBarDiv.childNodes[4];
+					languageLogo = topBarDiv.childNodes[8];
+					crownNav = topBarDiv.childNodes[9];
+					streakNav = topBarDiv.childNodes[10];
+				}
+				
+				// set up observers for page changes
+				classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
+				/* unused/unusable
+				classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
+				*/
+				classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
+
+				// set up observers for crown and streak nav hovers
+				childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
+				childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
+
+				if (homeNav.className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
+				{
+					// Seems as though the main page is now at /learn and the tab is not active, but we leave the check in case
+					// on home page
+					onMainPage = true;
+				}
+				else
+					onMainPage = false;
+
+				// need to set up Observer on language logo for language change detection
+				// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
+				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+
+				/*
+				language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
+				
+				language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
+				We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
+				
+
+				Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
+				*/
+
+				await optionsLoaded;
+				requestData();
+			}
 		}
 	}
 }

@@ -82,7 +82,8 @@ function retrieveOptions()
 					"crownsPrediction":					true,
 					"XPInfo":							true,
 					"XPBreakdown":						true,
-					"XPPrediction":						true
+					"XPPrediction":						true,
+					"showTranslationText":				true,
 				};
 			if (Object.entries(data).length === 0)
 			{
@@ -2037,28 +2038,33 @@ function checkUIVersion()
 
 function hideTranslationText()
 {
-	const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
-	const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
-
-	if (questionTypeString.includes("translate"))
+	if (options.showTranslationText)
+		return false;
+	else
 	{
-		const challengeTranslatePromt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
-		
-		if (challengeTranslatePromt.firstChild.tagName === "BUTTON")
-		{
-			// First child is a speaker button so we are translating from the target to the native language
-			const hintSentence = challengeTranslatePromt.querySelector('[data-test="hint-sentence"]');
-			hintSentence.style['filter'] = "blur(0.3em)";
-			hintSentence.onclick = () => {hintSentence.style['filter'] = "unset";};
+		const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
+		const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
 
-			return true;
-		}
-		else
+		if (questionTypeString.includes("translate"))
 		{
-			// No speaker button so we are translating from native to target language
+			const challengeTranslatePromt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
+			
+			if (challengeTranslatePromt.firstChild.tagName === "BUTTON")
+			{
+				// First child is a speaker button so we are translating from the target to the native language
+				const hintSentence = challengeTranslatePromt.querySelector('[data-test="hint-sentence"]');
+				hintSentence.style['filter'] = "blur(0.3em)";
+				hintSentence.onclick = () => {hintSentence.style['filter'] = "unset";};
+
+				return true;
+			}
+			else
+			{
+				// No speaker button so we are translating from native to target language
+			}
 		}
+		return false;
 	}
-	return false;
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.

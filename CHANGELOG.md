@@ -3,7 +3,16 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Added
+- New feature that lets the user hide the question text on translation 
+question from the target language to the native language. Hiden text can be 
+shown again by clicking the text.
+- Option to enable or disable this feature in the options menu. The question 
+text is shown by default.
+- Button next to question text that can be hidden which toggles the hiding of 
+the question text and saves that preference.
+- Option to enable or disable the toggle button in the options menu. The button
+is shown by default.
 
 [v1.1.12] - 2019-11-07
 -----------------

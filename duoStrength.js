@@ -2059,11 +2059,16 @@ function hideTranslationText()
 			if (options.showTranslationText == false)
 			{
 				hintSentence.style['filter'] = "blur(0.3em)";
-				hintSentence.onclick = () => {hintSentence.style['filter'] = "unset";};
+				hintSentence.onclick = () => {
+					hintSentence.style['filter'] = "unset";
+					hintSentence.title = "";
+				};
+				hintSentence.title = "Click to Show Sentence";
 			}
 			else
 			{
 				hintSentence.style['filter'] = "none";
+				hintSentence.title = "";
 			}
 
 			if (options.showToggleHidingTextButton)

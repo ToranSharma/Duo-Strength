@@ -37,6 +37,9 @@ const QUESTION_CONTAINER = "_14lWn";
 const LOGIN_PAGE = "_3nlUH";
 const LESSON = "BWibf _3MLiB";
 const LESSON_MAIN_SECTION = "_2-1wu";
+const LESSON_BOTTOM_SECTION = "_3gDW-";
+const QUESTION_UNCHECKED = "_34sNg";
+const QUESTION_CHECKED = "_2f9Fr";
 
 let languageCode = "";
 let language = "";
@@ -2039,7 +2042,7 @@ function checkUIVersion()
 }
 */
 
-function hideTranslationText()
+function hideTranslationText(reveal = false)
 {
 	if (document.getElementsByClassName(QUESTION_CONTAINER).length == 0)
 		return false;
@@ -2056,7 +2059,7 @@ function hideTranslationText()
 			// First child is a speaker button so we are translating from the target to the native language
 			const hintSentence = challengeTranslatePromt.querySelector('[data-test="hint-sentence"]');
 
-			if (options.showTranslationText == false)
+			if (options.showTranslationText == false && reveal == false)
 			{
 				hintSentence.style['filter'] = "blur(0.3em)";
 				hintSentence.onclick = () => {
@@ -2277,6 +2280,10 @@ let childListMutationHandle = function(mutationsList, observer)
 
 			// Set up mutation observer for question change
 			childListObserver.observe(mutation.target.firstChild, {childList:true});
+			
+			// Set up mutation observer for question checked status changeo
+			lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
+			classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
 		}
 		else if (mutation.target.parentNode.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
 		{
@@ -2296,6 +2303,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 		we are also changed to the main page, triggering the page change mutation.
 	*/
 	let pageChanged = false;
+	let questionCheckStatusChange = false;
 	for (let mutation of mutationsList)
 	{
 		if (mutation.target.parentNode.parentNode == languageLogo)
@@ -2304,9 +2312,14 @@ let classNameMutationHandle = function(mutationsList, observer)
 			languageChanged = true;
 			languageChangesPending++;
 		}
+		else if (mutation.target.parentNode.className == LESSON_BOTTOM_SECTION)
+		{
+			// The question check status changed
+			questionCheckStatusChange = true;
+		}
 		else
 		{
-			// this mutation is not a language change, so it must be a page change.
+			// this mutation is not a language change or a question check, so it must be a page change.
 			pageChanged = true;
 		}
 	}
@@ -2350,6 +2363,27 @@ let classNameMutationHandle = function(mutationsList, observer)
 		{
 			// not on main page, don't need to do anything other than set the flag.
 			onMainPage = false;
+		}
+	}
+	if (questionCheckStatusChange)
+	{
+		for (let mutation of mutationsList)
+		{
+			if (mutation.target.className.includes(QUESTION_UNCHECKED))
+			{
+				// The current question has not been checked yet,
+				// don't need to do anything.
+			}
+			else if (mutation.target.className.includes(QUESTION_CHECKED))
+			{
+				// The current question has just been checked,
+				// lets unhide the question text if it was hidden.
+				hideTranslationText(reveal = true);
+			}
+			else
+			{
+				// something else, maybe not on a question, just ignore it
+			}
 		}
 	}
 };

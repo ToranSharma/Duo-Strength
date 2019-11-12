@@ -2042,10 +2042,23 @@ function hideTranslationText()
 
 	if (questionTypeString.includes("translate"))
 	{
-		const hintSentence = questionContainer.querySelector("[data-test=\"hint-sentence\"]");
-		hintSentence.style['filter'] = "blur(0.3em)";
-		hintSentence.onclick = () => {hintSentence.style['filter'] = "unset";};
+		const challengeTranslatePromt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
+		
+		if (challengeTranslatePromt.firstChild.tagName === "BUTTON")
+		{
+			// First child is a speaker button so we are translating from the target to the native language
+			const hintSentence = challengeTranslatePromt.querySelector('[data-test="hint-sentence"]');
+			hintSentence.style['filter'] = "blur(0.3em)";
+			hintSentence.onclick = () => {hintSentence.style['filter'] = "unset";};
+
+			return true;
+		}
+		else
+		{
+			// No speaker button so we are translating from native to target language
+		}
 	}
+	return false;
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.

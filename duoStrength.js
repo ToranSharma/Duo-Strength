@@ -86,6 +86,7 @@ function retrieveOptions()
 					"XPBreakdown":						true,
 					"XPPrediction":						true,
 					"showTranslationText":				true,
+					"showToggleHidingTextButton":		true,
 				};
 			if (Object.entries(data).length === 0)
 			{
@@ -2040,6 +2041,8 @@ function checkUIVersion()
 
 function hideTranslationText()
 {
+	if (document.getElementsByClassName(QUESTION_CONTAINER).length == 0)
+		return false;
 	const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
 	const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
 
@@ -2063,54 +2066,57 @@ function hideTranslationText()
 				hintSentence.style['filter'] = "none";
 			}
 
-			let enableDisableButton = document.getElementById("hideTextEnableDisable");
-			if (enableDisableButton == null)
+			if (options.showToggleHidingTextButton)
 			{
-				// No enableDisableButton so make one and add it after the hint sentence.
+				let enableDisableButton = document.getElementById("hideTextEnableDisable");
+				if (enableDisableButton == null)
+				{
+					// No enableDisableButton so make one and add it after the hint sentence.
 
-				enableDisableButton = document.createElement("button");
-				enableDisableButton.id = "hideTextEnableDisable";
-				enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
-				enableDisableButton.style =
-				`
-					color: white;
-					margin-inline-start: 2em;
-					border: 0;
-					border-radius: 0.5em;
-					padding: 0.4em;
-					background-color: ${LIGHT_BLUE};
-					box-shadow: 0 0.3em ${DARK_BLUE};
-					transition: filter 0.2s;
-					filter: brightness(1.0);
-				`;
-				enableDisableButton.onmouseover = () => {
-					enableDisableButton.style["filter"] = "brightness(1.1)";
-				};
-				enableDisableButton.onmouseleave = () => {
-					enableDisableButton.style["filter"] = "brightness(1.0)";
-					enableDisableButton.style["box-shadow"] = `0 0.3em ${DARK_BLUE}`;
-					enableDisableButton.style["transform"] = "none";
-				};
-				enableDisableButton.onmousedown = () => {
-					enableDisableButton.style["box-shadow"] = "none";
-					enableDisableButton.style["transform"] = "translate(0, 0.3em)";
-				};
-				enableDisableButton.onmouseup = () => {
-					enableDisableButton.style["box-shadow"] = `0 0.3em ${DARK_BLUE}`;
-					enableDisableButton.style["transform"] = "none";
+					enableDisableButton = document.createElement("button");
+					enableDisableButton.id = "hideTextEnableDisable";
+					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
+					enableDisableButton.style =
+					`
+						color: white;
+						margin-inline-start: 2em;
+						border: 0;
+						border-radius: 0.5em;
+						padding: 0.4em;
+						background-color: ${LIGHT_BLUE};
+						box-shadow: 0 0.3em ${DARK_BLUE};
+						transition: filter 0.2s;
+						filter: brightness(1.0);
+					`;
+					enableDisableButton.onmouseover = () => {
+						enableDisableButton.style["filter"] = "brightness(1.1)";
+					};
+					enableDisableButton.onmouseleave = () => {
+						enableDisableButton.style["filter"] = "brightness(1.0)";
+						enableDisableButton.style["box-shadow"] = `0 0.3em ${DARK_BLUE}`;
+						enableDisableButton.style["transform"] = "none";
+					};
+					enableDisableButton.onmousedown = () => {
+						enableDisableButton.style["box-shadow"] = "none";
+						enableDisableButton.style["transform"] = "translate(0, 0.3em)";
+					};
+					enableDisableButton.onmouseup = () => {
+						enableDisableButton.style["box-shadow"] = `0 0.3em ${DARK_BLUE}`;
+						enableDisableButton.style["transform"] = "none";
 
-					options.showTranslationText = !options.showTranslationText;
-					chrome.storage.sync.set({"options": options});
-					hideTranslationText();
-				};
+						options.showTranslationText = !options.showTranslationText;
+						chrome.storage.sync.set({"options": options});
+						hideTranslationText();
+					};
 
-				hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);
-			}
-			else
-			{
-				// There is already an enableDisableButton just update the text and function
+					hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);
+				}
+				else
+				{
+					// There is already an enableDisableButton just update the text and function
 
-				enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
+					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
+				}
 			}
 			return true;
 		}

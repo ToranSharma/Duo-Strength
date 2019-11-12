@@ -2,6 +2,8 @@ const GOLD = "rgb(250, 217, 29)";
 const RED = "rgb(244, 78, 81)";
 const ORANGE = "rgb(255, 150, 0)";
 const GREY = "rgb(229, 229, 229)";
+const DARK_BLUE = "rgb(24, 153, 214)";
+const LIGHT_BLUE = "rgb(28, 176, 246)";
 
 // Duolingo class names:
 const SKILL_CONTAINER = "Af4up";
@@ -2038,33 +2040,86 @@ function checkUIVersion()
 
 function hideTranslationText()
 {
-	if (options.showTranslationText)
-		return false;
-	else
-	{
-		const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
-		const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
+	const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
+	const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
 
-		if (questionTypeString.includes("translate"))
+	if (questionTypeString != null && questionTypeString.includes("translate"))
+	{
+		// Translate type question
+		const challengeTranslatePromt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
+		
+		if (challengeTranslatePromt.firstChild.tagName === "BUTTON")
 		{
-			const challengeTranslatePromt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
-			
-			if (challengeTranslatePromt.firstChild.tagName === "BUTTON")
+			// First child is a speaker button so we are translating from the target to the native language
+			const hintSentence = challengeTranslatePromt.querySelector('[data-test="hint-sentence"]');
+
+			if (options.showTranslationText == false)
 			{
-				// First child is a speaker button so we are translating from the target to the native language
-				const hintSentence = challengeTranslatePromt.querySelector('[data-test="hint-sentence"]');
 				hintSentence.style['filter'] = "blur(0.3em)";
 				hintSentence.onclick = () => {hintSentence.style['filter'] = "unset";};
-
-				return true;
 			}
 			else
 			{
-				// No speaker button so we are translating from native to target language
+				hintSentence.style['filter'] = "none";
 			}
+
+			let enableDisableButton = document.getElementById("hideTextEnableDisable");
+			if (enableDisableButton == null)
+			{
+				// No enableDisableButton so make one and add it after the hint sentence.
+
+				enableDisableButton = document.createElement("button");
+				enableDisableButton.id = "hideTextEnableDisable";
+				enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
+				enableDisableButton.style =
+				`
+					color: white;
+					margin-inline-start: 2em;
+					border: 0;
+					border-radius: 0.5em;
+					padding: 0.4em;
+					background-color: ${LIGHT_BLUE};
+					box-shadow: 0 0.3em ${DARK_BLUE};
+					transition: filter 0.2s;
+					filter: brightness(1.0);
+				`;
+				enableDisableButton.onmouseover = () => {
+					enableDisableButton.style["filter"] = "brightness(1.1)";
+				};
+				enableDisableButton.onmouseleave = () => {
+					enableDisableButton.style["filter"] = "brightness(1.0)";
+					enableDisableButton.style["box-shadow"] = `0 0.3em ${DARK_BLUE}`;
+					enableDisableButton.style["transform"] = "none";
+				};
+				enableDisableButton.onmousedown = () => {
+					enableDisableButton.style["box-shadow"] = "none";
+					enableDisableButton.style["transform"] = "translate(0, 0.3em)";
+				};
+				enableDisableButton.onmouseup = () => {
+					enableDisableButton.style["box-shadow"] = `0 0.3em ${DARK_BLUE}`;
+					enableDisableButton.style["transform"] = "none";
+
+					options.showTranslationText = !options.showTranslationText;
+					chrome.storage.sync.set({"options": options});
+					hideTranslationText();
+				};
+
+				hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);
+			}
+			else
+			{
+				// There is already an enableDisableButton just update the text and function
+
+				enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
+			}
+			return true;
 		}
-		return false;
+		else
+		{
+			// No speaker button so we are translating from native to target language
+		}
 	}
+	return false;
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.

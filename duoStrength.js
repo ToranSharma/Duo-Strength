@@ -2076,18 +2076,18 @@ function hideTranslationText(reveal = false)
 
 			if (options.showToggleHidingTextButton)
 			{
-				let enableDisableButton = document.getElementById("hideTextEnableDisable");
-				if (enableDisableButton == null)
+				let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
+				if (enableDisableButton.length == 0)
 				{
 					// No enableDisableButton so make one and add it after the hint sentence.
 
 					enableDisableButton = document.createElement("button");
-					enableDisableButton.id = "hideTextEnableDisable";
+					enableDisableButton.className = "hideTextEnableDisable";
 					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
 					enableDisableButton.style =
 					`
 						color: white;
-						margin-inline-start: 2em;
+						float: right;
 						border: 0;
 						border-radius: 0.5em;
 						padding: 0.4em;
@@ -2123,6 +2123,7 @@ function hideTranslationText(reveal = false)
 				{
 					// There is already an enableDisableButton just update the text and function
 
+					enableDisableButton = enableDisableButton[0];
 					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
 				}
 			}

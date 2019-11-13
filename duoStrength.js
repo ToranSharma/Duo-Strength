@@ -1081,21 +1081,9 @@ function displayCrownsBreakdown()
 		maximumCrownCountContainer.id = "maxCrowns";
 		maximumCrownCountContainer.innerHTML = "/" + maxCrownCount;
 	}
-	/*
-	maximumCrownCountContainer.style =
-	`
-		position:absolute;
-		top: 50%;
-		right: 0;
-		margin-top: 5px;
-		font-size: 36px;
-		font-weight: 700;
-		transform: translateY(-50%);
-	`;
-	*/
 
 	// Add crowns progress graph
-	if (options.crownsGraph)
+	if (options.crownsGraph && crownTreeLevel() != 5)
 	{
 		let crownsEarnedInWeek = [];
 		// will hold number of crowns earned each day for seven days

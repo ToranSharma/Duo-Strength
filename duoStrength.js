@@ -1009,12 +1009,13 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 
 			let showMore = document.createElement("a");
 			showMore.textContent = numSkillsLeft + " more...";
-			showMore.href = "javascript:;";
+			showMore.href = "";
 
 			showMore.onclick = function () {
 				options.needsStrengtheningListLength = String(+options.needsStrengtheningListLength + +numExtraSkillsOnShowMore);
 				displayNeedsStrengthening(needsStrengthening, false);
-			}
+				return false;
+			};
 			
 			showMore.title = `Click to show ${numExtraSkillsOnShowMore} more skill${(numExtraSkillsOnShowMore != 1)? "s": ""}`;
 
@@ -1231,7 +1232,7 @@ function displayCrownsBreakdown()
 		width: 100%;
 		z-index: 1;
 	`;
-	crownImg.src = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
+	crownImg.src = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg"; // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
 
 	imgContainer.appendChild(crownImg);
 	imgContainer.appendChild(levelContainer);
@@ -1240,7 +1241,7 @@ function displayCrownsBreakdown()
 	{
 		if (options.crownsMaximum) crownTotalContainer.appendChild(maximumCrownCountContainer);
 
-		breakdownContainer.appendChild(document.createElement("p"))
+		breakdownContainer.appendChild(document.createElement("p"));
 		breakdownContainer.lastChild.style = "text-align: center; color: black;";
 		breakdownContainer.lastChild.textContent = "Your tree is at Level\xA0";
 		breakdownContainer.lastChild.appendChild(treeLevelContainer);
@@ -1435,7 +1436,7 @@ function displayXPBreakdown()
 			'points':			userData.language_data[languageCode].points,
 			'history':			userData.language_data[languageCode].calendar,
 			//'timezone':			userData.timezone_offset seems to not be available for every users, maybe depends on platform use.
-		}
+		};
 
 	let levelProgressPercentage = (data.level_progress*100)/(data.level_points);
 
@@ -1535,7 +1536,7 @@ function displayXPBreakdown()
 				)
 			);
 			projectedNextLevelCompletion.appendChild(document.createElement("span"));
-			projectedNextLevelCompletion.lastChild.id = "XPPrediction"
+			projectedNextLevelCompletion.lastChild.id = "XPPrediction";
 			projectedNextLevelCompletion.lastChild.style.fontWeight = "bold";
 			projectedNextLevelCompletion.lastChild.textContent = daysLeft;
 
@@ -1691,7 +1692,7 @@ function displaySuggestion(skills, bonusSkills)
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
-			setTimeout(function(){displaySuggestion(skills, bonusSkills)}, 50);
+			setTimeout(function(){displaySuggestion(skills, bonusSkills);}, 50);
 		}
 		else
 		{
@@ -1965,7 +1966,7 @@ function httpGetAsync(url, responseHandler)
 		}
 		else
 		{
-			let newData  = dataElem.textContent.slice(2)
+			let newData  = dataElem.textContent.slice(2);
 			document.body.removeChild(dataElem);
 			document.body.removeChild(document.getElementById('xhrScript' + id));
 			responseHandler(newData, id);
@@ -2305,8 +2306,8 @@ let childListMutationHandle = function(mutationsList, observer)
 			// Set up mutation observer for question change
 			childListObserver.observe(mutation.target.firstChild, {childList:true});
 			
-			// Set up mutation observer for question checked status changeo
-			lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
+			// Set up mutation observer for question checked status change
+			const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
 			classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
 		}
 		else if (mutation.target.parentNode.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
@@ -2402,7 +2403,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 			{
 				// The current question has just been checked,
 				// lets unhide the question text if it was hidden.
-				hideTranslationText(reveal = true);
+				hideTranslationText(true);
 			}
 			else
 			{
@@ -2485,7 +2486,7 @@ async function init()
 				// there is a topBarDiv so we can continue to process the page to workout what to do
 
 				// set username via the href of a link to the profile
-				let profileTabHrefParts = document.querySelector("[data-test = \"profile-tab\"]").href.split("/")
+				let profileTabHrefParts = document.querySelector("[data-test = \"profile-tab\"]").href.split("/");
 				username = profileTabHrefParts[profileTabHrefParts.length - 1];
 
 				// topBar Div is the direct container holding the navigation butons, has class _3F_8q

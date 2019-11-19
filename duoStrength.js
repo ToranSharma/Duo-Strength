@@ -47,10 +47,10 @@ let languageChanged = false;
 let languageChangesPending = 0;
 let languageLogo;
 
-let options = Object();
-let progress = Array();
+let options = {};
+let progress = [];
 let username = "";
-let userData = Object();
+let userData = {};
 let requestID = 0;
 
 let rootElem;
@@ -99,9 +99,10 @@ function retrieveOptions()
 			{
 				// We have loaded some options,
 				// let's apply them individually in case new options have been added since last on the options page
-				for (option in data.options)
+				for (let option in data.options)
 				{
-					options[option] = data.options[option];
+					if (data.options.hasOwnProperty(option))
+						options[option] = data.options[option];
 				}
 			}
 			// Now let's save the options for next time.
@@ -162,7 +163,7 @@ function updateProgress()
 		if (progress.length > 1 && progress[progress.length-1][1] != progress[progress.length-2][1])
 		{
 			// The last stored entry was the first at the crown level, so let's not overwrite it
-			progress.push(entry)
+			progress.push(entry);
 		}
 		else
 		{
@@ -326,7 +327,7 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 
 	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // number of days, inclusive of start and end.
 
-	let xpRate = xpTotal/timePeriod // in units of xp/day
+	let xpRate = xpTotal/timePeriod; // in units of xp/day
 
 	return Math.ceil(xpLeft/xpRate);
 }
@@ -697,7 +698,7 @@ function addStrengths(strengths)
 	{
 		let iconElement = skills[i][0];
 		let nameElement = skills[i][1];
-		let name = nameElement.innerHTML;
+		let name = nameElement.textContent;
 		let strength = skills[i][2]*1.0;
 		let display = (skills[i][3])? "" : "none";
 		
@@ -758,7 +759,7 @@ function addStrengths(strengths)
 				z-index: 3;
 				margin: auto;
 			`;
-			strengthValue.innerHTML = strength*100 + "%";
+			strengthValue.textContent = strength*100 + "%";
 			
 			if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground);
 			strengthBarHolder.appendChild(strengthBar);
@@ -773,7 +774,7 @@ function addStrengths(strengths)
 			strengthBar.style['backgroundColor'] = (strength == 1.0 ? GOLD : RED);
 			
 			let strengthValue = document.getElementById(name + "StrengthValue");
-			strengthValue.innerHTML = strength*100 + "%";
+			strengthValue.textContent = strength*100 + "%";
 
 			strengthBar.parentNode.style['display'] = display;
 		}
@@ -828,7 +829,7 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	function sortSkillsAlphabetical(a, b)
 	{
 		return (a['title'] < b['title']) ? -1 : 1;
-	};
+	}
 
 	function shuffle(array)
 	{
@@ -917,67 +918,87 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 
 	let numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
 
-	strengthenBox.innerHTML = "";
+	strengthenBox.textContent = "";
 
-	strengthenBox.innerHTML +=
+	strengthenBox.textContent +=
 	`
 		Your tree has ${numSkillsToBeStrengthened} 
-		${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"} strengthening: <br/>
+		${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"}
+		strengthening:
 	`;
+
+	strengthenBox.appendChild(document.createElement("br"));
 
 	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, options.needsStrengtheningListLength);
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
+		let skillLink = document.createElement("a");
 		if (i < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[0][i]['url_title']}${(needsStrengthening[0][i]['skill_progress']['level'] == 5)? "/practice":""}'>${needsStrengthening[0][i]['title']}</a>, `;
+			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[0][i]['url_title']}${(needsStrengthening[0][i]['skill_progress']['level'] == 5)? "/practice":""}'>`;
+			skillLink.textContent = needsStrengthening[0][i]['title'];
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = i - needsStrengthening[0].length;
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex]['url_title']}${(needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice":""}'>${needsStrengthening[1][bonusSkillIndex]['title']}</a>, `;
+			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex]['url_title']}${(needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice":""}'>`;
+			skillLink.textContent = needsStrengthening[1][bonusSkillIndex]['title'];
 		}
+
+		strengthenBox.appendChild(skillLink);
+		strengthenBox.appendChild(document.createTextNode(", "));
 	}
-	strengthenBox.innerHTML = strengthenBox.innerHTML.substring(0, strengthenBox.innerHTML.length - 2);
-	strengthenBox.innerHTML +=	(function()
-								{
-									if (numSkillsToShow == 1)
-										return ""; // If there is only one skill in the list, don't put anything before it.
-									else if (numSkillsToShow == numSkillsToBeStrengthened)
-										return " & "; // Add & if we have put some stuff and showing every skill in list so the next one is the very last.
-									else
-										return ", "; // Otherwise we have put some stuff and there is more coming after so just put a comma.
-								})();
+	strengthenBox.removeChild(strengthenBox.lastChild);
+	
+	const listEndText = document.createTextNode("");
+	if (numSkillsToShow == 1)
+		listEndText.textContent = ""; // If there is only one skill in the list, don't put anything before it.
+	else if (numSkillsToShow == numSkillsToBeStrengthened)
+		listEndText.textContent = " & "; // Add & if we have put some stuff and showing every skill in list so the next one is the very last.
+	else
+		listEndText.textContent = ", "; // Otherwise we have put some stuff and there is more coming after so just put a comma.
+
+	strengthenBox.appendChild(listEndText);
 
 	if (numSkillsToShow == numSkillsToBeStrengthened)
 	{
+		const skillLink = document.createElement("a");
 		// we are showing every skill that needs to be stregnthened.
-		if(needsStrengthening[1].length > 0)
+		if (needsStrengthening[1].length > 0)
 		{
 			// last skill to be displayed is a bonus skill
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[1][needsStrengthening[1].length - 1]['url_title']}${(needsStrengthening[1][needsStrengthening[1].length - 1]['skill_progress']['level'] == 1)? "/practice":""}'>${needsStrengthening[1][needsStrengthening[1].length - 1]['title']}</a>`;
+			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[1][needsStrengthening[1].length - 1]['url_title']}${(needsStrengthening[1][needsStrengthening[1].length - 1]['skill_progress']['level'] == 1)? "/practice":""}'`;
+			skillLink.textContent = needsStrengthening[1][needsStrengthening[1].length - 1]['title'];
 		} else
 		{
 			// last skill to be displayed is a normal skill
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[0][needsStrengthening[0].length -1]['url_title']}${(needsStrengthening[0][needsStrengthening[0].length -1]['skill_progress']['level'] == 5)? "/practice":""}'>${needsStrengthening[0][needsStrengthening[0].length -1]['title']}</a>`;
+			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[0][needsStrengthening[0].length -1]['url_title']}${(needsStrengthening[0][needsStrengthening[0].length -1]['skill_progress']['level'] == 5)? "/practice":""}'`;
+			skillLink.textContent = needsStrengthening[0][needsStrengthening[0].length -1]['title'];
 		}
+		
+		strengthenBox.appendChild(skillLink);
 	}
 	else
 	{
 		// some skills that need to be strengthened are not being shown, so the last one we are showing is just the next one in the order we have
+		const skillLink = document.createElement("a");
 		let lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
 		if (lastIndexToBeShown < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[0][lastIndexToBeShown]['url_title']}${(needsStrengthening[0][lastIndexToBeShown]['skill_progress']['level'] == 5)? "/practice":""}'>${needsStrengthening[0][lastIndexToBeShown]['title']}</a>, `;
+			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[0][lastIndexToBeShown]['url_title']}${(needsStrengthening[0][lastIndexToBeShown]['skill_progress']['level'] == 5)? "/practice":""}'`;
+			skillLink.textContent = needsStrengthening[0][lastIndexToBeShown]['title'];
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = lastIndexToBeShown - needsStrengthening[0].length;
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex]['url_title']}${(needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice":""}'>${needsStrengthening[1][bonusSkillIndex]['title']}</a>, `;
+			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex]['url_title']}${(needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice":""}'`;
+			skillLink.textContent = needsStrengthening[1][bonusSkillIndex]['title'];
 		}
-
+		strengthenBox.appendChild(skillLink);
+		strengthenBox.appendChild(document.createTextNode(", "));
+		
 		let numSkillsLeft = numSkillsToBeStrengthened - numSkillsToShow;
 
 		// Add a clickable element to show more skills in the list.
@@ -987,7 +1008,7 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, data.options.needsStrengtheningListLength);
 
 			let showMore = document.createElement("a");
-			showMore.innerHTML = numSkillsLeft + " more...";
+			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "javascript:;";
 
 			showMore.onclick = function () {
@@ -995,9 +1016,9 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 				displayNeedsStrengthening(needsStrengthening, false);
 			}
 			
-			showMore.title = "Click to show " + numExtraSkillsOnShowMore + " more skill" + ((numExtraSkillsOnShowMore != 1)? "s": "");
+			showMore.title = `Click to show ${numExtraSkillsOnShowMore} more skill${(numExtraSkillsOnShowMore != 1)? "s": ""}`;
 
-			strengthenBox.innerHTML += " and ";
+			strengthenBox.appendChild(document.createTextNode(" and "));
 			strengthenBox.appendChild(showMore);
 		});
 	}
@@ -1079,7 +1100,7 @@ function displayCrownsBreakdown()
 
 		maximumCrownCountContainer = document.createElement("span");
 		maximumCrownCountContainer.id = "maxCrowns";
-		maximumCrownCountContainer.innerHTML = "/" + maxCrownCount;
+		maximumCrownCountContainer.textContent = "/" + maxCrownCount;
 	}
 
 	// Add crowns progress graph
@@ -1170,7 +1191,7 @@ function displayCrownsBreakdown()
 	let treeLevelContainer = document.createElement("div");
 	treeLevelContainer.id = "treeLevel";
 	treeLevelContainer.style = "display: inline-block";
-	treeLevelContainer.innerHTML = treeLevel;
+	treeLevelContainer.textContent = treeLevel;
 
 	let breakdownList = document.createElement("ul");
 	breakdownList.id = "breakdownList";
@@ -1220,11 +1241,11 @@ function displayCrownsBreakdown()
 		if (options.crownsMaximum) crownTotalContainer.appendChild(maximumCrownCountContainer);
 
 		breakdownContainer.appendChild(document.createElement("p"))
-		breakdownContainer.lastChild.style = "text-align: center;";
-		breakdownContainer.lastChild.innerHTML = "Your tree is at Level&nbsp;";
+		breakdownContainer.lastChild.style = "text-align: center; color: black;";
+		breakdownContainer.lastChild.textContent = "Your tree is at Level\xA0";
 		breakdownContainer.lastChild.appendChild(treeLevelContainer);
 
-		for(let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
+		for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; ++crownLevel)
 		{
 			let skillCount = crownLevelCount[0][crownLevel];
 
@@ -1233,8 +1254,8 @@ function displayCrownsBreakdown()
 
 			let crownCount = skillCount * crownLevel;
 		
-			levelContainer.id = "crownLevel" + crownLevel + "Count";
-			levelContainer.innerHTML = crownLevel;
+			imgContainer.lastChild.id = "crownLevel" + crownLevel + "Count";
+			imgContainer.lastChild.textContent = crownLevel;
 
 			let breakdownListItem = document.createElement("li");
 			breakdownListItem.className = "crownLevelItem";
@@ -1246,28 +1267,27 @@ function displayCrownsBreakdown()
 				grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 			`;
 
-			breakdownListItem.innerHTML =
-			`
-				<span>
-					${skillCount}
-				</span>
-				<span style='justify-self: center;'>
-					skill${(skillCount == 1 )?"":"s"} at
-				</span>
-			`;
+			const skillCountSpan = document.createElement("span");
+			skillCountSpan.textContent = skillCount;
+			breakdownListItem.appendChild(skillCountSpan);
+
+			const skillsAtSpan = document.createElement("span");
+			skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
+			skillsAtSpan.style['justify-self'] = "center";
+			breakdownListItem.appendChild(skillsAtSpan);
 
 			breakdownListItem.appendChild(imgContainer);
+			imgContainer = imgContainer.cloneNode(true);
 
-			breakdownListItem.innerHTML +=
-			`
-				=
-				<span>
-					${crownCount}
-				</span>
-				<span>
-					crown${(crownCount == 1 )?"":"s"}
-				</span>
-			`;
+			breakdownListItem.appendChild(document.createTextNode("="));
+			
+			const crownCountSpan = document.createElement("span");
+			crownCountSpan.textContent = crownCount;
+			breakdownListItem.appendChild(crownCountSpan);
+
+			const crownsSpan = document.createElement("span");
+			crownsSpan.textContent = `crown${(crownCount == 1 )?"":"s"}`;
+			breakdownListItem.appendChild(crownsSpan);
 
 			breakdownList.appendChild(breakdownListItem);
 		}
@@ -1277,7 +1297,7 @@ function displayCrownsBreakdown()
 		{
 			// The tree has some bonus skills so let's display a breakdown of their crown levels.
 			let bonusSkillsBreakdownHeader = document.createElement("h3");
-			bonusSkillsBreakdownHeader.innerText = "Bonus Skills";
+			bonusSkillsBreakdownHeader.textContent = "Bonus Skills";
 			bonusSkillsBreakdownHeader.style =
 			`
 				margin: 0;
@@ -1296,8 +1316,8 @@ function displayCrownsBreakdown()
 
 				let crownCount = skillCount * crownLevel;
 			
-				levelContainer.id = "bonusSkillCrownLevel" + crownLevel + "Count";
-				levelContainer.innerHTML = crownLevel;
+				imgContainer.lastChild.id = "bonusSkillCrownLevel" + crownLevel + "Count";
+				imgContainer.lastChild.textContent = crownLevel;
 
 				let breakdownListItem = document.createElement("li");
 				breakdownListItem.className = "crownLevelItem";
@@ -1309,28 +1329,27 @@ function displayCrownsBreakdown()
 					grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 				`;
 				
-				breakdownListItem.innerHTML =
-				`
-					<span>
-						${skillCount}
-					</span>
-					<span style='justify-self: center;'>
-						skill${(skillCount == 1 )?"":"s"} at
-					</span>
-				`;
+				const skillCountSpan = document.createElement("span");
+				skillCountSpan.textContent = skillCount;
+				breakdownListItem.appendChild(skillCountSpan);
+
+				const skillsAtSpan = document.createElement("span");
+				skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
+				skillsAtSpan.style['justify-self'] = "center";
+				breakdownListItem.appendChild(skillsAtSpan);
 
 				breakdownListItem.appendChild(imgContainer);
+				imgContainer = imgContainer.cloneNode(true);
 
-				breakdownListItem.innerHTML +=
-				`
-					=
-					<span>
-						${crownCount}
-					</span>
-					<span>
-						crown${(crownCount == 1 )?"":"s"}
-					</span>
-				`;
+				breakdownListItem.appendChild(document.createTextNode("="));
+				
+				const crownCountSpan = document.createElement("span");
+				crownCountSpan.textContent = crownCount;
+				breakdownListItem.appendChild(crownCountSpan);
+
+				const crownsSpan = document.createElement("span");
+				crownsSpan.textContent = `crown${(crownCount == 1 )?"":"s"}`;
+				breakdownListItem.appendChild(crownsSpan);
 
 				breakdownList.appendChild(breakdownListItem);
 			}
@@ -1355,15 +1374,18 @@ function displayCrownsBreakdown()
 			}
 
 			prediction.id = "treeCrownLevelPrediction";
-			prediction.innerHTML =
-			`
-				At your current rate your tree will reach Level&nbsp;${treeLevel + 1} in
-				<span style='font-weight: bold'>
-					${numDays}
-				</span>
-				days, on
-				${new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString()}
-			`;
+			prediction.appendChild(
+				document.createTextNode(`At your current rate your tree will reach Level\xA0${treeLevel + 1} in `)
+			);
+			prediction.appendChild(document.createElement("span"));
+			prediction.lastChild.textContent = numDays;
+			prediction.lastChild.style["font-weight"] = "bold";
+			prediction.appendChild(
+				document.createTextNode(` days, on `)
+			);
+			prediction.appendChild(document.createElement("span"));
+			prediction.lastChild.textContent = new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
+			prediction.lastChild.style["font-weight"] = "bold";
 
 			prediction.style =
 			`
@@ -1372,27 +1394,29 @@ function displayCrownsBreakdown()
 				color: black;
 			`;
 
-			if (options.crownsPrediction) crownLevelContainer.appendChild(prediction)
+			if (options.crownsPrediction) crownLevelContainer.appendChild(prediction);
 		}
 	}
-	else // We have already added the breakdown data, just update it.
+	else
 	{
-		for(let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
+		// We have already added the breakdown data, just update it.
+
+		for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
 		{
 			let levelContainerElement = document.getElementById("crownLevel" + crownLevel + "Count");
-			levelContainerElement.innerHTML = crownLevel;
+			levelContainerElement.textContent = crownLevel;
 		}
 		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
 		{
 			for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
 			{
 				let levelContainerElement = document.getElementById("bonusSkillCrownLevel" + crownLevel + "Count");
-				levelContainerElement.innerHTML = crownLevel;
+				levelContainerElement.textContent = crownLevel;
 			}
 		}
 
-		document.getElementById("maxCrowns").innerHTML = "/" + maxCrownCount;
-		document.getElementById("treeLevel").innerHTML = treeLevel;
+		document.getElementById("maxCrowns").textContent = "/" + maxCrownCount;
+		document.getElementById("treeLevel").textContent = treeLevel;
 	}
 }
 
@@ -1428,7 +1452,7 @@ function displayXPBreakdown()
 		`;
 
 		let XPHeader = document.createElement("h2");
-		XPHeader.innerText = data['language_string']+ " XP";
+		XPHeader.textContent = data['language_string']+ " XP";
 
 		let languageLevelContainer = document.createElement("div");
 
@@ -1436,7 +1460,7 @@ function displayXPBreakdown()
 
 		let languageLevelElement = document.createElement("p");
 		languageLevelElement.id = "xpTotalAndLevel";
-		languageLevelElement.innerText = "Level " + data['level'];
+		languageLevelElement.textContent = "Level " + data['level'];
 		languageLevelElement.style =
 		`
 			font-size: 175%;
@@ -1446,7 +1470,7 @@ function displayXPBreakdown()
 		`;
 
 		let languageXPElement = document.createElement("span");
-		languageXPElement.innerText = data['points'] + " XP - ";
+		languageXPElement.textContent = data['points'] + " XP - ";
 		languageXPElement.style =
 		`
 			color: black;
@@ -1465,7 +1489,7 @@ function displayXPBreakdown()
 				text-align: center;
 				margin-bottom: 0;
 			`;
-			nextLevelProgressElement.innerText = `${data['level_points']-data['level_progress']} XP till Level ${data['level']+1}`;
+			nextLevelProgressElement.textContent = `${data['level_points']-data['level_progress']} XP till Level ${data['level']+1}`;
 
 			let languageLevelProgressBarContainer = document.createElement("div");
 			languageLevelProgressBarContainer.className = "languageLevelProgressBar";
@@ -1491,7 +1515,7 @@ function displayXPBreakdown()
 
 			let currentLevelProgressElement = document.createElement("p");
 			currentLevelProgressElement.style = "text-align: center;";
-			currentLevelProgressElement.innerText = `(${data['level_progress']}/${data['level_points']} XP - ${Number(levelProgressPercentage).toFixed(1)}%)`;
+			currentLevelProgressElement.textContent = `(${data['level_progress']}/${data['level_points']} XP - ${Number(levelProgressPercentage).toFixed(1)}%)`;
 
 			languageLevelContainer.appendChild(nextLevelProgressElement);
 			languageLevelContainer.appendChild(languageLevelProgressBarContainer);
@@ -1505,17 +1529,25 @@ function displayXPBreakdown()
 				margin-bottom: 0;
 				text-align: center;
 			`;
-			projectedNextLevelCompletion.innerHTML =
-			`
-				At your current rate you will reach the next level, Level&nbsp;${data['level']+1}, in about
-				<span id="XPPrediction" style='font-weight:bold'>
-					${daysLeft}
-				</span>
-				days, on
-				<span id="XPPredictionDate">
-					${new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString()}
-				</span>
-			`;
+			projectedNextLevelCompletion.appendChild(
+				document.createTextNode(
+					`At your current rate you will reach the next level, Level\xA0${data['level']+1}, in about `
+				)
+			);
+			projectedNextLevelCompletion.appendChild(document.createElement("span"));
+			projectedNextLevelCompletion.lastChild.id = "XPPrediction"
+			projectedNextLevelCompletion.lastChild.style["font-weight"] = "bold";
+			projectedNextLevelCompletion.lastChild.textContent = daysLeft;
+
+			projectedNextLevelCompletion.appendChild(
+				document.createTextNode(
+					` days, on `
+				)
+			);
+			
+			projectedNextLevelCompletion.appendChild(document.createElement("span"));
+			projectedNextLevelCompletion.lastChild.id = "XPPredictionDate";
+			projectedNextLevelCompletion.lastChild.textContent = (new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000)).toLocaleDateString();
 			
 			if (daysLeft != -1 && options.XPPrediction)
 			{
@@ -1526,7 +1558,7 @@ function displayXPBreakdown()
 		{
 			// Reached max level
 			let maxLevelMessage = document.createElement("p");
-			maxLevelMessage.innerText = "You have reached the maximum level!";
+			maxLevelMessage.textContent = "You have reached the maximum level!";
 			languageLevelContainer.appendChild(maxLevelMessage);
 		}
 		if (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length != 0)
@@ -1571,8 +1603,8 @@ function displayXPBreakdown()
 		{
 			let languageLevelElement = document.getElementById("xpTotalAndLevel");
 			let languageXPElement = languageLevelElement.childNodes[0];
-			languageXPElement.innerText = data['points'] + " XP - ";
-			languageLevelElement.innerText = "Level " + data['level'];
+			languageXPElement.textContent = data['points'] + " XP - ";
+			languageLevelElement.textContent = "Level " + data['level'];
 			languageLevelElement.insertBefore(languageXPElement,languageLevelElement.childNodes[0]);
 			
 			if (languageLevelElement.nextSibling != null)
@@ -1600,10 +1632,10 @@ function displayXPBreakdown()
 					`;
 
 					let nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
-					nextLevelProgressElement.innerText = `${data['level_points']-data['level_progress']} XP till Level ${data['level']+1}`;
+					nextLevelProgressElement.textContent = `${data['level_points']-data['level_progress']} XP till Level ${data['level']+1}`;
 
 					let currentLevelProgressElement = languageLevelProgressBarContainer.nextSibling;
-					currentLevelProgressElement.innerText =
+					currentLevelProgressElement.textContent =
 					`
 						(${data['level_progress']}/${data['level_points']} XP - ${Number(levelProgressPercentage).toFixed(1)}%)
 					`;
@@ -1619,7 +1651,7 @@ function displayXPBreakdown()
 
 					let maxLevelMessage = document.createElement("p");
 					maxLevelMessage.style = "margin-bottom: 0";
-					maxLevelMessage.innerText = "You have reached the maximum level!";
+					maxLevelMessage.textContent = "You have reached the maximum level!";
 					languageLevelElement.parentNode.appendChild(maxLevelMessage);
 				}
 			}
@@ -1627,8 +1659,8 @@ function displayXPBreakdown()
 		if (options.XPPrediction && document.getElementById("XPPredicition")!= null)
 		{
 			let daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
-			document.getElementById("XPPrediction").innerText = daysLeft;
-			document.getElementById("XPPredictionDate").innerText = new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString();
+			document.getElementById("XPPrediction").textContent = daysLeft;
+			document.getElementById("XPPredictionDate").textContent = (new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000)).toLocaleDateString();
 		}
 	}
 }
@@ -1732,7 +1764,7 @@ function displaySuggestion(skills, bonusSkills)
 
 		let link = document.createElement("a");
 		link.href = "/skill/" + languageCode + "/" + randomSuggestion['url_title'] + ((treeLevel == 5) ? "/practice/" : "/");
-		link.innerText = randomSuggestion['title'];
+		link.textContent = randomSuggestion['title'];
 		link.style.color = 'blue';
 		link.addEventListener('focus',
 			function(event)
@@ -1751,26 +1783,29 @@ function displaySuggestion(skills, bonusSkills)
 		let fullStrengthMessage = document.createElement("p");
 		if (treeLevel == 5)
 		{
-			fullStrengthMessage.innerHTML =
-			`
-				Your ${language} tree is fully strengthened and at Level 5! Why not do a
-				<a href='/practice'>
-					general practice
-				</a>
-			`;
+			fullStrengthMessage.appendChild(
+				document.createTextNode(
+					`Your ${language} tree is fully strengthened and at Level 5! Why not do a `
+				)
+			);
+
+			fullStrengthMessage.appendChild(document.createElement("a"));
+			fullStrengthMessage.lastChild.href = "/practice";
+			fullStrengthMessage.lastChild.textContent = "general practice";
 		}
 		else if (treeLevel == 0)
 		{
 			link.href = "/skill/" + languageCode + "/" + skillsByCrowns[0][0]['url_title'] + "/";
-			link.innerText = skillsByCrowns[0][0]['title'];
+			link.textContent = skillsByCrowns[0][0]['title'];
 
-			fullStrengthMessage.innerText = "All the skills that you have learnt so far are fully strengthened. ";
-			fullStrengthMessage.innerText += "The next skill to learn is: ";
+			fullStrengthMessage.textContent = "All the skills that you have learnt so far are fully strengthened. ";
+			fullStrengthMessage.textContent += "The next skill to learn is: ";
 			fullStrengthMessage.appendChild(link);
 		}
 		else
 		{
-			fullStrengthMessage.innerHTML = `Your ${language} tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level&nbsp;${treeLevel + 1}: `;	
+			fullStrengthMessage.textContent =
+				`Your ${language} tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level\xA0${treeLevel + 1}: `;
 			fullStrengthMessage.appendChild(link);
 		}
 
@@ -1904,7 +1939,7 @@ function httpGetAsync(url, responseHandler)
 			{
 				if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
 				{
-					document.getElementById('userData${requestID}').innerText = "//" + xmlHttp.responseText;		
+					document.getElementById('userData${requestID}').textContent = "//" + xmlHttp.responseText;		
 				}
 			};
 			xmlHttp.open('GET', '${url+'?id='+requestID}', true);
@@ -1918,19 +1953,19 @@ function httpGetAsync(url, responseHandler)
 
 	let xhrScript = document.createElement("script");
 	xhrScript.id = 'xhrScript' + requestID;
-	xhrScript.innerHTML = code;
-	document.body.append(xhrScript);
+	xhrScript.textContent = code;
+	document.body.appendChild(xhrScript);
 
 	function checkData(id)
 	{
 		let dataElem = document.getElementById('userData' + id);
-		if (dataElem.innerHTML == '')
+		if (dataElem.textContent == '')
 		{
 			setTimeout(()=>checkData(id), 50);
 		}
 		else
 		{
-			let newData  = dataElem.innerHTML.slice(2)
+			let newData  = dataElem.textContent.slice(2)
 			document.body.removeChild(dataElem);
 			document.body.removeChild(document.getElementById('xhrScript' + id));
 			responseHandler(newData, id);
@@ -2521,7 +2556,7 @@ async function init()
 				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
 
 				/*
-				language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
+				language = document.head.getElementsByTagName("title")[0].textContent.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
 				
 				language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
 				We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.

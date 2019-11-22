@@ -223,6 +223,15 @@ function removeNeedsStrengtheningBox()
 	}
 }
 
+function removeCrackedSkillsList()
+{
+	let crackedBox = document.getElementById("crackedBox");
+	if (crackedBox != null) // could be null if changed from old to new UI and the topOfTree div gets removed.
+	{
+		crackedBox.parentNode.removeChild(crackedBox);
+	}
+}
+
 function removeCrownsBreakdown()
 {
 	let maxCrowns = document.getElementById("maxCrowns");
@@ -1964,6 +1973,7 @@ function getStrengths()
 	{
 		// Nothing that needs strengthening!
 		removeNeedsStrengtheningBox(); // Remove the needStrengthingBox if there happns to be one.
+		removeCrackedSkillsList();
 		if (options.skillSuggestion) displaySuggestion(skills);
 	}
 

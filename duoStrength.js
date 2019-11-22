@@ -1030,6 +1030,31 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	}
 }
 
+function getCrackedSkills()
+{
+	const skillIcons = document.querySelectorAll(`[data-test="skill-icon"]`);
+	let crackedSkillNames = [];
+
+	for (let i = 0; i < skillIcons.length; ++i)
+	{
+		if (skillIcons[i].childElementCount != 1)
+		{
+			// The icon has the cracked overlay
+			const skillIcon = skillIcons[i];
+			const skillContainer = skillIcon.parentNode.parentNode.parentNode;
+			const skillName = skillContainer.lastChild.lastChild.textContent;
+
+			crackedSkillNames.push(skillName);
+		}
+	}
+
+	const crackedSkills = [
+		userData.language_data[languageCode].skills.filter(skill => crackedSkillNames.includes(skill.short)),
+		userData.language_data[languageCode].bonus_skills.filter(skill => crackedSkillNames.includes(skill.short)),
+	];
+	return crackedSkills;
+}
+
 function displayCrownsBreakdown()
 {
 	if (Object.entries(userData).length == 0)

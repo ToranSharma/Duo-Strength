@@ -77,6 +77,9 @@ function retrieveOptions()
 					"needsStrengtheningList":			true,
 					"needsStrengtheningListLength":		"10",
 					"needsStrengtheningListSortOrder":	"0",
+					"crackedSkillsList":				true,
+					"crackedSkillsListLength":			"10",
+					"crackedSkillsListSortOrder":		"0",
 					"skillSuggestion":					true,
 					"skillSuggestionMethod":			"0",
 					"crownsInfo":						true,
@@ -844,7 +847,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	}
 
 	if (needsSorting)
-		switch (options.needsStrengtheningListSortOrder)
+		switch ((!cracked)?options.needsStrengtheningListSortOrder:options.crackedSkillsListSortOrder)
 		{
 			case "0":
 				break;
@@ -937,7 +940,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 	strengthenBox.appendChild(document.createElement("br"));
 
-	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, options.needsStrengtheningListLength);
+	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, (!cracked)?options.needsStrengtheningListLength:options.crackedSkillsListLength);
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
 		let skillLink = document.createElement("a");
@@ -1013,17 +1016,28 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		// We are going to add on another needsStrengtheningListLength number of skills to the list, but as we are going to change this amount to lengthen the list, we need to original saved in storage.
 	 	chrome.storage.sync.get("options", function (data)
 	 	{
-			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, data.options.needsStrengtheningListLength);
+			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, (!cracked)?data.options.needsStrengtheningListLength:data.options.crackedSkillsListLength);
 
 			let showMore = document.createElement("a");
 			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "";
 
-			showMore.onclick = function () {
-				options.needsStrengtheningListLength = String(+options.needsStrengtheningListLength + +numExtraSkillsOnShowMore);
-				displayNeedsStrengthening(needsStrengthening, cracked, false);
-				return false;
-			};
+			if (!cracked)
+			{
+				showMore.onclick = function () {
+					options.needsStrengtheningListLength = String(+options.needsStrengtheningListLength + +numExtraSkillsOnShowMore);
+					displayNeedsStrengthening(needsStrengthening, cracked, false);
+					return false;
+				};
+			}
+			else
+			{
+				showMore.onclick = function () {
+					options.crackedSkillsListLength = String(+options.crackedSkillsListLength + +numExtraSkillsOnShowMore);
+					displayNeedsStrengthening(needsStrengthening, cracked, false);
+					return false;
+				};
+			}
 			
 			showMore.title = `Click to show ${numExtraSkillsOnShowMore} more skill${(numExtraSkillsOnShowMore != 1)? "s": ""}`;
 
@@ -1933,16 +1947,16 @@ function getStrengths()
 	const practiceNeeded = (needsStrengthening[0].length + needsStrengthening[1].length != 0) || (crackedSkills[0].length + crackedSkills[1].length != 0);
 	if (practiceNeeded)
 	{
+		removeSuggestion(); // Remove the suggestion box if there happens to be one.
 		if (needsStrengthening[0].length + needsStrengthening[1].length != 0)
 		{
 			// Something needs strengthening.
-			removeSuggestion(); // Remove the suggestion box if there happens to be one.
 			if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
 		}
 		if (crackedSkills[0].length + crackedSkills[1].length != 0)
 		{
-			removeSuggestion();
-			displayNeedsStrengthening(crackedSkills, true);
+			// There are some cracked skills.
+			if (options.crackedSkillsList) displayNeedsStrengthening(crackedSkills, true);
 		}
 	}
 	else

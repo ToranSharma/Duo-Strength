@@ -781,14 +781,14 @@ function addStrengths(strengths)
 	}
 }
 
-function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
+function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSorting = true)
 {
-	// adds clickable list of skills that need strengthening to top of the tree.
+	// Adds clickable list of skills that need strengthening to top of the tree.
 	
 	// let skillTree;
 	// let firstSkillRow;
 	let topOfTree;
-	if(
+	if (
 			document.getElementsByClassName(TREE_CONTAINER).length != 0 &&
 			document.getElementsByClassName(SKILL_ROW).length != 0 &&
 			(
@@ -807,9 +807,9 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	else
 	{
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
-		if(onMainPage)
+		if (onMainPage)
 		{
-			setTimeout(function () {displayNeedsStrengthening(needsStrengthening);}, 500);
+			setTimeout(function () {displayNeedsStrengthening(needsStrengthening, cracked, needsSorting);}, 500);
 		}
 		else
 		{
@@ -871,14 +871,14 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	topOfTree.style.height = "auto";
 	topOfTree.style.width = "100%";
 
-	let strengthenBox; // will be a div to hold list of skills that need strengthenening
+	let strengthenBox = document.getElementById((!cracked)?"strengthenBox":"crackedBox"); // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;
 
-	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
+	if (strengthenBox == null) // if we haven't made the box yet, make it
 	{
 		needToAddBox = true;
 		strengthenBox = document.createElement("div");
-		strengthenBox.id = "strengthenBox";
+		strengthenBox.id = (!cracked)?"strengthenBox":"crackedBox";
 		strengthenBox.style =
 		`
 			text-align: left;
@@ -911,21 +911,29 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 			}
 		}
 	}
-	else
-	{
-		strengthenBox = document.getElementById("strengthenBox");
-	}
 
 	let numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
 
 	strengthenBox.textContent = "";
 
-	strengthenBox.textContent +=
-	`
-		Your tree has ${numSkillsToBeStrengthened} 
-		${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"}
-		strengthening:
-	`;
+	if (!cracked)
+	{
+		strengthenBox.textContent +=
+		`
+			Your tree has ${numSkillsToBeStrengthened} 
+			${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"}
+			strengthening:
+		`;
+	}
+	else
+	{
+		strengthenBox.textContent +=
+		`
+			Your tree has ${numSkillsToBeStrengthened} 
+			${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that are": " skill that is"}
+			cracked:
+		`;
+	}
 
 	strengthenBox.appendChild(document.createElement("br"));
 
@@ -1013,7 +1021,7 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 
 			showMore.onclick = function () {
 				options.needsStrengtheningListLength = String(+options.needsStrengtheningListLength + +numExtraSkillsOnShowMore);
-				displayNeedsStrengthening(needsStrengthening, false);
+				displayNeedsStrengthening(needsStrengthening, cracked, false);
 				return false;
 			};
 			
@@ -1916,15 +1924,26 @@ function getStrengths()
 		}
 	}
 
+	const crackedSkills = getCrackedSkills();
+
 	if (options.strengthBars) addStrengths(strengths); // call function to add these strengths under the skills
 	
 	if (options.XPInfo) displayXPBreakdown();
 
-	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
+	const practiceNeeded = (needsStrengthening[0].length + needsStrengthening[1].length != 0) || (crackedSkills[0].length + crackedSkills[1].length != 0);
+	if (practiceNeeded)
 	{
-		// Something needs strengthening.
-		removeSuggestion(); // Remove the suggestion box if there happens to be one.
-		if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
+		if (needsStrengthening[0].length + needsStrengthening[1].length != 0)
+		{
+			// Something needs strengthening.
+			removeSuggestion(); // Remove the suggestion box if there happens to be one.
+			if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
+		}
+		if (crackedSkills[0].length + crackedSkills[1].length != 0)
+		{
+			removeSuggestion();
+			displayNeedsStrengthening(crackedSkills, true);
+		}
 	}
 	else
 	{

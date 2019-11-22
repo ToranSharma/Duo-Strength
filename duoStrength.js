@@ -1944,7 +1944,8 @@ function getStrengths()
 	
 	if (options.XPInfo) displayXPBreakdown();
 
-	const practiceNeeded = (needsStrengthening[0].length + needsStrengthening[1].length != 0) || (crackedSkills[0].length + crackedSkills[1].length != 0);
+	const practiceNeeded = ((needsStrengthening[0].length + needsStrengthening[1].length != 0) && options.needsStrengtheningList)
+						|| ((crackedSkills[0].length + crackedSkills[1].length != 0) && options.crackedSkillsList);
 	if (practiceNeeded)
 	{
 		removeSuggestion(); // Remove the suggestion box if there happens to be one.

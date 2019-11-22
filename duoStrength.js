@@ -936,13 +936,13 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 		if (i < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[0][i].url_title}${(needsStrengthening[0][i].skill_progress.level == 5)? "/practice":""}'>`;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][i].url_title}${(needsStrengthening[0][i].skill_progress.level == 5)? "/practice":""}`;
 			skillLink.textContent = needsStrengthening[0][i].title;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = i - needsStrengthening[0].length;
-			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex].url_title}${(needsStrengthening[1][bonusSkillIndex].skill_progress.level == 1)? "/practice":""}'>`;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex].url_title}${(needsStrengthening[1][bonusSkillIndex].skill_progress.level == 1)? "/practice":""}`;
 			skillLink.textContent = needsStrengthening[1][bonusSkillIndex].title;
 		}
 
@@ -968,12 +968,12 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 		if (needsStrengthening[1].length > 0)
 		{
 			// last skill to be displayed is a bonus skill
-			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[1][needsStrengthening[1].length - 1].url_title}${(needsStrengthening[1][needsStrengthening[1].length - 1].skill_progress.level == 1)? "/practice":""}'`;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][needsStrengthening[1].length - 1].url_title}${(needsStrengthening[1][needsStrengthening[1].length - 1].skill_progress.level == 1)? "/practice":""}`;
 			skillLink.textContent = needsStrengthening[1][needsStrengthening[1].length - 1].title;
 		} else
 		{
 			// last skill to be displayed is a normal skill
-			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[0][needsStrengthening[0].length -1].url_title}${(needsStrengthening[0][needsStrengthening[0].length -1].skill_progress.level == 5)? "/practice":""}'`;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][needsStrengthening[0].length -1].url_title}${(needsStrengthening[0][needsStrengthening[0].length -1].skill_progress.level == 5)? "/practice":""}`;
 			skillLink.textContent = needsStrengthening[0][needsStrengthening[0].length -1].title;
 		}
 		
@@ -987,13 +987,13 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 		if (lastIndexToBeShown < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[0][lastIndexToBeShown].url_title}${(needsStrengthening[0][lastIndexToBeShown].skill_progress.level == 5)? "/practice":""}'`;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][lastIndexToBeShown].url_title}${(needsStrengthening[0][lastIndexToBeShown].skill_progress.level == 5)? "/practice":""}`;
 			skillLink.textContent = needsStrengthening[0][lastIndexToBeShown].title;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = lastIndexToBeShown - needsStrengthening[0].length;
-			skillLink.href = `'/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex].url_title}${(needsStrengthening[1][bonusSkillIndex].skill_progress.level == 1)? "/practice":""}'`;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex].url_title}${(needsStrengthening[1][bonusSkillIndex].skill_progress.level == 1)? "/practice":""}`;
 			skillLink.textContent = needsStrengthening[1][bonusSkillIndex].title;
 		}
 		strengthenBox.appendChild(skillLink);

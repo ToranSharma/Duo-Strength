@@ -13,6 +13,9 @@ text is shown by default.
 the question text and saves that preference.
 - Option to enable or disable the toggle button in the options menu. The button
 is shown by default.
+- List of skills that are 'cracked' to top of the tree.
+- Option to enable or disable the Cracked Skills List, and change its
+behaviour, similar to the Needs Strengthening List.
 
 [v1.1.12] - 2019-11-07
 -----------------

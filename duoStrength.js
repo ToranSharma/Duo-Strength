@@ -77,6 +77,9 @@ function retrieveOptions()
 					"needsStrengtheningList":			true,
 					"needsStrengtheningListLength":		"10",
 					"needsStrengtheningListSortOrder":	"0",
+					"crackedSkillsList":				true,
+					"crackedSkillsListLength":			"10",
+					"crackedSkillsListSortOrder":		"0",
 					"skillSuggestion":					true,
 					"skillSuggestionMethod":			"0",
 					"crownsInfo":						true,
@@ -781,14 +784,14 @@ function addStrengths(strengths)
 	}
 }
 
-function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
+function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSorting = true)
 {
-	// adds clickable list of skills that need strengthening to top of the tree.
+	// Adds clickable list of skills that need strengthening to top of the tree.
 	
 	// let skillTree;
 	// let firstSkillRow;
 	let topOfTree;
-	if(
+	if (
 			document.getElementsByClassName(TREE_CONTAINER).length != 0 &&
 			document.getElementsByClassName(SKILL_ROW).length != 0 &&
 			(
@@ -807,9 +810,9 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	else
 	{
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
-		if(onMainPage)
+		if (onMainPage)
 		{
-			setTimeout(function () {displayNeedsStrengthening(needsStrengthening);}, 500);
+			setTimeout(function () {displayNeedsStrengthening(needsStrengthening, cracked, needsSorting);}, 500);
 		}
 		else
 		{
@@ -844,7 +847,7 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	}
 
 	if (needsSorting)
-		switch (options.needsStrengtheningListSortOrder)
+		switch ((!cracked)?options.needsStrengtheningListSortOrder:options.crackedSkillsListSortOrder)
 		{
 			case "0":
 				break;
@@ -871,14 +874,14 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	topOfTree.style.height = "auto";
 	topOfTree.style.width = "100%";
 
-	let strengthenBox; // will be a div to hold list of skills that need strengthenening
+	let strengthenBox = document.getElementById((!cracked)?"strengthenBox":"crackedBox"); // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;
 
-	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
+	if (strengthenBox == null) // if we haven't made the box yet, make it
 	{
 		needToAddBox = true;
 		strengthenBox = document.createElement("div");
-		strengthenBox.id = "strengthenBox";
+		strengthenBox.id = (!cracked)?"strengthenBox":"crackedBox";
 		strengthenBox.style =
 		`
 			text-align: left;
@@ -911,25 +914,33 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 			}
 		}
 	}
-	else
-	{
-		strengthenBox = document.getElementById("strengthenBox");
-	}
 
 	let numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
 
 	strengthenBox.textContent = "";
 
-	strengthenBox.textContent +=
-	`
-		Your tree has ${numSkillsToBeStrengthened} 
-		${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"}
-		strengthening:
-	`;
+	if (!cracked)
+	{
+		strengthenBox.textContent +=
+		`
+			Your tree has ${numSkillsToBeStrengthened} 
+			${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"}
+			strengthening:
+		`;
+	}
+	else
+	{
+		strengthenBox.textContent +=
+		`
+			Your tree has ${numSkillsToBeStrengthened} 
+			${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that are": " skill that is"}
+			cracked:
+		`;
+	}
 
 	strengthenBox.appendChild(document.createElement("br"));
 
-	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, options.needsStrengtheningListLength);
+	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, (!cracked)?options.needsStrengtheningListLength:options.crackedSkillsListLength);
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
 		let skillLink = document.createElement("a");
@@ -1005,17 +1016,28 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 		// We are going to add on another needsStrengtheningListLength number of skills to the list, but as we are going to change this amount to lengthen the list, we need to original saved in storage.
 	 	chrome.storage.sync.get("options", function (data)
 	 	{
-			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, data.options.needsStrengtheningListLength);
+			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, (!cracked)?data.options.needsStrengtheningListLength:data.options.crackedSkillsListLength);
 
 			let showMore = document.createElement("a");
 			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "";
 
-			showMore.onclick = function () {
-				options.needsStrengtheningListLength = String(+options.needsStrengtheningListLength + +numExtraSkillsOnShowMore);
-				displayNeedsStrengthening(needsStrengthening, false);
-				return false;
-			};
+			if (!cracked)
+			{
+				showMore.onclick = function () {
+					options.needsStrengtheningListLength = String(+options.needsStrengtheningListLength + +numExtraSkillsOnShowMore);
+					displayNeedsStrengthening(needsStrengthening, cracked, false);
+					return false;
+				};
+			}
+			else
+			{
+				showMore.onclick = function () {
+					options.crackedSkillsListLength = String(+options.crackedSkillsListLength + +numExtraSkillsOnShowMore);
+					displayNeedsStrengthening(needsStrengthening, cracked, false);
+					return false;
+				};
+			}
 			
 			showMore.title = `Click to show ${numExtraSkillsOnShowMore} more skill${(numExtraSkillsOnShowMore != 1)? "s": ""}`;
 
@@ -1028,6 +1050,31 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	{
 		topOfTree.appendChild(strengthenBox);
 	}
+}
+
+function getCrackedSkills()
+{
+	const skillIcons = document.querySelectorAll(`[data-test="skill-icon"]`);
+	let crackedSkillNames = [];
+
+	for (let i = 0; i < skillIcons.length; ++i)
+	{
+		if (skillIcons[i].childElementCount != 1)
+		{
+			// The icon has the cracked overlay
+			const skillIcon = skillIcons[i];
+			const skillContainer = skillIcon.parentNode.parentNode.parentNode;
+			const skillName = skillContainer.lastChild.lastChild.textContent;
+
+			crackedSkillNames.push(skillName);
+		}
+	}
+
+	const crackedSkills = [
+		userData.language_data[languageCode].skills.filter(skill => crackedSkillNames.includes(skill.short)),
+		userData.language_data[languageCode].bonus_skills.filter(skill => crackedSkillNames.includes(skill.short)),
+	];
+	return crackedSkills;
 }
 
 function displayCrownsBreakdown()
@@ -1891,15 +1938,27 @@ function getStrengths()
 		}
 	}
 
+	const crackedSkills = getCrackedSkills();
+
 	if (options.strengthBars) addStrengths(strengths); // call function to add these strengths under the skills
 	
 	if (options.XPInfo) displayXPBreakdown();
 
-	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
+	const practiceNeeded = ((needsStrengthening[0].length + needsStrengthening[1].length != 0) && options.needsStrengtheningList)
+						|| ((crackedSkills[0].length + crackedSkills[1].length != 0) && options.crackedSkillsList);
+	if (practiceNeeded)
 	{
-		// Something needs strengthening.
 		removeSuggestion(); // Remove the suggestion box if there happens to be one.
-		if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
+		if (needsStrengthening[0].length + needsStrengthening[1].length != 0)
+		{
+			// Something needs strengthening.
+			if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
+		}
+		if (crackedSkills[0].length + crackedSkills[1].length != 0)
+		{
+			// There are some cracked skills.
+			if (options.crackedSkillsList) displayNeedsStrengthening(crackedSkills, true);
+		}
 	}
 	else
 	{

@@ -14,6 +14,7 @@ const BONUS_SKILL_DIVIDER = "_32Q0j";
 const TREE_CONTAINER = "i12-l";
 const TOP_OF_TREE_WITH_IN_BETA = "w8Lxd";
 const TOP_OF_TREE = "_3rABk";
+const MOBILE_TOP_OF_TREE = "_3UShd";
 const SKILL_ROW = "_2GJb6";
 const SKILL_COLUMN = "QmbDT";
 const IN_BETA_LABEL = "_27CnM";
@@ -805,6 +806,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			document.getElementsByClassName(SKILL_ROW).length != 0 &&
 			(
 				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
+				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
 				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
 			)
 
@@ -814,7 +816,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		skillTree = document.getElementsByClassName(TREE_CONTAINER)[0];
 		firstSkillRow = document.getElementsByClassName(SKILL_ROW)[0];
 		*/
-		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].childNodes[0];
+		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].firstChild;
 	}
 	else
 	{
@@ -1733,6 +1735,7 @@ function displaySuggestion(skills, bonusSkills)
 			document.getElementsByClassName(SKILL_ROW).length != 0 &&
 			(
 				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
+				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
 				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
 			)
 		) // Has the tree loaded from a page change
@@ -1741,7 +1744,7 @@ function displaySuggestion(skills, bonusSkills)
 		skillTree = document.getElementsByClassName(TREE_CONTAINER)[0];
 		firstSkillRow = document.getElementsByClassName(SKILL_ROW)[0];
 		*/
-		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].childNodes[0];
+		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].firstChild;
 	}
 	else
 	{
@@ -2233,158 +2236,185 @@ function hideTranslationText(reveal = false)
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
 let childListMutationHandle = function(mutationsList, observer)
 {
+	let rootChildReplaced = false;
+	let rootChildContentsReplaced = false;
+	let mainBodyReplaced = false
+	let mainBodyContentsChanged = false ;
+	let popupChanged = false;
+	let popupIcon;
+	let lessonLoaded = false;
+	let lessonQuestionChanged = false;
+	
 	for (let mutation of mutationsList)
 	{
 		if (mutation.target == rootElem)
-		{
-			// root child list has changed so rootChild has probably been replaced, let's redefine it.
-			rootChild = rootElem.childNodes[0];
-			init();
-		}
+			rootChildReplaced = true;
 		else if (mutation.target == rootChild)
-		{
-			// Check if there is both the topbar and the main page elem.
-			if (rootChild.childElementCount == 2)
-			{
-				// not just changed into a lesson
-				languageChanged = false;
-				init();
-			}
-			else
-			{
-				// Entered a lesson in the normal way, through the skill tree.
-				// Need to set up observer on lessonMainSection for when the first question loads
-
-				childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0], {childList:true});
-			}
-		}
+			rootChildContentsReplaced = true;
 		else if (mutation.target == mainBodyContainer)
-		{
-			// mainBodyContainer childlist changed, so the mainBody element must have been replaced.
-			mainBody = mainBodyContainer.firstChild;
-
-
-			// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks.
-			// But also make sure than this page hasn't removed to top bar, if it has just stop.
-			if (topBarDiv != null)
-				classNameMutationHandle(mutationsList, null);
-			else
-				return false;
-		}
+			mainBodyReplaced = true;
 		else if (mutation.target == mainBody)
+			mainBodyContentsChanged = true;
+		else if (mutation.target.className == POPUP_ICON)
 		{
-			// Switched between mobile and desktop layouts.
-
-			// Set appropriate styling to need strengthing list or skill suggestion
-			let mobileMargin = "0.5em 1em 0.5em 1em";
-			let desktopMargin = "0 0 2em 0";
-
-			let mobileWidth = "auto";
-			let desktopWidth = "calc(100% - 119px)";
-
-			if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
-			{
-				// There is an IN BETA label
-				mobileMargin = "1.5em 1em 0.5em 1em";
-				desktopMargin = "0.5em 1em 2em 1em";
-				desktopWidth = "auto";
-			}
-
-			if (document.getElementsByClassName(SIDEBAR).length == 0)
-			{
-				// No sidebar so we are in mobile layout.
-				inMobileLayout = true;
-
-				if (document.getElementById("strengthenBox") != null)
-				{
-					document.getElementById("strengthenBox").style.margin = mobileMargin;
-					document.getElementById("strengthenBox").style.width = mobileWidth;
-				}
-				if (document.getElementById("fullStrengthMessageContainer") != null)
-				{
-					document.getElementById("fullStrengthMessageContainer").style.margin = mobileMargin;
-					document.getElementById("fullStrengthMessageContainer").style.width = mobileWidth;
-				}
-				
-			}
-			else
-			{
-				// There is a sidebar so we are in normal desktop layout.
-				inMobileLayout = false;
-
-				if (document.getElementById("strengthenBox") != null)
-				{
-					document.getElementById("strengthenBox").style.margin = desktopMargin;
-					document.getElementById("strengthenBox").style.width = desktopWidth;
-					
-				}
-				if (document.getElementById("fullStrengthMessageContainer") != null)
-				{
-					document.getElementById("fullStrengthMessageContainer").style.margin = desktopMargin;
-					document.getElementById("fullStrengthMessageContainer").style.width = desktopWidth;
-				}
-				
-
-				// Try and add the XP box again as the sidebar has come back
-				if (options.XPInfo) displayXPBreakdown();
-			}
-		}
-		else if (mutation.target.className == POPUP_ICON) // Applies to both mobile and desktop layout streak and crowns icons.
-		{
-			// Crown or streak pop up box has appeared or dissapeared.
-
-			if (languageChanged)
-			{
-				// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
-				continue;
-			}
-			else if (mutation.target.getElementsByClassName(GOLD_CROWN).length + mutation.target.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
-			{
-				// Crowns has had the change.
-				if (options.crownsInfo && mutation.target.lastChild.nodeName == 'DIV')
-				{
-					// Pop-up box, which is a div, has just appeared as the last child, let's display the Crown breakdown.
-					displayCrownsBreakdown();
-				}
-				else
-				{
-					// Pop-up box disappeared
-				}
-			}
-			if (mutation.target.getElementsByClassName(COLOURED_FLAME).length +  mutation.target.getElementsByClassName(GREY_FLAME).length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
-			{
-				// Streak/XP has had the change.
-				if (options.XPInfo && mutation.target.lastChild.nodeName == 'DIV')
-				{
-					// Pop-up box, which is a div, has just appeared as the last child, let's display the XP breakdown.
-					displayXPBreakdown();
-				}
-				else
-				{
-					// Pop-up box disappeared
-				}
-			}
+			popupChanged = true;
+			popupIcon = mutation.target;
 		}
 		else if (mutation.target.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
-		{
-			// Question section loaded.
-
-			// Run check for translation type question
-			hideTranslationText();
-
-			// Set up mutation observer for question change
-			childListObserver.observe(mutation.target.firstChild, {childList:true});
-			
-			// Set up mutation observer for question checked status change
-			const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
-			classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
-		}
+			lessonLoaded = true;
 		else if (mutation.target.parentNode.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
-		{
-			// Run check for translation type question
+			lessonQuestionChanged = true;
+	}
 
-			hideTranslationText();
+	if (rootChildReplaced)
+	{
+		// root child list has changed so rootChild has probably been replaced, let's redefine it.
+		rootChild = rootElem.childNodes[0];
+		init();
+	}
+	if (rootChildContentsReplaced)
+	{
+		// Check if there is both the topbar and the main page elem.
+		if (rootChild.childElementCount == 2)
+		{
+			// not just changed into a lesson
+			languageChanged = false;
+			init();
 		}
+		else
+		{
+			// Entered a lesson in the normal way, through the skill tree.
+			// Need to set up observer on lessonMainSection for when the first question loads
+
+			childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0], {childList:true});
+		}
+	}
+	if (mainBodyReplaced)
+	{
+		// mainBodyContainer childlist changed, so the mainBody element must have been replaced.
+		mainBody = mainBodyContainer.firstChild;
+
+
+		// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks.
+		// But also make sure that this page hasn't removed to top bar, if it has just stop.
+		if (document.body.contains(topBarDiv))
+			classNameMutationHandle(mutationsList, null);
+		else
+			return false;
+	}
+	if (mainBodyContentsChanged)
+	{
+		// Switched between mobile and desktop layouts.
+
+		// Set appropriate styling to need strengthing list or skill suggestion
+		let mobileMargin = "0.5em 1em 0.5em 1em";
+		let desktopMargin = "0 0 2em 0";
+
+		let mobileWidth = "auto";
+		let desktopWidth = "calc(100% - 119px)";
+
+		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
+		{
+			// There is an IN BETA label
+			mobileMargin = "1.5em 1em 0.5em 1em";
+			desktopMargin = "0.5em 1em 2em 1em";
+			desktopWidth = "auto";
+		}
+
+		if (document.getElementsByClassName(SIDEBAR).length == 0)
+		{
+			// No sidebar so we are in mobile layout.
+			inMobileLayout = true;
+
+			if (document.getElementById("strengthenBox") != null)
+			{
+				document.getElementById("strengthenBox").style.margin = mobileMargin;
+				document.getElementById("strengthenBox").style.width = mobileWidth;
+			}
+			if (document.getElementById("fullStrengthMessageContainer") != null)
+			{
+				document.getElementById("fullStrengthMessageContainer").style.margin = mobileMargin;
+				document.getElementById("fullStrengthMessageContainer").style.width = mobileWidth;
+			}
+			
+		}
+		else
+		{
+			// There is a sidebar so we are in normal desktop layout.
+			inMobileLayout = false;
+
+			if (document.getElementById("strengthenBox") != null)
+			{
+				document.getElementById("strengthenBox").style.margin = desktopMargin;
+				document.getElementById("strengthenBox").style.width = desktopWidth;
+				
+			}
+			if (document.getElementById("fullStrengthMessageContainer") != null)
+			{
+				document.getElementById("fullStrengthMessageContainer").style.margin = desktopMargin;
+				document.getElementById("fullStrengthMessageContainer").style.width = desktopWidth;
+			}
+			
+
+			// Try and add the XP box again as the sidebar has come back
+			if (options.XPInfo) displayXPBreakdown();
+		}
+	}
+	if (popupChanged)
+	{
+		// Crown or streak pop up box has appeared or dissapeared.
+
+		if (languageChanged)
+		{
+			// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
+			return false;
+		}
+		else if (popupIcon.getElementsByClassName(GOLD_CROWN).length + popupIcon.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
+		{
+			// Crowns has had the change.
+			if (options.crownsInfo && popupIcon.lastChild.nodeName == 'DIV')
+			{
+				// Pop-up box, which is a div, has just appeared as the last child, let's display the Crown breakdown.
+				displayCrownsBreakdown();
+			}
+			else
+			{
+				// Pop-up box disappeared
+			}
+		}
+		if (popupIcon.getElementsByClassName(COLOURED_FLAME).length +  popupIcon.getElementsByClassName(GREY_FLAME).length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
+		{
+			// Streak/XP has had the change.
+			if (options.XPInfo && popupIcon.lastChild.nodeName == 'DIV')
+			{
+				// Pop-up box, which is a div, has just appeared as the last child, let's display the XP breakdown.
+				displayXPBreakdown();
+			}
+			else
+			{
+				// Pop-up box disappeared
+			}
+		}
+	}
+	if (lessonLoaded)
+	{
+		// Question section loaded.
+
+		// Run check for translation type question
+		hideTranslationText();
+
+		// Set up mutation observer for question change
+		childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0].firstChild, {childList:true});
+		
+		// Set up mutation observer for question checked status change
+		const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
+		classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
+	}
+	if (lessonQuestionChanged)
+	{
+		// Run check for translation type question
+
+		hideTranslationText();
 	}
 };
 

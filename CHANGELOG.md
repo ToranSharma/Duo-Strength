@@ -17,6 +17,12 @@ is shown by default.
 - Option to enable or disable the Cracked Skills List, and change its
 behaviour, similar to the Needs Strengthening List.
 
+### Changed
+- The first link in the needs strengthening list and the cracked skills list is
+now focused so that it can be opened quickly without using the mouse. The
+cracked skills list has priority over the needs strengthening list if both are
+being displayed.
+
 [v1.1.12] - 2019-11-07
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.1.12)

@@ -1057,10 +1057,29 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		});
 	}
 
+	const firstSkillLink = strengthenBox.getElementsByTagName("A")[0];
+	firstSkillLink.addEventListener('focus',
+		function(event)
+		{
+			event.target.style.fontWeight = 'bold';
+			event.target.style.textDecoration = 'underline';
+		}
+	);
+
+	firstSkillLink.addEventListener('blur',
+		function(event)
+		{
+			event.target.style.fontWeight = 'normal';
+			event.target.style.textDecoration = 'none';
+		}
+	);
+	
 	if(needToAddBox)
 	{
 		topOfTree.appendChild(strengthenBox);
 	}
+
+	firstSkillLink.focus();
 }
 
 function getCrackedSkills()

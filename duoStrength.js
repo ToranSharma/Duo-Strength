@@ -2468,6 +2468,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 		// As the language has just changed, need to wipe the slate clean so no old data is shown after change.
 		removeStrengthBars();
 		removeNeedsStrengtheningBox();
+		removeCrackedSkillsList();
 		removeCrownsBreakdown();
 		removeXPBox();
 		removeSuggestion();

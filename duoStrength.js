@@ -41,6 +41,7 @@ const LESSON_MAIN_SECTION = "_2-1wu";
 const LESSON_BOTTOM_SECTION = "_3gDW-";
 const QUESTION_UNCHECKED = "_34sNg";
 const QUESTION_CHECKED = "_2f9Fr";
+const CRACKED_SKILL_OVERLAY = "._22Nf9";
 
 let languageCode = "";
 let language = "";
@@ -1084,21 +1085,16 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 function getCrackedSkills()
 {
-	const skillIcons = document.querySelectorAll(`[data-test="skill-icon"]`);
-	let crackedSkillNames = [];
-
-	for (let i = 0; i < skillIcons.length; ++i)
-	{
-		if (skillIcons[i].childElementCount != 1)
-		{
-			// The icon has the cracked overlay
-			const skillIcon = skillIcons[i];
+	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY));
+	const crackedSkillNames = crackedSkillElements.map(
+		(crackedSkill) => {
+			const skillIcon = crackedSkill.parentNode;
 			const skillContainer = skillIcon.parentNode.parentNode.parentNode;
 			const skillName = skillContainer.lastChild.lastChild.textContent;
 
-			crackedSkillNames.push(skillName);
+			return skillName;
 		}
-	}
+	);
 
 	const crackedSkills = [
 		userData.language_data[languageCode].skills.filter(skill => crackedSkillNames.includes(skill.short)),

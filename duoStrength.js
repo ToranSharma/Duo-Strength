@@ -2163,12 +2163,12 @@ function hideTranslationText(reveal = false)
 	if (questionTypeString != null && questionTypeString.includes("translate"))
 	{
 		// Translate type question
-		const challengeTranslatePromt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
+		const challengeTranslatePrompt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
 		
-		if (challengeTranslatePromt.firstChild.tagName === "BUTTON")
+		if (challengeTranslatePrompt.querySelectorAll("BUTTON").length != 0)
 		{
-			// First child is a speaker button so we are translating from the target to the native language
-			const hintSentence = challengeTranslatePromt.querySelector('[data-test="hint-sentence"]');
+			// There is an svg in the question sentence which is the speaker button so we are translating from the target to the native language
+			const hintSentence = challengeTranslatePrompt.querySelector('[data-test="hint-sentence"]');
 
 			if (options.showTranslationText == false && reveal == false)
 			{

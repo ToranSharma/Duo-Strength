@@ -42,6 +42,7 @@ const LESSON_BOTTOM_SECTION = "_3gDW-";
 const QUESTION_UNCHECKED = "_34sNg";
 const QUESTION_CHECKED = "_2f9Fr";
 const CRACKED_SKILL_OVERLAY = "._22Nf9";
+const NEW_WORD_SELECTOR = "._29XRF";
 
 let languageCode = "";
 let language = "";
@@ -2169,6 +2170,9 @@ function hideTranslationText(reveal = false)
 		{
 			// There is an svg in the question sentence which is the speaker button so we are translating from the target to the native language
 			const hintSentence = challengeTranslatePrompt.querySelector('[data-test="hint-sentence"]');
+
+			if (hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length != 0)
+				return false; // There is a new word, so we don't want to be hiding this sentence.
 
 			if (options.showTranslationText == false && reveal == false)
 			{

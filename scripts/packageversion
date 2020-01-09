@@ -1,0 +1,13 @@
+#!/bin/bash
+
+VERNUM=$(awk '(/"version"/){vernum = $NF; gsub(/[^0-9^.]/, "", vernum); print vernum}' manifest.json)
+
+mv manifest.json manifest.json.original
+
+sed "/^\/\// d" manifest.json.original > manifest.json
+zip -r "Duo Strength v$VERNUM.zip" CHANGELOG.md LICENSE manifest.json options.js options.html duoStrength.js icons
+
+sed "s|^//||" manifest.json.original > manifest.json
+zip -r "Duo Strength v$VERNUM - firefox.zip" CHANGELOG.md LICENSE manifest.json options.js options.html duoStrength.js icons
+
+mv manifest.json.original manifest.json

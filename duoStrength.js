@@ -2,6 +2,8 @@ const GOLD = "rgb(250, 217, 29)";
 const RED = "rgb(244, 78, 81)";
 const ORANGE = "rgb(255, 150, 0)";
 const GREY = "rgb(229, 229, 229)";
+const DARK_BLUE = "rgb(24, 153, 214)";
+const LIGHT_BLUE = "rgb(28, 176, 246)";
 
 // Duolingo class names:
 const SKILL_CONTAINER = "Af4up";
@@ -12,6 +14,7 @@ const BONUS_SKILL_DIVIDER = "_32Q0j";
 const TREE_CONTAINER = "i12-l";
 const TOP_OF_TREE_WITH_IN_BETA = "w8Lxd";
 const TOP_OF_TREE = "_3rABk";
+const MOBILE_TOP_OF_TREE = "_3UShd";
 const SKILL_ROW = "_2GJb6";
 const SKILL_COLUMN = "QmbDT";
 const IN_BETA_LABEL = "_27CnM";
@@ -31,6 +34,15 @@ const GREY_FLAME = "_27oya";
 const ACTIVE_TAB = "_2lkuX";
 const TOP_BAR = "_3F_8q";
 const NAVIGATION_BUTTON = "_3MT82";
+const QUESTION_CONTAINER = "_14lWn";
+const LOGIN_PAGE = "_3nlUH";
+const LESSON = "BWibf _3MLiB";
+const LESSON_MAIN_SECTION = "_2-1wu";
+const LESSON_BOTTOM_SECTION = "_3gDW-";
+const QUESTION_UNCHECKED = "_34sNg";
+const QUESTION_CHECKED = "_2f9Fr";
+const CRACKED_SKILL_OVERLAY = "._22Nf9";
+const NEW_WORD_SELECTOR = "._29XRF";
 
 let languageCode = "";
 let language = "";
@@ -38,10 +50,10 @@ let languageChanged = false;
 let languageChangesPending = 0;
 let languageLogo;
 
-let options = Object();
-let progress = Array();
+let options = {};
+let progress = [];
 let username = "";
-let userData = Object();
+let userData = {};
 let requestID = 0;
 
 let rootElem;
@@ -68,6 +80,9 @@ function retrieveOptions()
 					"needsStrengtheningList":			true,
 					"needsStrengtheningListLength":		"10",
 					"needsStrengtheningListSortOrder":	"0",
+					"crackedSkillsList":				true,
+					"crackedSkillsListLength":			"10",
+					"crackedSkillsListSortOrder":		"0",
 					"skillSuggestion":					true,
 					"skillSuggestionMethod":			"0",
 					"crownsInfo":						true,
@@ -78,7 +93,9 @@ function retrieveOptions()
 					"crownsPrediction":					true,
 					"XPInfo":							true,
 					"XPBreakdown":						true,
-					"XPPrediction":						true
+					"XPPrediction":						true,
+					"showTranslationText":				true,
+					"showToggleHidingTextButton":		true,
 				};
 			if (Object.entries(data).length === 0)
 			{
@@ -88,9 +105,10 @@ function retrieveOptions()
 			{
 				// We have loaded some options,
 				// let's apply them individually in case new options have been added since last on the options page
-				for (option in data.options)
+				for (let option in data.options)
 				{
-					options[option] = data.options[option];
+					if (data.options.hasOwnProperty(option))
+						options[option] = data.options[option];
 				}
 			}
 			// Now let's save the options for next time.
@@ -128,7 +146,7 @@ function storeProgressHistory()
 		chrome.storage.sync.get("progress", function (data)
 		{
 			if (Object.entries(data).length === 0)
-				data['progress'] = {};
+				data.progress = {};
 			data.progress[username+languageCode] = progress;
 			chrome.storage.sync.set({"progress": data.progress});
 			resolve();
@@ -151,7 +169,7 @@ function updateProgress()
 		if (progress.length > 1 && progress[progress.length-1][1] != progress[progress.length-2][1])
 		{
 			// The last stored entry was the first at the crown level, so let's not overwrite it
-			progress.push(entry)
+			progress.push(entry);
 		}
 		else
 		{
@@ -208,6 +226,15 @@ function removeNeedsStrengtheningBox()
 	}
 }
 
+function removeCrackedSkillsList()
+{
+	let crackedBox = document.getElementById("crackedBox");
+	if (crackedBox != null) // could be null if changed from old to new UI and the topOfTree div gets removed.
+	{
+		crackedBox.parentNode.removeChild(crackedBox);
+	}
+}
+
 function removeCrownsBreakdown()
 {
 	let maxCrowns = document.getElementById("maxCrowns");
@@ -244,21 +271,21 @@ function removeSuggestion()
 
 function hasMetGoal()
 {
-	return userData['streak_extended_today'];
+	return userData.streak_extended_today;
 }
 
 function currentProgress()
 {
-	let skills = userData['language_data'][languageCode]['skills'];
+	let skills = userData.language_data[languageCode].skills;
 	let treeLevel = crownTreeLevel();
 	let lessonsToNextCrownLevel = 0;
 	for (let skill of skills)
 	{
-		//if (skill['locked']) continue;
+		//if (skill.locked) continue;
 		
-		if (skill['skill_progress']['level'] == treeLevel)
+		if (skill.skill_progress.level == treeLevel)
 		{
-			lessonsToNextCrownLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
+			lessonsToNextCrownLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
 		}
 	}
 
@@ -267,13 +294,13 @@ function currentProgress()
 
 function crownTreeLevel()
 {
-	let skills = userData['language_data'][languageCode]['skills'];
+	let skills = userData.language_data[languageCode].skills;
 
 	let skillsByCrowns = [[],[],[],[],[],[]];
 
 	for (let skill of skills)
 	{
-		skillsByCrowns[skill['skill_progress']['level']].push(skill);
+		skillsByCrowns[skill.skill_progress.level].push(skill);
 	}
 
 	let treeLevel = 0;
@@ -315,7 +342,7 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 
 	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // number of days, inclusive of start and end.
 
-	let xpRate = xpTotal/timePeriod // in units of xp/day
+	let xpRate = xpTotal/timePeriod; // in units of xp/day
 
 	return Math.ceil(xpLeft/xpRate);
 }
@@ -368,19 +395,19 @@ function daysToNextCrownLevel()
 
 function daysToNextCrownLevelByCalendar()
 {
-	let skills = userData['language_data'][languageCode]['skills'];
+	let skills = userData.language_data[languageCode].skills;
 	let treeLevel = crownTreeLevel();
 	let lessonsToNextCrownLevel = 0;
 
 	for (let skill of skills)
 	{
-		if (skill['skill_progress']['level'] == treeLevel)
+		if (skill.skill_progress.level == treeLevel)
 		{
-			lessonsToNextCrownLevel += skill['num_sessions_for_level'] - skill['level_sessions_finished'];
+			lessonsToNextCrownLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
 		}
 	}
 
-	let calendar = userData['language_data'][languageCode]['calendar'];
+	let calendar = userData.language_data[languageCode].calendar;
 	if (calendar.length == 0)
 		return -1;
 
@@ -390,7 +417,7 @@ function daysToNextCrownLevelByCalendar()
 
 	for (let lesson of calendar)
 	{	
-		let date = (new Date(lesson['datetime'])).setHours(0,0,0,0);
+		let date = (new Date(lesson.datetime)).setHours(0,0,0,0);
 		if (date == currentDate && !hasMetGoal)
 		{
 			// if the lesson is from today and the goal hasn't been met, then let's not include it
@@ -686,7 +713,7 @@ function addStrengths(strengths)
 	{
 		let iconElement = skills[i][0];
 		let nameElement = skills[i][1];
-		let name = nameElement.innerHTML;
+		let name = nameElement.textContent;
 		let strength = skills[i][2]*1.0;
 		let display = (skills[i][3])? "" : "none";
 		
@@ -702,7 +729,7 @@ function addStrengths(strengths)
 				display: ${display};
 			`;
 			
-			nameElement.parentNode.style['width'] = "100%";
+			nameElement.parentNode.style.width = "100%";
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
 
 			let strengthBarBackground = document.createElement("div");
@@ -747,7 +774,7 @@ function addStrengths(strengths)
 				z-index: 3;
 				margin: auto;
 			`;
-			strengthValue.innerHTML = strength*100 + "%";
+			strengthValue.textContent = strength*100 + "%";
 			
 			if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground);
 			strengthBarHolder.appendChild(strengthBar);
@@ -758,29 +785,30 @@ function addStrengths(strengths)
 		} else // we already have the elements made previously, just update their values.
 		{
 			let strengthBar = document.getElementById(name + "StrengthBar");
-			strengthBar.style['width'] = (strength*100)+"%";
-			strengthBar.style['backgroundColor'] = (strength == 1.0 ? GOLD : RED);
+			strengthBar.style.width = (strength*100)+"%";
+			strengthBar.style.backgroundColor = (strength == 1.0 ? GOLD : RED);
 			
 			let strengthValue = document.getElementById(name + "StrengthValue");
-			strengthValue.innerHTML = strength*100 + "%";
+			strengthValue.textContent = strength*100 + "%";
 
-			strengthBar.parentNode.style['display'] = display;
+			strengthBar.parentNode.style.display = display;
 		}
 	}
 }
 
-function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
+function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSorting = true)
 {
-	// adds clickable list of skills that need strengthening to top of the tree.
+	// Adds clickable list of skills that need strengthening to top of the tree.
 	
 	// let skillTree;
 	// let firstSkillRow;
 	let topOfTree;
-	if(
+	if (
 			document.getElementsByClassName(TREE_CONTAINER).length != 0 &&
 			document.getElementsByClassName(SKILL_ROW).length != 0 &&
 			(
 				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
+				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
 				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
 			)
 
@@ -790,14 +818,14 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 		skillTree = document.getElementsByClassName(TREE_CONTAINER)[0];
 		firstSkillRow = document.getElementsByClassName(SKILL_ROW)[0];
 		*/
-		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].childNodes[0];
+		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].firstChild;
 	}
 	else
 	{
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
-		if(onMainPage)
+		if (onMainPage)
 		{
-			setTimeout(function () {displayNeedsStrengthening(needsStrengthening);}, 500);
+			setTimeout(function () {displayNeedsStrengthening(needsStrengthening, cracked, needsSorting);}, 500);
 		}
 		else
 		{
@@ -816,8 +844,8 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	*/
 	function sortSkillsAlphabetical(a, b)
 	{
-		return (a['title'] < b['title']) ? -1 : 1;
-	};
+		return (a.title < b.title) ? -1 : 1;
+	}
 
 	function shuffle(array)
 	{
@@ -832,7 +860,7 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 	}
 
 	if (needsSorting)
-		switch (options.needsStrengtheningListSortOrder)
+		switch ((!cracked)?options.needsStrengtheningListSortOrder:options.crackedSkillsListSortOrder)
 		{
 			case "0":
 				break;
@@ -856,17 +884,17 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 				break;
 		}
 
-	topOfTree.style['height'] = "auto";
-	topOfTree.style['width'] = "100%";
+	topOfTree.style.height = "auto";
+	topOfTree.style.width = "100%";
 
-	let strengthenBox; // will be a div to hold list of skills that need strengthenening
+	let strengthenBox = document.getElementById((!cracked)?"strengthenBox":"crackedBox"); // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;
 
-	if (document.getElementById("strengthenBox") == null) // if we haven't made the box yet, make it
+	if (strengthenBox == null) // if we haven't made the box yet, make it
 	{
 		needToAddBox = true;
 		strengthenBox = document.createElement("div");
-		strengthenBox.id = "strengthenBox";
+		strengthenBox.id = (!cracked)?"strengthenBox":"crackedBox";
 		strengthenBox.style =
 		`
 			text-align: left;
@@ -874,16 +902,16 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 			min-height: 3em
 		`;
 		if (inMobileLayout)
-			strengthenBox.style['margin'] = "0.5em 1em 0.5em 1em";
+			strengthenBox.style.margin = "0.5em 1em 0.5em 1em";
 
 		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length != 0)
 		{
 			// If there is the IN BETA label, make it relative, not aboslute.
-			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style['position'] = 'relative';
+			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style.position = 'relative';
 			if (inMobileLayout)
-				strengthenBox.style['margin-top'] = "1.5em";
+				strengthenBox.style.marginTop = "1.5em";
 			else
-				strengthenBox.style['margin-top'] = "0.5em";
+				strengthenBox.style.marginTop = "0.5em";
 		}
 		else
 		{
@@ -895,106 +923,185 @@ function displayNeedsStrengthening(needsStrengthening, needsSorting = true)
 			else
 			{
 				// In desktop layout so let's make room for the TRY PLUS button to the right.
-				strengthenBox.style['width'] = "calc(100% - 119px)";	
+				strengthenBox.style.width = "calc(100% - 119px)";	
 			}
 		}
-	}
-	else
-	{
-		strengthenBox = document.getElementById("strengthenBox");
 	}
 
 	let numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
 
-	strengthenBox.innerHTML = "";
+	strengthenBox.textContent = "";
 
-	strengthenBox.innerHTML +=
-	`
-		Your tree has ${numSkillsToBeStrengthened} 
-		${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"} strengthening: <br/>
-	`;
+	if (!cracked)
+	{
+		strengthenBox.textContent +=
+		`
+			Your tree has ${numSkillsToBeStrengthened} 
+			${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"}
+			strengthening:
+		`;
+	}
+	else
+	{
+		strengthenBox.textContent +=
+		`
+			Your tree has ${numSkillsToBeStrengthened} 
+			${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that are": " skill that is"}
+			cracked:
+		`;
+	}
 
-	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, options.needsStrengtheningListLength);
+	strengthenBox.appendChild(document.createElement("br"));
+
+	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, (!cracked)?options.needsStrengtheningListLength:options.crackedSkillsListLength);
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
+		let skillLink = document.createElement("a");
 		if (i < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[0][i]['url_title']}${(needsStrengthening[0][i]['skill_progress']['level'] == 5)? "/practice":""}'>${needsStrengthening[0][i]['title']}</a>, `;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][i].url_title}${(needsStrengthening[0][i].skill_progress.level == 5)? "/practice":""}`;
+			skillLink.textContent = needsStrengthening[0][i].title;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = i - needsStrengthening[0].length;
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex]['url_title']}${(needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice":""}'>${needsStrengthening[1][bonusSkillIndex]['title']}</a>, `;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex].url_title}${(needsStrengthening[1][bonusSkillIndex].skill_progress.level == 1)? "/practice":""}`;
+			skillLink.textContent = needsStrengthening[1][bonusSkillIndex].title;
 		}
+
+		strengthenBox.appendChild(skillLink);
+		strengthenBox.appendChild(document.createTextNode(", "));
 	}
-	strengthenBox.innerHTML = strengthenBox.innerHTML.substring(0, strengthenBox.innerHTML.length - 2);
-	strengthenBox.innerHTML +=	(function()
-								{
-									if (numSkillsToShow == 1)
-										return ""; // If there is only one skill in the list, don't put anything before it.
-									else if (numSkillsToShow == numSkillsToBeStrengthened)
-										return " & "; // Add & if we have put some stuff and showing every skill in list so the next one is the very last.
-									else
-										return ", "; // Otherwise we have put some stuff and there is more coming after so just put a comma.
-								})();
+	strengthenBox.removeChild(strengthenBox.lastChild);
+	
+	const listEndText = document.createTextNode("");
+	if (numSkillsToShow == 1)
+		listEndText.textContent = ""; // If there is only one skill in the list, don't put anything before it.
+	else if (numSkillsToShow == numSkillsToBeStrengthened)
+		listEndText.textContent = " & "; // Add & if we have put some stuff and showing every skill in list so the next one is the very last.
+	else
+		listEndText.textContent = ", "; // Otherwise we have put some stuff and there is more coming after so just put a comma.
+
+	strengthenBox.appendChild(listEndText);
 
 	if (numSkillsToShow == numSkillsToBeStrengthened)
 	{
+		const skillLink = document.createElement("a");
 		// we are showing every skill that needs to be stregnthened.
-		if(needsStrengthening[1].length > 0)
+		if (needsStrengthening[1].length > 0)
 		{
 			// last skill to be displayed is a bonus skill
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[1][needsStrengthening[1].length - 1]['url_title']}${(needsStrengthening[1][needsStrengthening[1].length - 1]['skill_progress']['level'] == 1)? "/practice":""}'>${needsStrengthening[1][needsStrengthening[1].length - 1]['title']}</a>`;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][needsStrengthening[1].length - 1].url_title}${(needsStrengthening[1][needsStrengthening[1].length - 1].skill_progress.level == 1)? "/practice":""}`;
+			skillLink.textContent = needsStrengthening[1][needsStrengthening[1].length - 1].title;
 		} else
 		{
 			// last skill to be displayed is a normal skill
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[0][needsStrengthening[0].length -1]['url_title']}${(needsStrengthening[0][needsStrengthening[0].length -1]['skill_progress']['level'] == 5)? "/practice":""}'>${needsStrengthening[0][needsStrengthening[0].length -1]['title']}</a>`;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][needsStrengthening[0].length -1].url_title}${(needsStrengthening[0][needsStrengthening[0].length -1].skill_progress.level == 5)? "/practice":""}`;
+			skillLink.textContent = needsStrengthening[0][needsStrengthening[0].length -1].title;
 		}
+		
+		strengthenBox.appendChild(skillLink);
 	}
 	else
 	{
 		// some skills that need to be strengthened are not being shown, so the last one we are showing is just the next one in the order we have
+		const skillLink = document.createElement("a");
 		let lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
 		if (lastIndexToBeShown < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[0][lastIndexToBeShown]['url_title']}${(needsStrengthening[0][lastIndexToBeShown]['skill_progress']['level'] == 5)? "/practice":""}'>${needsStrengthening[0][lastIndexToBeShown]['title']}</a>, `;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][lastIndexToBeShown].url_title}${(needsStrengthening[0][lastIndexToBeShown].skill_progress.level == 5)? "/practice":""}`;
+			skillLink.textContent = needsStrengthening[0][lastIndexToBeShown].title;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = lastIndexToBeShown - needsStrengthening[0].length;
-			strengthenBox.innerHTML += `<a href='/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex]['url_title']}${(needsStrengthening[1][bonusSkillIndex]['skill_progress']['level'] == 1)? "/practice":""}'>${needsStrengthening[1][bonusSkillIndex]['title']}</a>, `;
+			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex].url_title}${(needsStrengthening[1][bonusSkillIndex].skill_progress.level == 1)? "/practice":""}`;
+			skillLink.textContent = needsStrengthening[1][bonusSkillIndex].title;
 		}
-
+		strengthenBox.appendChild(skillLink);
+		strengthenBox.appendChild(document.createTextNode(", "));
+		
 		let numSkillsLeft = numSkillsToBeStrengthened - numSkillsToShow;
 
 		// Add a clickable element to show more skills in the list.
 		// We are going to add on another needsStrengtheningListLength number of skills to the list, but as we are going to change this amount to lengthen the list, we need to original saved in storage.
 	 	chrome.storage.sync.get("options", function (data)
 	 	{
-			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, data.options.needsStrengtheningListLength);
+			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, (!cracked)?data.options.needsStrengtheningListLength:data.options.crackedSkillsListLength);
 
 			let showMore = document.createElement("a");
-			showMore.innerHTML = numSkillsLeft + " more...";
-			showMore.href = "javascript:;";
+			showMore.textContent = numSkillsLeft + " more...";
+			showMore.href = "";
 
-			showMore.onclick = function () {
-				options.needsStrengtheningListLength = String(+options.needsStrengtheningListLength + +numExtraSkillsOnShowMore);
-				displayNeedsStrengthening(needsStrengthening, false);
+			if (!cracked)
+			{
+				showMore.onclick = function () {
+					options.needsStrengtheningListLength = String(+options.needsStrengtheningListLength + +numExtraSkillsOnShowMore);
+					displayNeedsStrengthening(needsStrengthening, cracked, false);
+					return false;
+				};
+			}
+			else
+			{
+				showMore.onclick = function () {
+					options.crackedSkillsListLength = String(+options.crackedSkillsListLength + +numExtraSkillsOnShowMore);
+					displayNeedsStrengthening(needsStrengthening, cracked, false);
+					return false;
+				};
 			}
 			
-			showMore.title = "Click to show " + numExtraSkillsOnShowMore + " more skill" + ((numExtraSkillsOnShowMore != 1)? "s": "");
+			showMore.title = `Click to show ${numExtraSkillsOnShowMore} more skill${(numExtraSkillsOnShowMore != 1)? "s": ""}`;
 
-			strengthenBox.innerHTML += " and ";
+			strengthenBox.appendChild(document.createTextNode(" and "));
 			strengthenBox.appendChild(showMore);
 		});
 	}
 
+	const firstSkillLink = strengthenBox.getElementsByTagName("A")[0];
+	firstSkillLink.addEventListener('focus',
+		function(event)
+		{
+			event.target.style.fontWeight = 'bold';
+			event.target.style.textDecoration = 'underline';
+		}
+	);
+
+	firstSkillLink.addEventListener('blur',
+		function(event)
+		{
+			event.target.style.fontWeight = 'normal';
+			event.target.style.textDecoration = 'none';
+		}
+	);
+	
 	if(needToAddBox)
 	{
 		topOfTree.appendChild(strengthenBox);
 	}
+
+	firstSkillLink.focus();
+}
+
+function getCrackedSkills()
+{
+	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY));
+	const crackedSkillNames = crackedSkillElements.map(
+		(crackedSkill) => {
+			const skillIcon = crackedSkill.parentNode;
+			const skillContainer = skillIcon.parentNode.parentNode.parentNode;
+			const skillName = skillContainer.lastChild.lastChild.textContent;
+
+			return skillName;
+		}
+	);
+
+	const crackedSkills = [
+		userData.language_data[languageCode].skills.filter(skill => crackedSkillNames.includes(skill.short)),
+		userData.language_data[languageCode].bonus_skills.filter(skill => crackedSkillNames.includes(skill.short)),
+	];
+	return crackedSkills;
 }
 
 function displayCrownsBreakdown()
@@ -1002,19 +1109,19 @@ function displayCrownsBreakdown()
 	if (Object.entries(userData).length == 0)
 		return false;
 
-	let skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	let bonusSkills = userData['language_data'][languageCode]['bonus_skills'];
+	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
+	let bonusSkills = userData.language_data[languageCode].bonus_skills;
 
 	let crownLevelCount = [Array(6).fill(0),Array(2).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
 
 	for (let skill of skills)
 	{
-		crownLevelCount[0][skill['skill_progress']['level']]++;
+		crownLevelCount[0][skill.skill_progress.level]++;
 	}
 
 	for (let bonusSkill of bonusSkills)
 	{
-		crownLevelCount[1][bonusSkill['skill_progress']['level']]++;
+		crownLevelCount[1][bonusSkill.skill_progress.level]++;
 	}
 
 	let maxCrownCount = skills.length*5 + bonusSkills.length;
@@ -1054,8 +1161,8 @@ function displayCrownsBreakdown()
 	let crownLogoContainer = document.getElementsByClassName(CROWN_LOGO_CONTAINER)[inMobileLayout? 1 : 0];
 	let crownDescriptionContainer = document.getElementsByClassName(CROWN_DESCRIPTION_CONTAINER)[inMobileLayout ? 1 : 0];
 
-	crownLogoContainer.style['transform'] = 'scale(1.7)';
-	crownDescriptionContainer.style['width'] = '50%';
+	crownLogoContainer.style.transform = 'scale(1.7)';
+	crownDescriptionContainer.style.width = '50%';
 
 	let crownTotalContainer;
 	crownTotalContainer = crownLevelContainer.getElementsByClassName(CROWN_TOTAL_CONTAINER)[0];
@@ -1068,23 +1175,11 @@ function displayCrownsBreakdown()
 
 		maximumCrownCountContainer = document.createElement("span");
 		maximumCrownCountContainer.id = "maxCrowns";
-		maximumCrownCountContainer.innerHTML = "/" + maxCrownCount;
+		maximumCrownCountContainer.textContent = "/" + maxCrownCount;
 	}
-	/*
-	maximumCrownCountContainer.style =
-	`
-		position:absolute;
-		top: 50%;
-		right: 0;
-		margin-top: 5px;
-		font-size: 36px;
-		font-weight: 700;
-		transform: translateY(-50%);
-	`;
-	*/
 
 	// Add crowns progress graph
-	if (options.crownsGraph)
+	if (options.crownsGraph && crownTreeLevel() != 5)
 	{
 		let crownsEarnedInWeek = [];
 		// will hold number of crowns earned each day for seven days
@@ -1171,7 +1266,7 @@ function displayCrownsBreakdown()
 	let treeLevelContainer = document.createElement("div");
 	treeLevelContainer.id = "treeLevel";
 	treeLevelContainer.style = "display: inline-block";
-	treeLevelContainer.innerHTML = treeLevel;
+	treeLevelContainer.textContent = treeLevel;
 
 	let breakdownList = document.createElement("ul");
 	breakdownList.id = "breakdownList";
@@ -1203,7 +1298,7 @@ function displayCrownsBreakdown()
 	`;
 
 	let crownImg = document.createElement("img");
-	crownImg['alt'] = "crown";
+	crownImg.alt = "crown";
 	// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
 	crownImg.style =
 	`
@@ -1211,7 +1306,7 @@ function displayCrownsBreakdown()
 		width: 100%;
 		z-index: 1;
 	`;
-	crownImg['src'] = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
+	crownImg.src = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg"; // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
 
 	imgContainer.appendChild(crownImg);
 	imgContainer.appendChild(levelContainer);
@@ -1220,12 +1315,12 @@ function displayCrownsBreakdown()
 	{
 		if (options.crownsMaximum) crownTotalContainer.appendChild(maximumCrownCountContainer);
 
-		breakdownContainer.appendChild(document.createElement("p"))
-		breakdownContainer.lastChild.style = "text-align: center;";
-		breakdownContainer.lastChild.innerHTML = "Your tree is at Level&nbsp;";
+		breakdownContainer.appendChild(document.createElement("p"));
+		breakdownContainer.lastChild.style = "text-align: center; color: black;";
+		breakdownContainer.lastChild.textContent = "Your tree is at Level\xA0";
 		breakdownContainer.lastChild.appendChild(treeLevelContainer);
 
-		for(let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
+		for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; ++crownLevel)
 		{
 			let skillCount = crownLevelCount[0][crownLevel];
 
@@ -1234,8 +1329,8 @@ function displayCrownsBreakdown()
 
 			let crownCount = skillCount * crownLevel;
 		
-			levelContainer.id = "crownLevel" + crownLevel + "Count";
-			levelContainer.innerHTML = crownLevel;
+			imgContainer.lastChild.id = "crownLevel" + crownLevel + "Count";
+			imgContainer.lastChild.textContent = crownLevel;
 
 			let breakdownListItem = document.createElement("li");
 			breakdownListItem.className = "crownLevelItem";
@@ -1247,28 +1342,27 @@ function displayCrownsBreakdown()
 				grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 			`;
 
-			breakdownListItem.innerHTML =
-			`
-				<span>
-					${skillCount}
-				</span>
-				<span style='justify-self: center;'>
-					skill${(skillCount == 1 )?"":"s"} at
-				</span>
-			`;
+			const skillCountSpan = document.createElement("span");
+			skillCountSpan.textContent = skillCount;
+			breakdownListItem.appendChild(skillCountSpan);
+
+			const skillsAtSpan = document.createElement("span");
+			skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
+			skillsAtSpan.style.justifySelf = "center";
+			breakdownListItem.appendChild(skillsAtSpan);
 
 			breakdownListItem.appendChild(imgContainer);
+			imgContainer = imgContainer.cloneNode(true);
 
-			breakdownListItem.innerHTML +=
-			`
-				=
-				<span>
-					${crownCount}
-				</span>
-				<span>
-					crown${(crownCount == 1 )?"":"s"}
-				</span>
-			`;
+			breakdownListItem.appendChild(document.createTextNode("="));
+			
+			const crownCountSpan = document.createElement("span");
+			crownCountSpan.textContent = crownCount;
+			breakdownListItem.appendChild(crownCountSpan);
+
+			const crownsSpan = document.createElement("span");
+			crownsSpan.textContent = `crown${(crownCount == 1 )?"":"s"}`;
+			breakdownListItem.appendChild(crownsSpan);
 
 			breakdownList.appendChild(breakdownListItem);
 		}
@@ -1278,7 +1372,7 @@ function displayCrownsBreakdown()
 		{
 			// The tree has some bonus skills so let's display a breakdown of their crown levels.
 			let bonusSkillsBreakdownHeader = document.createElement("h3");
-			bonusSkillsBreakdownHeader.innerText = "Bonus Skills";
+			bonusSkillsBreakdownHeader.textContent = "Bonus Skills";
 			bonusSkillsBreakdownHeader.style =
 			`
 				margin: 0;
@@ -1297,8 +1391,8 @@ function displayCrownsBreakdown()
 
 				let crownCount = skillCount * crownLevel;
 			
-				levelContainer.id = "bonusSkillCrownLevel" + crownLevel + "Count";
-				levelContainer.innerHTML = crownLevel;
+				imgContainer.lastChild.id = "bonusSkillCrownLevel" + crownLevel + "Count";
+				imgContainer.lastChild.textContent = crownLevel;
 
 				let breakdownListItem = document.createElement("li");
 				breakdownListItem.className = "crownLevelItem";
@@ -1310,28 +1404,27 @@ function displayCrownsBreakdown()
 					grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 				`;
 				
-				breakdownListItem.innerHTML =
-				`
-					<span>
-						${skillCount}
-					</span>
-					<span style='justify-self: center;'>
-						skill${(skillCount == 1 )?"":"s"} at
-					</span>
-				`;
+				const skillCountSpan = document.createElement("span");
+				skillCountSpan.textContent = skillCount;
+				breakdownListItem.appendChild(skillCountSpan);
+
+				const skillsAtSpan = document.createElement("span");
+				skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
+				skillsAtSpan.style.justifySelf = "center";
+				breakdownListItem.appendChild(skillsAtSpan);
 
 				breakdownListItem.appendChild(imgContainer);
+				imgContainer = imgContainer.cloneNode(true);
 
-				breakdownListItem.innerHTML +=
-				`
-					=
-					<span>
-						${crownCount}
-					</span>
-					<span>
-						crown${(crownCount == 1 )?"":"s"}
-					</span>
-				`;
+				breakdownListItem.appendChild(document.createTextNode("="));
+				
+				const crownCountSpan = document.createElement("span");
+				crownCountSpan.textContent = crownCount;
+				breakdownListItem.appendChild(crownCountSpan);
+
+				const crownsSpan = document.createElement("span");
+				crownsSpan.textContent = `crown${(crownCount == 1 )?"":"s"}`;
+				breakdownListItem.appendChild(crownsSpan);
 
 				breakdownList.appendChild(breakdownListItem);
 			}
@@ -1351,20 +1444,23 @@ function displayCrownsBreakdown()
 
 			if (numDays == -1)
 			{
-				crownLevelContainer.style['marginBottom'] = "1em";
+				crownLevelContainer.style.marginBottom = "1em";
 				return false;
 			}
 
 			prediction.id = "treeCrownLevelPrediction";
-			prediction.innerHTML =
-			`
-				At your current rate your tree will reach Level&nbsp;${treeLevel + 1} in
-				<span style='font-weight: bold'>
-					${numDays}
-				</span>
-				days, on
-				${new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString()}
-			`;
+			prediction.appendChild(
+				document.createTextNode(`At your current rate your tree will reach Level\xA0${treeLevel + 1} in `)
+			);
+			prediction.appendChild(document.createElement("span"));
+			prediction.lastChild.textContent = numDays;
+			prediction.lastChild.style.fontWeight = "bold";
+			prediction.appendChild(
+				document.createTextNode(` days, on `)
+			);
+			prediction.appendChild(document.createElement("span"));
+			prediction.lastChild.textContent = new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
+			prediction.lastChild.style.fontWeight = "bold";
 
 			prediction.style =
 			`
@@ -1373,27 +1469,29 @@ function displayCrownsBreakdown()
 				color: black;
 			`;
 
-			if (options.crownsPrediction) crownLevelContainer.appendChild(prediction)
+			if (options.crownsPrediction) crownLevelContainer.appendChild(prediction);
 		}
 	}
-	else // We have already added the breakdown data, just update it.
+	else
 	{
-		for(let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
+		// We have already added the breakdown data, just update it.
+
+		for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
 		{
 			let levelContainerElement = document.getElementById("crownLevel" + crownLevel + "Count");
-			levelContainerElement.innerHTML = crownLevel;
+			levelContainerElement.textContent = crownLevel;
 		}
 		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
 		{
 			for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
 			{
 				let levelContainerElement = document.getElementById("bonusSkillCrownLevel" + crownLevel + "Count");
-				levelContainerElement.innerHTML = crownLevel;
+				levelContainerElement.textContent = crownLevel;
 			}
 		}
 
-		document.getElementById("maxCrowns").innerHTML = "/" + maxCrownCount;
-		document.getElementById("treeLevel").innerHTML = treeLevel;
+		document.getElementById("maxCrowns").textContent = "/" + maxCrownCount;
+		document.getElementById("treeLevel").textContent = treeLevel;
 	}
 }
 
@@ -1405,16 +1503,16 @@ function displayXPBreakdown()
 	
 	let data =
 		{
-			'language_string':	userData['language_data'][languageCode]['language_string'],
-			'level_progress':	userData['language_data'][languageCode]['level_progress'],
-			'level':			userData['language_data'][languageCode]['level'],
-			'level_points':		userData['language_data'][languageCode]['level_points'],
-			'points':			userData['language_data'][languageCode]['points'],
-			'history':			userData['language_data'][languageCode]['calendar']
-			//'timezone':			userData['timezone_offset'] seems to not be available for every users, maybe depends on platform use.
-		}
+			'language_string':	userData.language_data[languageCode].language_string,
+			'level_progress':	userData.language_data[languageCode].level_progress,
+			'level':			userData.language_data[languageCode].level,
+			'level_points':		userData.language_data[languageCode].level_points,
+			'points':			userData.language_data[languageCode].points,
+			'history':			userData.language_data[languageCode].calendar,
+			//'timezone':			userData.timezone_offset seems to not be available for every users, maybe depends on platform use.
+		};
 
-	let levelProgressPercentage = data['level_progress']*100/data['level_points'];
+	let levelProgressPercentage = (data.level_progress*100)/(data.level_points);
 
 	if(document.getElementById("XPBox") == null)
 	{
@@ -1429,7 +1527,7 @@ function displayXPBreakdown()
 		`;
 
 		let XPHeader = document.createElement("h2");
-		XPHeader.innerText = data['language_string']+ " XP";
+		XPHeader.textContent = data.language_string+ " XP";
 
 		let languageLevelContainer = document.createElement("div");
 
@@ -1437,7 +1535,7 @@ function displayXPBreakdown()
 
 		let languageLevelElement = document.createElement("p");
 		languageLevelElement.id = "xpTotalAndLevel";
-		languageLevelElement.innerText = "Level " + data['level'];
+		languageLevelElement.textContent = "Level " + data.level;
 		languageLevelElement.style =
 		`
 			font-size: 175%;
@@ -1447,7 +1545,7 @@ function displayXPBreakdown()
 		`;
 
 		let languageXPElement = document.createElement("span");
-		languageXPElement.innerText = data['points'] + " XP - ";
+		languageXPElement.textContent = data.points + " XP - ";
 		languageXPElement.style =
 		`
 			color: black;
@@ -1458,7 +1556,7 @@ function displayXPBreakdown()
 		languageLevelContainer.appendChild(languageLevelElement);
 		if (options.XPBreakdown) container.appendChild(languageLevelContainer);
 		
-		if (data['level'] != 25)
+		if (data.level != 25)
 		{
 			let nextLevelProgressElement = document.createElement("p");
 			nextLevelProgressElement.style =
@@ -1466,7 +1564,7 @@ function displayXPBreakdown()
 				text-align: center;
 				margin-bottom: 0;
 			`;
-			nextLevelProgressElement.innerText = `${data['level_points']-data['level_progress']} XP till Level ${data['level']+1}`;
+			nextLevelProgressElement.textContent = `${data.level_points - data.level_progress} XP till Level ${data.level+1}`;
 
 			let languageLevelProgressBarContainer = document.createElement("div");
 			languageLevelProgressBarContainer.className = "languageLevelProgressBar";
@@ -1492,31 +1590,39 @@ function displayXPBreakdown()
 
 			let currentLevelProgressElement = document.createElement("p");
 			currentLevelProgressElement.style = "text-align: center;";
-			currentLevelProgressElement.innerText = `(${data['level_progress']}/${data['level_points']} XP - ${Number(levelProgressPercentage).toFixed(1)}%)`;
+			currentLevelProgressElement.textContent = `(${data.level_progress}/${data.level_points} XP - ${Number(levelProgressPercentage).toFixed(1)}%)`;
 
 			languageLevelContainer.appendChild(nextLevelProgressElement);
 			languageLevelContainer.appendChild(languageLevelProgressBarContainer);
 			languageLevelContainer.appendChild(currentLevelProgressElement);
 
 
-			let daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
+			let daysLeft = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
 			let projectedNextLevelCompletion = document.createElement("p");
 			projectedNextLevelCompletion.style =
 			`
 				margin-bottom: 0;
 				text-align: center;
 			`;
-			projectedNextLevelCompletion.innerHTML =
-			`
-				At your current rate you will reach the next level, Level&nbsp;${data['level']+1}, in about
-				<span id="XPPrediction" style='font-weight:bold'>
-					${daysLeft}
-				</span>
-				days, on
-				<span id="XPPredictionDate">
-					${new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString()}
-				</span>
-			`;
+			projectedNextLevelCompletion.appendChild(
+				document.createTextNode(
+					`At your current rate you will reach the next level, Level\xA0${data.level+1}, in about `
+				)
+			);
+			projectedNextLevelCompletion.appendChild(document.createElement("span"));
+			projectedNextLevelCompletion.lastChild.id = "XPPrediction";
+			projectedNextLevelCompletion.lastChild.style.fontWeight = "bold";
+			projectedNextLevelCompletion.lastChild.textContent = daysLeft;
+
+			projectedNextLevelCompletion.appendChild(
+				document.createTextNode(
+					` days, on `
+				)
+			);
+			
+			projectedNextLevelCompletion.appendChild(document.createElement("span"));
+			projectedNextLevelCompletion.lastChild.id = "XPPredictionDate";
+			projectedNextLevelCompletion.lastChild.textContent = (new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000)).toLocaleDateString();
 			
 			if (daysLeft != -1 && options.XPPrediction)
 			{
@@ -1527,7 +1633,7 @@ function displayXPBreakdown()
 		{
 			// Reached max level
 			let maxLevelMessage = document.createElement("p");
-			maxLevelMessage.innerText = "You have reached the maximum level!";
+			maxLevelMessage.textContent = "You have reached the maximum level!";
 			languageLevelContainer.appendChild(maxLevelMessage);
 		}
 		if (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length != 0)
@@ -1572,14 +1678,14 @@ function displayXPBreakdown()
 		{
 			let languageLevelElement = document.getElementById("xpTotalAndLevel");
 			let languageXPElement = languageLevelElement.childNodes[0];
-			languageXPElement.innerText = data['points'] + " XP - ";
-			languageLevelElement.innerText = "Level " + data['level'];
+			languageXPElement.textContent = data.points + " XP - ";
+			languageLevelElement.textContent = "Level " + data.level;
 			languageLevelElement.insertBefore(languageXPElement,languageLevelElement.childNodes[0]);
 			
 			if (languageLevelElement.nextSibling != null)
 			{
 				// Wasn't level 25 ...
-				if (data['level'] != 25)
+				if (data.level != 25)
 				{
 					// ... and still aren't
 					let languageLevelProgressBarContainer = document.getElementsByClassName("languageLevelProgressBar")[0];
@@ -1601,12 +1707,12 @@ function displayXPBreakdown()
 					`;
 
 					let nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
-					nextLevelProgressElement.innerText = `${data['level_points']-data['level_progress']} XP till Level ${data['level']+1}`;
+					nextLevelProgressElement.textContent = `${data.level_points - data.level_progress} XP till Level ${data.level+1}`;
 
 					let currentLevelProgressElement = languageLevelProgressBarContainer.nextSibling;
-					currentLevelProgressElement.innerText =
+					currentLevelProgressElement.textContent =
 					`
-						(${data['level_progress']}/${data['level_points']} XP - ${Number(levelProgressPercentage).toFixed(1)}%)
+						(${data.level_progress}/${data.level_points} XP - ${Number(levelProgressPercentage).toFixed(1)}%)
 					`;
 
 				}
@@ -1620,16 +1726,16 @@ function displayXPBreakdown()
 
 					let maxLevelMessage = document.createElement("p");
 					maxLevelMessage.style = "margin-bottom: 0";
-					maxLevelMessage.innerText = "You have reached the maximum level!";
+					maxLevelMessage.textContent = "You have reached the maximum level!";
 					languageLevelElement.parentNode.appendChild(maxLevelMessage);
 				}
 			}
 		}
 		if (options.XPPrediction && document.getElementById("XPPredicition")!= null)
 		{
-			let daysLeft = daysToNextXPLevel(data['history'], data['level_points']-data['level_progress']);
-			document.getElementById("XPPrediction").innerText = daysLeft;
-			document.getElementById("XPPredictionDate").innerText = new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000).toLocaleDateString();
+			let daysLeft = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
+			document.getElementById("XPPrediction").textContent = daysLeft;
+			document.getElementById("XPPredictionDate").textContent = (new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000)).toLocaleDateString();
 		}
 	}
 }
@@ -1645,6 +1751,7 @@ function displaySuggestion(skills, bonusSkills)
 			document.getElementsByClassName(SKILL_ROW).length != 0 &&
 			(
 				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
+				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
 				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
 			)
 		) // Has the tree loaded from a page change
@@ -1653,14 +1760,14 @@ function displaySuggestion(skills, bonusSkills)
 		skillTree = document.getElementsByClassName(TREE_CONTAINER)[0];
 		firstSkillRow = document.getElementsByClassName(SKILL_ROW)[0];
 		*/
-		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].childNodes[0];
+		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].firstChild;
 	}
 	else
 	{
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
-			setTimeout(function(){displaySuggestion(skills, bonusSkills)}, 50);
+			setTimeout(function(){displaySuggestion(skills, bonusSkills);}, 50);
 		}
 		else
 		{
@@ -1669,8 +1776,8 @@ function displaySuggestion(skills, bonusSkills)
 		return false;
 	}
 
-	topOfTree.style['height'] = "auto";
-	topOfTree.style['width'] = "100%";
+	topOfTree.style.height = "auto";
+	topOfTree.style.width = "100%";
 
 	if (document.getElementById("fullStrengthMessageContainer") == null)
 	{
@@ -1684,11 +1791,11 @@ function displaySuggestion(skills, bonusSkills)
 		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length != 0)
 		{
 			// If there is the IN BETA label, make it relative, not absolute.
-			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style['position'] = 'relative';
+			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style.position = 'relative';
 			if (inMobileLayout)
-				container.style['margin-top'] = "1.5em";
+				container.style.marginTop = "1.5em";
 			else
-				container.style['margin-top'] = "0.5em";
+				container.style.marginTop = "0.5em";
 		}
 		else
 		{
@@ -1700,7 +1807,7 @@ function displaySuggestion(skills, bonusSkills)
 			else
 			{
 				// In desktop layout so let's make room for the TRY PLUS button to the right.
-				container.style['width'] = "calc(100% - 119px)";
+				container.style.width = "calc(100% - 119px)";
 			}
 		}
 		let treeLevel = crownTreeLevel();
@@ -1708,7 +1815,7 @@ function displaySuggestion(skills, bonusSkills)
 
 		for (let skill of skills)
 		{
-			skillsByCrowns[skill['skill_progress']['level']].push(skill);
+			skillsByCrowns[skill.skill_progress.level].push(skill);
 		}
 		
 		let randomSuggestion;
@@ -1732,8 +1839,8 @@ function displaySuggestion(skills, bonusSkills)
 		}
 
 		let link = document.createElement("a");
-		link.href = "/skill/" + languageCode + "/" + randomSuggestion['url_title'] + ((treeLevel == 5) ? "/practice/" : "/");
-		link.innerText = randomSuggestion['title'];
+		link.href = "/skill/" + languageCode + "/" + randomSuggestion.url_title + ((treeLevel == 5) ? "/practice/" : "/");
+		link.textContent = randomSuggestion.title;
 		link.style.color = 'blue';
 		link.addEventListener('focus',
 			function(event)
@@ -1752,26 +1859,55 @@ function displaySuggestion(skills, bonusSkills)
 		let fullStrengthMessage = document.createElement("p");
 		if (treeLevel == 5)
 		{
-			fullStrengthMessage.innerHTML =
-			`
-				Your ${language} tree is fully strengthened and at Level 5! Why not do a
-				<a href='/practice'>
-					general practice
-				</a>
-			`;
+			fullStrengthMessage.appendChild(
+				document.createTextNode(
+					`Your ${language} tree is fully strengthened and at Level 5! Why not do a `
+				)
+			);
+
+			fullStrengthMessage.appendChild(document.createElement("a"));
+			fullStrengthMessage.lastChild.href = "/practice";
+			fullStrengthMessage.lastChild.textContent = "general practice";
 		}
 		else if (treeLevel == 0)
 		{
-			link.href = "/skill/" + languageCode + "/" + skillsByCrowns[0][0]['url_title'] + "/";
-			link.innerText = skillsByCrowns[0][0]['title'];
+			// Tree not finished, so suggest the next skill that is not yet been completed.
+			let nextSkill = skillsByCrowns[0][0];
+			
+			fullStrengthMessage.textContent = "All the skills that you have learnt so far are fully strengthened. ";
 
-			fullStrengthMessage.innerText = "All the skills that you have learnt so far are fully strengthened. ";
-			fullStrengthMessage.innerText += "The next skill to learn is: ";
+			if (nextSkill.locked)
+			{
+				// The next skill is locked, so a checkpoint test is needed.
+				let checkpointNumber;
+				const checkpoints = document.querySelectorAll(`[data-test="checkpoint-badge"]`);
+				checkpoints.forEach(
+					(checkpoint, index) =>
+					{
+						if (checkpointNumber == null && checkpoint.querySelector(`img`).src.includes(`unlocked`))
+							checkpointNumber = index;
+					}
+				);
+				link.href = `/checkpoint/${languageCode}/${checkpointNumber}/`;
+				link.textContent = `Checkpoint ${checkpointNumber +1}`;
+
+				fullStrengthMessage.textContent += "To unlock more skills you need to complete: ";
+			}
+			else
+			{
+				// The next skil is unlocked so lets suggest it.
+				link.href = `/skill/${languageCode}/${nextSkill.url_title}/`;
+				link.textContent = nextSkill.title;
+
+				fullStrengthMessage.textContent += "The next skill to learn is: ";
+			}
+			
 			fullStrengthMessage.appendChild(link);
 		}
 		else
 		{
-			fullStrengthMessage.innerHTML = `Your ${language} tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level&nbsp;${treeLevel + 1}: `;	
+			fullStrengthMessage.textContent =
+				`Your ${language} tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level\xA0${treeLevel + 1}: `;
 			fullStrengthMessage.appendChild(link);
 		}
 
@@ -1808,22 +1944,22 @@ function getStrengths()
 	let strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
 	let needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
 	
-	languageCode = Object.keys(userData['language_data'])[0]; // only one child of 'language_data', a code for active language.
+	languageCode = Object.keys(userData.language_data)[0]; // only one child of 'language_data', a code for active language.
 
-	let skills = userData['language_data'][languageCode]['skills']; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	let bonusSkills = userData['language_data'][languageCode]['bonus_skills'];
+	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
+	let bonusSkills = userData.language_data[languageCode].bonus_skills;
 
 	function sortSkills(skill1,skill2)
 	{
-		if (skill1['coords_y'] < skill2['coords_y']) // x above y give x
+		if (skill1.coords_y < skill2.coords_y) // x above y give x
 		{
 			return -1;
-		} else if (skill1['coords_y'] > skill2['coords_y'])// x below y give y
+		} else if (skill1.coords_y > skill2.coords_y)// x below y give y
 		{
 			return 1;
 		} else // x and y on same level
 		{
-			if (skill1['coords_x'] < skill2['coords_x']) // x to left of y give x
+			if (skill1.coords_x < skill2.coords_x) // x to left of y give x
 			{
 				return -1;
 			} else // x to right of y give y
@@ -1838,8 +1974,8 @@ function getStrengths()
 
 	for (let skill of skills)
 	{
-		strengths[0].push([skill['strength'],Boolean(skill['skill_progress']['level'])]);
-		if(skill['strength'] != 1 && skill['strength'] != 0 && skill['skill_progress']['level'] != 0)
+		strengths[0].push([skill.strength,Boolean(skill.skill_progress.level)]);
+		if(skill.strength != 1 && skill.strength != 0 && skill.skill_progress.level != 0)
 		{
 			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
 			needsStrengthening[0].push(skill);
@@ -1848,28 +1984,41 @@ function getStrengths()
 
 	for (let bonusSkill of bonusSkills)
 	{
-		strengths[1].push([bonusSkill['strength'],Boolean(bonusSkill['skill_progress']['level'])]);
-		if(bonusSkill['strength'] != 1 && bonusSkill['strength'] != 0 && bonusSkill['skill_progress']['level'] != 0)
+		strengths[1].push([bonusSkill.strength,Boolean(bonusSkill.skill_progress.level)]);
+		if(bonusSkill.strength != 1 && bonusSkill.strength != 0 && bonusSkill.skill_progress.level != 0)
 		{
 			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
 			needsStrengthening[1].push(bonusSkill);
 		}
 	}
 
+	const crackedSkills = getCrackedSkills();
+
 	if (options.strengthBars) addStrengths(strengths); // call function to add these strengths under the skills
 	
 	if (options.XPInfo) displayXPBreakdown();
 
-	if (needsStrengthening[0].length+needsStrengthening[1].length !=0)
+	const practiceNeeded = ((needsStrengthening[0].length + needsStrengthening[1].length != 0) && options.needsStrengtheningList)
+						|| ((crackedSkills[0].length + crackedSkills[1].length != 0) && options.crackedSkillsList);
+	if (practiceNeeded)
 	{
-		// Something needs strengthening.
 		removeSuggestion(); // Remove the suggestion box if there happens to be one.
-		if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
+		if (needsStrengthening[0].length + needsStrengthening[1].length != 0)
+		{
+			// Something needs strengthening.
+			if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
+		}
+		if (crackedSkills[0].length + crackedSkills[1].length != 0)
+		{
+			// There are some cracked skills.
+			if (options.crackedSkillsList) displayNeedsStrengthening(crackedSkills, true);
+		}
 	}
 	else
 	{
 		// Nothing that needs strengthening!
 		removeNeedsStrengtheningBox(); // Remove the needStrengthingBox if there happns to be one.
+		removeCrackedSkillsList();
 		if (options.skillSuggestion) displaySuggestion(skills);
 	}
 
@@ -1905,7 +2054,7 @@ function httpGetAsync(url, responseHandler)
 			{
 				if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
 				{
-					document.getElementById('userData${requestID}').innerText = "//" + xmlHttp.responseText;		
+					document.getElementById('userData${requestID}').textContent = "//" + xmlHttp.responseText;		
 				}
 			};
 			xmlHttp.open('GET', '${url+'?id='+requestID}', true);
@@ -1919,19 +2068,19 @@ function httpGetAsync(url, responseHandler)
 
 	let xhrScript = document.createElement("script");
 	xhrScript.id = 'xhrScript' + requestID;
-	xhrScript.innerHTML = code;
-	document.body.append(xhrScript);
+	xhrScript.textContent = code;
+	document.body.appendChild(xhrScript);
 
 	function checkData(id)
 	{
 		let dataElem = document.getElementById('userData' + id);
-		if (dataElem.innerHTML == '')
+		if (dataElem.textContent == '')
 		{
 			setTimeout(()=>checkData(id), 50);
 		}
 		else
 		{
-			let newData  = dataElem.innerHTML.slice(2)
+			let newData  = dataElem.textContent.slice(2);
 			document.body.removeChild(dataElem);
 			document.body.removeChild(document.getElementById('xhrScript' + id));
 			responseHandler(newData, id);
@@ -1944,8 +2093,8 @@ function httpGetAsync(url, responseHandler)
 async function handleDataResponse(responseText)
 {
 	userData = JSON.parse(responseText); // store response text as JSON object.
-	let newDataLanguageCode = Object.keys(userData['language_data'])[0];
-	let newDataLanguageString = userData['language_data'][newDataLanguageCode]['language_string'];
+	let newDataLanguageCode = Object.keys(userData.language_data)[0];
+	let newDataLanguageString = userData.language_data[newDataLanguageCode].language_string;
 
 	if (language == '')
 	{
@@ -2031,138 +2180,286 @@ function checkUIVersion()
 }
 */
 
+function hideTranslationText(reveal = false)
+{
+	if (document.getElementsByClassName(QUESTION_CONTAINER).length == 0)
+		return false;
+	const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
+	const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
+
+	if (questionTypeString != null && questionTypeString.includes("translate"))
+	{
+		// Translate type question
+		const challengeTranslatePrompt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
+		
+		if (challengeTranslatePrompt.querySelectorAll("BUTTON").length != 0)
+		{
+			// There is an svg in the question sentence which is the speaker button so we are translating from the target to the native language
+			const hintSentence = challengeTranslatePrompt.querySelector('[data-test="hint-sentence"]');
+
+			if (hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length != 0)
+				return false; // There is a new word, so we don't want to be hiding this sentence.
+
+			if (options.showTranslationText == false && reveal == false)
+			{
+				hintSentence.style.filter = "blur(0.3em)";
+				hintSentence.onclick = () => {
+					hintSentence.style.filter = "unset";
+					hintSentence.title = "";
+				};
+				hintSentence.title = "Click to Show Sentence";
+			}
+			else
+			{
+				hintSentence.style.filter = "none";
+				hintSentence.title = "";
+			}
+
+			if (options.showToggleHidingTextButton)
+			{
+				let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
+				if (enableDisableButton.length == 0)
+				{
+					// No enableDisableButton so make one and add it after the hint sentence.
+
+					enableDisableButton = document.createElement("button");
+					enableDisableButton.className = "hideTextEnableDisable";
+					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
+					enableDisableButton.style =
+					`
+						color: white;
+						float: right;
+						border: 0;
+						border-radius: 0.5em;
+						padding: 0.4em;
+						background-color: ${LIGHT_BLUE};
+						box-shadow: 0 0.3em ${DARK_BLUE};
+						transition: filter 0.2s;
+						filter: brightness(1.0);
+					`;
+					enableDisableButton.onmouseover = () => {
+						enableDisableButton.style.filter = "brightness(1.1)";
+					};
+					enableDisableButton.onmouseleave = () => {
+						enableDisableButton.style.filter = "brightness(1.0)";
+						enableDisableButton.style.boxShadow = `0 0.3em ${DARK_BLUE}`;
+						enableDisableButton.style.transform = "none";
+					};
+					enableDisableButton.onmousedown = () => {
+						enableDisableButton.style.boxShadow = "none";
+						enableDisableButton.style.transform = "translate(0, 0.3em)";
+					};
+					enableDisableButton.onmouseup = () => {
+						enableDisableButton.style.boxShadow = `0 0.3em ${DARK_BLUE}`;
+						enableDisableButton.style.transform = "none";
+
+						options.showTranslationText = !options.showTranslationText;
+						chrome.storage.sync.set({"options": options});
+						hideTranslationText();
+					};
+
+					hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);
+				}
+				else
+				{
+					// There is already an enableDisableButton just update the text and function
+
+					enableDisableButton = enableDisableButton[0];
+					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
+				}
+			}
+			return true;
+		}
+		else
+		{
+			// No speaker button so we are translating from native to target language
+		}
+	}
+	return false;
+}
+
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
 let childListMutationHandle = function(mutationsList, observer)
 {
+	let rootChildReplaced = false;
+	let rootChildContentsReplaced = false;
+	let mainBodyReplaced = false
+	let mainBodyContentsChanged = false ;
+	let popupChanged = false;
+	let popupIcon;
+	let lessonLoaded = false;
+	let lessonQuestionChanged = false;
+	
 	for (let mutation of mutationsList)
 	{
 		if (mutation.target == rootElem)
+			rootChildReplaced = true;
+		else if (mutation.target == rootChild)
+			rootChildContentsReplaced = true;
+		else if (mutation.target == mainBodyContainer)
+			mainBodyReplaced = true;
+		else if (mutation.target == mainBody)
+			mainBodyContentsChanged = true;
+		else if (mutation.target.className == POPUP_ICON)
 		{
-			// root child list has changed so rootChild has probably been replaced, let's redefine it.
-			rootChild = rootElem.childNodes[0];
+			popupChanged = true;
+			popupIcon = mutation.target;
+		}
+		else if (mutation.target.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
+			lessonLoaded = true;
+		else if (mutation.target.parentNode.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
+			lessonQuestionChanged = true;
+	}
+
+	if (rootChildReplaced)
+	{
+		// root child list has changed so rootChild has probably been replaced, let's redefine it.
+		rootChild = rootElem.childNodes[0];
+		init();
+	}
+	if (rootChildContentsReplaced)
+	{
+		// Check if there is both the topbar and the main page elem.
+		if (rootChild.childElementCount == 2)
+		{
+			// not just changed into a lesson
+			languageChanged = false;
 			init();
 		}
-		else if (mutation.target == rootChild)
+		else
 		{
-			// Check if there is both the topbar and the main page elem.
-			if (rootChild.childElementCount == 2)
-			{
-				// not just changed into a lesson
-				languageChanged = false;
-				init();
-			}
-			else
-			{
-				// we have just entered a lesson in the normal way and we don't need to do anything.
-			}
+			// Entered a lesson in the normal way, through the skill tree.
+			// Need to set up observer on lessonMainSection for when the first question loads
+
+			childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0], {childList:true});
 		}
-		else if (mutation.target == mainBodyContainer)
+	}
+	if (mainBodyReplaced)
+	{
+		// mainBodyContainer childlist changed, so the mainBody element must have been replaced.
+		mainBody = mainBodyContainer.firstChild;
+
+
+		// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks.
+		// But also make sure that this page hasn't removed to top bar, if it has just stop.
+		if (document.body.contains(topBarDiv))
+			classNameMutationHandle(mutationsList, null);
+		else
+			return false;
+	}
+	if (mainBodyContentsChanged)
+	{
+		// Switched between mobile and desktop layouts.
+
+		// Set appropriate styling to need strengthing list or skill suggestion
+		let mobileMargin = "0.5em 1em 0.5em 1em";
+		let desktopMargin = "0 0 2em 0";
+
+		let mobileWidth = "auto";
+		let desktopWidth = "calc(100% - 119px)";
+
+		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
 		{
-			// mainBodyContainer childlist changed, so the mainBody element must have been replaced.
-			mainBody = mainBodyContainer.firstChild;
-
-
-			// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks.
-			// But also make sure than this page hasn't removed to top bar, if it has just stop.
-			if (topBarDiv != null)
-				classNameMutationHandle(mutationsList, null);
-			else
-				return false;
+			// There is an IN BETA label
+			mobileMargin = "1.5em 1em 0.5em 1em";
+			desktopMargin = "0.5em 1em 2em 1em";
+			desktopWidth = "auto";
 		}
-		else if (mutation.target == mainBody)
+
+		if (document.getElementsByClassName(SIDEBAR).length == 0)
 		{
-			// Switched between mobile and desktop layouts.
+			// No sidebar so we are in mobile layout.
+			inMobileLayout = true;
 
-			// Set appropriate styling to need strengthing list or skill suggestion
-			let mobileMargin = "0.5em 1em 0.5em 1em";
-			let desktopMargin = "0 0 2em 0";
-
-			let mobileWidth = "auto";
-			let desktopWidth = "calc(100% - 119px)";
-
-			if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
+			if (document.getElementById("strengthenBox") != null)
 			{
-				// There is an IN BETA label
-				mobileMargin = "1.5em 1em 0.5em 1em";
-				desktopMargin = "0.5em 1em 2em 1em";
-				desktopWidth = "auto";
+				document.getElementById("strengthenBox").style.margin = mobileMargin;
+				document.getElementById("strengthenBox").style.width = mobileWidth;
 			}
-
-			if (document.getElementsByClassName(SIDEBAR).length == 0)
+			if (document.getElementById("fullStrengthMessageContainer") != null)
 			{
-				// No sidebar so we are in mobile layout.
-				inMobileLayout = true;
+				document.getElementById("fullStrengthMessageContainer").style.margin = mobileMargin;
+				document.getElementById("fullStrengthMessageContainer").style.width = mobileWidth;
+			}
+			
+		}
+		else
+		{
+			// There is a sidebar so we are in normal desktop layout.
+			inMobileLayout = false;
 
-				if (document.getElementById("strengthenBox") != null)
-				{
-					document.getElementById("strengthenBox").style['margin'] = mobileMargin;
-					document.getElementById("strengthenBox").style['width'] = mobileWidth;
-				}
-				if (document.getElementById("fullStrengthMessageContainer") != null)
-				{
-					document.getElementById("fullStrengthMessageContainer").style['margin'] = mobileMargin;
-					document.getElementById("fullStrengthMessageContainer").style['width'] = mobileWidth;
-				}
+			if (document.getElementById("strengthenBox") != null)
+			{
+				document.getElementById("strengthenBox").style.margin = desktopMargin;
+				document.getElementById("strengthenBox").style.width = desktopWidth;
 				
 			}
+			if (document.getElementById("fullStrengthMessageContainer") != null)
+			{
+				document.getElementById("fullStrengthMessageContainer").style.margin = desktopMargin;
+				document.getElementById("fullStrengthMessageContainer").style.width = desktopWidth;
+			}
+			
+
+			// Try and add the XP box again as the sidebar has come back
+			if (options.XPInfo) displayXPBreakdown();
+		}
+	}
+	if (popupChanged)
+	{
+		// Crown or streak pop up box has appeared or dissapeared.
+
+		if (languageChanged)
+		{
+			// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
+			return false;
+		}
+		else if (popupIcon.getElementsByClassName(GOLD_CROWN).length + popupIcon.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
+		{
+			// Crowns has had the change.
+			if (options.crownsInfo && popupIcon.lastChild.nodeName == 'DIV')
+			{
+				// Pop-up box, which is a div, has just appeared as the last child, let's display the Crown breakdown.
+				displayCrownsBreakdown();
+			}
 			else
 			{
-				// There is a sidebar so we are in normal desktop layout.
-				inMobileLayout = false;
-
-				if (document.getElementById("strengthenBox") != null)
-				{
-					document.getElementById("strengthenBox").style['margin'] = desktopMargin;
-					document.getElementById("strengthenBox").style['width'] = desktopWidth;
-					
-				}
-				if (document.getElementById("fullStrengthMessageContainer") != null)
-				{
-					document.getElementById("fullStrengthMessageContainer").style['margin'] = desktopMargin;
-					document.getElementById("fullStrengthMessageContainer").style['width'] = desktopWidth;
-				}
-				
-
-				// Try and add the XP box again as the sidebar has come back
-				if (options.XPInfo) displayXPBreakdown();
+				// Pop-up box disappeared
 			}
 		}
-		else if (mutation.target.className == POPUP_ICON) // Applies to both mobile and desktop layout streak and crowns icons.
+		if (popupIcon.getElementsByClassName(COLOURED_FLAME).length +  popupIcon.getElementsByClassName(GREY_FLAME).length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
 		{
-			// Crown or streak pop up box has appeared or dissapeared.
-
-			if (languageChanged)
+			// Streak/XP has had the change.
+			if (options.XPInfo && popupIcon.lastChild.nodeName == 'DIV')
 			{
-				// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
-				continue;
+				// Pop-up box, which is a div, has just appeared as the last child, let's display the XP breakdown.
+				displayXPBreakdown();
 			}
-			else if (mutation.target.getElementsByClassName(GOLD_CROWN).length + mutation.target.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
+			else
 			{
-				// Crowns has had the change.
-				if (options.crownsInfo && mutation.target.lastChild.nodeName == 'DIV')
-				{
-					// Pop-up box, which is a div, has just appeared as the last child, let's display the Crown breakdown.
-					displayCrownsBreakdown();
-				}
-				else
-				{
-					// Pop-up box disappeared
-				}
-			}
-			if (mutation.target.getElementsByClassName(COLOURED_FLAME).length +  mutation.target.getElementsByClassName(GREY_FLAME).length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
-			{
-				// Streak/XP has had the change.
-				if (options.XPInfo && mutation.target.lastChild.nodeName == 'DIV')
-				{
-					// Pop-up box, which is a div, has just appeared as the last child, let's display the XP breakdown.
-					displayXPBreakdown();
-				}
-				else
-				{
-					// Pop-up box disappeared
-				}
+				// Pop-up box disappeared
 			}
 		}
+	}
+	if (lessonLoaded)
+	{
+		// Question section loaded.
+
+		// Run check for translation type question
+		hideTranslationText();
+
+		// Set up mutation observer for question change
+		childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0].firstChild, {childList:true});
+		
+		// Set up mutation observer for question checked status change
+		const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
+		classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
+	}
+	if (lessonQuestionChanged)
+	{
+		// Run check for translation type question
+
+		hideTranslationText();
 	}
 };
 
@@ -2175,6 +2472,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 		we are also changed to the main page, triggering the page change mutation.
 	*/
 	let pageChanged = false;
+	let questionCheckStatusChange = false;
 	for (let mutation of mutationsList)
 	{
 		if (mutation.target.parentNode.parentNode == languageLogo)
@@ -2183,9 +2481,14 @@ let classNameMutationHandle = function(mutationsList, observer)
 			languageChanged = true;
 			languageChangesPending++;
 		}
+		else if (mutation.target.parentNode.className == LESSON_BOTTOM_SECTION)
+		{
+			// The question check status changed
+			questionCheckStatusChange = true;
+		}
 		else
 		{
-			// this mutation is not a language change, so it must be a page change.
+			// this mutation is not a language change or a question check, so it must be a page change.
 			pageChanged = true;
 		}
 	}
@@ -2195,6 +2498,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 		// As the language has just changed, need to wipe the slate clean so no old data is shown after change.
 		removeStrengthBars();
 		removeNeedsStrengtheningBox();
+		removeCrackedSkillsList();
 		removeCrownsBreakdown();
 		removeXPBox();
 		removeSuggestion();
@@ -2231,6 +2535,27 @@ let classNameMutationHandle = function(mutationsList, observer)
 			onMainPage = false;
 		}
 	}
+	if (questionCheckStatusChange)
+	{
+		for (let mutation of mutationsList)
+		{
+			if (mutation.target.className.includes(QUESTION_UNCHECKED))
+			{
+				// The current question has not been checked yet,
+				// don't need to do anything.
+			}
+			else if (mutation.target.className.includes(QUESTION_CHECKED))
+			{
+				// The current question has just been checked,
+				// lets unhide the question text if it was hidden.
+				hideTranslationText(true);
+			}
+			else
+			{
+				// something else, maybe not on a question, just ignore it
+			}
+		}
+	}
 };
 
 let classNameObserver = new MutationObserver(classNameMutationHandle);
@@ -2259,116 +2584,136 @@ async function init()
 		inMobileLayout = true;
 	else
 		inMobileLayout = false;
-
-	if(rootChild.childNodes.length == 1) // If there is only one child of rootChild then we are on the log in page.
+	
+	if (rootChild.firstChild.className === LOGIN_PAGE)
 	{
-		// On login page so cannot continue to turn rest of init process.
+		// On login page so cannot continue to run rest of init process.
 		onMainPage = false;
 		return false;
 	}
 	else
 	{
 		// should be logged in
-		
-		/*
-			As of 2019-07-17 comment nodes have been removed, so testing of position of main body element is simpler.
-			Main body container element has class _3MLiB. If it is the first child, there is no topbar Div, if it is second place, then second should be a topBarDiv.
-			As no comment nodes before or after, can just check the number of children.
-			If there are two children, then we have both a top bar and the main page, otherwise it is probably just the main page with no top bar.
-		*/
+		// now test to see if we are in a lesson or not
 
-		if(rootChild.childElementCount == 2)
+		if (rootChild.firstChild.className == LESSON)
 		{
-			// Using new white topBar layout
+			// in a lesson
+			// we probably got here from a link in the needs strengthenin list
 
-			// set username via the href of a link to the profile
-			let profileTabHrefParts = document.querySelector("[data-test = \"profile-tab\"]").href.split("/")
-			username = profileTabHrefParts[profileTabHrefParts.length - 1];
+			onMainPage = false;
 
-			// topBar Div is the direct container holding the navigation butons, has class _3F_8q
-			// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];
-			// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
-			// Safer to use class name, which may also change...
-			// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
-			topBarDiv = rootChild.getElementsByClassName(TOP_BAR)[0];
-			mobileTopBarDiv = rootChild.getElementsByClassName(TOP_BAR)[1];
-			
-			// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
-			let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
-			// if numNavButtons = 4 then there is no stories button.
-			// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+			const lessonMainSection = document.getElementsByClassName(LESSON_MAIN_SECTION)[0];
 
-			let homeNav = topBarDiv.childNodes[0];
+			// There is a loading animation inside lessonMainSection before the first question,
+			// so let's add a childList mutaion observer to lessonMainSection and run the checks then.
 
-			let storiesNav;
-			// let discussionNav;
-			let shopNav;
-			let crownNav;
-			let streakNav;
-
-			if (numNavButtons == 5)
-			{
-				storiesNav = topBarDiv.childNodes[2];
-				/* unused/unusable
-				discussionNav = topBarDiv.childNodes[4];
-				*/
-				shopNav = topBarDiv.childNodes[6];
-				languageLogo = topBarDiv.childNodes[10];
-				crownNav = topBarDiv.childNodes[11];
-				streakNav = topBarDiv.childNodes[12];
-			}
-			else
-			{
-				/* unused/unusable
-				discussionNav = topBarDiv.childNodes[2];
-				*/
-				shopNav = topBarDiv.childNodes[4];
-				languageLogo = topBarDiv.childNodes[8];
-				crownNav = topBarDiv.childNodes[9];
-				streakNav = topBarDiv.childNodes[10];
-			}
-			
-			// set up observers for page changes
-			classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
-			/* unused/unusable
-			classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
-			*/
-			classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
-
-			// set up observers for crown and streak nav hovers
-			childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
-			childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
-
-			if (homeNav.className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
-			{
-				// Seems as though the main page is now at /learn and the tab is not active, but we leave the check in case
-				// on home page
-				onMainPage = true;
-			}
-			else
-				onMainPage = false;
-
-			// need to set up Observer on language logo for language change detection
-			// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
-			classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
-
-			/*
-			language = document.head.getElementsByTagName("title")[0].innerHTML.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
-			
-			language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
-			We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
-			
-
-			Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
-			*/
-
-			await optionsLoaded;
-			requestData();
+			childListObserver.observe(lessonMainSection, {childList: true});
 		}
 		else
 		{
-			// page we are on is most likely a lesson, and we got here from a link in the strengthenBox.
-			onMainPage = false;
+			// not in a lesson
+			/*
+				Main body container element has class _3MLiB.
+				If it is the first child, there is no topBarDiv and it is the only child of rootChild,
+				if it is second place, then the first child should be a topBarDiv and there are two children of rootChild.
+				So it is enough to just test for the number of children of rootChild to check for a topBarDiv.
+			*/
+
+			if (rootChild.childElementCount == 1)
+			{
+				// no topBarDiv so nothing left to do
+				onMainPage = false;
+				return false;
+			}
+			else
+			{
+				// there is a topBarDiv so we can continue to process the page to workout what to do
+
+				// set username via the href of a link to the profile
+				let profileTabHrefParts = document.querySelector("[data-test = \"profile-tab\"]").href.split("/");
+				username = profileTabHrefParts[profileTabHrefParts.length - 1];
+
+				// topBar Div is the direct container holding the navigation butons, has class _3F_8q
+				// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];
+				// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
+				// Safer to use class name, which may also change...
+				// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
+				topBarDiv = rootChild.getElementsByClassName(TOP_BAR)[0];
+				mobileTopBarDiv = rootChild.getElementsByClassName(TOP_BAR)[1];
+				
+				// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
+				let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
+				// if numNavButtons = 4 then there is no stories button.
+				// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+
+				let homeNav = topBarDiv.childNodes[0];
+
+				let storiesNav;
+				// let discussionNav;
+				let shopNav;
+				let crownNav;
+				let streakNav;
+
+				if (numNavButtons == 5)
+				{
+					storiesNav = topBarDiv.childNodes[2];
+					/* unused/unusable
+					discussionNav = topBarDiv.childNodes[4];
+					*/
+					shopNav = topBarDiv.childNodes[6];
+					languageLogo = topBarDiv.childNodes[10];
+					crownNav = topBarDiv.childNodes[11];
+					streakNav = topBarDiv.childNodes[12];
+				}
+				else
+				{
+					/* unused/unusable
+					discussionNav = topBarDiv.childNodes[2];
+					*/
+					shopNav = topBarDiv.childNodes[4];
+					languageLogo = topBarDiv.childNodes[8];
+					crownNav = topBarDiv.childNodes[9];
+					streakNav = topBarDiv.childNodes[10];
+				}
+				
+				// set up observers for page changes
+				classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
+				/* unused/unusable
+				classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
+				*/
+				classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
+
+				// set up observers for crown and streak nav hovers
+				childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
+				childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
+
+				if (homeNav.className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
+				{
+					// Seems as though the main page is now at /learn and the tab is not active, but we leave the check in case
+					// on home page
+					onMainPage = true;
+				}
+				else
+					onMainPage = false;
+
+				// need to set up Observer on language logo for language change detection
+				// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
+				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+
+				/*
+				language = document.head.getElementsByTagName("title")[0].textContent.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
+				
+				language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
+				We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
+				
+
+				Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
+				*/
+
+				await optionsLoaded;
+				requestData();
+			}
 		}
 	}
 }

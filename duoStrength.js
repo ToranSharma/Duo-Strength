@@ -1871,11 +1871,37 @@ function displaySuggestion(skills, bonusSkills)
 		}
 		else if (treeLevel == 0)
 		{
-			link.href = "/skill/" + languageCode + "/" + skillsByCrowns[0][0].url_title + "/";
-			link.textContent = skillsByCrowns[0][0].title;
-
+			// Tree not finished, so suggest the next skill that is not yet been completed.
+			let nextSkill = skillsByCrowns[0][0];
+			
 			fullStrengthMessage.textContent = "All the skills that you have learnt so far are fully strengthened. ";
-			fullStrengthMessage.textContent += "The next skill to learn is: ";
+
+			if (nextSkill.locked)
+			{
+				// The next skill is locked, so a checkpoint test is needed.
+				let checkpointNumber;
+				const checkpoints = document.querySelectorAll(`[data-test="checkpoint-badge"]`);
+				checkpoints.forEach(
+					(checkpoint, index) =>
+					{
+						if (checkpointNumber == null && checkpoint.querySelector(`img`).src.includes(`unlocked`))
+							checkpointNumber = index;
+					}
+				);
+				link.href = `/checkpoint/${languageCode}/${checkpointNumber}/`;
+				link.textContent = `Checkpoint ${checkpointNumber +1}`;
+
+				fullStrengthMessage.textContent += "To unlock more skills you need to complete: ";
+			}
+			else
+			{
+				// The next skil is unlocked so lets suggest it.
+				link.href = `/skill/${languageCode}/${nextSkill.url_title}/`;
+				link.textContent = nextSkill.title;
+
+				fullStrengthMessage.textContent += "The next skill to learn is: ";
+			}
+			
 			fullStrengthMessage.appendChild(link);
 		}
 		else

@@ -1,0 +1,30 @@
+#!/bin/bash
+# Increment version number to input version number
+
+if [ "$#" -eq 1 ]; then
+	echo "Usage: parentbranch branchtype [vernum]"
+	exit 2
+fi
+
+PARENTBRANCH=$1
+BRANCHTYPE=$2
+VERNUM=$3
+
+if [ "$BRANCHTYPE" != "hotfix" -a "$BRANCHTYPE" != "release" ]; then
+	echo "Branchtype must be hotfix or release"
+	exit 2
+fi
+
+if [ "$BRANCHTYPE" == "hotfix" ]; then
+	echo "Incrementing version number for hotfix"
+	VERNUM=$(cat manifest.json | awk '(/"version"/){vernum = $NF; gsub(/[^0-9^.]/, "", vernum); print vernum}' | awk -F "." '{print $1 "." $2 "." $NF+1}')
+	echo "Version number now $VERNUM"
+fi
+
+git checkout $PARENTBRANCH
+git checkout -b $BRANCHTYPE"-"$VERNUM
+
+sed -i -b '/"version"/s/:\t".*"/:\t"'$VERNUM'"/' manifest.json
+
+git add manifest.json
+git commit -m "Incremented version number to $VERNUM"

@@ -1,0 +1,15 @@
+#!/bin/bash
+# Automatically merge a new version back into master and develop
+
+CURRENTBRANCH=$( git rev-parse --abbrev-ref HEAD )
+
+git checkout master
+git merge --no-ff $CURRENTBRANCH
+git push
+
+git checkout develop
+git merge --no-ff $CURRENTBRANCH
+git push
+
+git push --delete origin $CURRENTBRANCH
+git branch -d $CURRENTBRANCH

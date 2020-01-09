@@ -3,6 +3,10 @@ Changelog
 
 [Unreleased]
 ------------
+
+[v1.2.0] - 2020-01-09
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.0)
 ### Added
 - New feature that lets the user hide the question text on translation 
 question from the target language to the native language. Hiden text can be 
@@ -22,6 +26,8 @@ behaviour, similar to the Needs Strengthening List.
 now focused so that it can be opened quickly without using the mouse. The
 cracked skills list has priority over the needs strengthening list if both are
 being displayed.
+- Skills suggestion detects checkpoints if the next skill is locked, and 
+suggets the checkpoint to do next.
 
 [v1.1.12] - 2019-11-07
 -----------------
@@ -506,6 +512,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.2.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.12...v1.2.0
 [v1.1.12]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.11...v1.1.12
 [v1.1.11]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.10...v1.1.11
 [v1.1.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.9...v1.1.10

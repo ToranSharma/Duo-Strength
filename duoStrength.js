@@ -83,6 +83,7 @@ function retrieveOptions()
 					"crackedSkillsList":				true,
 					"crackedSkillsListLength":			"10",
 					"crackedSkillsListSortOrder":		"0",
+					"focusFirstSkill":					true,
 					"skillSuggestion":					true,
 					"skillSuggestionMethod":			"0",
 					"crownsInfo":						true,
@@ -1081,7 +1082,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		topOfTree.appendChild(strengthenBox);
 	}
 
-	firstSkillLink.focus();
+	if (options.focusFirstSkill) firstSkillLink.focus();
 }
 
 function getCrackedSkills()
@@ -1915,7 +1916,7 @@ function displaySuggestion(skills, bonusSkills)
 
 		topOfTree.appendChild(container);
 
-		link.focus();
+		if (options.focusFirstSkill) link.focus();
 	}
 	else
 	{
@@ -2180,7 +2181,7 @@ function checkUIVersion()
 }
 */
 
-function hideTranslationText(reveal = false)
+function hideTranslationText(reveal = false, setupObserver = true)
 {
 	if (document.getElementsByClassName(QUESTION_CONTAINER).length == 0)
 		return false;
@@ -2195,7 +2196,11 @@ function hideTranslationText(reveal = false)
 		if (challengeTranslatePrompt.querySelectorAll("BUTTON").length != 0)
 		{
 			// There is an svg in the question sentence which is the speaker button so we are translating from the target to the native language
+			const questionArea = questionContainer.firstChild.firstChild;
+			if (setupObserver) childListObserver.observe(questionArea, {childList: true});
+			
 			const hintSentence = challengeTranslatePrompt.querySelector('[data-test="hint-sentence"]');
+			
 
 			if (hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length != 0)
 				return false; // There is a new word, so we don't want to be hiding this sentence.
@@ -2228,7 +2233,6 @@ function hideTranslationText(reveal = false)
 					enableDisableButton.style =
 					`
 						color: white;
-						float: right;
 						border: 0;
 						border-radius: 0.5em;
 						padding: 0.4em;
@@ -2258,6 +2262,17 @@ function hideTranslationText(reveal = false)
 						hideTranslationText();
 					};
 
+					if (challengeTranslatePrompt.dir == "ltr")
+					{
+						// LTR language, button goes to the right
+						enableDisableButton.style.float = "right";
+					}
+					else
+					{
+						// RTL language, button goes to the left
+						enableDisableButton.style.float = "left";
+					}
+					
 					hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);
 				}
 				else
@@ -2289,6 +2304,7 @@ let childListMutationHandle = function(mutationsList, observer)
 	let popupIcon;
 	let lessonLoaded = false;
 	let lessonQuestionChanged = false;
+	let lessonInputMethodChanged = false;
 	
 	for (let mutation of mutationsList)
 	{
@@ -2309,6 +2325,8 @@ let childListMutationHandle = function(mutationsList, observer)
 			lessonLoaded = true;
 		else if (mutation.target.parentNode.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
 			lessonQuestionChanged = true;
+		else if (mutation.target.parentNode.parentNode.className.includes(QUESTION_CONTAINER))
+			lessonInputMethodChanged = true;
 	}
 
 	if (rootChildReplaced)
@@ -2451,6 +2469,7 @@ let childListMutationHandle = function(mutationsList, observer)
 		// Set up mutation observer for question change
 		childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0].firstChild, {childList:true});
 		
+		
 		// Set up mutation observer for question checked status change
 		const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
 		classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
@@ -2460,6 +2479,12 @@ let childListMutationHandle = function(mutationsList, observer)
 		// Run check for translation type question
 
 		hideTranslationText();
+	}
+	if (lessonInputMethodChanged)
+	{
+		// Need to re run question hiding as the question box has been replaced.
+
+		hideTranslationText(undefined, false);
 	}
 };
 

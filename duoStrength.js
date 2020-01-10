@@ -2233,7 +2233,6 @@ function hideTranslationText(reveal = false, setupObserver = true)
 					enableDisableButton.style =
 					`
 						color: white;
-						float: right;
 						border: 0;
 						border-radius: 0.5em;
 						padding: 0.4em;
@@ -2263,6 +2262,17 @@ function hideTranslationText(reveal = false, setupObserver = true)
 						hideTranslationText();
 					};
 
+					if (challengeTranslatePrompt.dir == "ltr")
+					{
+						// LTR language, button goes to the right
+						enableDisableButton.style.float = "right";
+					}
+					else
+					{
+						// RTL language, button goes to the left
+						enableDisableButton.style.float = "left";
+					}
+					
 					hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);
 				}
 				else

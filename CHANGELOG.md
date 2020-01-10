@@ -10,8 +10,12 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.0)
 ### Added
 - New option to disable the focusing of the first skill in lists. This is added
-to combat the auto scrolling into view of the lists when reentereing the tree
+to combat the auto scrolling into view of the lists when reentering the tree
 from a lesson.
+
+### Changed
+- Changing between word bank and keyboard input on a translation question is now
+detected and the sentence is hidden after the swtich.
 
 [v1.2.0] - 2020-01-09
 -----------------

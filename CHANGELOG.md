@@ -3,6 +3,15 @@ Changelog
 
 [Unreleased]
 ------------
+-
+
+[v1.2.1] - 2020-01-10
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.0)
+### Added
+- New option to disable the focusing of the first skill in lists. This is added
+to combat the auto scrolling into view of the lists when reentereing the tree
+from a lesson.
 
 [v1.2.0] - 2020-01-09
 -----------------

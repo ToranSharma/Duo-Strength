@@ -83,6 +83,7 @@ function retrieveOptions()
 					"crackedSkillsList":				true,
 					"crackedSkillsListLength":			"10",
 					"crackedSkillsListSortOrder":		"0",
+					"focusFirstSkill":					true,
 					"skillSuggestion":					true,
 					"skillSuggestionMethod":			"0",
 					"crownsInfo":						true,
@@ -1081,7 +1082,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		topOfTree.appendChild(strengthenBox);
 	}
 
-	firstSkillLink.focus();
+	if (options.focusFirstSkill) firstSkillLink.focus();
 }
 
 function getCrackedSkills()
@@ -1915,7 +1916,7 @@ function displaySuggestion(skills, bonusSkills)
 
 		topOfTree.appendChild(container);
 
-		link.focus();
+		if (options.focusFirstSkill) link.focus();
 	}
 	else
 	{

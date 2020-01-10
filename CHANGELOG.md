@@ -3,6 +3,21 @@ Changelog
 
 [Unreleased]
 ------------
+-
+
+[v1.2.1] - 2020-01-10
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.1)
+### Added
+- New option to disable the focusing of the first skill in lists. This is added
+to combat the auto scrolling into view of the lists when reentering the tree
+from a lesson.
+
+### Changed
+- Changing between word bank and keyboard input on a translation question is now
+detected and the sentence is hidden after the switch.
+- Enable/disable text hiding button is now floated according to the language text
+direction, right for LTR and left for RTL.
 
 [v1.2.0] - 2020-01-09
 -----------------
@@ -512,6 +527,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.2.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.0...v1.2.1
 [v1.2.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.12...v1.2.0
 [v1.1.12]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.11...v1.1.12
 [v1.1.11]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.10...v1.1.11

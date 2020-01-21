@@ -14,6 +14,7 @@ const BONUS_SKILL_DIVIDER = "_32Q0j";
 const TREE_CONTAINER = "i12-l";
 const TOP_OF_TREE_WITH_IN_BETA = "w8Lxd";
 const TOP_OF_TREE = "_3rABk";
+const TOP_OF_TREE_NEW = "iIzBH";
 const MOBILE_TOP_OF_TREE = "_3UShd";
 const SKILL_ROW = "_2GJb6";
 const SKILL_COLUMN = "QmbDT";
@@ -809,6 +810,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			document.getElementsByClassName(SKILL_ROW).length != 0 &&
 			(
 				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
+				document.getElementsByClassName(TOP_OF_TREE_NEW).length != 0 ||
 				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
 				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
 			)
@@ -1752,6 +1754,7 @@ function displaySuggestion(skills, bonusSkills)
 			document.getElementsByClassName(SKILL_ROW).length != 0 &&
 			(
 				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
+				document.getElementsByClassName(TOP_OF_TREE_NEW).length != 0 ||
 				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
 				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
 			)
@@ -2262,7 +2265,10 @@ function hideTranslationText(reveal = false, setupObserver = true)
 						hideTranslationText();
 					};
 
-					if (challengeTranslatePrompt.dir == "ltr")
+					if (
+						challengeTranslatePrompt.dir == "ltr" ||
+						challengeTranslatePrompt.firstChild.dir == "ltr"
+					)
 					{
 						// LTR language, button goes to the right
 						enableDisableButton.style.float = "right";

@@ -11,6 +11,8 @@ Changelog
 ### Fixed
 - Detection of left to right, or right to left sentences in translation
 questions.
+- Classname for top of tree element. Old classname retained in case not all
+users have this change.
 
 [v1.2.1] - 2020-01-10
 -----------------

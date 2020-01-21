@@ -2262,7 +2262,10 @@ function hideTranslationText(reveal = false, setupObserver = true)
 						hideTranslationText();
 					};
 
-					if (challengeTranslatePrompt.dir == "ltr")
+					if (
+						challengeTranslatePrompt.dir == "ltr" ||
+						challengeTranslatePrompt.firstChild.dir == "ltr"
+					)
 					{
 						// LTR language, button goes to the right
 						enableDisableButton.style.float = "right";

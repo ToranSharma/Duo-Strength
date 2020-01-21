@@ -44,6 +44,7 @@ const QUESTION_UNCHECKED = "_34sNg";
 const QUESTION_CHECKED = "_2f9Fr";
 const CRACKED_SKILL_OVERLAY = "._22Nf9";
 const NEW_WORD_SELECTOR = "._29XRF";
+const LEAGUE_TABLE = "_2ANgP";
 
 let languageCode = "";
 let language = "";
@@ -98,6 +99,7 @@ function retrieveOptions()
 					"XPPrediction":						true,
 					"showTranslationText":				true,
 					"showToggleHidingTextButton":		true,
+					"showLeagues":						true,
 				};
 			if (Object.entries(data).length === 0)
 			{
@@ -2594,6 +2596,9 @@ let childListObserver = new MutationObserver(childListMutationHandle);
 
 async function init()
 {
+	// hide leagues until options loaded, then can unhide if it needs to be displayed
+	document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
+
 	let optionsLoaded = retrieveOptions();
 
 	rootElem = document.getElementById("root"); // When logging in child list is changed.
@@ -2743,6 +2748,9 @@ async function init()
 				*/
 
 				await optionsLoaded;
+				if (options.showLeagues)
+					document.getElementsByClassName(LEAGUE_TABLE)[0].style.removeProperty('display');
+
 				requestData();
 			}
 		}

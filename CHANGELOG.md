@@ -3,7 +3,8 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Added
+- Option to hide the league table from the side bar.
 
 [v1.2.2] - 2020-01-21
 -----------------

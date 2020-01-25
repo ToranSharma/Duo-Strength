@@ -2265,18 +2265,17 @@ function hideTranslationText(reveal = false, setupObserver = true)
 						hideTranslationText();
 					};
 
-					if (
-						challengeTranslatePrompt.dir == "ltr" ||
-						challengeTranslatePrompt.firstChild.dir == "ltr"
-					)
+					if (questionArea.querySelectorAll(`[dir="ltr"]`).length > 0)
 					{
 						// LTR language, button goes to the right
 						enableDisableButton.style.float = "right";
+						enableDisableButton.style.marginLeft = "1em";
 					}
-					else
+					else if (questionArea.querySelectorAll(`[dir="rtl"]`).length > 0)
 					{
 						// RTL language, button goes to the left
 						enableDisableButton.style.float = "left";
+						enableDisableButton.style.marginRight = "1em";
 					}
 					
 					hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);

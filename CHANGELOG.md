@@ -3,7 +3,12 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Changed
+- Changed LTR/RTL detection to search all elements in question area for dir
+attribute. This makes the detection more flexible to different question
+layout styles, including those with images and speech bubbles.
+- Added a margin to the appropriate side of the Enable/Disable text hiding 
+button to give some breathing room for sentences in speech bubbles.
 
 [v1.2.2] - 2020-01-21
 -----------------

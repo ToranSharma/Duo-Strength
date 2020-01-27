@@ -9,6 +9,8 @@ attribute. This makes the detection more flexible to different question
 layout styles, including those with images and speech bubbles.
 - Added a margin to the appropriate side of the Enable/Disable text hiding 
 button to give some breathing room for sentences in speech bubbles.
+- Cracked skills list is updated when skills are refreshed after first 
+loading.
 
 [v1.2.2] - 2020-01-21
 -----------------

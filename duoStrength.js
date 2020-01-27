@@ -1104,6 +1104,14 @@ function getCrackedSkills()
 		userData.language_data[languageCode].skills.filter(skill => crackedSkillNames.includes(skill.short)),
 		userData.language_data[languageCode].bonus_skills.filter(skill => crackedSkillNames.includes(skill.short)),
 	];
+
+	crackedSkillElements.forEach(
+		(crackedSkillOverlay) => {
+			const parentElement = crackedSkillOverlay.parentNode;
+			childListObserver.observe(parentElement, {childList: true});
+		}
+	)
+
 	return crackedSkills;
 }
 
@@ -2310,6 +2318,7 @@ let childListMutationHandle = function(mutationsList, observer)
 	let lessonLoaded = false;
 	let lessonQuestionChanged = false;
 	let lessonInputMethodChanged = false;
+	let skillRepaired = false;
 	
 	for (let mutation of mutationsList)
 	{
@@ -2332,6 +2341,14 @@ let childListMutationHandle = function(mutationsList, observer)
 			lessonQuestionChanged = true;
 		else if (mutation.target.parentNode.parentNode.className.includes(QUESTION_CONTAINER))
 			lessonInputMethodChanged = true;
+		else if (
+			mutation.target.attributes.hasOwnProperty("data-test") &&
+			mutation.target.attributes["data-test"].value == "skill-icon" &&
+			mutation.removedNodes.length == 1 &&
+			`.${mutation.removedNodes[0].className}` == CRACKED_SKILL_OVERLAY
+		)
+			skillRepaired = true;
+
 	}
 
 	if (rootChildReplaced)
@@ -2490,6 +2507,10 @@ let childListMutationHandle = function(mutationsList, observer)
 		// Need to re run question hiding as the question box has been replaced.
 
 		hideTranslationText(undefined, false);
+	}
+	if (skillRepaired)
+	{
+		getStrengths();
 	}
 };
 

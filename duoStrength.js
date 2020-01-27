@@ -97,6 +97,8 @@ function retrieveOptions()
 					"XPBreakdown":						true,
 					"XPPrediction":						true,
 					"showTranslationText":				true,
+					"revealHotkey":						true,
+					"revealHotkeyCode":					"Ctrl+Alt+H",
 					"showToggleHidingTextButton":		true,
 				};
 			if (Object.entries(data).length === 0)
@@ -2224,6 +2226,25 @@ function hideTranslationText(reveal = false, setupObserver = true)
 					hintSentence.title = "";
 				};
 				hintSentence.title = "Click to Show Sentence";
+
+				if (options.revealHotkey)
+				{
+					hintSentence.tile += " or Press " + options.revealHotkeyCode;
+					document.onkeydown = (e) => {
+						const hotkeyList = options.revealHotkeyCode.split("+");
+						const numKeys = hotkeyList.length;
+						if (
+							e.key.toUpperCase() == hotkeyList[numKeys-1] &&
+							( (hotkeyList.includes("Ctrl") && e.ctrlKey) || !hotkeyList.includes("Ctrl") ) &&
+							( (hotkeyList.includes("Shift") && e.shiftKey) || !hotkeyList.includes("Shift") ) &&
+							( (hotkeyList.includes("Meta") && e.metaKey) || !hotkeyList.includes("Meta") ) &&
+							( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
+						)
+						{
+							hideTranslationText(true, false);
+						}
+					};
+				}
 			}
 			else
 			{

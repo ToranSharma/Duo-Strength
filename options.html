@@ -34,6 +34,10 @@
 					grid-template-columns: 3em 3em 1fr;
 					box-sizing: content-box;
 				}
+				li > ul > li.containsHotkeyInput
+				{
+					grid-template-columns: 3em 1fr;
+				}
 					li > ul > li::before
 					{
 						content: "";
@@ -64,6 +68,10 @@
 						top: calc(25% - 2px);
 						left: calc(1.5em - 0.5px);
 						grid-column: 1;
+					}
+					li > ul > li:last-child > ul::after
+					{
+						border-style: none;
 					}
 
 		input
@@ -239,10 +247,22 @@
 		<li>
 			<input class="option" id="showTranslationText" type="checkbox" checked="true" />
 			<label for="showTranslationText">Show Translation Text</label>
+			<ul>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="revealHotkey" type="checkbox" checked="true" />
+					<label for="revealHotKey">Enable Hotkey to unhide sentence</label>
+					<ul>
+						<li class="containsHotkeyInput">
+							<input class="option" id="revealHotkeyCode" type="text" value="Ctrl+Alt+H"/>
+						</li>
+					</ul>
+				</li>
+			</ul>
 		</li>
 		<li>
 			<input class="option" id="showToggleHidingTextButton" type="checkbox" checked="true" />
-			<label for="showToggleHidingTextButton">Show Button in Lessons to Toggle Above</label>
+			<label for="showToggleHidingTextButton">Show Button in Lessons to Toggle Sentence Hiding</label>
 		</li>
 	</ul>
 	<button id="enableAll">Enable all</button>

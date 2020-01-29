@@ -2596,9 +2596,6 @@ let childListObserver = new MutationObserver(childListMutationHandle);
 
 async function init()
 {
-	// hide leagues until options loaded, then can unhide if it needs to be displayed
-	document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
-
 	let optionsLoaded = retrieveOptions();
 
 	rootElem = document.getElementById("root"); // When logging in child list is changed.
@@ -2750,6 +2747,8 @@ async function init()
 				await optionsLoaded;
 				if (options.showLeagues)
 					document.getElementsByClassName(LEAGUE_TABLE)[0].style.removeProperty('display');
+				else
+					document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
 
 				requestData();
 			}

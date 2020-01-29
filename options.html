@@ -189,7 +189,7 @@
 		</li>
 		<li>
 			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
-			<label for="skillSuggestion">Fully Strengthened Tree Skill Suggestion</label>
+			<label for="skillSuggestion">Skill Suggestion</label>
 			<ul>
 				<li class="hasSelect">
 					<select class="option" id= "skillSuggestionMethod">
@@ -198,6 +198,16 @@
 						<option value="2">Last</option>
 					</select>
 					<label for="skillSuggestionMethod"> Skill at the Current Tree Level</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="hideSuggestionNonStrengthened" type="checkbox" checked="true" />
+					<label for="hideSuggestionNonStrengthened">Hide Suggestion When Not Fully Strengthened</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="hideSuggestionWithCrackedSkills" type="checkbox" checked="true" />
+					<label for="hideSuggestionWithCrackedSkills">Hide Suggestion When There Are Cracked Skills </label>
 				</li>
 			</ul>
 		</li>

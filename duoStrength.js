@@ -89,6 +89,8 @@ function retrieveOptions()
 					"focusFirstSkill":					true,
 					"skillSuggestion":					true,
 					"skillSuggestionMethod":			"0",
+					"hideSuggestionNonStrengthened":	true,
+					"hideSuggestionWithCrackedSkills":	true,
 					"crownsInfo":						true,
 					"crownsMaximum":					true,
 					"crownsGraph":						true,
@@ -106,6 +108,7 @@ function retrieveOptions()
 					"showToggleHidingTextButton":		true,
 					"showLeagues":						true,
 				};
+
 			if (Object.entries(data).length === 0)
 			{
 				// First time using version with options so nothing is set in storage.
@@ -1940,7 +1943,7 @@ function displayLanguagesInfo(languages)
 	}
 }
 
-function displaySuggestion(skills, bonusSkills)
+function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 {
 	// let skillTree;
 	// let firstSkillRow
@@ -1968,7 +1971,7 @@ function displaySuggestion(skills, bonusSkills)
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
-			setTimeout(function(){displaySuggestion(skills, bonusSkills);}, 50);
+			setTimeout(function(){displaySuggestion(skills, fullyStrengthened, noCrackedSkills);}, 50);
 		}
 		else
 		{
@@ -2048,34 +2051,49 @@ function displaySuggestion(skills, bonusSkills)
 			{
 				event.target.style.fontWeight = 'bold';
 				event.target.style.textDecoration = 'underline';
-			});
+			}
+		);
 
 		link.addEventListener('blur',
 			function(event)
 			{
 				event.target.style.fontWeight = 'normal';
 				event.target.style.textDecoration = 'none';
-			});
+			}
+		);
 		
-		let fullStrengthMessage = document.createElement("p");
+		let suggestionMessage = document.createElement("p");
 		if (treeLevel == 5)
 		{
-			fullStrengthMessage.appendChild(
-				document.createTextNode(
-					`Your ${language} tree is fully strengthened and at Level 5! Why not do a `
-				)
-			);
+			let messageText = `Your ${language} tree is `
+			if (fullyStrengthened)
+				messageText += `fully strengthened and `;
+			
+			messageText += `at Level 5`;
 
-			fullStrengthMessage.appendChild(document.createElement("a"));
-			fullStrengthMessage.lastChild.href = "/practice";
-			fullStrengthMessage.lastChild.textContent = "general practice";
+			if (noCrackedSkills)
+				messageText += ` with no cracked skills`;
+
+			messageText += `! Why not do a `;
+
+			suggestionMessage.textContent = messageText;
+
+			suggestionMessage.appendChild(document.createElement("a"));
+			suggestionMessage.lastChild.href = "/practice";
+			suggestionMessage.lastChild.style.color = "blue";
+			suggestionMessage.lastChild.textContent = "general practice";
 		}
 		else if (treeLevel == 0)
 		{
 			// Tree not finished, so suggest the next skill that is not yet been completed.
 			let nextSkill = skillsByCrowns[0][0];
 			
-			fullStrengthMessage.textContent = "All the skills that you have learnt so far are fully strengthened. ";
+			if (fullyStrengthened && noCrackedSkills)
+				suggestionMessage.textContent = `All the skills that you have learnt so far are fully Strengthened, and none are cracked. `;
+			else if (fullyStrengthened)
+				suggestionMessage.textContent = `All the skills that you have learnt so far are fully strengthened. `;
+			else if (noCrackedSkills)
+				suggestionMessage.textContent = `None of the skills that you have learnt so far are cracked. `
 
 			if (nextSkill.locked)
 			{
@@ -2092,7 +2110,7 @@ function displaySuggestion(skills, bonusSkills)
 				link.href = `/checkpoint/${languageCode}/${checkpointNumber}/`;
 				link.textContent = `Checkpoint ${checkpointNumber +1}`;
 
-				fullStrengthMessage.textContent += "To unlock more skills you need to complete: ";
+				suggestionMessage.textContent += "To unlock more skills you need to complete: ";
 			}
 			else
 			{
@@ -2100,19 +2118,25 @@ function displaySuggestion(skills, bonusSkills)
 				link.href = `/skill/${languageCode}/${nextSkill.url_title}/`;
 				link.textContent = nextSkill.title;
 
-				fullStrengthMessage.textContent += "The next skill to learn is: ";
+				suggestionMessage.textContent += "The next skill to learn is: ";
 			}
 			
-			fullStrengthMessage.appendChild(link);
+			suggestionMessage.appendChild(link);
 		}
 		else
 		{
-			fullStrengthMessage.textContent =
-				`Your ${language} tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level\xA0${treeLevel + 1}: `;
-			fullStrengthMessage.appendChild(link);
+			if (fullyStrengthened && noCrackedSkills)
+				suggestionMessage.textContent = `Your ${language} tree is fully strengthened, and there are no cracked cracked skills. `;
+			else if (fullyStrengthened)
+				suggestionMessage.textContent = `Your ${language} tree is fully strengthened. `;
+			else if (noCrackedSkills)
+				suggestionMessage.textContent = `None of the skills in your ${language} tree are cracked. `
+			
+			suggestionMessage.textContent += `Why not practise this skill to work towards getting your tree to Level\xA0${treeLevel + 1}: `;
+			suggestionMessage.appendChild(link);
 		}
 
-		container.appendChild(fullStrengthMessage);
+		container.appendChild(suggestionMessage);
 
 		topOfTree.appendChild(container);
 
@@ -2201,28 +2225,38 @@ function getStrengths()
 
 	if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 
-	const practiceNeeded = ((needsStrengthening[0].length + needsStrengthening[1].length != 0) && options.needsStrengtheningList)
-						|| ((crackedSkills[0].length + crackedSkills[1].length != 0) && options.crackedSkillsList);
-	if (practiceNeeded)
+	const fullyStrengthened = (needsStrengthening[0].length + needsStrengthening[1].length) == 0;
+	const noCrackedSkills = (crackedSkills[0].length + crackedSkills[1].length) == 0;
+
+	if (options.needsStrengtheningList && !fullyStrengthened)
+		displayNeedsStrengthening(needsStrengthening); // Not fully strengthened and the list is enabled.
+	else
+		removeNeedsStrengtheningBox(); // Remove if there happens to be one.
+
+	if (options.crackedSkillsList && !noCrackedSkills)
+		displayNeedsStrengthening(crackedSkills, true); // There are cracked skills and the list is enabled.
+	else
+		removeCrackedSkillsList(); // Remove if there happens to be one.
+
+	if (
+		(fullyStrengthened && noCrackedSkills) ||
+		(!fullyStrengthened && !options.hideSuggestionNonStrengthened) ||
+		(!noCrackedSkills && !options.hideSuggestionsWithCrackedSkills)
+	)
 	{
-		removeSuggestion(); // Remove the suggestion box if there happens to be one.
-		if (needsStrengthening[0].length + needsStrengthening[1].length != 0)
-		{
-			// Something needs strengthening.
-			if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
-		}
-		if (crackedSkills[0].length + crackedSkills[1].length != 0)
-		{
-			// There are some cracked skills.
-			if (options.crackedSkillsList) displayNeedsStrengthening(crackedSkills, true);
-		}
+		// Either a fully strengthened tree, or
+		// Not fully strengthened but still show suggestion, or
+		// There are cracked skills but still show suggestion
+		
+		if (options.skillSuggestion)
+			displaySuggestion(skills, fullyStrengthened, noCrackedSkills);
+		else
+			removeSuggestion(); // if there happens to be one
 	}
 	else
 	{
-		// Nothing that needs strengthening!
-		removeNeedsStrengtheningBox(); // Remove the needStrengthingBox if there happns to be one.
-		removeCrackedSkillsList();
-		if (options.skillSuggestion) displaySuggestion(skills);
+		// Should not be displaying a suggestion.
+		removeSuggestion() // if there happens to be one
 	}
 
 	// All done displaying what needs doing so let reset and get ready for another change.

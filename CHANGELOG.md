@@ -12,6 +12,7 @@ language.
 - Options to enable/disable this feature, and change the way the list is 
 sorted, either by Language, XP or, XP to Next Level. You can also choose 
 the reverse of any of these.
+- Option to hide the league table from the side bar.
 
 ### Changed
 - Changed LTR/RTL detection to search all elements in question area for dir

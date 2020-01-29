@@ -45,6 +45,7 @@ const QUESTION_UNCHECKED = "_34sNg";
 const QUESTION_CHECKED = "_2f9Fr";
 const CRACKED_SKILL_OVERLAY = "._22Nf9";
 const NEW_WORD_SELECTOR = "._29XRF";
+const LEAGUE_TABLE = "_2ANgP";
 
 let languageCode = "";
 let language = "";
@@ -103,6 +104,7 @@ function retrieveOptions()
 					"revealHotkey":						true,
 					"revealHotkeyCode":					"Ctrl+Alt+H",
 					"showToggleHidingTextButton":		true,
+					"showLeagues":						true,
 				};
 			if (Object.entries(data).length === 0)
 			{
@@ -2972,6 +2974,11 @@ async function init()
 				*/
 
 				await optionsLoaded;
+				if (options.showLeagues)
+					document.getElementsByClassName(LEAGUE_TABLE)[0].style.removeProperty('display');
+				else
+					document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
+
 				requestData();
 			}
 		}

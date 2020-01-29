@@ -27,6 +27,7 @@ const DAILY_GOAL_POPUP_CONTAINER = "yRM09";
 const DAILY_GOAL_SIDEBAR_CONATINER = "_1Ygk_";
 const XP_GRAPH_CONTAINER = "_3qiOl TTBxS w341j";
 const SIDEBAR = "_2_lzu";
+const WHITE_SIDEBAR_BOX_CONTAINER = "_1E3L7";
 const POPUP_ICON = "_3gtu3 _1-Eux iDKFi";
 const GOLD_CROWN = "WZkQ9";
 const GREY_CROWN = "_3FM63";
@@ -96,6 +97,8 @@ function retrieveOptions()
 					"XPInfo":							true,
 					"XPBreakdown":						true,
 					"XPPrediction":						true,
+					"languagesInfo":					true,
+					"languagesInfoSortOrder":			"0",
 					"showTranslationText":				true,
 					"showToggleHidingTextButton":		true,
 				};
@@ -1115,6 +1118,66 @@ function getCrackedSkills()
 	return crackedSkills;
 }
 
+function getLanguagesInfo()
+{
+	languages = userData.languages.filter(language => language.learning);
+	
+	languagesInfo = languages.map(language => [
+		language.language_string,
+		language.level,
+		language.points,
+		(language.level != 25) ? language.to_next_level: "-"
+	]);
+
+	/*
+		Sort the list based on the option saved:
+		0: Alphabetical
+		1: Reverse Alphabetical
+		2: XP - Descending
+		3: XP - Ascending
+		4: XP to Next Level - Descending
+		5: XP to Next Level - Ascending
+	*/
+	function sortAlphabetical(a, b)
+	{
+		return (a[0] < b[0]) ? -1 : 1;
+	}
+
+	function sortXPDescending(a, b)
+	{
+		return (a[2] < b[2]) ? 1 : -1;
+	}
+
+	function sortXPToNextLevelDescending(a, b)
+	{
+		return (a[3] < b[3]) ? 1 : -1;
+	}
+
+	switch (options.languagesInfoSortOrder)
+	{
+		case "0":
+			languagesInfo.sort(sortAlphabetical);
+			break;
+		case "1":
+			languagesInfo.sort(sortAlphabetical).reverse();
+			break;
+		case "2":
+			languagesInfo.sort(sortXPDescending);
+			break;
+		case "3":
+			languagesInfo.sort(sortXPDescending).reverse();
+			break;
+		case "4":
+			languagesInfo.sort(sortXPToNextLevelDescending);
+			break;
+		case "5":
+			languagesInfo.sort(sortXPToNextLevelDescending).reverse();
+			break;
+	}
+
+	return languagesInfo;
+}
+
 function displayCrownsBreakdown()
 {
 	if (Object.entries(userData).length == 0)
@@ -1751,6 +1814,128 @@ function displayXPBreakdown()
 	}
 }
 
+function displayLanguagesInfo(languages)
+{
+	let languagesBox = document.getElementById("languagesBox");
+
+	
+
+	if (languagesBox != null)
+	{
+		// We already have a languagesBox.
+	
+		if (languagesBox.querySelectorAll("tr").length == languages.length + 1)
+		{	
+			// Number of languages is unchanged, just update the data.
+			for (languageInfo of languages)
+			{
+				const tableRow = document.getElementById(`${languageInfo[0]}Row`);
+				const tableDataElements = tableRow.querySelectorAll("td");
+
+				languageInfo.forEach(
+					(data, index) => {
+						const tableData = tableDataElements[index];
+						tableData.textContent = data;
+					}
+				);
+			}
+		}
+		else
+		{
+			// Number of languages has changed, need to repopulate table.
+			const table = document.getElementById("languagesTable");
+			tableRowElements = languagesTable.querySelectorAll("table > tr");
+
+			// Clear current table
+			tableRowElements.forEach(row => table.removeChild(row));
+
+			// Add new rows
+			languages.forEach(
+				(languagesInfo, index) => {
+					const tableRow = document.createElement("TR");
+					tableRow.id = `${languageInfo[0]}Row`;
+					tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
+					table.appendChild(tableRow);
+
+					languageInfo.forEach(
+						(data) => {
+							const tableData = document.createElement("TD");
+							tableData.style.padding = "0";
+							tableData.textContent = data;
+							tableRow.appendChild(tableData);
+						}
+					);
+				}
+			);
+		}
+	}
+	else
+	{
+		// Need to make a languagesBox.
+		
+		languagesBox = document.createElement("DIV");
+		languagesBox.id = "languagesBox";
+		languagesBox.className = WHITE_SIDEBAR_BOX_CONTAINER;
+		
+		const heading = document.createElement("H2");
+		heading.textContent = "Languages Info";
+		languagesBox.appendChild(heading);
+
+		const table = document.createElement("TABLE");
+		table.id = "languagesTable";
+		languagesBox.appendChild(table);
+
+		const tableHead = document.createElement("THEAD");
+		table.appendChild(tableHead);
+		const tableHeadRow = document.createElement("TR");
+		tableHeadRow.style.borderBottom = "1px solid black";
+		tableHead.appendChild(tableHeadRow);
+		
+		const tableHeading = document.createElement("TH");
+		tableHeading.style.padding = "0";
+
+		tableHeading.textContent = "Language";
+		tableHeading.style.width = "30%";
+		tableHeadRow.appendChild(tableHeading.cloneNode(true));
+		
+		tableHeading.textContent = "Level";
+		tableHeading.style.width = "20%";
+		tableHeadRow.appendChild(tableHeading.cloneNode(true));
+
+		tableHeading.textContent = "Total XP";
+		tableHeading.style.width = "25%";
+		tableHeadRow.appendChild(tableHeading.cloneNode(true));
+
+		tableHeading.textContent = "XP to Next Level";
+		tableHeading.style.width = "25%";
+		tableHeadRow.appendChild(tableHeading.cloneNode(true));
+
+		languages.forEach(
+			(languageInfo, index) => {
+				const tableRow = document.createElement("TR");
+				tableRow.id = `${languageInfo[0]}Row`;
+				tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
+				table.appendChild(tableRow);
+
+				languageInfo.forEach(
+					(data) => {
+						const tableData = document.createElement("TD");
+						tableData.style.padding = "0";
+						tableData.textContent = data;
+						tableRow.appendChild(tableData);
+					}
+				);
+			}
+		);
+
+		// Add the new side bar box to the page
+		const sidebar = document.querySelector(`.${SIDEBAR}`);
+		const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONATINER}`);
+
+		sidebar.insertBefore(languagesBox, dailyGoalBox.nextSibling);
+	}
+}
+
 function displaySuggestion(skills, bonusSkills)
 {
 	// let skillTree;
@@ -2009,6 +2194,8 @@ function getStrengths()
 	if (options.strengthBars) addStrengths(strengths); // call function to add these strengths under the skills
 	
 	if (options.XPInfo) displayXPBreakdown();
+
+	if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 
 	const practiceNeeded = ((needsStrengthening[0].length + needsStrengthening[1].length != 0) && options.needsStrengtheningList)
 						|| ((crackedSkills[0].length + crackedSkills[1].length != 0) && options.crackedSkillsList);
@@ -2443,6 +2630,7 @@ let childListMutationHandle = function(mutationsList, observer)
 
 			// Try and add the XP box again as the sidebar has come back
 			if (options.XPInfo) displayXPBreakdown();
+			if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 		}
 	}
 	if (popupChanged)

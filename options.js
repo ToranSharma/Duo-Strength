@@ -136,7 +136,7 @@ function getOptions(firstLoad=false)
 	chrome.storage.sync.get("options", function (data)
 	{
 		items = data.options
-		if (Object.entries(items).length === 0)
+		if (Object.entries(data).length === 0 || Object.entries(items).length === 0)
 		{
 			saveOptions();
 			return false;

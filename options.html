@@ -33,6 +33,7 @@
 				{
 					grid-template-columns: 3em 3em 1fr;
 					box-sizing: content-box;
+					align-items: baseline;
 				}
 				li > ul > li.containsHotkeyInput
 				{
@@ -98,6 +99,11 @@
 			{
 				padding-left: 1em;
 			}
+
+		.hasNumber label
+		{
+			padding-left: 1em;
+		}
 		select
 		{
 			z-index: 3;
@@ -141,7 +147,7 @@
 			<input class="option" id="needsStrengtheningList" type="checkbox" checked="true" />
 			<label for="needsStrengtheningList">Needs Strengthening List</label>
 			<ul>
-				<li>
+				<li class="hasNumber">
 					<input class="option" id="needsStrengtheningListLength" type="number" value="10" min="1" />
 					<label for="needsStrengtheningListLength">Number of Skills Shown in List</label>
 				</li>
@@ -161,7 +167,7 @@
 			<input class="option" id="crackedSkillsList" type="checkbox" checked="true" />
 			<label for="crackedSkillsList">Cracked Skills List</label>
 			<ul>
-				<li>
+				<li class="hasNumber">
 					<input class="option" id="crackedSkillsListLength" type="number" value="10" min="1" />
 					<label for="crackedSkillsListLength">Number of Skills Shown in List</label>
 				</li>
@@ -241,6 +247,23 @@
 					<input class="dummy" type="checkbox" disabled="true" />
 					<input class="option" id="XPPrediction" type="checkbox" checked="true" />
 					<label for="XPPrediction">XP Prediction</label>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<input class="option" id="languagesInfo" type="checkbox" checked="true" />
+			<label for="languagesInfo">Languages Info Table</label>
+			<ul>
+				<li class="hasSelect">
+					<select class="option" id="languagesInfoSortOrder">
+						<option value="0">Alphabetical</option>
+						<option value="1">Reverse Alphabetical</option>
+						<option value="2" selected="true">Total XP Desc.</option>
+						<option value="3">Total XP Asc.</option>
+						<option value="4">XP to Next Level Desc.</option>
+						<option value="5">XP to Next Level Asc.</option>
+					</select>
+					<label for="languagesInfoSortOrder">Order of languages</label>
 				</li>
 			</ul>
 		</li>

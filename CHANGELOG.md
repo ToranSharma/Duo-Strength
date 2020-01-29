@@ -6,6 +6,12 @@ Changelog
 ### Added
 - Hotkey to reveal a hidden sentence. By default the hotkey is Ctrl+Alt+H.
 - Options to enable/disable hotkey and change key combination.
+- New box in the side bar with a table of all the languages a user is 
+learning. It displays the Level, Total XP and XP to Next Level for each 
+language.
+- Options to enable/disable this feature, and change the way the list is 
+sorted, either by Language, XP or, XP to Next Level. You can also choose 
+the reverse of any of these.
 
 ### Changed
 - Changed LTR/RTL detection to search all elements in question area for dir

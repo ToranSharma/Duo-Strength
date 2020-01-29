@@ -3,6 +3,10 @@ Changelog
 
 [Unreleased]
 ------------
+### Added
+- Hotkey to reveal a hidden sentence. By default the hotkey is Ctrl+Alt+H.
+- Options to enable/disable hotkey and change key combination.
+
 ### Changed
 - Changed LTR/RTL detection to search all elements in question area for dir
 attribute. This makes the detection more flexible to different question

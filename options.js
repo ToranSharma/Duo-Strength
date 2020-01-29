@@ -6,16 +6,48 @@ function init()
 	{
 		if (element.parentNode.getElementsByTagName("ul").length !== 0)
 		{
-			if (!element.checked)
+			if (element.id != "showTranslationText")
 			{
-				for (option of element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option"))
-						option.disabled = true;
-			}
-			element.addEventListener("change", function ()
+				// Disabled so turn off subfeatures
+				if (!element.checked)
 				{
-					for (option of this.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option"))
-						option.disabled = !this.checked;
-				});
+					Array.from(element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option")).forEach(
+						(option) => {
+							option.disabled = true;
+						}
+					);
+				}
+				element.addEventListener("change", function ()
+					{
+						Array.from(this.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option")).forEach(
+							(option) => {
+								option.disabled = !this.checked;
+							}
+						);
+					});
+			}
+			else
+			{
+				// Negative means enabled extra features
+				if (element.checked)
+				{
+					element.parentNode.querySelectorAll(":scope>ul>li>input.option").forEach(
+						(option) => {
+							console.log(option);
+							option.disabled = true;
+						}
+					);
+				}
+				element.addEventListener("change", function ()
+					{
+						this.parentNode.querySelectorAll(":scope>ul>li>input.option").forEach(
+							(option) => {
+								option.disabled = this.checked;
+							}
+						);
+					});
+
+			}
 		}
 		if (element.type == "number")
 			element.addEventListener("change", function ()
@@ -24,14 +56,82 @@ function init()
 						this.value = this.defautValue;
 					saveOptions();
 				});
-		else	
+		else if (element.type == "text")
+		{
+			element.addEventListener("keydown", function (e)
+				{
+					e.preventDefault();
+					console.log(e.code);
+					console.log(e.key);
+
+					if (this.value[this.value.length-1] != "+")
+						this.value="";
+					if (e.code.includes("Control"))
+					{
+						this.value = "Ctrl+"+this.value
+					}
+					else if (e.code.includes("Shift"))
+					{
+						if (!e.ctrlKey)
+							this.value = "Shift+" + this.value;
+						else
+							this.value += "Shift+";
+					}
+					else if (e.code.includes("Meta"))
+					{
+						if (!e.ctrlKey && e.shiftKey)
+							this.value = "Meta+" + this.value;
+						else
+							this.value += "Meta+";
+					}
+					else if (e.code.includes("Alt"))
+					{	
+						if (!e.ctrlKey && !e.shiftKey && !e.metaKey)
+							this.value = "Alt+" + this.value
+						else
+							this.value += "Alt+";
+					}
+					else if (e.code == "Space")
+						this.value += "Space"
+					else
+						this.value += e.key.toUpperCase();
+
+					if (this.value[this.value.length-1] != "+")
+					{
+						if (
+							!this.value.includes("Ctrl") &&
+							!this.value.includes("Alt") &&
+							!this.value.includes("Meta")
+						)
+						{
+							// Hotkey is a single key, which should not be allowed
+							this.value = options[this.id];
+						}
+						else
+						{
+							this.blur();
+							saveOptions();
+						}
+					}
+				});
+			element.addEventListener("keyup", function (e)
+				{
+					if (this.value[this.value.length-1] == "+" || this.value == options[this.id])
+						this.value = options[this.id];
+					else
+					{
+						saveOptions();
+					}
+				});
+		}
+		else
 			element.addEventListener("change", saveOptions);
 	}
 	document.getElementById("enableAll").onclick = () => changeAll(true);
 	document.getElementById("disableAll").onclick = () => changeAll(false);
 }
 
-function getOptions({firstLoad=false}={})
+function getOptions(firstLoad=false)
 {
 	chrome.storage.sync.get("options", function (data)
 	{
@@ -73,6 +173,9 @@ function saveOptions()
 				case "number":
 					options[element.id] = element.value;
 					break;
+				case "text":
+					options[element.id] = element.value;
+					break;
 				case "select-one":
 					options[element.id] = element.value;
 					break;
@@ -93,6 +196,8 @@ function changeAll(checked)
 				break;
 			case "number":
 				break;
+			case "text":
+				break;
 			case "select-one":
 				break;
 		}
@@ -103,4 +208,4 @@ function changeAll(checked)
 	saveOptions();
 }
 
-window.onload = () => getOptions({firstLoad:true});
+window.onload = () => getOptions(true);

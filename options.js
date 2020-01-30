@@ -4,16 +4,19 @@ function init()
 {
 	for (element of document.getElementsByClassName("option"))
 	{
+		// Go through all the option elements
 		if (element.parentNode.getElementsByTagName("ul").length !== 0)
 		{
-			if (element.id != "showTranslationText")
+			// If there are sub-options
+			if (element.id != "showTranslationText" && element.id != "practiceType")
 			{
-				// Disabled so turn off subfeatures
+				// Disabled means turn off subfeatures
 				if (!element.checked)
 				{
 					Array.from(element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option")).forEach(
 						(option) => {
 							option.disabled = true;
+							option.parentNode.classList.add("off");
 						}
 					);
 				}
@@ -22,19 +25,23 @@ function init()
 						Array.from(this.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option")).forEach(
 							(option) => {
 								option.disabled = !this.checked;
+								if (!this.checked)
+									option.parentNode.classList.add("off");
+								else
+									option.parentNode.classList.remove("off");
 							}
 						);
 					});
 			}
-			else
+			else if (element.id == "showTranslationText")
 			{
-				// Negative means enabled extra features
+				// Enabled means turn off subfeatures
 				if (element.checked)
 				{
 					element.parentNode.querySelectorAll(":scope>ul>li>input.option").forEach(
 						(option) => {
-							console.log(option);
 							option.disabled = true;
+							option.parentNode.classList.add("off")
 						}
 					);
 				}
@@ -43,10 +50,39 @@ function init()
 						this.parentNode.querySelectorAll(":scope>ul>li>input.option").forEach(
 							(option) => {
 								option.disabled = this.checked;
+								if (this.checked)
+									option.parentNode.classList.add("off");
+								else
+									option.parentNode.classList.remove("off");
 							}
 						);
 					});
 
+			}
+			else if (element.id == "practiceType")
+			{
+				// Subfeatures only on if third option is selected
+				if (element.value != "2")
+				{
+					Array.from(element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option")).forEach(
+						(option) => {
+							option.disabled = true;
+							option.parentNode.classList.add("off");
+						}
+					);
+				}
+				element.addEventListener("change", function ()
+					{
+						Array.from(this.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option")).forEach(
+							(option) => {
+								option.disabled = (this.value != "2");
+								if (this.value != "2")
+									option.parentNode.classList.add("off");
+								else
+									option.parentNode.classList.remove("off");
+							}
+						);
+					});
 			}
 		}
 		if (element.type == "number")

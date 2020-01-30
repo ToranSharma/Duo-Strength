@@ -78,33 +78,35 @@ function retrieveOptions()
 			// Set options to default settings
 			options =
 				{
-					"strengthBars":						true,
-					"strengthBarBackgrounds":			true, 
-					"needsStrengtheningList":			true,
-					"needsStrengtheningListLength":		"10",
-					"needsStrengtheningListSortOrder":	"0",
-					"crackedSkillsList":				true,
-					"crackedSkillsListLength":			"10",
-					"crackedSkillsListSortOrder":		"0",
-					"focusFirstSkill":					true,
-					"skillSuggestion":					true,
-					"skillSuggestionMethod":			"0",
-					"crownsInfo":						true,
-					"crownsMaximum":					true,
-					"crownsGraph":						true,
-					"crownsBreakdown":					true,
-					"crownsBreakdownShowZerosRows":		true,
-					"crownsPrediction":					true,
-					"XPInfo":							true,
-					"XPBreakdown":						true,
-					"XPPrediction":						true,
-					"languagesInfo":					true,
-					"languagesInfoSortOrder":			"0",
-					"showTranslationText":				true,
-					"revealHotkey":						true,
-					"revealHotkeyCode":					"Ctrl+Alt+H",
-					"showToggleHidingTextButton":		true,
-					"showLeagues":						true,
+					"strengthBars":                         true,
+						"strengthBarBackgrounds":               true, 
+					"needsStrengtheningList":               true,
+						"needsStrengtheningListLength":         "10",
+						"needsStrengtheningListSortOrder":      "0",
+					"crackedSkillsList":                    true,
+						"crackedSkillsListLength":              "10",
+						"crackedSkillsListSortOrder":           "0",
+					"skillSuggestion":                      true,
+						"skillSuggestionMethod":			    "0",
+					"focusFirstSkill":                      true,
+					"practiceType":                         "0",
+						"lessonThreshold":                      "4",
+					"crownsInfo":                           true,
+						"crownsMaximum":                        true,
+						"crownsGraph":                          true,
+						"crownsBreakdown":                      true,
+							"crownsBreakdownShowZerosRows":         true,
+						"crownsPrediction":                     true,
+					"XPInfo":                               true,
+						"XPBreakdown":                          true,
+						"XPPrediction":                         true,
+					"languagesInfo":                        true,
+						"languagesInfoSortOrder":               "0",
+					"showTranslationText":                  true,
+						"revealHotkey":                         true,
+							"revealHotkeyCode":                     "Ctrl+Alt+H",
+					"showToggleHidingTextButton":           true,
+					"showLeagues":                          true,
 				};
 			if (Object.entries(data).length === 0)
 			{
@@ -970,14 +972,22 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		if (i < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][i].url_title}${(needsStrengthening[0][i].skill_progress.level == 5)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[0][i].title;
+			const skill = needsStrengthening[0][i];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
+			                 `${(skill.skill_progress.level == 5 ||
+							     options.practiceType == "1" ||
+							     (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+							    ) ? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = i - needsStrengthening[0].length;
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex].url_title}${(needsStrengthening[1][bonusSkillIndex].skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[1][bonusSkillIndex].title;
+			const skill = needsStrengthening[1][bonusSkillIndex];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		}
 
 		strengthenBox.appendChild(skillLink);
@@ -1002,13 +1012,21 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		if (needsStrengthening[1].length > 0)
 		{
 			// last skill to be displayed is a bonus skill
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][needsStrengthening[1].length - 1].url_title}${(needsStrengthening[1][needsStrengthening[1].length - 1].skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[1][needsStrengthening[1].length - 1].title;
+			const skill = needsStrengthening[1][needsStrengthening[1].length -1];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		} else
 		{
 			// last skill to be displayed is a normal skill
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][needsStrengthening[0].length -1].url_title}${(needsStrengthening[0][needsStrengthening[0].length -1].skill_progress.level == 5)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[0][needsStrengthening[0].length -1].title;
+			const skill = needsStrengthening[0][needsStrengthening[0].length -1];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
+			                 `${(skill.skill_progress.level == 5 ||
+								 options.practiceType == "1" ||
+								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+							    )? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		}
 		
 		strengthenBox.appendChild(skillLink);
@@ -1021,14 +1039,22 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		if (lastIndexToBeShown < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][lastIndexToBeShown].url_title}${(needsStrengthening[0][lastIndexToBeShown].skill_progress.level == 5)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[0][lastIndexToBeShown].title;
+			const skill = needsStrengthening[0][lastIndexToBeShown];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
+			                 `${(skill.skill_progress.level == 5 ||
+							     options.practiceType == "1" ||
+								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+							    )? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = lastIndexToBeShown - needsStrengthening[0].length;
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex].url_title}${(needsStrengthening[1][bonusSkillIndex].skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[1][bonusSkillIndex].title;
+			const skill = needsStrengthening[1][bonusSkillIndex];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		}
 		strengthenBox.appendChild(skillLink);
 		strengthenBox.appendChild(document.createTextNode(", "));

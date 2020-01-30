@@ -970,6 +970,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
 		let skillLink = document.createElement("a");
+		skillLink.style.color = "blue";
 		if (i < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
@@ -1001,6 +1002,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	if (numSkillsToShow == numSkillsToBeStrengthened)
 	{
 		const skillLink = document.createElement("a");
+		skillLink.style.color = "blue";
 		// we are showing every skill that needs to be stregnthened.
 		if (needsStrengthening[1].length > 0)
 		{
@@ -1020,6 +1022,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	{
 		// some skills that need to be strengthened are not being shown, so the last one we are showing is just the next one in the order we have
 		const skillLink = document.createElement("a");
+		skillLink.color = "blue";
 		let lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
 		if (lastIndexToBeShown < needsStrengthening[0].length)
 		{
@@ -1045,6 +1048,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, (!cracked)?data.options.needsStrengtheningListLength:data.options.crackedSkillsListLength);
 
 			let showMore = document.createElement("a");
+			showMore.style.color = "blue";
 			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "";
 

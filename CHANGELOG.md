@@ -18,6 +18,9 @@ from "Lessons (Earn Crowns)", "Practice (Strengthen Only)" and "Lessons up to
 Threshold".
   - Option to change the crown level threshold from which point that skill's
   link is for practice not a lesson.
+- Practise button to the popout for each skill. This allows you to practise 
+a skill to strengthen it, without contributing towards earning crowns.
+  - Option to enable or disable this practise button.
 
 ### Changed
 - Changed LTR/RTL detection to search all elements in question area for dir

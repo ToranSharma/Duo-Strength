@@ -5,23 +5,30 @@ Changelog
 ------------
 ### Added
 - Hotkey to reveal a hidden sentence. By default the hotkey is Ctrl+Alt+H.
-- Options to enable/disable hotkey and change key combination.
+  - Options to enable/disable hotkey and change key combination.
 - New box in the side bar with a table of all the languages a user is 
 learning. It displays the Level, Total XP and XP to Next Level for each 
 language.
-- Options to enable/disable this feature, and change the way the list is 
-sorted, either by Language, XP or, XP to Next Level. You can also choose 
-the reverse of any of these.
+  - Options to enable/disable this feature, and change the way the list is 
+sorted, either by Language, XP or, XP to Next Level. You can also choose the 
+reverse of any of these.
 - Option to hide the league table from the side bar.
+- Option to select the practice type for links in lists. The user can choose 
+from "Lessons (Earn Crowns)", "Practice (Strengthen Only)" and "Lessons up to
+Threshold".
+  - Option to change the crown level threshold from which point that skill's
+  link is for practice not a lesson.
+- Practise button to the popout for each skill. This allows you to practise 
+a skill to strengthen it, without contributing towards earning crowns.
+  - Option to enable or disable this practise button.
 
 ### Changed
 - Changed LTR/RTL detection to search all elements in question area for dir
-attribute. This makes the detection more flexible to different question
-layout styles, including those with images and speech bubbles.
+attribute. This makes the detection more flexible to different question layout 
+styles, including those with images and speech bubbles.
 - Added a margin to the appropriate side of the Enable/Disable text hiding 
 button to give some breathing room for sentences in speech bubbles.
-- Cracked skills list is updated when skills are refreshed after first 
-loading.
+- Cracked skills list is updated when skills are refreshed after first loading.
 
 [v1.2.2] - 2020-01-21
 -----------------
@@ -43,8 +50,8 @@ from a lesson.
 ### Changed
 - Changing between word bank and keyboard input on a translation question is now
 detected and the sentence is hidden after the switch.
-- Enable/disable text hiding button is now floated according to the language text
-direction, right for LTR and left for RTL.
+- Enable/disable text hiding button is now floated according to the language
+text direction, right for LTR and left for RTL.
 
 [v1.2.0] - 2020-01-09
 -----------------

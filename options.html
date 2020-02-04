@@ -91,11 +91,15 @@
 			width: 100%;
 		}
 
+		.off
+		{
+			color: grey;
+		}
 		.hasSelect
 		{
 			grid-template-columns: 3em fit-content(100%) 1fr;
 		}
-			.hasSelect label
+			.hasSelect > label
 			{
 				padding-left: 1em;
 			}
@@ -104,6 +108,25 @@
 		{
 			padding-left: 1em;
 		}
+		.selectFirst
+		{
+			grid-template-columns: fit-content(100%) 1fr;
+		}
+			.selectFirst > label
+			{
+				padding-left: 1em;
+			}
+		.labelFirst
+		{
+			grid-template-columns: 3em fit-content(calc(100% - 6em)) 3em;
+		}
+			.labelFirst > label
+			{
+				padding-left: 0;
+				padding-right: 0.5em;
+				z-index: 3;
+				background-color: white;
+			}
 		select
 		{
 			z-index: 3;
@@ -184,20 +207,38 @@
 			</ul>
 		</li>
 		<li>
-			<input class="option" id="focusFirstSkill" type="checkbox" checked="true" />
-			<label for="focusFirstSkill">Focus First Skill in Lists</label>
-		</li>
-		<li>
 			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
 			<label for="skillSuggestion">Fully Strengthened Tree Skill Suggestion</label>
 			<ul>
 				<li class="hasSelect">
-					<select class="option" id= "skillSuggestionMethod">
+					<select class="option" id="skillSuggestionMethod">
 						<option value="0" selected="true">Random</option>
 						<option value="1">First</option>
 						<option value="2">Last</option>
 					</select>
 					<label for="skillSuggestionMethod"> Skill at the Current Crown Level</label>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<input class="option" id="focusFirstSkill" type="checkbox" checked="true" />
+			<label for="focusFirstSkill">Focus First Skill in Lists</label>
+		</li>
+		<li>
+			<input class="option" id="practiseButton" type="checkbox" checked="true" />
+			<label for="practiseButton">Practise Button in Skill Popout Box</label>
+		</li>
+		<li class="selectFirst">
+			<select class="option" id="practiceType">
+				<option value="0" selected="true">Lessons (Earn Crowns)</selected>
+				<option value="1">Practice (Strengthen Only)</option>
+				<option value="2">Lessons up to Threshold</option>
+			</select>
+			<label for="practiceType">Practice Type for List Links</label>
+			<ul>
+				<li class="labelFirst">
+					<label for="lessonThreshold">Practice only on skills with crown level &ge;</label>
+					<input class="option" id="lessonThreshold" type="number" value="4" min="1" max="4" />
 				</li>
 			</ul>
 		</li>

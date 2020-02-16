@@ -854,6 +854,26 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		2: Alphabetical
 		3: Reverse Aphabetical
 		4: Random
+		5: Strength Ascending
+		6: Strength Descending
+		7: Crown Level Ascending
+		8: Crown Level Descending
+
+
+		The option needsStrengtheningListSortOrder is a string with comma seperated criteria.
+		There are a maxium of 3 levels of sorting, after which no ambigutity should be left in the order of the skills.
+		The first criterion is the Primary sorting criterion.
+		The second is the Secondary sorting criterion, which gives the order to items that are the same when sorted by the Primary sorting criterion.
+		The thrid is the Tertiay sorting criterion, which sort out any items that are still the same after the first two rounds of sorting.
+
+		Note that criteria [0-4] leave no ambiguity in the sorting order, so no further sorting is needed after using one of these.
+
+		While it is not guaranteed by the ECMAscript standard, if a sorting function returns 0 that should leave the two items being compared unchanged relative to each other.
+
+		Assuming this behaviour, we will sort by the criteria in reverse order, so that this order is left intact when the higher level sorting puts items on the same level.
+
+		Tested on Chrome, Firefox and Opera, all seem to sort correctly as of 2020-02-16
+
 	*/
 	function sortSkillsAlphabetical(a, b)
 	{
@@ -872,31 +892,81 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		}
 	}
 
-	if (needsSorting)
-		switch ((!cracked)?options.needsStrengtheningListSortOrder:options.crackedSkillsListSortOrder)
-		{
-			case "0":
-				break;
-			case "1":
-				needsStrengthening[0].reverse();
-				needsStrengthening[1].reverse();
-				break;
-			case "2":
-				needsStrengthening[0].sort(sortSkillsAlphabetical);
-				needsStrengthening[1].sort(sortSkillsAlphabetical);
-				break;
-			case "3":
-				needsStrengthening[0].sort(sortSkillsAlphabetical);
-				needsStrengthening[1].sort(sortSkillsAlphabetical);
-				needsStrengthening[0].reverse();
-				needsStrengthening[1].reverse();
-				break;
-			case "4":
-				shuffle(needsStrengthening[0]);
-				shuffle(needsStrengthening[1]);
-				break;
-		}
+	function sortSkillsByStrength(a, b)
+	{
+		if (a.strength === b.strength)
+			return 0;
+		
+		return (a.strength < b.strength) ? -1 : 1;
+	}
 
+	function sortSkillsByCrownLevel(a, b)
+	{
+		if (a.skill_progress.level === b.skill_progress.level)
+			return 0;
+		
+		return (a.skill_progress.level < b.skill_progress.level) ? -1 : 1;
+	}
+
+
+	const sortingCriteria = (
+		(!cracked) ? options.needsStrengtheningListSortOrder : options.crackedSkillsListSortOrder
+	).split(",");
+
+	if (needsSorting)
+	{
+		for (criterion of sortingCriteria.reverse())
+		{
+			switch (criterion)
+			{
+				case "0":
+					break;
+				case "1":
+					needsStrengthening[0].reverse();
+					needsStrengthening[1].reverse();
+					break;
+				case "2":
+					needsStrengthening[0].sort(sortSkillsAlphabetical);
+					needsStrengthening[1].sort(sortSkillsAlphabetical);
+					break;
+				case "3":
+					needsStrengthening[0].sort(sortSkillsAlphabetical);
+					needsStrengthening[1].sort(sortSkillsAlphabetical);
+					needsStrengthening[0].reverse();
+					needsStrengthening[1].reverse();
+					break;
+				case "4":
+					shuffle(needsStrengthening[0]);
+					shuffle(needsStrengthening[1]);
+					break;
+				case "5":
+					needsStrengthening[0].sort(sortSkillsByStrength);
+					needsStrengthening[1].sort(sortSkillsByStrength);
+					break;
+				case "6":
+					needsStrengthening[0].sort(
+						(a, b) => -1 * sortSkillsByStrength(a, b)
+					);
+					needsStrengthening[1].sort(
+						(a, b) => -1 * sortSkillsByStrength(a, b)
+					);
+					break;
+				case "7":
+					needsStrengthening[0].sort(sortSkillsByCrownLevel);
+					needsStrengthening[1].sort(sortSkillsByCrownLevel);
+					break
+				case "8":
+					needsStrengthening[0].sort(
+						(a, b) => -1 * sortSkillsByCrownLevel(a, b)
+					);
+					needsStrengthening[1].sort(
+						(a, b) => -1 * sortSkillsByCrownLevel(a, b)
+					);
+					break;
+			}
+		}
+	}
+	
 	topOfTree.style.height = "auto";
 	topOfTree.style.width = "100%";
 

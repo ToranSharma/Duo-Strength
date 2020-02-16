@@ -22,6 +22,13 @@ layout styles, including those with images and speech bubbles.
 button to give some breathing room for sentences in speech bubbles.
 - Cracked skills list is updated when skills are refreshed after first 
 loading.
+- The needs strengthening list sorting option has new criteria to sort by and
+can now be sorted by multiple criteria.
+  - The list can now be sorted by skill strength and crown level, both ascending
+  and descending.
+  - You an add further sorting criteria if any of the above are chosen. These
+  will define the order of any skills that are the same based on prior sorting
+  criteria.
 
 [v1.2.2] - 2020-01-21
 -----------------

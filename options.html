@@ -24,7 +24,6 @@
 			background-color: white;
 			position: relative;
 		}
-		
 			li > ul
 			{
 				grid-column: span 2;
@@ -33,7 +32,6 @@
 				{
 					grid-template-columns: 3em 3em 1fr;
 					box-sizing: content-box;
-					align-items: baseline;
 				}
 				li > ul > li.containsHotkeyInput
 				{
@@ -44,6 +42,7 @@
 						content: "";
 						z-index: 1;
 						width: 100%;
+						min-height: 1.2em;
 						height: calc(100% + 0.2em);
 						border-style: dashed;
 						border-color: black;
@@ -127,6 +126,43 @@
 				z-index: 3;
 				background-color: white;
 			}
+		.textOnly
+		{
+			grid-template-columns: 3em 1fr;
+		}
+			.textOnly span
+			{
+				background-color: white;
+				z-index: 3;
+				padding-left: 0.5em;
+			}
+		.addSortList
+		{
+			color: blue;
+			cursor: pointer;
+		}
+		.removeSortCriterion
+		{
+			position: absolute;
+			right: 0;
+			top: calc(50% - 0.35em);
+			border-radius: 100%;
+			width: 0.7em;
+			height: 0.7em;
+			font-size: 175%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transform: rotate(45deg);
+			cursor: pointer;
+			color: white;
+			background-color: #666;
+		}
+			.removeSortCriterion:hover
+			{
+				background-color: black;
+			}
+
 		select
 		{
 			z-index: 3;
@@ -148,6 +184,10 @@
 		button
 		{
 			width: 6em;
+		}
+		label
+		{
+			align-self: center;
 		}
 	</style>
 </head>
@@ -174,15 +214,27 @@
 					<input class="option" id="needsStrengtheningListLength" type="number" value="10" min="1" />
 					<label for="needsStrengtheningListLength">Number of Skills Shown in List</label>
 				</li>
-				<li class="hasSelect">
-					<select class="option" id="needsStrengtheningListSortOrder">
-						<option value="0" selected="true">Tree Order</option>
-						<option value="1">Reverse Tree Order</option>
-						<option value="2">Alphabetical</option>
-						<option value="3">Reverse Alphabetical</option>
-						<option value="4">Random</option>
-					</select>
-					<label for="needsStrengtheningListSortOrder">Order of Skills in List</label>
+				<li class="textOnly">
+					<span>Sorting Method</span>
+					<ul class="multiPart" id="needsStrengtheningListSortOrder">
+						<li class="hasSelect">
+							<select class="option" id="needsStrengtheningListSortOrder0">
+								<option value="0" selected="true">Tree Order</option>
+								<option value="1">Reverse Tree Order</option>
+								<option value="2">Alphabetical</option>
+								<option value="3">Reverse Alphabetical</option>
+								<option value="4">Random</option>
+								<option value="5">Strength Asc.</option>
+								<option value="6">Strength Desc.</option>
+								<option value="7">Crown Level Asc.</option>
+								<option value="8">Crown Level Desc.</option>
+							</select>
+							<label for="needsStrengtheningListSortOrder">Primary</label>
+						</li>
+						<li class="textOnly">
+							<span class="addSortList">Add another sorting criterion</span>
+						</li>
+					</ul>
 				</li>
 			</ul>
 		</li>
@@ -208,7 +260,7 @@
 		</li>
 		<li>
 			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
-			<label for="skillSuggestion">Fully Strengthened Tree Skill Suggestion</label>
+			<label for="skillSuggestion">Skill Suggestion</label>
 			<ul>
 				<li class="hasSelect">
 					<select class="option" id="skillSuggestionMethod">
@@ -216,7 +268,17 @@
 						<option value="1">First</option>
 						<option value="2">Last</option>
 					</select>
-					<label for="skillSuggestionMethod"> Skill at the Current Crown Level</label>
+					<label for="skillSuggestionMethod"> Skill at the Current Tree Level</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="hideSuggestionNonStrengthened" type="checkbox" checked="true" />
+					<label for="hideSuggestionNonStrengthened">Hide Suggestion When Not Fully Strengthened</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="hideSuggestionWithCrackedSkills" type="checkbox" checked="true" />
+					<label for="hideSuggestionWithCrackedSkills">Hide Suggestion When There Are Cracked Skills </label>
 				</li>
 			</ul>
 		</li>

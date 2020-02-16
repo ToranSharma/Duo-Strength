@@ -1,4 +1,10 @@
 var options = Object();
+const ordinalLabels = {
+	"0": "Primary",
+	"1": "Secondary",
+	"2": "Tertiary"
+};
+let addButtonListItem;
 
 function init()
 {
@@ -85,6 +91,7 @@ function init()
 					});
 			}
 		}
+
 		if (element.type == "number")
 			element.addEventListener("change", function ()
 				{
@@ -97,8 +104,6 @@ function init()
 			element.addEventListener("keydown", function (e)
 				{
 					e.preventDefault();
-					console.log(e.code);
-					console.log(e.key);
 
 					if (this.value[this.value.length-1] != "+")
 						this.value="";
@@ -150,7 +155,7 @@ function init()
 						}
 					}
 				});
-			element.addEventListener("keyup", function (e)
+			element.addEventListener("keyup", function(e)
 				{
 					if (this.value[this.value.length-1] == "+" || this.value == options[this.id])
 						this.value = options[this.id];
@@ -159,6 +164,19 @@ function init()
 						saveOptions();
 					}
 				});
+		}
+		else if (element.parentNode.parentNode.className.includes(`multiPart`))
+		{
+			if (element.parentNode.parentNode.querySelector(`.option`) == element)
+			{
+				// multi part option
+				let selectElements = element.parentNode.parentNode.querySelectorAll(`.option`);
+				selectElements.forEach(
+					(select, index) => {
+						select.addEventListener("change", multiPartChangeHandler);
+					}
+				);
+			}
 		}
 		else
 			element.addEventListener("change", saveOptions);
@@ -180,14 +198,63 @@ function getOptions(firstLoad=false)
 		options = items;
 		for (option in options)
 		{
-			switch (typeof options[option])
+			if (option != "needsStrengtheningListSortOrder")
 			{
-				case "boolean":
-					document.getElementById(option).checked = options[option];
-					break;
-				case "string":
-					document.getElementById(option).value = options[option];
-					break;
+				switch (typeof options[option])
+				{
+					case "boolean":
+						document.getElementById(option).checked = options[option];
+						break;
+					case "string":
+						document.getElementById(option).value = options[option];
+						break;
+				}
+			}
+			else
+			{
+				// needsStrengtheningList order is a multi part option, encoded in one string with comma seperated values
+				let sortingCriteria = options[option].split(",");
+				const addButton = document.querySelector(`#needsStrengtheningListSortOrder .addSortList`);
+				addButtonListItem = addButton.parentNode.cloneNode(true); // save for adding later
+
+				addButton.addEventListener("click", addSortListButtonClickHandler);
+				addButtonListItem.querySelector(`.addSortList`).addEventListener("click", addSortListButtonClickHandler); // has to be added seperating as cloning doesn't copy event listeners
+
+
+				sortingCriteria.forEach(
+					(criterion, index) => {
+
+						const element = document.getElementById(option+index);
+						element.value = criterion;
+
+						if (criterion > "4")
+						{
+							// some further sorting can be done
+							if (index+1 != sortingCriteria.length)
+							{
+								// not the last criterion
+								// need to add another list
+								const previousList = element.parentNode;
+								const newList = newSortList(previousList);
+								previousList.parentNode.insertBefore(newList, previousList.nextSibling);
+							}
+							else if (index == 2)
+							{
+								// last saved criterion and last possible criterion
+								// no more ambiguity in the list
+								// remove the button to add another drop down list
+								addButton.parentNode.removeChild(addButton);
+							}
+	
+						}
+						else
+						{
+							// no further sorting can be done
+							// remove the button to add another drop down list
+							addButton.parentNode.parentNode.removeChild(addButton.parentNode);
+						}
+					}
+				);
 			}
 		}
 		if (firstLoad)
@@ -199,7 +266,7 @@ function saveOptions()
 {
 	for (element of document.getElementsByClassName("option"))
 	{
-		if (element.tagName = "INPUT")
+		if (!element.parentNode.parentNode.className.includes("multiPart"))
 		{
 			switch (element.type)
 			{
@@ -215,6 +282,27 @@ function saveOptions()
 				case "select-one":
 					options[element.id] = element.value;
 					break;
+			}
+		}
+		else
+		{
+			// saving a multi part option
+			if (element.parentNode.parentNode.querySelector(`.option`) == element)
+			{
+				// first of this multi part
+				const option = element.parentNode.parentNode.id;
+				const parts = element.parentNode.parentNode.querySelectorAll(`select`);
+				let value = parts[0].value;
+				for (let i = 1; i<parts.length; ++i)
+				{
+					value += `,${parts[i].value}`;
+				}
+			
+				options[option] = value;
+			}
+			else
+			{
+				// not first element so will have already saved this multi part option
 			}
 		}
 	}
@@ -242,6 +330,107 @@ function changeAll(checked)
 	}
 	// Interestingly doesn't trigger the change event so need to save manually. This does save on a repeat saves.
 	saveOptions();
+}
+
+function multiPartChangeHandler()
+{
+	const parts = Array.from(this.parentNode.parentNode.querySelectorAll(`.option`));
+	const partIndex = parts.indexOf(this);
+
+	const removeFurtherCriteria = () => parts.slice(partIndex + 1).forEach(
+			(part) => {
+				part.parentNode.parentNode.removeChild(part.parentNode);
+			}
+		);
+
+	if (this.value <= 4)
+	{
+		// no more sorting can be done
+		if (partIndex + 1 != parts.length)
+		{
+			// there are some further criteria that we need to remove
+			removeFurtherCriteria();
+		}
+		else
+		{
+			// this is the last criterion
+			// remove the add further criterion button
+			const button = this.parentNode.parentNode.querySelector(`.addSortList`);
+			if (button != null)
+			{
+				button.parentNode.parentNode.removeChild(button.parentNode);
+			}
+		}
+	}
+	else if (partIndex < 2)
+	{
+		// can sort further
+		// first remove further criteria as they may be invalid
+		removeFurtherCriteria();
+
+		// now add link to add further criterion
+		this.parentNode.parentNode.appendChild(addButtonListItem)
+	}
+	else
+	{
+		// nothing to do
+	}
+
+	saveOptions();
+}
+
+function addSortListButtonClickHandler()
+{
+	const lastList = this.parentNode.previousElementSibling;
+	const newList = newSortList(lastList);
+	lastList.parentNode.insertBefore(newList, lastList.nextSibling);
+	this.parentNode.parentNode.removeChild(this.parentNode);
+	saveOptions();
+}
+
+function newSortList(previousListItem)
+{
+	const previousListSelect = previousListItem.querySelector(`select`);
+	const criterion = previousListSelect.value;
+	const invalidValues = [criterion, (criterion %2) ? (`${1 + +criterion}`) : (`${-1 + +criterion}`)];
+	const newList = previousListItem.cloneNode(true);
+	newList.querySelector(`select`).value = "0";
+
+	invalidValues.forEach(
+		(value) => {
+			const elementToRemove = newList.querySelector(`option[value="${value}"]`);
+			newList.querySelector(`select`).removeChild(elementToRemove);
+		}
+	);
+	
+	const previousIndex = previousListSelect.id.slice(-1);
+	const optionId = previousListSelect.id.slice(0,-1);
+	const currentIndex = 1 + +previousIndex;
+	newList.querySelector(`label`).textContent = ordinalLabels[currentIndex];
+	newList.querySelector(`.option`).id = `${optionId}${currentIndex}`;
+
+	newList.querySelector(`.option`).addEventListener("change", multiPartChangeHandler);
+
+	const removeButton = document.createElement("DIV");
+	removeButton.className = "removeSortCriterion";
+	removeButton.textContent = "+";
+	removeButton.addEventListener("click",
+		(e) => {
+			for (let i = currentIndex; i < 3; ++i)
+			{
+				const selectToBeRemoved = document.getElementById(`${optionId}${i}`);
+				if (selectToBeRemoved == null)
+					continue;
+				const liToBeRemoved = selectToBeRemoved.parentNode;
+				liToBeRemoved.parentNode.removeChild(liToBeRemoved);
+			}
+			previousListItem.parentNode.appendChild(addButtonListItem);
+			saveOptions();
+		}
+	);
+	newList.appendChild(removeButton);
+
+	return newList;
 }
 
 window.onload = () => getOptions(true);

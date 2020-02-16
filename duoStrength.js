@@ -109,6 +109,7 @@ function retrieveOptions()
 					"showToggleHidingTextButton":			true,
 					"showLeagues":							true,
 				};
+
 			if (Object.entries(data).length === 0)
 			{
 				// First time using version with options so nothing is set in storage.
@@ -856,6 +857,26 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		2: Alphabetical
 		3: Reverse Aphabetical
 		4: Random
+		5: Strength Ascending
+		6: Strength Descending
+		7: Crown Level Ascending
+		8: Crown Level Descending
+
+
+		The option needsStrengtheningListSortOrder is a string with comma seperated criteria.
+		There are a maxium of 3 levels of sorting, after which no ambigutity should be left in the order of the skills.
+		The first criterion is the Primary sorting criterion.
+		The second is the Secondary sorting criterion, which gives the order to items that are the same when sorted by the Primary sorting criterion.
+		The thrid is the Tertiay sorting criterion, which sort out any items that are still the same after the first two rounds of sorting.
+
+		Note that criteria [0-4] leave no ambiguity in the sorting order, so no further sorting is needed after using one of these.
+
+		While it is not guaranteed by the ECMAscript standard, if a sorting function returns 0 that should leave the two items being compared unchanged relative to each other.
+
+		Assuming this behaviour, we will sort by the criteria in reverse order, so that this order is left intact when the higher level sorting puts items on the same level.
+
+		Tested on Chrome, Firefox and Opera, all seem to sort correctly as of 2020-02-16
+
 	*/
 	function sortSkillsAlphabetical(a, b)
 	{
@@ -874,31 +895,81 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		}
 	}
 
-	if (needsSorting)
-		switch ((!cracked)?options.needsStrengtheningListSortOrder:options.crackedSkillsListSortOrder)
-		{
-			case "0":
-				break;
-			case "1":
-				needsStrengthening[0].reverse();
-				needsStrengthening[1].reverse();
-				break;
-			case "2":
-				needsStrengthening[0].sort(sortSkillsAlphabetical);
-				needsStrengthening[1].sort(sortSkillsAlphabetical);
-				break;
-			case "3":
-				needsStrengthening[0].sort(sortSkillsAlphabetical);
-				needsStrengthening[1].sort(sortSkillsAlphabetical);
-				needsStrengthening[0].reverse();
-				needsStrengthening[1].reverse();
-				break;
-			case "4":
-				shuffle(needsStrengthening[0]);
-				shuffle(needsStrengthening[1]);
-				break;
-		}
+	function sortSkillsByStrength(a, b)
+	{
+		if (a.strength === b.strength)
+			return 0;
+		
+		return (a.strength < b.strength) ? -1 : 1;
+	}
 
+	function sortSkillsByCrownLevel(a, b)
+	{
+		if (a.skill_progress.level === b.skill_progress.level)
+			return 0;
+		
+		return (a.skill_progress.level < b.skill_progress.level) ? -1 : 1;
+	}
+
+
+	const sortingCriteria = (
+		(!cracked) ? options.needsStrengtheningListSortOrder : options.crackedSkillsListSortOrder
+	).split(",");
+
+	if (needsSorting)
+	{
+		for (criterion of sortingCriteria.reverse())
+		{
+			switch (criterion)
+			{
+				case "0":
+					break;
+				case "1":
+					needsStrengthening[0].reverse();
+					needsStrengthening[1].reverse();
+					break;
+				case "2":
+					needsStrengthening[0].sort(sortSkillsAlphabetical);
+					needsStrengthening[1].sort(sortSkillsAlphabetical);
+					break;
+				case "3":
+					needsStrengthening[0].sort(sortSkillsAlphabetical);
+					needsStrengthening[1].sort(sortSkillsAlphabetical);
+					needsStrengthening[0].reverse();
+					needsStrengthening[1].reverse();
+					break;
+				case "4":
+					shuffle(needsStrengthening[0]);
+					shuffle(needsStrengthening[1]);
+					break;
+				case "5":
+					needsStrengthening[0].sort(sortSkillsByStrength);
+					needsStrengthening[1].sort(sortSkillsByStrength);
+					break;
+				case "6":
+					needsStrengthening[0].sort(
+						(a, b) => -1 * sortSkillsByStrength(a, b)
+					);
+					needsStrengthening[1].sort(
+						(a, b) => -1 * sortSkillsByStrength(a, b)
+					);
+					break;
+				case "7":
+					needsStrengthening[0].sort(sortSkillsByCrownLevel);
+					needsStrengthening[1].sort(sortSkillsByCrownLevel);
+					break
+				case "8":
+					needsStrengthening[0].sort(
+						(a, b) => -1 * sortSkillsByCrownLevel(a, b)
+					);
+					needsStrengthening[1].sort(
+						(a, b) => -1 * sortSkillsByCrownLevel(a, b)
+					);
+					break;
+			}
+		}
+	}
+	
 	topOfTree.style.height = "auto";
 	topOfTree.style.width = "100%";
 
@@ -972,6 +1043,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
 		let skillLink = document.createElement("a");
+		skillLink.style.color = "blue";
 		if (i < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
@@ -1011,6 +1083,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	if (numSkillsToShow == numSkillsToBeStrengthened)
 	{
 		const skillLink = document.createElement("a");
+		skillLink.style.color = "blue";
 		// we are showing every skill that needs to be stregnthened.
 		if (needsStrengthening[1].length > 0)
 		{
@@ -1038,6 +1111,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	{
 		// some skills that need to be strengthened are not being shown, so the last one we are showing is just the next one in the order we have
 		const skillLink = document.createElement("a");
+		skillLink.color = "blue";
 		let lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
 		if (lastIndexToBeShown < needsStrengthening[0].length)
 		{
@@ -1071,6 +1145,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, (!cracked)?data.options.needsStrengtheningListLength:data.options.crackedSkillsListLength);
 
 			let showMore = document.createElement("a");
+			showMore.style.color = "blue";
 			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "";
 
@@ -1994,7 +2069,7 @@ function displayLanguagesInfo(languages)
 	}
 }
 
-function displaySuggestion(skills, bonusSkills)
+function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 {
 	// let skillTree;
 	// let firstSkillRow
@@ -2022,7 +2097,7 @@ function displaySuggestion(skills, bonusSkills)
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
-			setTimeout(function(){displaySuggestion(skills, bonusSkills);}, 50);
+			setTimeout(function(){displaySuggestion(skills, fullyStrengthened, noCrackedSkills);}, 50);
 		}
 		else
 		{
@@ -2102,34 +2177,49 @@ function displaySuggestion(skills, bonusSkills)
 			{
 				event.target.style.fontWeight = 'bold';
 				event.target.style.textDecoration = 'underline';
-			});
+			}
+		);
 
 		link.addEventListener('blur',
 			function(event)
 			{
 				event.target.style.fontWeight = 'normal';
 				event.target.style.textDecoration = 'none';
-			});
+			}
+		);
 		
-		let fullStrengthMessage = document.createElement("p");
+		let suggestionMessage = document.createElement("p");
 		if (treeLevel == 5)
 		{
-			fullStrengthMessage.appendChild(
-				document.createTextNode(
-					`Your ${language} tree is fully strengthened and at Level 5! Why not do a `
-				)
-			);
+			let messageText = `Your ${language} tree is `
+			if (fullyStrengthened)
+				messageText += `fully strengthened and `;
+			
+			messageText += `at Level 5`;
 
-			fullStrengthMessage.appendChild(document.createElement("a"));
-			fullStrengthMessage.lastChild.href = "/practice";
-			fullStrengthMessage.lastChild.textContent = "general practice";
+			if (noCrackedSkills)
+				messageText += ` with no cracked skills`;
+
+			messageText += `! Why not do a `;
+
+			suggestionMessage.textContent = messageText;
+
+			suggestionMessage.appendChild(document.createElement("a"));
+			suggestionMessage.lastChild.href = "/practice";
+			suggestionMessage.lastChild.style.color = "blue";
+			suggestionMessage.lastChild.textContent = "general practice";
 		}
 		else if (treeLevel == 0)
 		{
 			// Tree not finished, so suggest the next skill that is not yet been completed.
 			let nextSkill = skillsByCrowns[0][0];
 			
-			fullStrengthMessage.textContent = "All the skills that you have learnt so far are fully strengthened. ";
+			if (fullyStrengthened && noCrackedSkills)
+				suggestionMessage.textContent = `All the skills that you have learnt so far are fully Strengthened, and none are cracked. `;
+			else if (fullyStrengthened)
+				suggestionMessage.textContent = `All the skills that you have learnt so far are fully strengthened. `;
+			else if (noCrackedSkills)
+				suggestionMessage.textContent = `None of the skills that you have learnt so far are cracked. `
 
 			if (nextSkill.locked)
 			{
@@ -2146,7 +2236,7 @@ function displaySuggestion(skills, bonusSkills)
 				link.href = `/checkpoint/${languageCode}/${checkpointNumber}/`;
 				link.textContent = `Checkpoint ${checkpointNumber +1}`;
 
-				fullStrengthMessage.textContent += "To unlock more skills you need to complete: ";
+				suggestionMessage.textContent += "To unlock more skills you need to complete: ";
 			}
 			else
 			{
@@ -2154,19 +2244,25 @@ function displaySuggestion(skills, bonusSkills)
 				link.href = `/skill/${languageCode}/${nextSkill.url_title}/`;
 				link.textContent = nextSkill.title;
 
-				fullStrengthMessage.textContent += "The next skill to learn is: ";
+				suggestionMessage.textContent += "The next skill to learn is: ";
 			}
 			
-			fullStrengthMessage.appendChild(link);
+			suggestionMessage.appendChild(link);
 		}
 		else
 		{
-			fullStrengthMessage.textContent =
-				`Your ${language} tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level\xA0${treeLevel + 1}: `;
-			fullStrengthMessage.appendChild(link);
+			if (fullyStrengthened && noCrackedSkills)
+				suggestionMessage.textContent = `Your ${language} tree is fully strengthened, and there are no cracked cracked skills. `;
+			else if (fullyStrengthened)
+				suggestionMessage.textContent = `Your ${language} tree is fully strengthened. `;
+			else if (noCrackedSkills)
+				suggestionMessage.textContent = `None of the skills in your ${language} tree are cracked. `
+			
+			suggestionMessage.textContent += `Why not practise this skill to work towards getting your tree to Level\xA0${treeLevel + 1}: `;
+			suggestionMessage.appendChild(link);
 		}
 
-		container.appendChild(fullStrengthMessage);
+		container.appendChild(suggestionMessage);
 
 		topOfTree.appendChild(container);
 
@@ -2255,28 +2351,38 @@ function getStrengths()
 
 	if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 
-	const practiceNeeded = ((needsStrengthening[0].length + needsStrengthening[1].length != 0) && options.needsStrengtheningList)
-						|| ((crackedSkills[0].length + crackedSkills[1].length != 0) && options.crackedSkillsList);
-	if (practiceNeeded)
+	const fullyStrengthened = (needsStrengthening[0].length + needsStrengthening[1].length) == 0;
+	const noCrackedSkills = (crackedSkills[0].length + crackedSkills[1].length) == 0;
+
+	if (options.needsStrengtheningList && !fullyStrengthened)
+		displayNeedsStrengthening(needsStrengthening); // Not fully strengthened and the list is enabled.
+	else
+		removeNeedsStrengtheningBox(); // Remove if there happens to be one.
+
+	if (options.crackedSkillsList && !noCrackedSkills)
+		displayNeedsStrengthening(crackedSkills, true); // There are cracked skills and the list is enabled.
+	else
+		removeCrackedSkillsList(); // Remove if there happens to be one.
+
+	if (
+		(fullyStrengthened && noCrackedSkills) ||
+		(!fullyStrengthened && !options.hideSuggestionNonStrengthened) ||
+		(!noCrackedSkills && !options.hideSuggestionsWithCrackedSkills)
+	)
 	{
-		removeSuggestion(); // Remove the suggestion box if there happens to be one.
-		if (needsStrengthening[0].length + needsStrengthening[1].length != 0)
-		{
-			// Something needs strengthening.
-			if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
-		}
-		if (crackedSkills[0].length + crackedSkills[1].length != 0)
-		{
-			// There are some cracked skills.
-			if (options.crackedSkillsList) displayNeedsStrengthening(crackedSkills, true);
-		}
+		// Either a fully strengthened tree, or
+		// Not fully strengthened but still show suggestion, or
+		// There are cracked skills but still show suggestion
+		
+		if (options.skillSuggestion)
+			displaySuggestion(skills, fullyStrengthened, noCrackedSkills);
+		else
+			removeSuggestion(); // if there happens to be one
 	}
 	else
 	{
-		// Nothing that needs strengthening!
-		removeNeedsStrengtheningBox(); // Remove the needStrengthingBox if there happns to be one.
-		removeCrackedSkillsList();
-		if (options.skillSuggestion) displaySuggestion(skills);
+		// Should not be displaying a suggestion.
+		removeSuggestion() // if there happens to be one
 	}
 
 	if (options.practiseButton)

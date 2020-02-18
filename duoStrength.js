@@ -627,32 +627,36 @@ function addStrengths(strengths)
 	// Adds strength bars and percentages under each skill in the tree.
 	/*
 		The structure of skill tree is as follows:
-		<div class="_2GJb6"> 												<-- container for row of skills, has classes _1H-7I and _1--zr if bonus skill row
-			<a class="Af4up" href="javascript:;"> 							<-- container for individual skill
-				<div class="_1fneo" tab-index="0">							<-- new container as of 2019-09-03, unknown function
+		<div class="_2GJb6"> 														<-- container for row of skills, has classes _1H-7I and _1--zr if bonus skill row
+			<a class="Af4up QmbDt" data-test="skill"> 								<-- container for individual skill
+				<div class="_1fneo" tab-index="0">									<-- new container as of 2019-09-03, unknown function
 					<div class="_2albn">
-						<div>													<-- possibly new container as of 2019-03-01 holds skill icon and progress ring
-							<div class="_3zkuO _39IKr">     					<-- progress ring container
-								<div class="_2xGPj">							<-- progress ring container
-									<svg>...</svg>          					<-- progress ring svg
+						<div class="Fu0xk">											<-- new container as of 2020-02-18
+							<div class="_2969E">									<-- new container as of 2020-02-18
+								<div class="_39IKr">		     					<-- progress ring container
+									<div class="_3zkuO">							<-- progress ring container
+										<div class="_3o9cS">						<-- rotated progress ring container
+											<svg>...</svg>         					<-- progress ring svg
+										</div>
+									</div>
 								</div>
+								<div class="_3hKMGG" data-test="skill-icon">		<-- skill icon container
+									<div class="...">								<-- skill icon background
+										<svg>...</svg>								<--	skill icon
+									</div>
+								</div>
+								<div clas ="_26l3y">...</div>						<-- skill crowns logo and number
 							</div>
-							<span class="_1z_vo _3hKMG ewiWc _2vstG">			<-- skill icon background
-								<span class="..."></span>						<-- skill icon
-								<div clas ="_26l3y">...</div>					<-- skill crowns logo and number
-							</span>
-						</div>
-						<div>													<-- another possibly new container as of 2019-03-01 holds skill name
-							####################################################<-- Strength Bar to be inserted here
-							<span class="_378Tf _3qO9M _33VdW">Skill Name</span><-- Skill name
-						</div>
-
-						####### when skill clicked on new div below is appended ##########
-						<div class="_2EYQL _2HujR _1ZY-H gqrCU ewiWc">			<-- popup box backgorund
-							<div>...</div>										<-- popup box info container
-							::after												<-- popup box 'speach bubble' style arrow at top
+							<div>													<-- another possibly new container as of 2019-03-01 holds skill name
+								####################################################<-- Strength Bar to be inserted here
+								<div class="_378Tf _1YG0X _3qO9M _33VdW">Skill Name</div>
+							</div>
 						</div>
 					</div>
+				</div>
+				####### when skill clicked on new div below is appended ##########	<-- moved to direct child of Af4up container as of 2020-02-18
+				<div class="_2RblG _32ZXv _3czW4" data-test="skill-popout">			<-- popup box container
+					<div>...</div>													<-- popup box container
 				</div>
 			</a>
 		</div>
@@ -669,6 +673,14 @@ function addStrengths(strengths)
 		3:	display boolean - false if skill at crown 0, true otherwise.
 	*/
 	let bonusElementsCount = 0;
+	
+	const bonusSkillDividers = Array.from(document.querySelectorAll(`.${BONUS_SKILL_DIVIDER}`));
+	let bonusSkillRow;
+	if (bonusSkillDividers.length != 0)
+	{
+		bonusSkillRow = bonusSkillDividers[0].nextElementSibling;
+	}
+
 	for (let i=0; i<skillElements.length; i++)
 	{
 		let elementContents = [
@@ -690,16 +702,16 @@ function addStrengths(strengths)
 
 		// Check if this skill is in the bonus skill section.
 		// In the bonus skill section if the row is sandwiched between two divs with class _32Q0j, that contain an hr.
-		if (skillElements[i].parentNode.parentNode.previousSibling != null && skillElements[i].parentNode.parentNode.nextSibling != null
-			&& skillElements[i].parentNode.parentNode.previousSibling.className == BONUS_SKILL_DIVIDER && skillElements[i].parentNode.parentNode.nextSibling.className == BONUS_SKILL_DIVIDER)
+		if (bonusSkillRow != null && bonusSkillRow.contains(skillElements[i]))
 		{
-			// these skill elements are in the bonus skill section.
+			// this skill is in the bonus skill section.
 			elementContents.push(strengths[1][bonusElementsCount][0]);
 			elementContents.push(strengths[1][bonusElementsCount][1]);
 			bonusElementsCount ++;
 
 			skills.push(elementContents);
-		} else
+		}
+		else
 		{
 			// Normal skill
 			elementContents.push(strengths[0][i - bonusElementsCount][0]);
@@ -726,9 +738,11 @@ function addStrengths(strengths)
 			strengthBarHolder.style = 
 			`
 				width: 100%;
-				height: 1.4em;
 				position: relative;
 				display: ${display};
+				margin-top: 0.5em;
+				margin-bottom: -8px;
+				line-height: 1em;
 			`;
 			
 			nameElement.parentNode.style.width = "100%";
@@ -769,7 +783,7 @@ function addStrengths(strengths)
 			strengthValue.style = 
 			`
 				position: relative;
-				width: 95%;
+				width: 97%;
 				text-align: right;
 				vertical-align: middle;
 				font-size: 75%;

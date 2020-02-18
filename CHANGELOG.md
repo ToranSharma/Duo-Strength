@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v1.2.3] - 2020-02-18
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.1)
+### Fixed
+- Detection of bonus skill row when adding strength bars.
+- Spacing of strength bar under skill logo and above skill name.
+
 [v1.2.2] - 2020-01-21
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.1)
@@ -536,7 +543,8 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
-[v1.2.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.1...v1.2.2
+[v1.2.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.2...v1.2.3
+[v1.2.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.1...v1.2.2
 [v1.2.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.0...v1.2.1
 [v1.2.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.12...v1.2.0
 [v1.1.12]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.11...v1.1.12

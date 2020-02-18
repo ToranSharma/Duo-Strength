@@ -2242,7 +2242,21 @@ function hideTranslationText(reveal = false, setupObserver = true)
 				let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
 				if (enableDisableButton.length == 0)
 				{
-					// No enableDisableButton so make one and add it after the hint sentence.
+					// No enableDisableButton so make one and add it next to the question header
+					const headerContainer = document.createElement("div");
+					headerContainer.style =
+					`
+						width: 100%;
+						margin-top: 1em;
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+					`;
+
+					const questionHeader = questionContainer.querySelector(`[data-test="challenge-header"]`);
+					questionHeader.style.width = `fit-content`;
+					questionHeader.parentNode.insertBefore(headerContainer, questionHeader);
+					headerContainer.appendChild(questionHeader);
 
 					enableDisableButton = document.createElement("button");
 					enableDisableButton.className = "hideTextEnableDisable";
@@ -2279,21 +2293,24 @@ function hideTranslationText(reveal = false, setupObserver = true)
 						hideTranslationText();
 					};
 
-					if (
-						challengeTranslatePrompt.dir == "ltr" ||
-						challengeTranslatePrompt.firstChild.dir == "ltr"
-					)
+					/*
+					if (questionArea.querySelectorAll(`[dir="ltr"]`).length > 0)
 					{
 						// LTR language, button goes to the right
 						enableDisableButton.style.float = "right";
+						enableDisableButton.style.marginLeft = "1em";
 					}
-					else
+					else if (questionArea.querySelectorAll(`[dir="rtl"]`).length > 0)
 					{
 						// RTL language, button goes to the left
 						enableDisableButton.style.float = "left";
+						enableDisableButton.style.marginRight = "1em";
 					}
 					
 					hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);
+					*/
+
+					headerContainer.appendChild(enableDisableButton);
 				}
 				else
 				{

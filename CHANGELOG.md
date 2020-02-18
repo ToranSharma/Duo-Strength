@@ -11,6 +11,8 @@ Changelog
 ### Fixed
 - Detection of bonus skill row when adding strength bars.
 - Spacing of strength bar under skill logo and above skill name.
+- Moved Enable/Disable text hiding button next to question header to allow room
+for the new speech bubbles.
 
 [v1.2.2] - 2020-01-21
 -----------------

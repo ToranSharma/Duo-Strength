@@ -3169,6 +3169,24 @@ async function init()
 	}
 }
 
-document.body.onload = init(); // call function to start display sequence on first load
+window.onunload = function()
+{
+	chrome.runtime.sendMessage({type: "pageClosed"});
+}
+
+document.body.onload = function()
+{
+	chrome.runtime.sendMessage({type: "showPageAction"});
+	chrome.runtime.onMessage.addListener(
+		(message) => {
+			if (message.type == "optionsChanged")
+			{
+				console.log("options changed");
+				init();
+			}
+		}
+	);
+	init();
+}; // call function to start display sequence on first load
 
 //observer.disconnet(); can't disconnect as always needed while page is loaded.

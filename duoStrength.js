@@ -1653,9 +1653,15 @@ function displayXPBreakdown()
 			maxLevelMessage.textContent = "You have reached the maximum level!";
 			languageLevelContainer.appendChild(maxLevelMessage);
 		}
-		if (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length != 0)
+		
+		if (document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER).length != 0)
 		{
-			// If there is a Daily Goal box pop-up box, put the breakdown in that
+			// If there is a Daily Goal box in the sidebar put the breakdown in that.
+			document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER)[0].appendChild(container);
+		}
+		else if (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length != 0)
+		{
+			// Otherwise if there is a Daily Goal box pop-up box, put the breakdown in that.
 			if (inMobileLayout)
 				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[1].appendChild(container);
 			else
@@ -1677,11 +1683,6 @@ function displayXPBreakdown()
 					max-height: calc(100vh - ${(58+90)}px);
 				`;
 			}
-		}
-		else if (document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER).length != 0)
-		{
-			// If there is a Daily Goal box in the sidebar put the breakdown in that
-			document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER)[0].appendChild(container);
 		}
 		else
 		{

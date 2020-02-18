@@ -7,16 +7,18 @@ Changelog
 
 [v1.2.3] - 2020-02-18
 -----------------
-[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.1)
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.3)
 ### Fixed
 - Detection of bonus skill row when adding strength bars.
 - Spacing of strength bar under skill logo and above skill name.
 - Moved Enable/Disable text hiding button next to question header to allow room
 for the new speech bubbles.
+- Placement of XPInfo if streak popup box is visible when loading data. The
+sidebar box now has priority.
 
 [v1.2.2] - 2020-01-21
 -----------------
-[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.1)
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.2)
 ### Fixed
 - Detection of left to right, or right to left sentences in translation
 questions.

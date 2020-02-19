@@ -23,11 +23,6 @@ a skill to strengthen it, without contributing towards earning crowns.
   - Option to enable or disable this practise button.
 
 ### Changed
-- Changed LTR/RTL detection to search all elements in question area for dir
-attribute. This makes the detection more flexible to different question layout 
-styles, including those with images and speech bubbles.
-- Added a margin to the appropriate side of the Enable/Disable text hiding 
-button to give some breathing room for sentences in speech bubbles.
 - Cracked skills list is updated when skills are refreshed after first loading.
 - The needs strengthening list sorting option has new criteria to sort by and
 can now be sorted by multiple criteria.
@@ -37,9 +32,20 @@ can now be sorted by multiple criteria.
   will define the order of any skills that are the same based on prior sorting
   criteria.
 
+[v1.2.3] - 2020-02-18
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.3)
+### Fixed
+- Detection of bonus skill row when adding strength bars.
+- Spacing of strength bar under skill logo and above skill name.
+- Moved Enable/Disable text hiding button next to question header to allow room
+for the new speech bubbles.
+- Placement of XPInfo if streak popup box is visible when loading data. The
+sidebar box now has priority.
+
 [v1.2.2] - 2020-01-21
 -----------------
-[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.1)
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.2)
 ### Fixed
 - Detection of left to right, or right to left sentences in translation
 questions.
@@ -568,7 +574,8 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
-[v1.2.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.1...v1.2.2
+[v1.2.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.2...v1.2.3
+[v1.2.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.1...v1.2.2
 [v1.2.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.0...v1.2.1
 [v1.2.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.12...v1.2.0
 [v1.1.12]: https://github.com/ToranSharma/Duo-Strength/compare/v1.1.11...v1.1.12

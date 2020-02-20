@@ -2480,6 +2480,12 @@ let childListMutationHandle = function(mutationsList, observer)
 				document.getElementById("strengthenBox").style.margin = mobileMargin;
 				document.getElementById("strengthenBox").style.width = mobileWidth;
 			}
+			if (document.getElementById("crackedBox") != null)
+			{
+				document.getElementById("crackedBox").style.margin = mobileMargin;
+				document.getElementById("crackedBox").style.width = mobileWidth;
+
+			}
 			if (document.getElementById("fullStrengthMessageContainer") != null)
 			{
 				document.getElementById("fullStrengthMessageContainer").style.margin = mobileMargin;
@@ -2496,6 +2502,12 @@ let childListMutationHandle = function(mutationsList, observer)
 			{
 				document.getElementById("strengthenBox").style.margin = desktopMargin;
 				document.getElementById("strengthenBox").style.width = desktopWidth;
+				
+			}
+			if (document.getElementById("crackedBox") != null)
+			{
+				document.getElementById("crackedBox").style.margin = desktopMargin;
+				document.getElementById("crackedBox").style.width = desktopWidth;
 				
 			}
 			if (document.getElementById("fullStrengthMessageContainer") != null)

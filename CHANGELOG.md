@@ -14,6 +14,7 @@ attach a observer to the root child element.
 - Handling of multiple concurrent requests after a language change that arrive
 in a different order to the order they were sent in. Data from an older request
 arriving later is now only processed if it is for the current language.
+- Cracked skills list styling when switching between mobile and desktop layouts.
 
 ### Changed
 - User data request errors are now handled and the request will be retried after

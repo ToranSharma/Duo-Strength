@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v1.2.4] - 2020-02-20
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.4)
+### Changed
+- User data request errors are now handled and the request will be retryed after
+a 250ms wait.
+
 [v1.2.3] - 2020-02-18
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.3)
@@ -547,6 +554,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.2.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.3...v1.2.4
 [v1.2.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.2...v1.2.3
 [v1.2.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.1...v1.2.2
 [v1.2.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.0...v1.2.1

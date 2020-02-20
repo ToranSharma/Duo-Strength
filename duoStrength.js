@@ -2071,9 +2071,17 @@ function httpGetAsync(url, responseHandler)
 			let xmlHttp = new XMLHttpRequest();
 			xmlHttp.onreadystatechange = function()
 			{
-				if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+				if (xmlHttp.readyState == 4)
 				{
-					document.getElementById('userData${requestID}').textContent = "//" + xmlHttp.responseText;		
+					if (xmlHttp.status == 200)
+					{
+						document.getElementById('userData${requestID}').textContent = "//" + xmlHttp.responseText;		
+					}
+					else
+					{
+						// The request had an error, or possibly some unexpected accepted code.
+						document.getElementById('userData${requestID}').textContent = "//ERROR " + xmlHttp.status;
+					}
 				}
 			};
 			xmlHttp.open('GET', '${url+'?id='+requestID}', true);
@@ -2095,14 +2103,27 @@ function httpGetAsync(url, responseHandler)
 		let dataElem = document.getElementById('userData' + id);
 		if (dataElem.textContent == '')
 		{
-			setTimeout(()=>checkData(id), 50);
+			setTimeout(() => checkData(id), 50);
 		}
 		else
 		{
-			let newData  = dataElem.textContent.slice(2);
-			document.body.removeChild(dataElem);
-			document.body.removeChild(document.getElementById('xhrScript' + id));
-			responseHandler(newData, id);
+			if (dataElem.textContent.slice(0,7) == "//ERROR")
+			{
+				// The request had an error, lets clear the scripts and try again
+				const code = dataElem.textContent.slice(8);
+				console.error(`Request ID${id} failed, HTTP response code ${code}`);
+				document.body.removeChild(dataElem);
+				document.body.removeChild(document.getElementById('xhrScript' + id));
+
+				setTimeout(() => httpGetAsync(url, responseHandler), 250);
+			}
+			else
+			{
+				let newData  = dataElem.textContent.slice(2);
+				document.body.removeChild(dataElem);
+				document.body.removeChild(document.getElementById('xhrScript' + id));
+				responseHandler(newData, id);
+			}
 		}
 	}
 

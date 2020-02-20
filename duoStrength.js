@@ -56,6 +56,7 @@ let progress = [];
 let username = "";
 let userData = {};
 let requestID = 0;
+let requestsPending = 0;
 
 let rootElem;
 let rootChild;
@@ -2040,9 +2041,6 @@ function getStrengths()
 		removeCrackedSkillsList();
 		if (options.skillSuggestion) displaySuggestion(skills);
 	}
-
-	// All done displaying what needs doing so let reset and get ready for another change.
-	resetLanguageFlags();
 }
 
 function httpGetAsync(url, responseHandler)
@@ -2071,31 +2069,58 @@ function httpGetAsync(url, responseHandler)
 			let xmlHttp = new XMLHttpRequest();
 			xmlHttp.onreadystatechange = function()
 			{
-				if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+				if (xmlHttp.readyState == 4)
 				{
-					document.getElementById('userData${requestID}').textContent = "//" + xmlHttp.responseText;		
+					if (xmlHttp.status == 200)
+					{
+						document.getElementById('userData${requestID}').textContent = "//" + xmlHttp.responseText;		
+					}
+					else
+					{
+						// The request had an error, or possibly some unexpected accepted code.
+						document.getElementById('userData${requestID}').textContent = "//ERROR " + xmlHttp.status;
+					}
 				}
 			};
 			xmlHttp.open('GET', '${url+'?id='+requestID}', true);
 			xmlHttp.send(null);
 		})()`;
 
+	const requestResponseHelper = (mutationsList) => requestResponseMutationHandle(mutationsList, url, responseHandler);
 
+	let requestResponseObserver = new MutationObserver(requestResponseHelper);
 	let data = document.createElement('script');
 	data.id = 'userData' + requestID;
-	document.body.appendChild(data);
 
 	let xhrScript = document.createElement("script");
 	xhrScript.id = 'xhrScript' + requestID;
 	xhrScript.textContent = code;
-	document.body.appendChild(xhrScript);
 
-	function checkData(id)
+	document.body.appendChild(data);
+	requestResponseObserver.observe(data, {childList: true});
+	document.body.appendChild(xhrScript);
+	++requestsPending;
+	++requestID;
+}
+
+function requestResponseMutationHandle(mutationsList, url, responseHandler)
+{
+	for (let mutation of mutationsList)
 	{
-		let dataElem = document.getElementById('userData' + id);
-		if (dataElem.textContent == '')
+		const dataElem = mutation.target;
+		const id = dataElem.id.slice("userData".length);
+
+		--requestsPending; // We have recieved some sort of response for this request.
+
+		if (dataElem.textContent.slice(0,7) == "//ERROR")
 		{
-			setTimeout(()=>checkData(id), 50);
+			// The request had an error, lets clear the scripts and try again after a short wait.
+			const code = dataElem.textContent.slice(8);
+			console.error(`Request ID${id} failed, HTTP response code ${code}`);
+			document.body.removeChild(dataElem);
+			document.body.removeChild(document.getElementById('xhrScript' + id));
+
+			setTimeout(() => httpGetAsync(url, responseHandler), 250);
 		}
 		else
 		{
@@ -2105,15 +2130,13 @@ function httpGetAsync(url, responseHandler)
 			responseHandler(newData, id);
 		}
 	}
-
-	checkData(requestID ++);
 }
 
 async function handleDataResponse(responseText)
 {
-	userData = JSON.parse(responseText); // store response text as JSON object.
-	let newDataLanguageCode = Object.keys(userData.language_data)[0];
-	let newDataLanguageString = userData.language_data[newDataLanguageCode].language_string;
+	let newUserData = JSON.parse(responseText); // store response text as JSON object.
+	let newDataLanguageCode = Object.keys(newUserData.language_data)[0];
+	let newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
 
 	if (language == '')
 	{
@@ -2132,25 +2155,51 @@ async function handleDataResponse(responseText)
 		return false;
 
 	}
-	if (languageChanged && newDataLanguageString == language)
+	if (languageChanged)
 	{
-		// language change has happened but the data isn't up to date yet as it is not matching the current active language
-		// so request the data, but only if still on the main page. Safe to not wait as the httpRequest will take some time.
-		if (onMainPage)
+		// The language change hasn't been resolved yet.
+		if (newDataLanguageString == language)
 		{
-			requestData();
+			// language change has happened but the data isn't up to date yet as it is not matching the current active language
+			// so request the data, but only if still on the main page. Safe to not wait as the httpRequest will take some time.
+			if (onMainPage)
+			{
+				requestData();
+			}
+			return false;
 		}
-		return false;
+		else
+		{
+			// The string has updated so let's accept this as the data for the new language.
+			userData = newUserData;
+
+			languageCode = newDataLanguageCode;
+			language = newDataLanguageString;
+			resetLanguageFlags();
+			await retrieveProgressHistory();
+			updateProgress();
+
+			getStrengths();	// actual processing of the data.
+		}
 	}
 	else
 	{
-		languageCode = newDataLanguageCode;
-		language = newDataLanguageString;
-		resetLanguageFlags();
-		await retrieveProgressHistory();
-		updateProgress();
+		// No language change
+		if (newDataLanguageString != language)
+		{
+			// But the language srting data has changed, this may be a response from an older but slower request
+			if (requestsPending == 0)
+				requestData(); // Something isn't quite right so let's get some more data and see
 
-		getStrengths();	// actual processing of the data.
+			return false;
+		}
+		else
+		{
+			// Not a language change and the data is for the current language, just process it.
+			userData = newUserData;
+
+			getStrengths();
+		}
 	}
 }
 
@@ -2369,11 +2418,10 @@ let childListMutationHandle = function(mutationsList, observer)
 
 	if (rootChildReplaced)
 	{
-		// root child list has changed so rootChild has probably been replaced, let's redefine it.
-		rootChild = rootElem.childNodes[0];
+		// root child list has changed so rootChild has probably been replaced, let's start again.
 		init();
 	}
-	if (rootChildContentsReplaced)
+	else if (rootChildContentsReplaced)
 	{
 		// Check if there is both the topbar and the main page elem.
 		if (rootChild.childElementCount == 2)
@@ -2390,7 +2438,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0], {childList:true});
 		}
 	}
-	if (mainBodyReplaced)
+	else if (mainBodyReplaced)
 	{
 		// mainBodyContainer childlist changed, so the mainBody element must have been replaced.
 		mainBody = mainBodyContainer.firstChild;
@@ -2432,6 +2480,12 @@ let childListMutationHandle = function(mutationsList, observer)
 				document.getElementById("strengthenBox").style.margin = mobileMargin;
 				document.getElementById("strengthenBox").style.width = mobileWidth;
 			}
+			if (document.getElementById("crackedBox") != null)
+			{
+				document.getElementById("crackedBox").style.margin = mobileMargin;
+				document.getElementById("crackedBox").style.width = mobileWidth;
+
+			}
 			if (document.getElementById("fullStrengthMessageContainer") != null)
 			{
 				document.getElementById("fullStrengthMessageContainer").style.margin = mobileMargin;
@@ -2448,6 +2502,12 @@ let childListMutationHandle = function(mutationsList, observer)
 			{
 				document.getElementById("strengthenBox").style.margin = desktopMargin;
 				document.getElementById("strengthenBox").style.width = desktopWidth;
+				
+			}
+			if (document.getElementById("crackedBox") != null)
+			{
+				document.getElementById("crackedBox").style.margin = desktopMargin;
+				document.getElementById("crackedBox").style.width = desktopWidth;
 				
 			}
 			if (document.getElementById("fullStrengthMessageContainer") != null)
@@ -2535,14 +2595,14 @@ let classNameMutationHandle = function(mutationsList, observer)
 		we are also changed to the main page, triggering the page change mutation.
 	*/
 	let pageChanged = false;
+	let isLanguageChange = false;
 	let questionCheckStatusChange = false;
 	for (let mutation of mutationsList)
 	{
 		if (mutation.target.parentNode.parentNode == languageLogo)
 		{
 			// it was a language change
-			languageChanged = true;
-			languageChangesPending++;
+			isLanguageChange = true;
 		}
 		else if (mutation.target.parentNode.className == LESSON_BOTTOM_SECTION)
 		{
@@ -2555,10 +2615,13 @@ let classNameMutationHandle = function(mutationsList, observer)
 			pageChanged = true;
 		}
 	}
-	if (languageChanged)
+	if (isLanguageChange)
 	{
 		// Now we deal with the language change.
 		// As the language has just changed, need to wipe the slate clean so no old data is shown after change.
+		languageChanged = true;
+		languageChangesPending++;
+		
 		removeStrengthBars();
 		removeNeedsStrengtheningBox();
 		removeCrackedSkillsList();
@@ -2584,7 +2647,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 			if (language != "")
 			{
 				// language has previously been set so not first time on main page, let's just get some new data.
-				requestData(language);
+				requestData();
 			}
 			else
 			{
@@ -2629,12 +2692,12 @@ async function init()
 	let optionsLoaded = retrieveOptions();
 
 	rootElem = document.getElementById("root"); // When logging in child list is changed.
-	/*
-		data-react attribute seems to have been removed as of 2019-07-17
-		dataReactRoot = rootElem.childNodes[0]; // When entering or leaving a lesson children change there is a new body so need to detect that to know when to reload the bars.
-	*/
-	rootChild = rootElem.childNodes[0];
 	childListObserver.observe(rootElem,{childList: true}); // Observing for changes to its children to detect logging in and out?
+
+	if (rootElem.childElementCount == 0)
+		return false;
+
+	rootChild = rootElem.childNodes[0];
 	childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
 	
 	mainBodyContainer = rootChild.lastChild;

@@ -9,8 +9,10 @@ Changelog
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.4)
 ### Changed
-- User data request errors are now handled and the request will be retryed after
+- User data request errors are now handled and the request will be retried after
 a 250ms wait.
+- User data requests are responded to more cleanly through a mutation observer.
+This removes the unecessary 50ms timeout loop to check for the response.
 
 [v1.2.3] - 2020-02-18
 -----------------

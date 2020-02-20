@@ -2089,27 +2089,16 @@ function httpGetAsync(url, responseHandler)
 		})()`;
 
 
-	let data = document.createElement('script');
-	data.id = 'userData' + requestID;
-	document.body.appendChild(data);
-
-	let xhrScript = document.createElement("script");
-	xhrScript.id = 'xhrScript' + requestID;
-	xhrScript.textContent = code;
-	document.body.appendChild(xhrScript);
-
-	function checkData(id)
+	const requestResponseMutationHandle = function(mutationsList)
 	{
-		let dataElem = document.getElementById('userData' + id);
-		if (dataElem.textContent == '')
+		for (let mutation of mutationsList)
 		{
-			setTimeout(() => checkData(id), 50);
-		}
-		else
-		{
+			const dataElem = mutation.target;
+			const id = dataElem.id.slice("userData".length);
+
 			if (dataElem.textContent.slice(0,7) == "//ERROR")
 			{
-				// The request had an error, lets clear the scripts and try again
+				// The request had an error, lets clear the scripts and try again after a short wait.
 				const code = dataElem.textContent.slice(8);
 				console.error(`Request ID${id} failed, HTTP response code ${code}`);
 				document.body.removeChild(dataElem);
@@ -2127,8 +2116,21 @@ function httpGetAsync(url, responseHandler)
 		}
 	}
 
-	checkData(requestID ++);
+	let requestResponseObserver = new MutationObserver(requestResponseMutationHandle);
+	let data = document.createElement('script');
+	data.id = 'userData' + requestID;
+
+	let xhrScript = document.createElement("script");
+	xhrScript.id = 'xhrScript' + requestID;
+	xhrScript.textContent = code;
+
+	document.body.appendChild(data);
+	requestResponseObserver.observe(data, {childList: true});
+	document.body.appendChild(xhrScript);
+
+	++requestID;
 }
+
 
 async function handleDataResponse(responseText)
 {
@@ -2390,11 +2392,10 @@ let childListMutationHandle = function(mutationsList, observer)
 
 	if (rootChildReplaced)
 	{
-		// root child list has changed so rootChild has probably been replaced, let's redefine it.
-		rootChild = rootElem.childNodes[0];
+		// root child list has changed so rootChild has probably been replaced, let's start again.
 		init();
 	}
-	if (rootChildContentsReplaced)
+	else if (rootChildContentsReplaced)
 	{
 		// Check if there is both the topbar and the main page elem.
 		if (rootChild.childElementCount == 2)
@@ -2411,7 +2412,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0], {childList:true});
 		}
 	}
-	if (mainBodyReplaced)
+	else if (mainBodyReplaced)
 	{
 		// mainBodyContainer childlist changed, so the mainBody element must have been replaced.
 		mainBody = mainBodyContainer.firstChild;
@@ -2605,7 +2606,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 			if (language != "")
 			{
 				// language has previously been set so not first time on main page, let's just get some new data.
-				requestData(language);
+				requestData();
 			}
 			else
 			{

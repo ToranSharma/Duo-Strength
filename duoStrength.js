@@ -2509,6 +2509,7 @@ async function handleDataResponse(responseText)
 	{
 		// no lanuage set , then this must be the first load and we need to set the lanuage now.
 		language = newDataLanguageString;
+		languageCode = newDataLanguageCode;
 	}
 	if (languageChangesPending > 1)
 	{
@@ -2543,8 +2544,7 @@ async function handleDataResponse(responseText)
 			languageCode = newDataLanguageCode;
 			language = newDataLanguageString;
 			resetLanguageFlags();
-			await retrieveProgressHistory();
-			updateProgress();
+			retrieveProgressHistory().then(updateProgress);
 
 			getStrengths();	// actual processing of the data.
 		}
@@ -2565,6 +2565,7 @@ async function handleDataResponse(responseText)
 			// Not a language change and the data is for the current language, just process it.
 			userData = newUserData;
 
+			retrieveProgressHistory().then(updateProgress);
 			getStrengths();
 		}
 	}

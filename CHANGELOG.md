@@ -32,6 +32,23 @@ can now be sorted by multiple criteria.
   will define the order of any skills that are the same based on prior sorting
   criteria.
 
+[v1.2.4] - 2020-02-20
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.4)
+### Fixed
+- The root element is now checked to see if it has any children before trying to
+attach a observer to the root child element.
+- Handling of multiple concurrent requests after a language change that arrive
+in a different order to the order they were sent in. Data from an older request
+arriving later is now only processed if it is for the current language.
+- Cracked skills list styling when switching between mobile and desktop layouts.
+
+### Changed
+- User data request errors are now handled and the request will be retried after
+a 250ms wait.
+- User data requests are responded to more cleanly through a mutation observer.
+This removes the unecessary 50ms timeout loop to check for the response.
+
 [v1.2.3] - 2020-02-18
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.3)
@@ -574,6 +591,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.2.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.3...v1.2.4
 [v1.2.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.2...v1.2.3
 [v1.2.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.1...v1.2.2
 [v1.2.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.0...v1.2.1

@@ -2041,9 +2041,6 @@ function getStrengths()
 		removeCrackedSkillsList();
 		if (options.skillSuggestion) displaySuggestion(skills);
 	}
-
-	// All done displaying what needs doing so let reset and get ready for another change.
-	resetLanguageFlags();
 }
 
 function httpGetAsync(url, responseHandler)

@@ -56,6 +56,7 @@ let progress = [];
 let username = "";
 let userData = {};
 let requestID = 0;
+let requestsPending = 0;
 
 let rootElem;
 let rootChild;
@@ -2096,6 +2097,8 @@ function httpGetAsync(url, responseHandler)
 			const dataElem = mutation.target;
 			const id = dataElem.id.slice("userData".length);
 
+			--requestsPending; // We have recieved some sort of response for this request.
+
 			if (dataElem.textContent.slice(0,7) == "//ERROR")
 			{
 				// The request had an error, lets clear the scripts and try again after a short wait.
@@ -2127,16 +2130,16 @@ function httpGetAsync(url, responseHandler)
 	document.body.appendChild(data);
 	requestResponseObserver.observe(data, {childList: true});
 	document.body.appendChild(xhrScript);
-
+	++requestsPending;
 	++requestID;
 }
 
 
 async function handleDataResponse(responseText)
 {
-	userData = JSON.parse(responseText); // store response text as JSON object.
-	let newDataLanguageCode = Object.keys(userData.language_data)[0];
-	let newDataLanguageString = userData.language_data[newDataLanguageCode].language_string;
+	let newUserData = JSON.parse(responseText); // store response text as JSON object.
+	let newDataLanguageCode = Object.keys(newUserData.language_data)[0];
+	let newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
 
 	if (language == '')
 	{
@@ -2155,25 +2158,51 @@ async function handleDataResponse(responseText)
 		return false;
 
 	}
-	if (languageChanged && newDataLanguageString == language)
+	if (languageChanged)
 	{
-		// language change has happened but the data isn't up to date yet as it is not matching the current active language
-		// so request the data, but only if still on the main page. Safe to not wait as the httpRequest will take some time.
-		if (onMainPage)
+		// The language change hasn't been resolved yet.
+		if (newDataLanguageString == language)
 		{
-			requestData();
+			// language change has happened but the data isn't up to date yet as it is not matching the current active language
+			// so request the data, but only if still on the main page. Safe to not wait as the httpRequest will take some time.
+			if (onMainPage)
+			{
+				requestData();
+			}
+			return false;
 		}
-		return false;
+		else
+		{
+			// The string has updated so let's accept this as the data for the new language.
+			userData = newUserData;
+
+			languageCode = newDataLanguageCode;
+			language = newDataLanguageString;
+			resetLanguageFlags();
+			await retrieveProgressHistory();
+			updateProgress();
+
+			getStrengths();	// actual processing of the data.
+		}
 	}
 	else
 	{
-		languageCode = newDataLanguageCode;
-		language = newDataLanguageString;
-		resetLanguageFlags();
-		await retrieveProgressHistory();
-		updateProgress();
+		// No language change
+		if (newDataLanguageString != language)
+		{
+			// But the language srting data has changed, this may be a response from an older but slower request
+			if (requestsPending == 0)
+				requestData(); // Something isn't quite right so let's get some more data and see
 
-		getStrengths();	// actual processing of the data.
+			return false;
+		}
+		else
+		{
+			// Not a language change and the data is for the current language, just process it.
+			userData = newUserData;
+
+			getStrengths();
+		}
 	}
 }
 
@@ -2557,14 +2586,14 @@ let classNameMutationHandle = function(mutationsList, observer)
 		we are also changed to the main page, triggering the page change mutation.
 	*/
 	let pageChanged = false;
+	let isLanguageChange = false;
 	let questionCheckStatusChange = false;
 	for (let mutation of mutationsList)
 	{
 		if (mutation.target.parentNode.parentNode == languageLogo)
 		{
 			// it was a language change
-			languageChanged = true;
-			languageChangesPending++;
+			isLanguageChange = true;
 		}
 		else if (mutation.target.parentNode.className == LESSON_BOTTOM_SECTION)
 		{
@@ -2577,10 +2606,13 @@ let classNameMutationHandle = function(mutationsList, observer)
 			pageChanged = true;
 		}
 	}
-	if (languageChanged)
+	if (isLanguageChange)
 	{
 		// Now we deal with the language change.
 		// As the language has just changed, need to wipe the slate clean so no old data is shown after change.
+		languageChanged = true;
+		languageChangesPending++;
+		
 		removeStrengthBars();
 		removeNeedsStrengtheningBox();
 		removeCrackedSkillsList();

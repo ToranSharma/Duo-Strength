@@ -2089,37 +2089,9 @@ function httpGetAsync(url, responseHandler)
 			xmlHttp.send(null);
 		})()`;
 
+	const requestResponseHelper = (mutationsList) => requestResponseMutationHandle(mutationsList, url, responseHandler);
 
-	const requestResponseMutationHandle = function(mutationsList)
-	{
-		for (let mutation of mutationsList)
-		{
-			const dataElem = mutation.target;
-			const id = dataElem.id.slice("userData".length);
-
-			--requestsPending; // We have recieved some sort of response for this request.
-
-			if (dataElem.textContent.slice(0,7) == "//ERROR")
-			{
-				// The request had an error, lets clear the scripts and try again after a short wait.
-				const code = dataElem.textContent.slice(8);
-				console.error(`Request ID${id} failed, HTTP response code ${code}`);
-				document.body.removeChild(dataElem);
-				document.body.removeChild(document.getElementById('xhrScript' + id));
-
-				setTimeout(() => httpGetAsync(url, responseHandler), 250);
-			}
-			else
-			{
-				let newData  = dataElem.textContent.slice(2);
-				document.body.removeChild(dataElem);
-				document.body.removeChild(document.getElementById('xhrScript' + id));
-				responseHandler(newData, id);
-			}
-		}
-	}
-
-	let requestResponseObserver = new MutationObserver(requestResponseMutationHandle);
+	let requestResponseObserver = new MutationObserver(requestResponseHelper);
 	let data = document.createElement('script');
 	data.id = 'userData' + requestID;
 
@@ -2134,6 +2106,34 @@ function httpGetAsync(url, responseHandler)
 	++requestID;
 }
 
+function requestResponseMutationHandle(mutationsList, url, responseHandler)
+{
+	for (let mutation of mutationsList)
+	{
+		const dataElem = mutation.target;
+		const id = dataElem.id.slice("userData".length);
+
+		--requestsPending; // We have recieved some sort of response for this request.
+
+		if (dataElem.textContent.slice(0,7) == "//ERROR")
+		{
+			// The request had an error, lets clear the scripts and try again after a short wait.
+			const code = dataElem.textContent.slice(8);
+			console.error(`Request ID${id} failed, HTTP response code ${code}`);
+			document.body.removeChild(dataElem);
+			document.body.removeChild(document.getElementById('xhrScript' + id));
+
+			setTimeout(() => httpGetAsync(url, responseHandler), 250);
+		}
+		else
+		{
+			let newData  = dataElem.textContent.slice(2);
+			document.body.removeChild(dataElem);
+			document.body.removeChild(document.getElementById('xhrScript' + id));
+			responseHandler(newData, id);
+		}
+	}
+}
 
 async function handleDataResponse(responseText)
 {

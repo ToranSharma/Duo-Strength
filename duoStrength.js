@@ -2651,12 +2651,12 @@ async function init()
 	let optionsLoaded = retrieveOptions();
 
 	rootElem = document.getElementById("root"); // When logging in child list is changed.
-	/*
-		data-react attribute seems to have been removed as of 2019-07-17
-		dataReactRoot = rootElem.childNodes[0]; // When entering or leaving a lesson children change there is a new body so need to detect that to know when to reload the bars.
-	*/
-	rootChild = rootElem.childNodes[0];
 	childListObserver.observe(rootElem,{childList: true}); // Observing for changes to its children to detect logging in and out?
+
+	if (rootElem.childElementCount == 0)
+		return false;
+
+	rootChild = rootElem.childNodes[0];
 	childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
 	
 	mainBodyContainer = rootChild.lastChild;

@@ -8,6 +8,10 @@ Changelog
 [v1.2.4] - 2020-02-20
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.4)
+### Fixed
+- The root element is now checked to see if it has any children before trying to
+attach a observer to the root child element.
+
 ### Changed
 - User data request errors are now handled and the request will be retried after
 a 250ms wait.

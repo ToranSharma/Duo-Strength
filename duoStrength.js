@@ -1738,7 +1738,33 @@ function displayXPBreakdown()
 
 	let levelProgressPercentage = (data.level_progress*100)/(data.level_points);
 
-	if(document.getElementById("XPBox") == null)
+	const currentXPBox = document.getElementById("XPBox");
+	let removeCurrentBox = false;
+
+	if (currentXPBox != null)
+	{
+		// truth table
+		// boxExists wantBox startOver
+		//		1		1		0
+		// 		1	 	0		1
+		// 		-----------------
+		// 		0		1		1
+		// 		0		0		0
+		//
+		//	Want XOR, or can split into two cases as shown
+		//	if the feature exists, then the output should be NOT the option
+		//	else it should be the same as the option
+		//
+		if ( (currentXPBox.querySelector(`#XPBreakdown`) != null) ? !options.XPBreakdown : options.XPBreakdown)
+			removeCurrentBox = true;
+		if ( (currentXPBox.querySelector(`#XPPrediction`) != null) ? !options.XPPrediction : options.XPPrediction)
+			removeCurrentBox = true
+	}
+
+	if (removeCurrentBox)
+		currentXPBox.remove();
+
+	if (document.getElementById("XPBox") == null)
 	{
 		// We haven't made the XP Box yet
 
@@ -1750,10 +1776,11 @@ function displayXPBreakdown()
 			color: black;
 		`;
 
+		let languageLevelContainer = document.createElement("div");
+		languageLevelContainer.id = "XPBreakdown";
+
 		let XPHeader = document.createElement("h2");
 		XPHeader.textContent = data.language_string+ " XP";
-
-		let languageLevelContainer = document.createElement("div");
 
 		languageLevelContainer.appendChild(XPHeader);
 
@@ -1823,6 +1850,7 @@ function displayXPBreakdown()
 
 			let daysLeft = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
 			let projectedNextLevelCompletion = document.createElement("p");
+			projectedNextLevelCompletion.id = "XPPrediction";
 			projectedNextLevelCompletion.style =
 			`
 				margin-bottom: 0;

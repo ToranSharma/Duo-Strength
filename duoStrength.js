@@ -1994,6 +1994,10 @@ function displayXPBreakdown()
 
 function displayLanguagesInfo(languages)
 {
+	const sidebar = document.querySelector(`.${SIDEBAR}`);
+	if (sidebar == null)
+		return false;
+
 	let languagesBox = document.getElementById("languagesBox");
 
 	if (languagesBox != null)
@@ -2116,7 +2120,6 @@ function displayLanguagesInfo(languages)
 		);
 
 		// Add the new side bar box to the page
-		const sidebar = document.querySelector(`.${SIDEBAR}`);
 		const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONATINER}`);
 
 		sidebar.insertBefore(languagesBox, dailyGoalBox.nextSibling);
@@ -3221,11 +3224,14 @@ async function init()
 				*/
 
 				await optionsLoaded;
-				if (options.showLeagues)
-					document.getElementsByClassName(LEAGUE_TABLE)[0].style.removeProperty('display');
-				else
-					document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
 
+				if (document.getElementsByClassName(LEAGUE_TABLE).length != 0)
+				{
+					if (options.showLeagues)
+						document.getElementsByClassName(LEAGUE_TABLE)[0].style.removeProperty('display');
+					else
+						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
+				}
 				requestData();
 			}
 		}

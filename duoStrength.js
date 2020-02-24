@@ -1972,9 +1972,20 @@ function displayLanguagesInfo(languages)
 	{
 		// We already have a languagesBox.
 	
-		if (languagesBox.querySelectorAll("tr").length == languages.length + 1)
+		const displayedLanguages = Array.from(languagesBox.querySelectorAll(`table > tr > td:first-child`)).map(td => td.textContent);
+		// Need to repopulate the table if there are a different number of languages, or the order of the languages is different
+		const repopulate = (
+			displayedLanguages.length != languages.length ||
+			!displayedLanguages.every(
+				(language, index) => {
+					language == languages[index]
+				}
+			)
+		);
+
+		if (!repopulate)
 		{	
-			// Number of languages is unchanged, just update the data.
+			// Number and order of languages is unchanged, just update the data.
 			for (languageInfo of languages)
 			{
 				const tableRow = document.getElementById(`${languageInfo[0]}Row`);
@@ -1990,7 +2001,7 @@ function displayLanguagesInfo(languages)
 		}
 		else
 		{
-			// Number of languages has changed, need to repopulate table.
+			// Number of languages or the order of them has changed, need to repopulate table.
 			const table = document.getElementById("languagesTable");
 			tableRowElements = languagesTable.querySelectorAll("table > tr");
 
@@ -1999,7 +2010,7 @@ function displayLanguagesInfo(languages)
 
 			// Add new rows
 			languages.forEach(
-				(languagesInfo, index) => {
+				(languageInfo, index) => {
 					const tableRow = document.createElement("TR");
 					tableRow.id = `${languageInfo[0]}Row`;
 					tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";

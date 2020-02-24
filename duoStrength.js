@@ -223,7 +223,7 @@ function resetLanguageFlags()
 
 function removeStrengthBars()
 {
-	let bars = document.getElementsByClassName("strengthBarHolder");
+	let bars = Array.from(document.getElementsByClassName("strengthBarHolder"));
 	for (let bar of bars)
 	{
 		bar.parentNode.removeChild(bar);
@@ -280,6 +280,13 @@ function removeSuggestion()
 	{
 		suggestionContainer.parentNode.removeChild(suggestionContainer);
 	}
+}
+
+function removeLanguagesInfo()
+{
+	let languagesInfoBox = document.getElementById("languagesBox");
+	if (languagesInfoBox != null)
+		languagesInfoBox.parentNode.removeChild(languagesInfoBox);
 }
 
 function hasMetGoal()
@@ -723,6 +730,21 @@ function addStrengths(strengths)
 	}
 	
 	let numBarsAdded = 0;
+
+	let strengthBarBackground = document.createElement("div");
+	strengthBarBackground.className = "strengthBarBackground";
+	strengthBarBackground.style =
+	`
+		position: absolute;
+		display: inline-block;
+		width: 100%;
+		height: 1em;
+		left: 0;
+		background-color: #e5e5e5;
+		border-radius: 0.5em;
+		z-index: 1;
+	`;
+
 	
 	for (let i = 0; i< skills.length; i++)
 	{
@@ -746,20 +768,6 @@ function addStrengths(strengths)
 			
 			nameElement.parentNode.style.width = "100%";
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
-
-			let strengthBarBackground = document.createElement("div");
-			strengthBarBackground.className = "strengthBarBackground";
-			strengthBarBackground.style =
-			`
-				position: absolute;
-				display: inline-block;
-				width: 100%;
-				height: 1em;
-				left: 0;
-				background-color: #e5e5e5;
-				border-radius: 0.5em;
-				z-index: 1;
-			`;
 
 			let strengthBar = document.createElement("div");
 			strengthBar.className = "strengthBar";
@@ -791,22 +799,29 @@ function addStrengths(strengths)
 			`;
 			strengthValue.textContent = strength*100 + "%";
 			
-			if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground);
-			strengthBarHolder.appendChild(strengthBar);
-			strengthBarHolder.appendChild(strengthValue);
-			
-			numBarsAdded ++; // added a bar so increment counter.
-			
-		} else // we already have the elements made previously, just update their values.
-		{
-			let strengthBar = document.getElementById(name + "StrengthBar");
-			strengthBar.style.width = (strength*100)+"%";
-			strengthBar.style.backgroundColor = (strength == 1.0 ? GOLD : RED);
-			
-			let strengthValue = document.getElementById(name + "StrengthValue");
-			strengthValue.textContent = strength*100 + "%";
+		if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground.cloneNode());
+		strengthBarHolder.appendChild(strengthBar);
+		strengthBarHolder.appendChild(strengthValue);
+		
+		numBarsAdded ++; // added a bar so increment counter.
+		
+	} else // we already have the elements made previously, just update their values.
+	{
+		let strengthBar = document.getElementById(name + "StrengthBar");
+		strengthBar.style.width = (strength*100)+"%";
+		strengthBar.style.backgroundColor = (strength == 1.0 ? GOLD : RED);
+		
+		let strengthValue = document.getElementById(name + "StrengthValue");
+		strengthValue.textContent = strength*100 + "%";
 
-			strengthBar.parentNode.style.display = display;
+		strengthBar.parentNode.style.display = display;
+		
+		const background = strengthBar.parentNode.querySelector(`.strengthBarBackground`);
+		if (options.strengthBarBackgrounds && background == null)
+				strengthBar.parentNode.insertBefore(strengthBarBackground.cloneNode(),strengthBar);
+		else if (!options.strengthBarBackgrounds && background != null)
+			background.remove();
+				
 		}
 	}
 }
@@ -2345,11 +2360,20 @@ function getStrengths()
 
 	const crackedSkills = getCrackedSkills();
 
-	if (options.strengthBars) addStrengths(strengths); // call function to add these strengths under the skills
+	if (options.strengthBars)
+		addStrengths(strengths); // call function to add these strengths under the skills
+	else
+		removeStrengthBars();
 	
-	if (options.XPInfo) displayXPBreakdown();
+	if (options.XPInfo)
+		displayXPBreakdown();
+	else
+		removeXPBox();
 
-	if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
+	if (options.languagesInfo)
+		displayLanguagesInfo(getLanguagesInfo());
+	else
+		removeLanguagesInfo();
 
 	const fullyStrengthened = (needsStrengthening[0].length + needsStrengthening[1].length) == 0;
 	const noCrackedSkills = (crackedSkills[0].length + crackedSkills[1].length) == 0;

@@ -23,6 +23,11 @@ a skill to strengthen it, without contributing towards earning crowns.
   - Option to enable or disable this practise button.
 
 ### Changed
+- The extension is now a `page action`.
+  - The Duo Strength Logo will now appear in the toolbar in all broswers.
+  - Clicking on the logo will now open a popup window with the options page.
+  - Modifying any of the options will cause the extension to refresh, displaying
+  the new options.
 - Cracked skills list is updated when skills are refreshed after first loading.
 - The needs strengthening list sorting option has new criteria to sort by and
 can now be sorted by multiple criteria.

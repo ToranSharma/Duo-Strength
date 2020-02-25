@@ -224,7 +224,7 @@ function resetLanguageFlags()
 
 function removeStrengthBars()
 {
-	let bars = document.getElementsByClassName("strengthBarHolder");
+	let bars = Array.from(document.getElementsByClassName("strengthBarHolder"));
 	for (let bar of bars)
 	{
 		bar.parentNode.removeChild(bar);
@@ -252,11 +252,15 @@ function removeCrackedSkillsList()
 function removeCrownsBreakdown()
 {
 	let maxCrowns = document.getElementById("maxCrowns");
-	if(maxCrowns != null) // is null after some language changes.
+	if (maxCrowns != null) // is null after some language changes.
 	{
 		maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
 		maxCrowns.parentNode.removeChild(maxCrowns);
 	}
+
+	const crownsGraph = document.getElementById("crownsGraph");
+	if (crownsGraph != null)
+		crownsGraph.remove();
 
 	let crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
 	if (crownLevelBreakdownContainer != null) crownLevelBreakdownContainer.parentNode.removeChild(crownLevelBreakdownContainer);
@@ -281,6 +285,13 @@ function removeSuggestion()
 	{
 		suggestionContainer.parentNode.removeChild(suggestionContainer);
 	}
+}
+
+function removeLanguagesInfo()
+{
+	let languagesInfoBox = document.getElementById("languagesBox");
+	if (languagesInfoBox != null)
+		languagesInfoBox.parentNode.removeChild(languagesInfoBox);
 }
 
 function hasMetGoal()
@@ -734,6 +745,21 @@ function addStrengths(strengths)
 	}
 	
 	let numBarsAdded = 0;
+
+	let strengthBarBackground = document.createElement("div");
+	strengthBarBackground.className = "strengthBarBackground";
+	strengthBarBackground.style =
+	`
+		position: absolute;
+		display: inline-block;
+		width: 100%;
+		height: 1em;
+		left: 0;
+		background-color: #e5e5e5;
+		border-radius: 0.5em;
+		z-index: 1;
+	`;
+
 	
 	for (let i = 0; i< skills.length; i++)
 	{
@@ -759,20 +785,6 @@ function addStrengths(strengths)
 			
 			nameElement.parentNode.style.width = "100%";
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
-
-			let strengthBarBackground = document.createElement("div");
-			strengthBarBackground.className = "strengthBarBackground";
-			strengthBarBackground.style =
-			`
-				position: absolute;
-				display: inline-block;
-				width: 100%;
-				height: 1em;
-				left: 0;
-				background-color: #e5e5e5;
-				border-radius: 0.5em;
-				z-index: 1;
-			`;
 
 			let strengthBar = document.createElement("div");
 			strengthBar.className = "strengthBar";
@@ -804,22 +816,29 @@ function addStrengths(strengths)
 			`;
 			strengthValue.textContent = strength*100 + "%";
 			
-			if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground);
-			strengthBarHolder.appendChild(strengthBar);
-			strengthBarHolder.appendChild(strengthValue);
-			
-			numBarsAdded ++; // added a bar so increment counter.
-			
-		} else // we already have the elements made previously, just update their values.
-		{
-			let strengthBar = document.getElementById(name + "StrengthBar");
-			strengthBar.style.width = (strength*100)+"%";
-			strengthBar.style.backgroundColor = (strength == 1.0 ? GOLD : RED);
-			
-			let strengthValue = document.getElementById(name + "StrengthValue");
-			strengthValue.textContent = strength*100 + "%";
+		if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground.cloneNode());
+		strengthBarHolder.appendChild(strengthBar);
+		strengthBarHolder.appendChild(strengthValue);
+		
+		numBarsAdded ++; // added a bar so increment counter.
+		
+	} else // we already have the elements made previously, just update their values.
+	{
+		let strengthBar = document.getElementById(name + "StrengthBar");
+		strengthBar.style.width = (strength*100)+"%";
+		strengthBar.style.backgroundColor = (strength == 1.0 ? GOLD : RED);
+		
+		let strengthValue = document.getElementById(name + "StrengthValue");
+		strengthValue.textContent = strength*100 + "%";
 
-			strengthBar.parentNode.style.display = display;
+		strengthBar.parentNode.style.display = display;
+		
+		const background = strengthBar.parentNode.querySelector(`.strengthBarBackground`);
+		if (options.strengthBarBackgrounds && background == null)
+				strengthBar.parentNode.insertBefore(strengthBarBackground.cloneNode(),strengthBar);
+		else if (!options.strengthBarBackgrounds && background != null)
+			background.remove();
+				
 		}
 	}
 }
@@ -1328,8 +1347,10 @@ function getLanguagesInfo()
 
 function displayCrownsBreakdown()
 {
-	if (Object.entries(userData).length == 0)
+	if (Object.entries(userData).length == 0 || document.getElementsByClassName(CROWN_POPUP_CONTAINER).length === 0)
 		return false;
+
+	removeCrownsBreakdown(); // Remove if there is anything, in case it is still visible when we call
 
 	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	let bonusSkills = userData.language_data[languageCode].bonus_skills;
@@ -1467,6 +1488,7 @@ function displayCrownsBreakdown()
 
 		// Generate a graph for the data.
 		let graph = graphSVG(crownsEarnedInWeek);
+		graph.id = "crownsGraph";
 		graph.width = "100%";
 		graph.style.margin = "0 1em";
 
@@ -1736,7 +1758,33 @@ function displayXPBreakdown()
 
 	let levelProgressPercentage = (data.level_progress*100)/(data.level_points);
 
-	if(document.getElementById("XPBox") == null)
+	const currentXPBox = document.getElementById("XPBox");
+	let removeCurrentBox = false;
+
+	if (currentXPBox != null)
+	{
+		// truth table
+		// boxExists wantBox startOver
+		//		1		1		0
+		// 		1	 	0		1
+		// 		-----------------
+		// 		0		1		1
+		// 		0		0		0
+		//
+		//	Want XOR, or can split into two cases as shown
+		//	if the feature exists, then the output should be NOT the option
+		//	else it should be the same as the option
+		//
+		if ( (currentXPBox.querySelector(`#XPBreakdown`) != null) ? !options.XPBreakdown : options.XPBreakdown)
+			removeCurrentBox = true;
+		if ( (currentXPBox.querySelector(`#XPPrediction`) != null) ? !options.XPPrediction : options.XPPrediction)
+			removeCurrentBox = true
+	}
+
+	if (removeCurrentBox)
+		currentXPBox.remove();
+
+	if (document.getElementById("XPBox") == null)
 	{
 		// We haven't made the XP Box yet
 
@@ -1748,10 +1796,11 @@ function displayXPBreakdown()
 			color: black;
 		`;
 
+		let languageLevelContainer = document.createElement("div");
+		languageLevelContainer.id = "XPBreakdown";
+
 		let XPHeader = document.createElement("h2");
 		XPHeader.textContent = data.language_string+ " XP";
-
-		let languageLevelContainer = document.createElement("div");
 
 		languageLevelContainer.appendChild(XPHeader);
 
@@ -1821,6 +1870,7 @@ function displayXPBreakdown()
 
 			let daysLeft = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
 			let projectedNextLevelCompletion = document.createElement("p");
+			projectedNextLevelCompletion.id = "XPPrediction";
 			projectedNextLevelCompletion.style =
 			`
 				margin-bottom: 0;
@@ -1965,15 +2015,30 @@ function displayXPBreakdown()
 
 function displayLanguagesInfo(languages)
 {
+	const sidebar = document.querySelector(`.${SIDEBAR}`);
+	if (sidebar == null)
+		return false;
+
 	let languagesBox = document.getElementById("languagesBox");
 
 	if (languagesBox != null)
 	{
 		// We already have a languagesBox.
 	
-		if (languagesBox.querySelectorAll("tr").length == languages.length + 1)
+		const displayedLanguages = Array.from(languagesBox.querySelectorAll(`table > tr > td:first-child`)).map(td => td.textContent);
+		// Need to repopulate the table if there are a different number of languages, or the order of the languages is different
+		const repopulate = (
+			displayedLanguages.length != languages.length ||
+			!displayedLanguages.every(
+				(language, index) => {
+					language == languages[index]
+				}
+			)
+		);
+
+		if (!repopulate)
 		{	
-			// Number of languages is unchanged, just update the data.
+			// Number and order of languages is unchanged, just update the data.
 			for (languageInfo of languages)
 			{
 				const tableRow = document.getElementById(`${languageInfo[0]}Row`);
@@ -1989,7 +2054,7 @@ function displayLanguagesInfo(languages)
 		}
 		else
 		{
-			// Number of languages has changed, need to repopulate table.
+			// Number of languages or the order of them has changed, need to repopulate table.
 			const table = document.getElementById("languagesTable");
 			tableRowElements = languagesTable.querySelectorAll("table > tr");
 
@@ -1998,7 +2063,7 @@ function displayLanguagesInfo(languages)
 
 			// Add new rows
 			languages.forEach(
-				(languagesInfo, index) => {
+				(languageInfo, index) => {
 					const tableRow = document.createElement("TR");
 					tableRow.id = `${languageInfo[0]}Row`;
 					tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
@@ -2076,7 +2141,6 @@ function displayLanguagesInfo(languages)
 		);
 
 		// Add the new side bar box to the page
-		const sidebar = document.querySelector(`.${SIDEBAR}`);
 		const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONATINER}`);
 
 		sidebar.insertBefore(languagesBox, dailyGoalBox.nextSibling);
@@ -2359,11 +2423,25 @@ function getStrengths()
 
 	const crackedSkills = getCrackedSkills();
 
-	if (options.strengthBars) addStrengths(strengths); // call function to add these strengths under the skills
+	if (options.strengthBars)
+		addStrengths(strengths); // call function to add these strengths under the skills
+	else
+		removeStrengthBars();
 	
-	if (options.XPInfo) displayXPBreakdown();
+	if (options.XPInfo)
+		displayXPBreakdown();
+	else
+		removeXPBox();
 
-	if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
+	if (options.crownsInfo)
+		displayCrownsBreakdown();
+	else
+		removeCrownsBreakdown();
+
+	if (options.languagesInfo)
+		displayLanguagesInfo(getLanguagesInfo());
+	else
+		removeLanguagesInfo();
 
 	const fullyStrengthened = (needsStrengthening[0].length + needsStrengthening[1].length) == 0;
 	const noCrackedSkills = (crackedSkills[0].length + crackedSkills[1].length) == 0;
@@ -3253,17 +3331,37 @@ async function init()
 				*/
 
 				await optionsLoaded;
-				if (options.showLeagues)
-					document.getElementsByClassName(LEAGUE_TABLE)[0].style.removeProperty('display');
-				else
-					document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
 
+				if (document.getElementsByClassName(LEAGUE_TABLE).length != 0)
+				{
+					if (options.showLeagues)
+						document.getElementsByClassName(LEAGUE_TABLE)[0].style.removeProperty('display');
+					else
+						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
+				}
 				requestData();
 			}
 		}
 	}
 }
 
-document.body.onload = init(); // call function to start display sequence on first load
+window.onunload = function()
+{
+	chrome.runtime.sendMessage({type: "pageClosed"});
+}
+
+document.body.onload = function()
+{
+	chrome.runtime.sendMessage({type: "showPageAction"});
+	chrome.runtime.onMessage.addListener(
+		(message) => {
+			if (message.type == "optionsChanged")
+			{
+				init();
+			}
+		}
+	);
+	init();
+}; // call function to start display sequence on first load
 
 //observer.disconnet(); can't disconnect as always needed while page is loaded.

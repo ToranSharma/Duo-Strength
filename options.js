@@ -1,4 +1,5 @@
 var options = Object();
+var tabs = [];
 const ordinalLabels = {
 	"0": "Primary",
 	"1": "Secondary",
@@ -264,6 +265,7 @@ function getOptions(firstLoad=false)
 
 function saveOptions()
 {
+	const oldOptions = Object.assign({}, options);
 	for (element of document.getElementsByClassName("option"))
 	{
 		if (!element.parentNode.parentNode.className.includes("multiPart"))
@@ -307,6 +309,14 @@ function saveOptions()
 		}
 	}
 	chrome.storage.sync.set({"options": options});
+	if (JSON.stringify(oldOptions) !== JSON.stringify(options))
+	{
+		tabs.forEach(
+			(id) => {
+				chrome.tabs.sendMessage(id, {type: "optionsChanged"})
+			}
+		);
+	}
 }
 
 function changeAll(checked)
@@ -433,4 +443,13 @@ function newSortList(previousListItem)
 	return newList;
 }
 
-window.onload = () => getOptions(true);
+window.onload = () => {
+	chrome.runtime.sendMessage({type: "tabsRequest"},
+		(response) => {
+			console.log(response);
+			tabs = response.openedTabs;
+		}
+	);
+	getOptions(true);
+
+}

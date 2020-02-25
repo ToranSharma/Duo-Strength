@@ -251,11 +251,15 @@ function removeCrackedSkillsList()
 function removeCrownsBreakdown()
 {
 	let maxCrowns = document.getElementById("maxCrowns");
-	if(maxCrowns != null) // is null after some language changes.
+	if (maxCrowns != null) // is null after some language changes.
 	{
 		maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
 		maxCrowns.parentNode.removeChild(maxCrowns);
 	}
+
+	const crownsGraph = document.getElementById("crownsGraph");
+	if (crownsGraph != null)
+		crownsGraph.remove();
 
 	let crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
 	if (crownLevelBreakdownContainer != null) crownLevelBreakdownContainer.parentNode.removeChild(crownLevelBreakdownContainer);
@@ -1330,8 +1334,10 @@ function getLanguagesInfo()
 
 function displayCrownsBreakdown()
 {
-	if (Object.entries(userData).length == 0)
+	if (Object.entries(userData).length == 0 || document.getElementsByClassName(CROWN_POPUP_CONTAINER).length === 0)
 		return false;
+
+	removeCrownsBreakdown(); // Remove if there is anything, in case it is still visible when we call
 
 	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	let bonusSkills = userData.language_data[languageCode].bonus_skills;
@@ -1469,6 +1475,7 @@ function displayCrownsBreakdown()
 
 		// Generate a graph for the data.
 		let graph = graphSVG(crownsEarnedInWeek);
+		graph.id = "crownsGraph";
 		graph.width = "100%";
 		graph.style.margin = "0 1em";
 
@@ -2411,6 +2418,11 @@ function getStrengths()
 		displayXPBreakdown();
 	else
 		removeXPBox();
+
+	if (options.crownsInfo)
+		displayCrownsBreakdown();
+	else
+		removeCrownsBreakdown();
 
 	if (options.languagesInfo)
 		displayLanguagesInfo(getLanguagesInfo());

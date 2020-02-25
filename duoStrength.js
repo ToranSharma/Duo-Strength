@@ -2459,7 +2459,7 @@ function getStrengths()
 	if (
 		(fullyStrengthened && noCrackedSkills) ||
 		(!fullyStrengthened && !options.hideSuggestionNonStrengthened) ||
-		(!noCrackedSkills && !options.hideSuggestionsWithCrackedSkills)
+		(!noCrackedSkills && !options.hideSuggestionWithCrackedSkills)
 	)
 	{
 		// Either a fully strengthened tree, or

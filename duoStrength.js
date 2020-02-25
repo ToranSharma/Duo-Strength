@@ -3262,7 +3262,6 @@ document.body.onload = function()
 		(message) => {
 			if (message.type == "optionsChanged")
 			{
-				console.log("options changed");
 				init();
 			}
 		}

@@ -23,6 +23,11 @@ a skill to strengthen it, without contributing towards earning crowns.
   - Option to enable or disable this practise button.
 
 ### Changed
+- The extension is now a `page action`.
+  - The Duo Strength Logo will now appear in the toolbar in all broswers.
+  - Clicking on the logo will now open a popup window with the options page.
+  - Modifying any of the options will cause the extension to refresh, displaying
+  the new options.
 - Changed LTR/RTL detection to search all elements in question area for dir
 attribute. This makes the detection more flexible to different question layout 
 styles, including those with images and speech bubbles.

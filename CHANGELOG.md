@@ -21,6 +21,7 @@ Threshold".
 - Practise button to the popout for each skill. This allows you to practise 
 a skill to strengthen it, without contributing towards earning crowns.
   - Option to enable or disable this practise button.
+- Sub option to add a percentage value under total crowns count in crowns popup.
 
 ### Changed
 - The extension is now a `page action`.

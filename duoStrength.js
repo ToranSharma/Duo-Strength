@@ -95,6 +95,7 @@ function retrieveOptions()
 						"lessonThreshold":						"4",
 					"crownsInfo":							true,
 						"crownsMaximum":						true,
+							"crownsPercentage":						true,
 						"crownsGraph":							true,
 						"crownsBreakdown":						true,
 							"crownsBreakdownShowZerosRows":			true,
@@ -251,21 +252,25 @@ function removeCrackedSkillsList()
 
 function removeCrownsBreakdown()
 {
-	let maxCrowns = document.getElementById("maxCrowns");
+	const maxCrowns = document.getElementById("maxCrowns");
 	if (maxCrowns != null) // is null after some language changes.
 	{
 		maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
 		maxCrowns.parentNode.removeChild(maxCrowns);
 	}
 
+	const crownCountPercentage = document.getElementById("crownCountPercentage");
+	if (crownCountPercentage != null)
+		crownCountPercentage.remove();
+
 	const crownsGraph = document.getElementById("crownsGraph");
 	if (crownsGraph != null)
 		crownsGraph.remove();
 
-	let crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
+	const crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
 	if (crownLevelBreakdownContainer != null) crownLevelBreakdownContainer.parentNode.removeChild(crownLevelBreakdownContainer);
 
-	let treeCrownLevelPrediction = document.getElementById("treeCrownLevelPrediction");
+	const treeCrownLevelPrediction = document.getElementById("treeCrownLevelPrediction");
 	if (treeCrownLevelPrediction != null) treeCrownLevelPrediction.parentNode.removeChild(treeCrownLevelPrediction);
 }
 
@@ -1412,6 +1417,7 @@ function displayCrownsBreakdown()
 
 
 	let maximumCrownCountContainer;
+	let crownCountPercentage;
 	if (options.crownsMaximum)
 	{
 		crownTotalContainer.style.fontSize = "15px";
@@ -1419,6 +1425,21 @@ function displayCrownsBreakdown()
 		maximumCrownCountContainer = document.createElement("span");
 		maximumCrownCountContainer.id = "maxCrowns";
 		maximumCrownCountContainer.textContent = "/" + maxCrownCount;
+		
+		if (options.crownsPercentage)
+		{
+			crownCountPercentage = document.createElement("span");
+			crownCountPercentage.id = "crownCountPercentage";
+			crownCountPercentage.textContent = `(${(100*crownTotalContainer.textContent/maxCrownCount).toFixed(1)}%)`;
+			crownCountPercentage.style = `
+				font-size: 12px;
+				position: absolute;
+				transform: translate(-50%, -50%);
+				left: 50%;
+				top: calc(50% + 1.3em);
+				color: #cd7900;
+			`;
+		}
 	}
 
 	// Add crowns progress graph
@@ -1555,9 +1576,17 @@ function displayCrownsBreakdown()
 	imgContainer.appendChild(crownImg);
 	imgContainer.appendChild(levelContainer);
 
-	if(document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so let's add it.
+	if (document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so let's add it.
 	{
-		if (options.crownsMaximum) crownTotalContainer.appendChild(maximumCrownCountContainer);
+		if (options.crownsMaximum)
+		{
+			crownTotalContainer.appendChild(maximumCrownCountContainer);
+			if (options.crownsPercentage)
+			{
+				crownTotalContainer.parentNode.appendChild(crownCountPercentage);
+			}
+		}
+
 
 		breakdownContainer.appendChild(document.createElement("p"));
 		breakdownContainer.lastChild.style = "text-align: center; color: black;";

@@ -10,6 +10,7 @@ const SKILL_CONTAINER = "Af4up";
 const SKILL_CONTAINER_CHILD = "_1fneo";
 const SKILL_ICON = "_2969E";
 const SKILL_NAME = "_33VdW";
+const SKILL_POPOUT_LEVEL_CONTAINER = "_1eGmL";
 const BONUS_SKILL_DIVIDER = "_32Q0j";
 const TREE_CONTAINER = "i12-l";
 const TOP_OF_TREE_WITH_IN_BETA = "w8Lxd";
@@ -46,6 +47,7 @@ const QUESTION_CHECKED = "_2f9Fr";
 const CRACKED_SKILL_OVERLAY = "._22Nf9";
 const NEW_WORD_SELECTOR = "._29XRF";
 const LEAGUE_TABLE = "_2ANgP";
+const SKILL_NAME_SELECTOR = "._378Tf._1YG0X._3qO9M._33VdW";
 
 let languageCode = "";
 let language = "";
@@ -1235,6 +1237,10 @@ function addPractiseButton(skillPopout)
 	if (skillPopout == null)
 		return false;
 
+	const skillLevel = document.querySelector(`.${SKILL_POPOUT_LEVEL_CONTAINER}`).textContent.slice(-3,-2);
+	if (skillLevel == 5)
+		return false;
+
 	const startButton = document.querySelector(`[data-test="start-button"]`);
 	startButton.textContent = "START LESSON";
 
@@ -1243,12 +1249,14 @@ function addPractiseButton(skillPopout)
 	const practiseButtonContainer = startButtonContainer.cloneNode(true);
 	practiseButtonContainer.style.marginTop = "0.5em";
 
+	Array.from(practiseButtonContainer.childNodes).slice(0,-1).forEach(button => button.remove());
+
 	const practiseButton = practiseButtonContainer.firstChild;
 	practiseButton.textContent = "Practise";
 	practiseButton.title = "Practising this skill will strengthen it, but will not contribute any progress towards earning the next crown.";
-	practiseButton.attributes["data-test"].value = "practise-button";
+	practiseButton.setAttribute("data-test", "practise-button");
 
-	skillTitle = skillPopout.parentNode.querySelector("span").textContent;
+	skillTitle = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
 	urlTitle = userData.language_data[languageCode].skills.filter(skill => skill.short == skillTitle)[0].url_title;
 	practiseButton.addEventListener("click", (event) => {
 		window.location = `/skill/${languageCode}/${urlTitle}/practice`;
@@ -2890,9 +2898,9 @@ let childListMutationHandle = function(mutationsList, observer)
 		)
 			skillRepaired = true;
 		else if (
-			mutation.target.className == SKILL_CONTAINER &&
+			mutation.target.className.includes(SKILL_CONTAINER) &&
 			mutation.addedNodes.length != 0 &&
-			mutation.target.querySelectorAll(`[data-test="skill-popout"]`)
+			mutation.target.querySelectorAll(`[data-test="skill-popout"]`).length != 0
 		)
 		{
 			skillPopoutAdded = true;

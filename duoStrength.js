@@ -91,6 +91,8 @@ function retrieveOptions()
 						"crackedSkillsListSortOrder":			"0",
 					"skillSuggestion":						true,
 						"skillSuggestionMethod":				"0",
+						"hideSuggestionNonStrengthened":		true,
+						"hideSuggestionWithCrackedSkills":		true,
 					"focusFirstSkill":						true,
 					"practiseButton":						true,
 					"practiceType":							"0",

@@ -22,6 +22,9 @@ Threshold".
 a skill to strengthen it, without contributing towards earning crowns.
   - Option to enable or disable this practise button.
 - Sub option to add a percentage value under total crowns count in crowns popup.
+- Buttons to the completed checkpoint popouts to retry the checkpoint, or test
+out the skills above.
+  - Option to enable or disable these buttons.
 
 ### Changed
 - The extension is now a `page action`.

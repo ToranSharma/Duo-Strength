@@ -1,30 +1,111 @@
 #!/bin/bash
-# Increment version number to input version number
+# Automatically create a new hotfix or release branch with housekeeping commits
 
-if [ "$#" -eq 1 ]; then
-	echo "Usage: parentbranch branchtype [vernum]"
+if [ "$#" -eq 0 ]; then
+	echo "Usage: branchtype [vernum]"
+	echo "optional vernum to override default increment"
+	echo "Example usage:"
+	echo "./newversion.bash hotfix"
+	echo "./newversion.bash release 2.0.0"
 	exit 2
 fi
 
-PARENTBRANCH=$1
-BRANCHTYPE=$2
-VERNUM=$3
+BRANCHTYPE=$1
+OVERRIDE=0
+if [ "$#" -eq 2 ]; then
+	OVERRIDE=1
+	VERNUM=$2
+fi
 
 if [ "$BRANCHTYPE" != "hotfix" -a "$BRANCHTYPE" != "release" ]; then
 	echo "Branchtype must be hotfix or release"
 	exit 2
 fi
 
-if [ "$BRANCHTYPE" == "hotfix" ]; then
-	echo "Incrementing version number for hotfix"
-	VERNUM=$(cat manifest.json | awk '(/"version"/){vernum = $NF; gsub(/[^0-9^.]/, "", vernum); print vernum}' | awk -F "." '{print $1 "." $2 "." $NF+1}')
-	echo "Version number now $VERNUM"
+PARENTBRANCH="master"
+
+if [ "$BRANCHTYPE" == "release" ]; then
+	PARENTBRANCH="develop"
 fi
 
-git checkout $PARENTBRANCH
-git checkout -b $BRANCHTYPE"-"$VERNUM
+OLDVERNUM=$( cat manifest.json | awk '(/"version"/){vernum = $NF; gsub(/[^0-9^.]/, "", vernum); print vernum}' )
 
-sed -i -b '/"version"/s/:\t".*"/:\t"'$VERNUM'"/' manifest.json
+if [ "$OVERRIDE" -eq 0 ]; then
+	if [ "$BRANCHTYPE" == "hotfix" ]; then
+		echo "Incrementing version number for hotfix"
+		VERNUM=$( echo $OLDVERNUM | awk -F "." '{print $1 "." $2 "." $NF+1}' )
+	else
+		echo "Incrementing version number for release"
+		VERNUM=$( echo $OLDVERNUM | awk -F "." '{print $1 "." $2+1 ".0"}' )
+	fi
+fi
+
+echo "Version number is now $VERNUM"
+
+
+git checkout $PARENTBRANCH
+git checkout -b "$BRANCHTYPE-$VERNUM"
+
+sed -i -b "/\"version\"/ s/$OLDVERNUM/$VERNUM/" manifest.json
 
 git add manifest.json
-git commit -m "Incremented version number to $VERNUM"
+git commit -m "Increment version number to $VERNUM"
+
+DATE=$( date +"%F" )
+
+if [ $BRANCHTYPE == "hotfix" ]
+then
+	sed -i -b "/$OLDVERNUM\] - / {
+		h
+		s/$OLDVERNUM/$VERNUM/
+		s/[0-9]*-[0-9]*-[0-9][0-9]/$DATE/
+		n
+		H
+		n
+		H
+		s/$OLDVERNUM/$VERNUM/gp
+		i $( echo $'\n' )
+		x
+	};
+	/$OLDVERNUM\]:/ {
+		h
+		s/$OLDVERNUM/$VERNUM/g
+		s|/v[0-9\.]*\.\.\.|/v$OLDVERNUM...|gp
+		x
+	}" CHANGELOG.md
+else
+	sed -i -b "/\[Unreleased\].$/ {	
+	n
+	a\
+		-$( echo '\n' )
+	a\
+		[v$VERNUM] - $DATE
+	a\
+		-----------------
+	a\
+		[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v$VERNUM)
+	}
+	/$OLDVERNUM\]:/ {
+		h
+		s/$OLDVERNUM/$VERNUM/g
+		s|/v[0-9\.]*\.\.\.|/v$OLDVERNUM...|gp
+		x
+	}" CHANGELOG.md
+fi
+
+if [ $BRANCHTYPE == "release" ]
+then
+	git add CHANGELOG.md
+	git commit -m "Add v$VERNUM to CHANGELOG"
+fi
+
+echo ""
+
+read -p "Push new commits? (Y/n)" PUSH
+
+if [ "$PUSH" != "n" ]
+then
+	git push --set-upstream origin "$BRANCHTYPE-$VERNUM"
+else
+	echo "Commits not pushed. Note upstream not set."
+fi

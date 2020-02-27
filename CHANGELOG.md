@@ -37,6 +37,9 @@ can now be sorted by multiple criteria.
   - You an add further sorting criteria if any of the above are chosen. These
   will define the order of any skills that are the same based on prior sorting
   criteria.
+- The popout box that appears under a skill when it is clicked is now made sure
+to be in view when the page loads, or when a skill is clicked and the new
+practise button is added.
 
 [v1.2.4] - 2020-02-20
 -----------------

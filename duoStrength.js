@@ -1270,6 +1270,8 @@ function addPractiseButton(skillPopout)
 	});
 
 	startButtonContainer.parentNode.insertBefore(practiseButtonContainer, startButtonContainer.nextSibling);
+
+	skillPopout.scrollIntoView({block: "center"});
 }
 
 function getCrackedSkills()
@@ -2516,8 +2518,12 @@ function getStrengths()
 		removeSuggestion() // if there happens to be one
 	}
 
+	const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
+
 	if (options.practiseButton)
 	{
+		if (skillPopout != null && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
+			addPractiseButton(skillPopout);
 		// Add each skill to childListObserver
 		document.querySelectorAll(`.${SKILL_CONTAINER}`).forEach(
 			(skill) => {
@@ -2525,6 +2531,9 @@ function getStrengths()
 			}
 		);
 	}
+
+	if (skillPopout != null)
+		skillPopout.scrollIntoView({block: "center"});
 }
 
 function httpGetAsync(url, responseHandler)
@@ -3378,6 +3387,13 @@ async function init()
 					else
 						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
 				}
+
+				const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
+
+				if (skillPopout != null)
+					skillPopout.scrollIntoView({block: "center"});
+
+				// Done all the prep we need, let's get some data to process
 				requestData();
 			}
 		}

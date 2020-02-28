@@ -1305,9 +1305,10 @@ function addCheckpointButtons(checkpointPopout)
 	};
 
 	const redoTestButton = document.createElement("BUTTON");
-	redoTestButton.textContent = "RETRY CHALLENGE";
+	redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
 	redoTestButton.style = 
 	`
+		font-size: 80%;
 		margin-top: 1em;
 		width: 100%;
 		color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
@@ -1322,26 +1323,17 @@ function addCheckpointButtons(checkpointPopout)
 
 	redoTestButton.addEventListener("mouseleave", oml);
 	redoTestButton.addEventListener("mousedown", omd);
-	redoTestButton.addEventListener("mouseup",
-		function ()
-		{
-			omu.call(this);
-			window.location = `/checkpoint/${languageCode}/${checkpointNumber}`;
-		}
-	);
+	redoTestButton.addEventListener("mouseup", omu);
+	redoTestButton.addEventListener("click", () => window.location = `/checkpoint/${languageCode}/${checkpointNumber}`);
 
 	testOutButton = redoTestButton.cloneNode(true);
-	testOutButton.textContent = "TEST OUT ABOVE SKILLS";
+	testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
 
 	testOutButton.addEventListener("mouseleave", oml);
 	testOutButton.addEventListener("mousedown", omd);
-	testOutButton.addEventListener("mouseup",
-		function ()
-		{
-			omu.call(this);
-			window.location = `/bigtest/${languageCode}/${checkpointNumber}`;
-		}
-	);
+	testOutButton.addEventListener("mouseup", omu);
+	testOutButton.addEventListener("click", () => window.location = `/bigtest/${languageCode}/${checkpointNumber}`);
+			
 
 	popoutContent.appendChild(redoTestButton);
 	popoutContent.appendChild(testOutButton);

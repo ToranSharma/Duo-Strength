@@ -44,10 +44,12 @@ const LESSON_MAIN_SECTION = "_2-1wu";
 const LESSON_BOTTOM_SECTION = "_3gDW-";
 const QUESTION_UNCHECKED = "_34sNg";
 const QUESTION_CHECKED = "_2f9Fr";
-const CRACKED_SKILL_OVERLAY = "._22Nf9";
+const CRACKED_SKILL_OVERLAY_SELECTOR = "._22Nf9";
 const NEW_WORD_SELECTOR = "._29XRF";
 const LEAGUE_TABLE = "_2ANgP";
 const SKILL_NAME_SELECTOR = "._378Tf._1YG0X._3qO9M._33VdW";
+const CHECKPOINT_CONTAINER_SELECTOR = "._1bcgw";
+const CHECKPOINT_POPOUT_SELECTOR = ".-WrFi._32ZXv._140Cx";
 
 let languageCode = "";
 let language = "";
@@ -97,6 +99,7 @@ function retrieveOptions()
 					"practiseButton":						true,
 					"practiceType":							"0",
 						"lessonThreshold":						"4",
+					"checkpointButtons":					true,
 					"crownsInfo":							true,
 						"crownsMaximum":						true,
 							"crownsPercentage":						true,
@@ -1274,9 +1277,73 @@ function addPractiseButton(skillPopout)
 	skillPopout.scrollIntoView({block: "center"});
 }
 
+function addCheckpointButtons(checkpointPopout)
+{
+	if (checkpointPopout == null)
+		return false;
+
+	if (checkpointPopout.querySelector(`[data-test="checkpoint-start-button"]`) != null)
+		return false;
+
+	const checkpointNumber = Array.from(document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR)).indexOf(checkpointPopout.parentNode);
+	popoutContent = checkpointPopout.firstChild.firstChild;
+
+	oml = function ()
+	{
+		this.style.boxShadow = `0 0.25em rgba(255, 255, 255, 0.5)`;
+		this.style.transform = "none";
+	};
+	omd = function ()
+	{
+		this.style.boxShadow = "none";
+		this.style.transform = "translate(0, 0.3em)";
+	};
+	omu = function ()
+	{
+		this.style.boxShadow = `0 0.25em rgba(255, 255, 255, 0.5)`;
+		this.style.transform = "none";
+	};
+
+	const redoTestButton = document.createElement("BUTTON");
+	redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
+	redoTestButton.style = 
+	`
+		font-size: 80%;
+		margin-top: 1em;
+		width: 100%;
+		color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
+		border: 0;
+		border-radius: 1em;
+		padding: .8em;
+		font-weight: 700;
+		background-color: white;
+		box-shadow: 0 0.25em rgba(255, 255, 255, 0.5);
+		transition: filter 0.2s;
+	`;
+
+	redoTestButton.addEventListener("mouseleave", oml);
+	redoTestButton.addEventListener("mousedown", omd);
+	redoTestButton.addEventListener("mouseup", omu);
+	redoTestButton.addEventListener("click", () => window.location = `/checkpoint/${languageCode}/${checkpointNumber}`);
+
+	testOutButton = redoTestButton.cloneNode(true);
+	testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
+
+	testOutButton.addEventListener("mouseleave", oml);
+	testOutButton.addEventListener("mousedown", omd);
+	testOutButton.addEventListener("mouseup", omu);
+	testOutButton.addEventListener("click", () => window.location = `/bigtest/${languageCode}/${checkpointNumber}`);
+			
+
+	popoutContent.appendChild(redoTestButton);
+	popoutContent.appendChild(testOutButton);
+
+	popoutContent.scrollIntoView({block: "center"});
+}
+
 function getCrackedSkills()
 {
-	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY));
+	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY_SELECTOR));
 	const crackedSkillNames = crackedSkillElements.map(
 		(crackedSkill) => {
 			const skillIcon = crackedSkill.parentNode;
@@ -2534,6 +2601,20 @@ function getStrengths()
 
 	if (skillPopout != null)
 		skillPopout.scrollIntoView({block: "center"});
+
+	if (options.checkpointButtons)
+	{
+		const checkpointPopout = document.querySelector(CHECKPOINT_POPOUT_SELECTOR);
+		if (checkpointPopout != null)
+			addCheckpointButtons(checkpointPopout);
+		
+		// Add each checkpoint to childListObserver
+		document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR).forEach(
+			(checkpoint) => {
+				childListObserver.observe(checkpoint, {childList: true});
+			}
+		);
+	}
 }
 
 function httpGetAsync(url, responseHandler)
@@ -2908,6 +2989,8 @@ let childListMutationHandle = function(mutationsList, observer)
 	let skillRepaired = false;
 	let skillPopoutAdded = false;
 	let skillPopout;
+	let checkpointPopoutAdded = false;
+	let checkpointPopout;
 	
 	for (let mutation of mutationsList)
 	{
@@ -2934,7 +3017,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			mutation.target.attributes.hasOwnProperty("data-test") &&
 			mutation.target.attributes["data-test"].value == "skill-icon" &&
 			mutation.removedNodes.length == 1 &&
-			`.${mutation.removedNodes[0].className}` == CRACKED_SKILL_OVERLAY
+			`.${mutation.removedNodes[0].className}` == CRACKED_SKILL_OVERLAY_SELECTOR
 		)
 			skillRepaired = true;
 		else if (
@@ -2945,6 +3028,15 @@ let childListMutationHandle = function(mutationsList, observer)
 		{
 			skillPopoutAdded = true;
 			skillPopout = mutation.target.querySelector(`[data-test="skill-popout"]`);
+		}
+		else if (
+			`.${mutation.target.className}` == CHECKPOINT_CONTAINER_SELECTOR &&
+			mutation.addedNodes.length != 0 &&
+			mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR) != null
+		)
+		{
+			checkpointPopoutAdded = true;
+			checkpointPopout = mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR);
 		}
 	}
 
@@ -3124,6 +3216,10 @@ let childListMutationHandle = function(mutationsList, observer)
 	if (skillPopoutAdded)
 	{
 		if (options.practiseButton) addPractiseButton(skillPopout);
+	}
+	if (checkpointPopoutAdded)
+	{
+		if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);
 	}
 };
 

@@ -44,9 +44,18 @@ can now be sorted by multiple criteria.
 to be in view when the page loads, or when a skill is clicked and the new
 practise button is added.
 
-[v1.2.4] - 2020-02-20
+[v1.2.6] - 2020-03-01
 -----------------
-[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.4)
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.6)
+### Fixed
+- Links in lists at the top of the page are now clickable in mobile layout. The
+container element for the lists at the top of the page is now forced to be on
+top of the skill tree if they are overlapping. This means that the click
+events are handled by the links now the skill tree.
+
+[v1.2.5] - 2020-02-20
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.5)
 ### Fixed
 - Crowns progress retrieval on first load.
 
@@ -609,6 +618,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.2.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.5...v1.2.6
 [v1.2.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.4...v1.2.5
 [v1.2.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.3...v1.2.4
 [v1.2.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.2...v1.2.3

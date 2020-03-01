@@ -1014,8 +1014,13 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		}
 	}
 	
-	topOfTree.style.height = "auto";
-	topOfTree.style.width = "100%";
+	topOfTree.style =
+	`
+		height: auto;
+		width: 100%;
+		z-index: 2;
+	`;
+	topOfTree.nextElementSibling.style = `z-index: 1`;
 
 	let strengthenBox = document.getElementById((!cracked)?"strengthenBox":"crackedBox"); // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;

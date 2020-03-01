@@ -44,6 +44,12 @@ can now be sorted by multiple criteria.
 to be in view when the page loads, or when a skill is clicked and the new
 practise button is added.
 
+[v1.2.7] - 2020-03-01
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.7)
+### Fixed
+- Applied previous versions fix to skill suggestion.
+
 [v1.2.6] - 2020-03-01
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.6)
@@ -618,6 +624,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.2.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.6...v1.2.7
 [v1.2.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.5...v1.2.6
 [v1.2.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.4...v1.2.5
 [v1.2.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.3...v1.2.4

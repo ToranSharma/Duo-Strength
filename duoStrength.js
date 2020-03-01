@@ -1801,8 +1801,13 @@ function displaySuggestion(skills, bonusSkills)
 		return false;
 	}
 
-	topOfTree.style.height = "auto";
-	topOfTree.style.width = "100%";
+	topOfTree.style =
+	`
+		height: auto;
+		width: 100%;
+		z-index: 2;
+	`;
+	topOfTree.nextElementSibling.style = `z-index: 1`;
 
 	if (document.getElementById("fullStrengthMessageContainer") == null)
 	{

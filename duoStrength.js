@@ -3348,9 +3348,16 @@ async function init()
 	childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
 	
 	mainBodyContainer = rootChild.lastChild;
-	mainBody = mainBodyContainer.firstChild;
-	
+	if (mainBodyContainer == null)
+		return false;
+
 	childListObserver.observe(mainBodyContainer, {childList:true}); // Observing for changes to its children to detect if the mainBody element has been replaced.
+
+
+	mainBody = mainBodyContainer.firstChild;
+	if (mainBody == null)
+		return false;
+	
 	childListObserver.observe(mainBody,{childList:true}); // Observing for changes to its children to detect moving between mobile and desktop layout.
 	
 	if (mainBody.getElementsByClassName(SIDEBAR).length == 0)

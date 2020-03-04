@@ -792,7 +792,6 @@ function addStrengths(strengths)
 				display: ${display};
 				margin-top: 0.5em;
 				margin-bottom: -8px;
-				line-height: 1em;
 			`;
 			
 			nameElement.parentNode.style.width = "100%";

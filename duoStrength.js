@@ -1,6 +1,9 @@
 const GOLD = "rgb(250, 217, 29)";
 const RED = "rgb(244, 78, 81)";
 const ORANGE = "rgb(255, 150, 0)";
+const GREEN = "rgb(120, 200, 0)";
+const BLUE = "rgb(28, 176, 246)";
+const PURPLE = "rgb(206, 130, 255)";
 const GREY = "rgb(229, 229, 229)";
 const DARK_BLUE = "rgb(24, 153, 214)";
 const LIGHT_BLUE = "rgb(28, 176, 246)";
@@ -50,6 +53,49 @@ const LEAGUE_TABLE = "_2ANgP";
 const SKILL_NAME_SELECTOR = "._378Tf._1YG0X._3qO9M._33VdW";
 const CHECKPOINT_CONTAINER_SELECTOR = "._1bcgw";
 const CHECKPOINT_POPOUT_SELECTOR = ".-WrFi._32ZXv._140Cx";
+const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
+
+const flagYOffsets = {
+	0:	"en",
+	32: "es",
+	64: "fr",
+	96: "de",
+	128: "ja",
+	160: "it",
+	193: "ko",
+	225: "zh",
+	257: "ru",
+	289: "pt",
+	321: "tr",
+	354: "nl",
+	386: "sv",
+	418: "ga",
+	450: "el",
+	482: "he",
+	515: "pl",
+	547: "no",
+	579: "da",
+	611: "hv",
+	643: "vi",
+	676: "ro",
+	708: "sw",
+	740: "eo",
+	772: "hu",
+	804: "cy",
+	837: "uk",
+	869: "kl",
+	901: "cs",
+	933: "hi",
+	965: "id",
+	998: "ha",
+	1030: "nv",
+	1062: "ar",
+	1094: "ca",
+	1126: "th",
+	1159: "gn",
+	1352: "ar",
+	1384: "gd",
+};
 
 let languageCode = "";
 let language = "";
@@ -3159,12 +3205,14 @@ let childListMutationHandle = function(mutationsList, observer)
 	{
 		// Crown or streak pop up box has appeared or dissapeared.
 
+		console.log("popupChanged");
 		if (languageChanged)
 		{
 			// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
 			return false;
 		}
-		else if (popupIcon.getElementsByClassName(GOLD_CROWN).length + popupIcon.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
+
+		if (popupIcon.getElementsByClassName(GOLD_CROWN).length + popupIcon.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
 		{
 			// Crowns has had the change.
 			if (options.crownsInfo && popupIcon.lastChild.nodeName == 'DIV')
@@ -3177,6 +3225,7 @@ let childListMutationHandle = function(mutationsList, observer)
 				// Pop-up box disappeared
 			}
 		}
+
 		if (popupIcon.getElementsByClassName(COLOURED_FLAME).length +  popupIcon.getElementsByClassName(GREY_FLAME).length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
 		{
 			// Streak/XP has had the change.
@@ -3189,6 +3238,68 @@ let childListMutationHandle = function(mutationsList, observer)
 			{
 				// Pop-up box disappeared
 			}
+		}
+
+		if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+		{
+			Array.from(popupIcon.querySelector(LANGUAGES_LIST_SELECTOR).querySelectorAll("._1vd9-")).forEach(
+				(container) => {
+					const flag = container.firstChild;
+					const backgroundPosition = window.getComputedStyle(flag).backgroundPosition.split(" ");
+					const x = backgroundPosition[0];
+					const y = backgroundPosition[1];
+					const yOffset = parseInt(y.slice(1,-2), 10);
+					const code = flagYOffsets[yOffset];
+					languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))});
+					languageProgressPromise.then(
+						(data) => {
+							langProgress = data.progress[`${username}${code}`];
+
+							let color;
+							
+							if (langProgress == null)
+								color = "white";
+							else
+							{
+								const treeLevel = langProgress[langProgress.length-1][1];
+								switch (treeLevel)
+								{
+									case 0:
+										color = "white";
+										break;
+									case 1:
+										color = BLUE;
+										break;
+									case 2:
+										color = GREEN;
+										break;
+									case 3:
+										color = RED;
+										break;
+									case 4:
+										color = ORANGE;
+										break;
+									case 5:
+										color = GOLD;
+										break;
+								}
+									
+							}
+
+
+							flag.style = 
+							`
+								border-color: ${color};
+								border-width: 2px;
+								border-style: solid;
+								border-radius: 0.45em;
+								background-position: calc(${x} - 2px) calc(${y} - 2px);
+							`;
+						}
+					);
+
+				}
+			);
 		}
 	}
 	if (lessonLoaded)
@@ -3462,6 +3573,9 @@ async function init()
 				classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
 				*/
 				classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
+
+				// set up observer for language logo popup
+				childListObserver.observe(languageLogo.lastChild, {childList: true});
 
 				// set up observers for crown and streak nav hovers
 				childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.

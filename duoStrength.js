@@ -98,6 +98,7 @@ const flagYOffsets = {
 };
 
 let languageCode = "";
+let UICode = "";
 let language = "";
 let languageChanged = false;
 let languageChangesPending = 0;
@@ -192,7 +193,7 @@ function retrieveProgressHistory()
 	{
 		chrome.storage.sync.get("progress", function (data)
 		{
-			if (Object.entries(data).length === 0 || !data.progress.hasOwnProperty(username + languageCode))
+			if (Object.entries(data).length === 0 || !data.progress.hasOwnProperty(username + languageCode + UICode))
 			{
 				// No progress data or none for this user+lang combination
 				updateProgress();
@@ -200,7 +201,7 @@ function retrieveProgressHistory()
 			else
 			{
 				// We have some progress data saved.
-				progress = data.progress[username+languageCode];
+				progress = data.progress[username + languageCode + UICode];
 			}
 			resolve();
 		});
@@ -215,7 +216,7 @@ function storeProgressHistory()
 		{
 			if (Object.entries(data).length === 0)
 				data.progress = {};
-			data.progress[username+languageCode] = progress;
+			data.progress[username + languageCode + UICode] = progress;
 			chrome.storage.sync.set({"progress": data.progress});
 			resolve();
 		});
@@ -2536,8 +2537,6 @@ function getStrengths()
 	let strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
 	let needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
 	
-	languageCode = Object.keys(userData.language_data)[0]; // only one child of 'language_data', a code for active language.
-
 	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	let bonusSkills = userData.language_data[languageCode].bonus_skills;
 
@@ -2763,15 +2762,17 @@ function requestResponseMutationHandle(mutationsList, url, responseHandler)
 
 async function handleDataResponse(responseText)
 {
-	let newUserData = JSON.parse(responseText); // store response text as JSON object.
-	let newDataLanguageCode = Object.keys(newUserData.language_data)[0];
-	let newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
+	const newUserData = JSON.parse(responseText); // store response text as JSON object.
+	const newDataLanguageCode = newUserData.learning_language;
+	const newDataUICode = newUserData.ui_language;
+	const newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
 
 	if (language == '')
 	{
 		// no lanuage set , then this must be the first load and we need to set the lanuage now.
 		language = newDataLanguageString;
 		languageCode = newDataLanguageCode;
+		UICode = newDataUICode;
 	}
 	if (languageChangesPending > 1)
 	{
@@ -2788,7 +2789,7 @@ async function handleDataResponse(responseText)
 	if (languageChanged)
 	{
 		// The language change hasn't been resolved yet.
-		if (newDataLanguageString == language)
+		if (newDataLanguageCode + newDataUICode == languageCode + UICode)
 		{
 			// language change has happened but the data isn't up to date yet as it is not matching the current active language
 			// so request the data, but only if still on the main page. Safe to not wait as the httpRequest will take some time.
@@ -2804,8 +2805,11 @@ async function handleDataResponse(responseText)
 			userData = newUserData;
 
 			languageCode = newDataLanguageCode;
+			UICode = newDataUICode;
 			language = newDataLanguageString;
+
 			resetLanguageFlags();
+
 			retrieveProgressHistory().then(updateProgress);
 
 			getStrengths();	// actual processing of the data.
@@ -2814,7 +2818,7 @@ async function handleDataResponse(responseText)
 	else
 	{
 		// No language change
-		if (newDataLanguageString != language)
+		if (newDataLanguageCode + newDataUICode != languageCode + UICode)
 		{
 			// But the language srting data has changed, this may be a response from an older but slower request
 			if (requestsPending == 0)
@@ -3205,7 +3209,6 @@ let childListMutationHandle = function(mutationsList, observer)
 	{
 		// Crown or streak pop up box has appeared or dissapeared.
 
-		console.log("popupChanged");
 		if (languageChanged)
 		{
 			// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
@@ -3244,16 +3247,29 @@ let childListMutationHandle = function(mutationsList, observer)
 		{
 			Array.from(popupIcon.querySelector(LANGUAGES_LIST_SELECTOR).querySelectorAll("._1vd9-")).forEach(
 				(container) => {
-					const flag = container.firstChild;
-					const backgroundPosition = window.getComputedStyle(flag).backgroundPosition.split(" ");
-					const x = backgroundPosition[0];
-					const y = backgroundPosition[1];
-					const yOffset = parseInt(y.slice(1,-2), 10);
-					const code = flagYOffsets[yOffset];
+					const flag1 = container.firstChild;
+					const flag2 = flag1.nextElementSibling;
+					
+					const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
+					const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
+					
+					const x1 = backgroundPosition1[0];
+					const y1 = backgroundPosition1[1];
+
+					const y2 = backgroundPosition2[1];
+					
+					const yOffset1 = parseInt(y1.slice(1,-2), 10);
+					const yOffset2 = parseInt(y2.slice(1,-2), 10);
+
+					const code1 = flagYOffsets[yOffset1];
+					let code2 = flagYOffsets[yOffset2];
+					if (window.getComputedStyle(flag2).visibility == "hidden")
+						code2 = UICode;
+
 					languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))});
 					languageProgressPromise.then(
 						(data) => {
-							langProgress = data.progress[`${username}${code}`];
+							langProgress = data.progress[`${username}${code1}${code2}`];
 
 							let color;
 							
@@ -3287,13 +3303,13 @@ let childListMutationHandle = function(mutationsList, observer)
 							}
 
 
-							flag.style = 
+							flag1.style = 
 							`
 								border-color: ${color};
 								border-width: 2px;
 								border-style: solid;
 								border-radius: 0.45em;
-								background-position: calc(${x} - 2px) calc(${y} - 2px);
+								background-position: calc(${x1} - 2px) calc(${y1} - 2px);
 							`;
 						}
 					);

@@ -1492,7 +1492,6 @@ function displayCrownsBreakdown()
 	let crownLogoContainer = document.getElementsByClassName(CROWN_LOGO_CONTAINER)[inMobileLayout? 1 : 0];
 	let crownDescriptionContainer = document.getElementsByClassName(CROWN_DESCRIPTION_CONTAINER)[inMobileLayout ? 1 : 0];
 
-	crownLogoContainer.style.transform = 'scale(1.7)';
 	crownDescriptionContainer.style.width = '50%';
 
 	let crownTotalContainer;
@@ -1503,8 +1502,6 @@ function displayCrownsBreakdown()
 	let crownCountPercentage;
 	if (options.crownsMaximum)
 	{
-		crownTotalContainer.style.fontSize = "15px";
-
 		maximumCrownCountContainer = document.createElement("span");
 		maximumCrownCountContainer.id = "maxCrowns";
 		maximumCrownCountContainer.textContent = "/" + maxCrownCount;
@@ -1515,7 +1512,7 @@ function displayCrownsBreakdown()
 			crownCountPercentage.id = "crownCountPercentage";
 			crownCountPercentage.textContent = `(${(100*crownTotalContainer.textContent/maxCrownCount).toFixed(1)}%)`;
 			crownCountPercentage.style = `
-				font-size: 12px;
+				font-size: 0.8em;
 				position: absolute;
 				transform: translate(-50%, -50%);
 				left: 50%;
@@ -1594,7 +1591,7 @@ function displayCrownsBreakdown()
 		let graph = graphSVG(crownsEarnedInWeek);
 		graph.id = "crownsGraph";
 		graph.width = "100%";
-		graph.style.margin = "0 1em";
+		graph.style.margin = "1em 1em 0 1em";
 
 		crownLevelContainer.appendChild(graph);
 	}
@@ -1650,8 +1647,8 @@ function displayCrownsBreakdown()
 	// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
 	crownImg.style =
 	`
-		height: 100%;
 		width: 100%;
+		padding: 0 0.2em ;
 		z-index: 1;
 	`;
 	crownImg.src = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg"; // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";

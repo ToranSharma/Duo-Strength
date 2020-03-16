@@ -3061,7 +3061,10 @@ let childListMutationHandle = function(mutationsList, observer)
 			mainBodyReplaced = true;
 		else if (mutation.target == mainBody)
 			mainBodyContentsChanged = true;
-		else if (mutation.target.className == POPUP_ICON)
+		else if (
+			mutation.target.className == POPUP_ICON &&
+			mutation.addedNodes.length != 0
+		)
 		{
 			popupChanged = true;
 			popupIcon = mutation.target;
@@ -3252,6 +3255,8 @@ let childListMutationHandle = function(mutationsList, observer)
 					
 					const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
 					const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
+					const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
+					const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
 					
 					const x1 = backgroundPosition1[0];
 					const y1 = backgroundPosition1[1];
@@ -3266,7 +3271,7 @@ let childListMutationHandle = function(mutationsList, observer)
 					if (window.getComputedStyle(flag2).visibility == "hidden")
 						code2 = UICode;
 
-					languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))});
+					languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
 					languageProgressPromise.then(
 						(data) => {
 							langProgress = data.progress[`${username}${code1}${code2}`];
@@ -3306,10 +3311,12 @@ let childListMutationHandle = function(mutationsList, observer)
 							flag1.style = 
 							`
 								border-color: ${color};
-								border-width: 2px;
+								border-width: 4px;
 								border-style: solid;
-								border-radius: 0.45em;
+								border-radius: 10px;
 								background-position: calc(${x1} - 2px) calc(${y1} - 2px);
+								height: ${+height1 + 4}px;
+								width: ${+width1 + 4}px;
 							`;
 						}
 					);

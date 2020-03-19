@@ -149,6 +149,7 @@ function retrieveOptions()
 					"practiceType":							"0",
 						"lessonThreshold":						"4",
 					"checkpointButtons":					true,
+					"treeLevelBorder":						true,
 					"crownsInfo":							true,
 						"crownsMaximum":						true,
 							"crownsPercentage":						true,
@@ -3250,7 +3251,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			}
 		}
 
-		if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+		if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null && options.treeLevelBorder)
 		{
 			// Get the progress saved for all languages and users, async
 			languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );

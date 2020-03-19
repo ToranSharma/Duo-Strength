@@ -1,9 +1,14 @@
 const GOLD = "rgb(250, 217, 29)";
 const RED = "rgb(244, 78, 81)";
 const ORANGE = "rgb(255, 150, 0)";
+const GREEN = "rgb(120, 200, 0)";
+const BLUE = "rgb(28, 176, 246)";
+const PURPLE = "rgb(206, 130, 255)";
 const GREY = "rgb(229, 229, 229)";
 const DARK_BLUE = "rgb(24, 153, 214)";
 const LIGHT_BLUE = "rgb(28, 176, 246)";
+
+const crownSrc = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
 
 // Duolingo class names:
 const SKILL_CONTAINER = "Af4up";
@@ -50,8 +55,52 @@ const LEAGUE_TABLE = "_2ANgP";
 const SKILL_NAME_SELECTOR = "._378Tf._1YG0X._3qO9M._33VdW";
 const CHECKPOINT_CONTAINER_SELECTOR = "._1bcgw";
 const CHECKPOINT_POPOUT_SELECTOR = ".-WrFi._32ZXv._140Cx";
+const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
+
+const flagYOffsets = {
+	0:	"en",
+	32: "es",
+	64: "fr",
+	96: "de",
+	128: "ja",
+	160: "it",
+	193: "ko",
+	225: "zh",
+	257: "ru",
+	289: "pt",
+	321: "tr",
+	354: "nl",
+	386: "sv",
+	418: "ga",
+	450: "el",
+	482: "he",
+	515: "pl",
+	547: "no",
+	579: "da",
+	611: "hv",
+	643: "vi",
+	676: "ro",
+	708: "sw",
+	740: "eo",
+	772: "hu",
+	804: "cy",
+	837: "uk",
+	869: "kl",
+	901: "cs",
+	933: "hi",
+	965: "id",
+	998: "ha",
+	1030: "nv",
+	1062: "ar",
+	1094: "ca",
+	1126: "th",
+	1159: "gn",
+	1352: "ar",
+	1384: "gd",
+};
 
 let languageCode = "";
+let UICode = "";
 let language = "";
 let languageChanged = false;
 let languageChangesPending = 0;
@@ -100,6 +149,7 @@ function retrieveOptions()
 					"practiceType":							"0",
 						"lessonThreshold":						"4",
 					"checkpointButtons":					true,
+					"treeLevelBorder":						true,
 					"crownsInfo":							true,
 						"crownsMaximum":						true,
 							"crownsPercentage":						true,
@@ -146,7 +196,7 @@ function retrieveProgressHistory()
 	{
 		chrome.storage.sync.get("progress", function (data)
 		{
-			if (Object.entries(data).length === 0 || !data.progress.hasOwnProperty(username + languageCode))
+			if (Object.entries(data).length === 0 || !data.progress.hasOwnProperty(username + languageCode + UICode))
 			{
 				// No progress data or none for this user+lang combination
 				updateProgress();
@@ -154,7 +204,7 @@ function retrieveProgressHistory()
 			else
 			{
 				// We have some progress data saved.
-				progress = data.progress[username+languageCode];
+				progress = data.progress[username + languageCode + UICode];
 			}
 			resolve();
 		});
@@ -169,7 +219,7 @@ function storeProgressHistory()
 		{
 			if (Object.entries(data).length === 0)
 				data.progress = {};
-			data.progress[username+languageCode] = progress;
+			data.progress[username + languageCode + UICode] = progress;
 			chrome.storage.sync.set({"progress": data.progress});
 			resolve();
 		});
@@ -1651,7 +1701,7 @@ function displayCrownsBreakdown()
 		padding: 0 0.2em ;
 		z-index: 1;
 	`;
-	crownImg.src = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg"; // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
+	crownImg.src = crownSrc;
 
 	imgContainer.appendChild(crownImg);
 	imgContainer.appendChild(levelContainer);
@@ -2487,8 +2537,6 @@ function getStrengths()
 	let strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
 	let needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
 	
-	languageCode = Object.keys(userData.language_data)[0]; // only one child of 'language_data', a code for active language.
-
 	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	let bonusSkills = userData.language_data[languageCode].bonus_skills;
 
@@ -2714,15 +2762,17 @@ function requestResponseMutationHandle(mutationsList, url, responseHandler)
 
 async function handleDataResponse(responseText)
 {
-	let newUserData = JSON.parse(responseText); // store response text as JSON object.
-	let newDataLanguageCode = Object.keys(newUserData.language_data)[0];
-	let newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
+	const newUserData = JSON.parse(responseText); // store response text as JSON object.
+	const newDataLanguageCode = newUserData.learning_language;
+	const newDataUICode = newUserData.ui_language;
+	const newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
 
 	if (language == '')
 	{
 		// no lanuage set , then this must be the first load and we need to set the lanuage now.
 		language = newDataLanguageString;
 		languageCode = newDataLanguageCode;
+		UICode = newDataUICode;
 	}
 	if (languageChangesPending > 1)
 	{
@@ -2739,7 +2789,7 @@ async function handleDataResponse(responseText)
 	if (languageChanged)
 	{
 		// The language change hasn't been resolved yet.
-		if (newDataLanguageString == language)
+		if (newDataLanguageCode + newDataUICode == languageCode + UICode)
 		{
 			// language change has happened but the data isn't up to date yet as it is not matching the current active language
 			// so request the data, but only if still on the main page. Safe to not wait as the httpRequest will take some time.
@@ -2755,8 +2805,11 @@ async function handleDataResponse(responseText)
 			userData = newUserData;
 
 			languageCode = newDataLanguageCode;
+			UICode = newDataUICode;
 			language = newDataLanguageString;
+
 			resetLanguageFlags();
+
 			retrieveProgressHistory().then(updateProgress);
 
 			getStrengths();	// actual processing of the data.
@@ -2765,7 +2818,7 @@ async function handleDataResponse(responseText)
 	else
 	{
 		// No language change
-		if (newDataLanguageString != language)
+		if (newDataLanguageCode + newDataUICode != languageCode + UICode)
 		{
 			// But the language srting data has changed, this may be a response from an older but slower request
 			if (requestsPending == 0)
@@ -3008,7 +3061,10 @@ let childListMutationHandle = function(mutationsList, observer)
 			mainBodyReplaced = true;
 		else if (mutation.target == mainBody)
 			mainBodyContentsChanged = true;
-		else if (mutation.target.className == POPUP_ICON)
+		else if (
+			mutation.target.className == POPUP_ICON &&
+			mutation.addedNodes.length != 0
+		)
 		{
 			popupChanged = true;
 			popupIcon = mutation.target;
@@ -3081,6 +3137,7 @@ let childListMutationHandle = function(mutationsList, observer)
 		else
 			return false;
 	}
+
 	if (mainBodyContentsChanged)
 	{
 		// Switched between mobile and desktop layouts.
@@ -3152,6 +3209,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 		}
 	}
+
 	if (popupChanged)
 	{
 		// Crown or streak pop up box has appeared or dissapeared.
@@ -3161,7 +3219,8 @@ let childListMutationHandle = function(mutationsList, observer)
 			// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
 			return false;
 		}
-		else if (popupIcon.getElementsByClassName(GOLD_CROWN).length + popupIcon.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
+
+		if (popupIcon.getElementsByClassName(GOLD_CROWN).length + popupIcon.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
 		{
 			// Crowns has had the change.
 			if (options.crownsInfo && popupIcon.lastChild.nodeName == 'DIV')
@@ -3174,6 +3233,7 @@ let childListMutationHandle = function(mutationsList, observer)
 				// Pop-up box disappeared
 			}
 		}
+
 		if (popupIcon.getElementsByClassName(COLOURED_FLAME).length +  popupIcon.getElementsByClassName(GREY_FLAME).length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
 		{
 			// Streak/XP has had the change.
@@ -3187,7 +3247,109 @@ let childListMutationHandle = function(mutationsList, observer)
 				// Pop-up box disappeared
 			}
 		}
+
+		if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null && options.treeLevelBorder)
+		{
+			// Get the progress saved for all languages and users, async
+			languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
+
+			languageProgressPromise.then(
+				(data) => {
+					// Go through each row in the language change list, if it is still there.
+					if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+						Array.from(popupIcon.querySelector(LANGUAGES_LIST_SELECTOR).querySelectorAll("._1vd9-")).forEach(
+							(container) => {
+								// There are two flags for each language, the first is the target language, the second is the base language.
+								const flag1 = container.firstChild;
+								const flag2 = flag1.nextElementSibling;
+								
+								// As the flags are all stored in one sprite sheet we determine which is displayed by the background positions.
+								const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
+								const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
+								
+
+								// Bbckground offsets in px as strings
+								const x1 = backgroundPosition1[0];
+								const y1 = backgroundPosition1[1];
+
+								const y2 = backgroundPosition2[1];
+								
+								// trim off px and make positive
+								const yOffset1 = Math.abs(parseInt(y1.slice(0,-2), 10));
+								const yOffset2 = Math.abs(parseInt(y2.slice(0,-2), 10));
+
+								// find the language code associated with those offsets
+								const code1 = flagYOffsets[yOffset1];
+								const code2 = flagYOffsets[yOffset2];
+
+								// height and width will need to be adjusted to account for the border that is to be added, so we save the original values
+								const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
+								const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
+						
+								langProgress = data.progress[`${username}${code1}${code2}`];
+
+								let color;
+								let treeLevel;
+								
+								if (langProgress == null)
+									treeLevel = 0;
+								else
+									treeLevel = langProgress[langProgress.length-1][1];
+
+								switch (treeLevel)
+								{
+									case 0:
+										color = "white";
+										break;
+									case 1:
+										color = BLUE;
+										break;
+									case 2:
+										color = GREEN;
+										break;
+									case 3:
+										color = RED;
+										break;
+									case 4:
+										color = ORANGE;
+										break;
+									case 5:
+										color = GOLD;
+										break;
+								}
+
+
+								flag1.style = 
+								`
+									border-color: ${color};
+									border-width: 4px;
+									border-style: solid;
+									border-radius: 10px;
+									background-position: calc(${x1} - 2px) calc(${y1} - 2px);
+									height: ${+height1 + 4}px;
+									width: ${+width1 + 4}px;
+								`;
+								
+								if (treeLevel == 5)
+								{
+									const crown = document.createElement("IMG");
+									crown.src = crownSrc;
+									crown.style = `
+										position: 	absolute;
+										left: 0;
+										bottom: 0;
+										width: 75%;
+										transform: translate(-50%, 50%);
+									`;
+									flag1.appendChild(crown);
+								}
+							}
+						);
+				}
+			);
+		}
 	}
+
 	if (lessonLoaded)
 	{
 		// Question section loaded.
@@ -3203,26 +3365,31 @@ let childListMutationHandle = function(mutationsList, observer)
 		const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
 		classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
 	}
+	
 	if (lessonQuestionChanged)
 	{
 		// Run check for translation type question
 
 		hideTranslationText();
 	}
+	
 	if (lessonInputMethodChanged)
 	{
 		// Need to re run question hiding as the question box has been replaced.
 
 		hideTranslationText(undefined, false);
 	}
+	
 	if (skillRepaired)
 	{
 		getStrengths();
 	}
+	
 	if (skillPopoutAdded)
 	{
 		if (options.practiseButton) addPractiseButton(skillPopout);
 	}
+	
 	if (checkpointPopoutAdded)
 	{
 		if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);
@@ -3459,6 +3626,9 @@ async function init()
 				classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
 				*/
 				classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
+
+				// set up observer for language logo popup
+				childListObserver.observe(languageLogo.lastChild, {childList: true});
 
 				// set up observers for crown and streak nav hovers
 				childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.

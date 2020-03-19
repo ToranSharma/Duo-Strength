@@ -8,6 +8,8 @@ const GREY = "rgb(229, 229, 229)";
 const DARK_BLUE = "rgb(24, 153, 214)";
 const LIGHT_BLUE = "rgb(28, 176, 246)";
 
+const crownSrc = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
+
 // Duolingo class names:
 const SKILL_CONTAINER = "Af4up";
 const SKILL_CONTAINER_CHILD = "_1fneo";
@@ -1701,7 +1703,7 @@ function displayCrownsBreakdown()
 		width: 100%;
 		z-index: 1;
 	`;
-	crownImg.src = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg"; // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
+	crownImg.src = crownSrc;
 
 	imgContainer.appendChild(crownImg);
 	imgContainer.appendChild(levelContainer);
@@ -3137,6 +3139,7 @@ let childListMutationHandle = function(mutationsList, observer)
 		else
 			return false;
 	}
+
 	if (mainBodyContentsChanged)
 	{
 		// Switched between mobile and desktop layouts.
@@ -3208,6 +3211,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 		}
 	}
+
 	if (popupChanged)
 	{
 		// Crown or streak pop up box has appeared or dissapeared.
@@ -3248,41 +3252,52 @@ let childListMutationHandle = function(mutationsList, observer)
 
 		if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null)
 		{
-			Array.from(popupIcon.querySelector(LANGUAGES_LIST_SELECTOR).querySelectorAll("._1vd9-")).forEach(
-				(container) => {
-					const flag1 = container.firstChild;
-					const flag2 = flag1.nextElementSibling;
-					
-					const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
-					const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
-					const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
-					const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
-					
-					const x1 = backgroundPosition1[0];
-					const y1 = backgroundPosition1[1];
+			// Get the progress saved for all languages and users, async
+			languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
 
-					const y2 = backgroundPosition2[1];
-					
-					const yOffset1 = Math.abs(parseInt(y1.slice(0,-2), 10));
-					const yOffset2 = Math.abs(parseInt(y2.slice(0,-2), 10));
+			languageProgressPromise.then(
+				(data) => {
+					// Go through each row in the language change list, if it is still there.
+					if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+						Array.from(popupIcon.querySelector(LANGUAGES_LIST_SELECTOR).querySelectorAll("._1vd9-")).forEach(
+							(container) => {
+								// There are two flags for each language, the first is the target language, the second is the base language.
+								const flag1 = container.firstChild;
+								const flag2 = flag1.nextElementSibling;
+								
+								// As the flags are all stored in one sprite sheet we determine which is displayed by the background positions.
+								const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
+								const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
+								
 
-					const code1 = flagYOffsets[yOffset1];
-					let code2 = flagYOffsets[yOffset2];
-					if (window.getComputedStyle(flag2).visibility == "hidden")
-						code2 = UICode;
-					
-					languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
-					languageProgressPromise.then(
-						(data) => {
-							langProgress = data.progress[`${username}${code1}${code2}`];
+								// Bbckground offsets in px as strings
+								const x1 = backgroundPosition1[0];
+								const y1 = backgroundPosition1[1];
 
-							let color;
-							
-							if (langProgress == null)
-								color = "white";
-							else
-							{
-								const treeLevel = langProgress[langProgress.length-1][1];
+								const y2 = backgroundPosition2[1];
+								
+								// trim off px and make positive
+								const yOffset1 = Math.abs(parseInt(y1.slice(0,-2), 10));
+								const yOffset2 = Math.abs(parseInt(y2.slice(0,-2), 10));
+
+								// find the language code associated with those offsets
+								const code1 = flagYOffsets[yOffset1];
+								const code2 = flagYOffsets[yOffset2];
+
+								// height and width will need to be adjusted to account for the border that is to be added, so we save the original values
+								const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
+								const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
+						
+								langProgress = data.progress[`${username}${code1}${code2}`];
+
+								let color;
+								let treeLevel;
+								
+								if (langProgress == null)
+									treeLevel = 0;
+								else
+									treeLevel = langProgress[langProgress.length-1][1];
+
 								switch (treeLevel)
 								{
 									case 0:
@@ -3304,27 +3319,39 @@ let childListMutationHandle = function(mutationsList, observer)
 										color = GOLD;
 										break;
 								}
-									
+
+
+								flag1.style = 
+								`
+									border-color: ${color};
+									border-width: 4px;
+									border-style: solid;
+									border-radius: 10px;
+									background-position: calc(${x1} - 2px) calc(${y1} - 2px);
+									height: ${+height1 + 4}px;
+									width: ${+width1 + 4}px;
+								`;
+								
+								if (treeLevel == 5)
+								{
+									const crown = document.createElement("IMG");
+									crown.src = crownSrc;
+									crown.style = `
+										position: 	absolute;
+										left: 0;
+										bottom: 0;
+										width: 75%;
+										transform: translate(-50%, 50%);
+									`;
+									flag1.appendChild(crown);
+								}
 							}
-
-
-							flag1.style = 
-							`
-								border-color: ${color};
-								border-width: 4px;
-								border-style: solid;
-								border-radius: 10px;
-								background-position: calc(${x1} - 2px) calc(${y1} - 2px);
-								height: ${+height1 + 4}px;
-								width: ${+width1 + 4}px;
-							`;
-						}
-					);
-
+						);
 				}
 			);
 		}
 	}
+
 	if (lessonLoaded)
 	{
 		// Question section loaded.
@@ -3340,26 +3367,31 @@ let childListMutationHandle = function(mutationsList, observer)
 		const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
 		classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
 	}
+	
 	if (lessonQuestionChanged)
 	{
 		// Run check for translation type question
 
 		hideTranslationText();
 	}
+	
 	if (lessonInputMethodChanged)
 	{
 		// Need to re run question hiding as the question box has been replaced.
 
 		hideTranslationText(undefined, false);
 	}
+	
 	if (skillRepaired)
 	{
 		getStrengths();
 	}
+	
 	if (skillPopoutAdded)
 	{
 		if (options.practiseButton) addPractiseButton(skillPopout);
 	}
+	
 	if (checkpointPopoutAdded)
 	{
 		if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);

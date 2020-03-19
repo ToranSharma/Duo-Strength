@@ -3263,14 +3263,14 @@ let childListMutationHandle = function(mutationsList, observer)
 
 					const y2 = backgroundPosition2[1];
 					
-					const yOffset1 = parseInt(y1.slice(1,-2), 10);
-					const yOffset2 = parseInt(y2.slice(1,-2), 10);
+					const yOffset1 = Math.abs(parseInt(y1.slice(0,-2), 10));
+					const yOffset2 = Math.abs(parseInt(y2.slice(0,-2), 10));
 
 					const code1 = flagYOffsets[yOffset1];
 					let code2 = flagYOffsets[yOffset2];
 					if (window.getComputedStyle(flag2).visibility == "hidden")
 						code2 = UICode;
-
+					
 					languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
 					languageProgressPromise.then(
 						(data) => {

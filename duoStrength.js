@@ -1540,6 +1540,10 @@ function displayCrownsBreakdown()
 		`;
 	}
 	let crownLogoContainer = document.getElementsByClassName(CROWN_LOGO_CONTAINER)[inMobileLayout? 1 : 0];
+	const emptyCrown = crownLogoContainer.querySelector(`img[src$="juicy-crown-empty.svg"]`);
+	if (emptyCrown != null)
+		emptyCrown.style["transform"] = "scale(1.3)";
+
 	let crownDescriptionContainer = document.getElementsByClassName(CROWN_DESCRIPTION_CONTAINER)[inMobileLayout ? 1 : 0];
 
 	crownDescriptionContainer.style.width = '50%';

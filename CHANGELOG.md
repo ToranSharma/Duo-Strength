@@ -25,6 +25,11 @@ a skill to strengthen it, without contributing towards earning crowns.
 - Buttons to the completed checkpoint popouts to retry the checkpoint, or test
 out the skills above.
   - Option to enable or disable these buttons.
+- Coloured border to the flags in the languages list to indicate the tree level
+of each tree. A white/no border indicates that the tree is level 0 (not 
+completed), level 1 is blue, level 2 is green, level 3 is red, level 4 is orange
+and level 5 is gold with a crown icon added to the bottom left corner.
+  - Option to neable or disable the borders around the flags.
 
 ### Changed
 - The extension is now a `page action`.
@@ -43,6 +48,12 @@ can now be sorted by multiple criteria.
 - The popout box that appears under a skill when it is clicked is now made sure
 to be in view when the page loads, or when a skill is clicked and the new
 practise button is added.
+
+### Fixed
+- The progress for different trees with the same target language but different 
+base languages are now differentiated and stored separetely. This does mean 
+however that the progress history for each tree will blank again after the 
+update.
 
 [v1.2.7] - 2020-03-01
 -----------------

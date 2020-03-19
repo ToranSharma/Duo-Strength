@@ -1300,9 +1300,12 @@ function addPractiseButton(skillPopout)
 {
 	if (skillPopout == null)
 		return false;
+	
+	if (document.querySelector(`${SKILL_POPOUT_LEVEL_CONTAINER}`) == null)
+		return false;
 
 	const skillLevel = document.querySelector(`.${SKILL_POPOUT_LEVEL_CONTAINER}`).textContent.slice(-3,-2);
-	if (skillLevel == 5)
+	if (skillLevel == 5 || skillLevel == 0)
 		return false;
 
 	const startButton = document.querySelector(`[data-test="start-button"]`);

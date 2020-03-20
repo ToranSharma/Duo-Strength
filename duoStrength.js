@@ -156,6 +156,7 @@ function retrieveOptions()
 						"crownsGraph":							true,
 						"crownsBreakdown":						true,
 							"crownsBreakdownShowZerosRows":			true,
+							"bonusSkillsBreakdown":					true,
 						"crownsPrediction":						true,
 					"XPInfo":								true,
 						"XPBreakdown":							true,
@@ -1778,7 +1779,7 @@ function displayCrownsBreakdown()
 		}
 
 
-		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
+		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0 && options.bonusSkillsBreakdown)
 		{
 			// The tree has some bonus skills so let's display a breakdown of their crown levels.
 			let bonusSkillsBreakdownHeader = document.createElement("h3");
@@ -2464,7 +2465,7 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 			let nextSkill = skillsByCrowns[0][0];
 			
 			if (fullyStrengthened && noCrackedSkills)
-				suggestionMessage.textContent = `All the skills that you have learnt so far are fully Strengthened, and none are cracked. `;
+				suggestionMessage.textContent = `All the skills that you have learnt so far are fully strengthened, and none are cracked. `;
 			else if (fullyStrengthened)
 				suggestionMessage.textContent = `All the skills that you have learnt so far are fully strengthened. `;
 			else if (noCrackedSkills)
@@ -2476,8 +2477,7 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 				let checkpointNumber;
 				const checkpoints = document.querySelectorAll(`[data-test="checkpoint-badge"]`);
 				checkpoints.forEach(
-					(checkpoint, index) =>
-					{
+					(checkpoint, index) => {
 						if (checkpointNumber == null && checkpoint.querySelector(`img`).src.includes(`unlocked`))
 							checkpointNumber = index;
 					}

@@ -30,6 +30,8 @@ of each tree. A white/no border indicates that the tree is level 0 (not
 completed), level 1 is blue, level 2 is green, level 3 is red, level 4 is orange
 and level 5 is gold with a crown icon added to the bottom left corner.
   - Option to neable or disable the borders around the flags.
+- Option to enable or disable the display of the breakdown of bonus skills in 
+the crowns popup box.
 
 ### Changed
 - The extension is now a `page action`.

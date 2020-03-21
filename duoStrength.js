@@ -2893,7 +2893,12 @@ function hideTranslationText(reveal = false, setupObserver = true)
 {
 	if (document.getElementsByClassName(QUESTION_CONTAINER).length == 0)
 		return false;
+	
 	const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
+
+	if (questionContainer.firstChild == null)
+		return false; // Duo ecouragement message, no question box, do nothing.
+
 	const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
 
 	if (questionTypeString != null && questionTypeString.includes("translate"))

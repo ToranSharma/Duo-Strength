@@ -748,7 +748,7 @@ function addStrengths(strengths)
 		</div>
 	*/
 
-	let skillElements = Array.from(document.querySelectorAll(`[data-test="skill"], [data-test="intro-lesson"]`)); // Af4up is class of skill containing element, may change.
+	let skillElements = Array.from(document.querySelectorAll(`[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"]`)); // Af4up is class of skill containing element, may change.
 	
 	let skills = Array();
 	/*

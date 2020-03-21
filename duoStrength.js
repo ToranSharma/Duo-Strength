@@ -137,9 +137,11 @@ function retrieveOptions()
 					"needsStrengtheningList":				true,
 						"needsStrengtheningListLength":			"10",
 						"needsStrengtheningListSortOrder":		"0",
+						"showBonusSkillsInNeedsStrengtheningList":	true,
 					"crackedSkillsList":					true,
 						"crackedSkillsListLength":				"10",
 						"crackedSkillsListSortOrder":			"0",
+						"showBonusSkillsInCrackedSkillsList":	true,
 					"skillSuggestion":						true,
 						"skillSuggestionMethod":				"0",
 						"hideSuggestionNonStrengthened":		true,
@@ -1113,16 +1115,21 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		}
 	}
 
-	let numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
+	let numSkillsToBeStrengthened = needsStrengthening[0].length;
+	
+	if (
+		(!cracked && options.showBonusSkillsInNeedsStrengtheningList) ||
+		(cracked && options.showBonusSkillsInCrackedSkillsList)
+	)
+		numSkillsToBeStrengthened += needsStrengthening[1].length;
 
-	strengthenBox.textContent = "";
+	strengthenBox.textContent = `Your tree has ${numSkillsToBeStrengthened}`;
 
 	if (!cracked)
 	{
 		strengthenBox.textContent +=
 		`
-			Your tree has ${numSkillsToBeStrengthened} 
-			${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"}
+			${(numSkillsToBeStrengthened != 1) ? " skills that need": " skill that needs"}
 			strengthening:
 		`;
 	}
@@ -1130,8 +1137,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	{
 		strengthenBox.textContent +=
 		`
-			Your tree has ${numSkillsToBeStrengthened} 
-			${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that are": " skill that is"}
+			${(numSkillsToBeStrengthened != 1) ? " skills that are": " skill that is"}
 			cracked:
 		`;
 	}
@@ -1184,7 +1190,12 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		const skillLink = document.createElement("a");
 		skillLink.style.color = "blue";
 		// we are showing every skill that needs to be stregnthened.
-		if (needsStrengthening[1].length > 0)
+		if (needsStrengthening[1].length > 0 && 
+			(
+				(!cracked && options.showBonusSkillsInNeedsStrengtheningList) ||
+				(cracked && options.showBonusSkillsInCrackedSkillsList)
+			)
+		)
 		{
 			// last skill to be displayed is a bonus skill
 			const skill = needsStrengthening[1][needsStrengthening[1].length -1];
@@ -2612,8 +2623,15 @@ function getStrengths()
 	else
 		removeLanguagesInfo();
 
-	const fullyStrengthened = (needsStrengthening[0].length + needsStrengthening[1].length) == 0;
-	const noCrackedSkills = (crackedSkills[0].length + crackedSkills[1].length) == 0;
+	const fullyStrengthened = (
+		needsStrengthening[0].length +
+		((options.showBonusSkillsInNeedsStrengtheningList) ? needsStrengthening[1].length : 0)
+	) == 0;
+
+	const noCrackedSkills = (
+		crackedSkills[0].length +
+		((options.showBonusSkillsInCrackedSkillsList) ? crackedSkills[1].length : 0)
+	) == 0;
 
 	if (options.needsStrengtheningList && !fullyStrengthened)
 		displayNeedsStrengthening(needsStrengthening); // Not fully strengthened and the list is enabled.

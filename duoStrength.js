@@ -584,7 +584,8 @@ function graphSVG(data, ratio=1.5)
 
 	let labels = document.createElementNS(svgns, "g");
 	labels.setAttributeNS(null, "id", "labels");
-	labels.setAttributeNS(null, "font-size", String(Math.min(6,0.1*height)));
+	const fontSize = String(Math.min(6,0.1*height));
+	labels.setAttributeNS(null, "font-size", fontSize);
 	labels.setAttributeNS(null, "font-family", "sans-serif");
 	
 	let yLabels = document.createElementNS(svgns, "g");
@@ -613,11 +614,9 @@ function graphSVG(data, ratio=1.5)
 	yTitle.textContent = "# Lessons Towards Next Level";
 	yTitle.setAttributeNS(null, "id", "yTitle");
 	yTitle.setAttributeNS(null, "x", "0");
-	yTitle.setAttributeNS(null, "y", `${0.5*height}`);
+	yTitle.setAttributeNS(null, "y", `0`);
 	yTitle.setAttributeNS(null, "text-anchor", "middle");
-	yTitle.setAttributeNS(null, "alignment-baseline", "text-before-edge");
-	yTitle.setAttributeNS(null, "transform-origin", `0 ${0.5*height}`);
-	yTitle.setAttributeNS(null, "transform", "rotate(-90)");
+	yTitle.setAttributeNS(null, "transform", `translate(${fontSize}, ${0.5*height}) rotate(-90)`);
 	yTitle.setAttributeNS(null, "font-size", 0.068*height);
 	labels.appendChild(yTitle);
 

@@ -58,6 +58,7 @@ practise button is added.
 base languages are now differentiated and stored separetely. This does mean 
 however that the progress history for each tree will blank again after the 
 update.
+- Crowns progress graph Y axis label alignment in firefox
 
 [v1.2.8] - 2020-03-25
 -----------------

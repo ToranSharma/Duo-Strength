@@ -1070,9 +1070,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	`
 		height: auto;
 		width: 100%;
-		z-index: 2;
+		z-index: 1;
 	`;
-	topOfTree.nextElementSibling.style = `z-index: 1`;
 
 	let strengthenBox = document.getElementById((!cracked)?"strengthenBox":"crackedBox"); // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;
@@ -2366,9 +2365,8 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 	`
 		height: auto;
 		width: 100%;
-		z-index: 2;
+		z-index: 1;
 	`;
-	topOfTree.nextElementSibling.style = `z-index: 1`;
 
 	if (document.getElementById("fullStrengthMessageContainer") == null)
 	{

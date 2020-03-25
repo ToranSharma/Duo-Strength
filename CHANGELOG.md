@@ -59,6 +59,14 @@ base languages are now differentiated and stored separetely. This does mean
 however that the progress history for each tree will blank again after the 
 update.
 
+[v1.2.8] - 2020-03-25
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.8)
+### Fixed
+- Fix for GitHub issue 51, where skill popout bubbles could not be interacted
+with when they were inline with the global practice button at the bottom of the
+page in desktop view.
+
 [v1.2.7] - 2020-03-01
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.7)
@@ -639,6 +647,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.2.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.7...v1.2.7
 [v1.2.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.6...v1.2.7
 [v1.2.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.5...v1.2.6
 [v1.2.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.4...v1.2.5

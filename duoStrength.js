@@ -2319,6 +2319,8 @@ function displayLanguagesInfo(languages)
 
 		// Add the new side bar box to the page
 		const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONATINER}`);
+		if (dailyGoalBox == null)
+			return false;
 
 		sidebar.insertBefore(languagesBox, dailyGoalBox.nextSibling);
 	}

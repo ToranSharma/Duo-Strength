@@ -685,8 +685,8 @@ function addStrengths(strengths)
 	for (let i=0; i<skillElements.length; i++)
 	{
 		let elementContents = [
-			skillElements[i].getElementsByClassName(SKILL_ICON)[0],
-			skillElements[i].getElementsByClassName(SKILL_NAME)[0]
+			skillElements[i].querySelector(`[data-test="skill-icon"]`),
+			skillElements[i].firstChild.firstChild.lastChild
 		 ];
 
 		/* old way of finding name element before new containers

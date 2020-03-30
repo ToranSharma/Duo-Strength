@@ -11,28 +11,20 @@ const LIGHT_BLUE = "rgb(28, 176, 246)";
 const crownSrc = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
 
 // Duolingo class names:
-const SKILL_CONTAINER = "Af4up";
-const SKILL_CONTAINER_CHILD = "_1fneo";
-const SKILL_ICON = "_2969E";
-const SKILL_NAME = "_33VdW";
-const SKILL_POPOUT_LEVEL_CONTAINER = "_1eGmL";
 const BONUS_SKILL_DIVIDER = "_32Q0j";
-const TREE_CONTAINER = "i12-l";
-const TOP_OF_TREE_WITH_IN_BETA = "w8Lxd";
-const TOP_OF_TREE = "_3rABk";
-const TOP_OF_TREE_NEW = "iIzBH";
-const MOBILE_TOP_OF_TREE = "_3UShd";
+const TOP_OF_TREE_WITH_IN_BETA = "_1uUHs _3tYmC";
+const TOP_OF_TREE = "_3GFex";
+const MOBILE_TOP_OF_TREE = "_3Y5Xu";
 const SKILL_ROW = "_2GJb6";
 const SKILL_COLUMN = "QmbDT";
-const IN_BETA_LABEL = "_27CnM";
+const IN_BETA_LABEL = "_3yV19";
 const CROWN_POPUP_CONTAINER = "NugKJ";
 const CROWN_LOGO_CONTAINER = "_3uwBi";
 const CROWN_DESCRIPTION_CONTAINER = "_27NkX";
 const CROWN_TOTAL_CONTAINER = "_2boWj";
 const DAILY_GOAL_POPUP_CONTAINER = "yRM09";
-const DAILY_GOAL_SIDEBAR_CONATINER = "_1Ygk_";
-const XP_GRAPH_CONTAINER = "_3qiOl TTBxS w341j";
-const SIDEBAR = "_2_lzu";
+const DAILY_GOAL_SIDEBAR_CONATINER = "_2hhXN";
+const SIDEBAR = "_3Nl60";
 const WHITE_SIDEBAR_BOX_CONTAINER = "_1E3L7";
 const POPUP_ICON = "_3gtu3 _1-Eux iDKFi";
 const GOLD_CROWN = "WZkQ9";
@@ -42,14 +34,14 @@ const GREY_FLAME = "_27oya";
 const ACTIVE_TAB = "_2lkuX";
 const TOP_BAR = "_3F_8q";
 const NAVIGATION_BUTTON = "_3MT82";
-const QUESTION_CONTAINER = "_14lWn";
-const LOGIN_PAGE = "_3nlUH";
-const LESSON = "BWibf _3MLiB";
-const LESSON_MAIN_SECTION = "_2-1wu";
-const LESSON_BOTTOM_SECTION = "_3gDW-";
-const QUESTION_UNCHECKED = "_34sNg";
-const QUESTION_CHECKED = "_2f9Fr";
-const CRACKED_SKILL_OVERLAY_SELECTOR = "._22Nf9";
+const QUESTION_CONTAINER = "_2NEKS";
+const LOGIN_PAGE = "_11AR-";
+const LESSON = "_7TCY- _160QG";
+const LESSON_MAIN_SECTION = "_14_MG";
+const LESSON_BOTTOM_SECTION = "_1obm2";
+const QUESTION_UNCHECKED = "zEs4P";
+const QUESTION_CHECKED = "_1NmT0";
+const CRACKED_SKILL_OVERLAY_SELECTOR = "._7WUMp";
 const NEW_WORD_SELECTOR = "._29XRF";
 const LEAGUE_TABLE = "_2ANgP";
 const SKILL_NAME_SELECTOR = "._378Tf._1YG0X._3qO9M._33VdW";
@@ -771,8 +763,8 @@ function addStrengths(strengths)
 	for (let i=0; i<skillElements.length; i++)
 	{
 		let elementContents = [
-			skillElements[i].getElementsByClassName(SKILL_ICON)[0],
-			skillElements[i].getElementsByClassName(SKILL_NAME)[0]
+			skillElements[i].querySelector(`[data-test="skill-icon"]`),
+			skillElements[i].firstChild.firstChild.lastChild
 		 ];
 
 		/* old way of finding name element before new containers
@@ -910,26 +902,19 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 {
 	// Adds clickable list of skills that need strengthening to top of the tree.
 	
-	// let skillTree;
-	// let firstSkillRow;
 	let topOfTree;
 	if (
-			document.getElementsByClassName(TREE_CONTAINER).length != 0 &&
-			document.getElementsByClassName(SKILL_ROW).length != 0 &&
+			document.querySelector(`[data-test="skill-tree"]`) != null &&
+			document.querySelector(`[data-test="tree-section"]`) != null &&
 			(
 				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
-				document.getElementsByClassName(TOP_OF_TREE_NEW).length != 0 ||
 				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
 				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
 			)
 
 		) // Has the tree loaded from a page change
 	{
-		/* currently unused
-		skillTree = document.getElementsByClassName(TREE_CONTAINER)[0];
-		firstSkillRow = document.getElementsByClassName(SKILL_ROW)[0];
-		*/
-		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].firstChild;
+		topOfTree = document.querySelector(`[data-test="skill-tree"]`).firstChild;
 	}
 	else
 	{
@@ -2327,26 +2312,19 @@ function displayLanguagesInfo(languages)
 
 function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 {
-	// let skillTree;
-	// let firstSkillRow
-
 	let topOfTree;
 	if (
-			document.getElementsByClassName(TREE_CONTAINER).length != 0 &&
-			document.getElementsByClassName(SKILL_ROW).length != 0 &&
+			document.querySelector(`[data-test="skill-tree"]`) != null &&
+			document.querySelector(`[data-test="tree-section"]`) != null &&
 			(
 				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
-				document.getElementsByClassName(TOP_OF_TREE_NEW).length != 0 ||
 				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
 				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
 			)
+
 		) // Has the tree loaded from a page change
 	{
-		/* currently unused
-		skillTree = document.getElementsByClassName(TREE_CONTAINER)[0];
-		firstSkillRow = document.getElementsByClassName(SKILL_ROW)[0];
-		*/
-		topOfTree = document.getElementsByClassName(TREE_CONTAINER)[0].firstChild;
+		topOfTree = document.querySelector(`[data-test="skill-tree"]`).firstChild;
 	}
 	else
 	{

@@ -5,12 +5,19 @@ Changelog
 ------------
 -
 
+[v1.2.10] - 2020-03-30
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.10)
+### Fixed
+- Class name for new words in lessons. Detection of new words is now fixed so 
+that sentences with new words are never hidden.
+
 [v1.2.9] - 2020-03-30
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.9)
 ### Fixed
 - Various classnames after Duolingo changes.
-- Fixed scaling of crowns images in crowns info popup.
+- Scaling of crowns images in crowns info popup.
 
 [v1.2.8] - 2020-03-25
 -----------------
@@ -600,6 +607,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.2.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.9...v1.2.10
 [v1.2.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.8...v1.2.9
 [v1.2.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.7...v1.2.8
 [v1.2.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.6...v1.2.7

@@ -10,6 +10,7 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.9)
 ### Fixed
 - Various classnames after Duolingo changes.
+- Fixed scaling of crowns images in crowns info popup.
 
 [v1.2.8] - 2020-03-25
 -----------------

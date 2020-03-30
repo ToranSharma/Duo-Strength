@@ -36,7 +36,7 @@ const LESSON_BOTTOM_SECTION = "_1obm2";
 const QUESTION_UNCHECKED = "zEs4P";
 const QUESTION_CHECKED = "_1NmT0";
 const CRACKED_SKILL_OVERLAY_SELECTOR = "._7WUMp";
-const NEW_WORD_SELECTOR = "._29XRF";
+const NEW_WORD_SELECTOR = "._2tgi3";
 
 let languageCode = "";
 let language = "";

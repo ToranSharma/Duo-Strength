@@ -5,11 +5,18 @@ Changelog
 ------------
 -
 
+[v1.2.11] - 2020-03-31
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.11)
+### Fixed
+- Classname for bonus skill dividing lines. This fixes the adding of strength 
+bars on trees with bonus skills.
+
 [v1.2.10] - 2020-03-30
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.2.10)
 ### Fixed
-- Class name for new words in lessons. Detection of new words is now fixed so 
+- Classname for new words in lessons. Detection of new words is now fixed so 
 that sentences with new words are never hidden.
 
 [v1.2.9] - 2020-03-30
@@ -607,6 +614,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.2.11]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.10...v1.2.11
 [v1.2.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.9...v1.2.10
 [v1.2.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.8...v1.2.9
 [v1.2.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.7...v1.2.8

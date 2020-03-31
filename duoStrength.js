@@ -6,7 +6,7 @@ const DARK_BLUE = "rgb(24, 153, 214)";
 const LIGHT_BLUE = "rgb(28, 176, 246)";
 
 // Duolingo class names:
-const BONUS_SKILL_DIVIDER = "_32Q0j";
+const BONUS_SKILL_DIVIDER = "_23P6X";
 const TOP_OF_TREE_WITH_IN_BETA = "_1uUHs _3tYmC";
 const TOP_OF_TREE = "_3GFex";
 const MOBILE_TOP_OF_TREE = "_3Y5Xu";

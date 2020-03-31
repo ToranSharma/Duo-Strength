@@ -11,7 +11,7 @@ const LIGHT_BLUE = "rgb(28, 176, 246)";
 const crownSrc = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
 
 // Duolingo class names:
-const BONUS_SKILL_DIVIDER = "_32Q0j";
+const BONUS_SKILL_DIVIDER = "_23P6X";
 const TOP_OF_TREE_WITH_IN_BETA = "_1uUHs _3tYmC";
 const TOP_OF_TREE = "_3GFex";
 const MOBILE_TOP_OF_TREE = "_3Y5Xu";
@@ -1236,8 +1236,16 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	 	chrome.storage.sync.get("options", function (data)
 	 	{
 			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, (!cracked)?data.options.needsStrengtheningListLength:data.options.crackedSkillsListLength);
+			
+			let showMore = document.getElementById(`showMore${(!cracked)?"ToStrengthen":"ToRepair"}`);
+			if (showMore != null)
+			{
+				showMore.previousSibling.remove();
+				showMore.remove(); // could have updated the list before we got the data back, so if there is an existing showMore button then remove it and replace it with a newer one
+			}
 
-			let showMore = document.createElement("a");
+			showMore = document.createElement("a");
+			showMore.id = `showMore${(!cracked)?"ToStrengthen":"ToRepair"}`;
 			showMore.style.color = "blue";
 			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "";

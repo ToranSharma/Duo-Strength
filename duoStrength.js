@@ -1038,8 +1038,16 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	 	chrome.storage.sync.get("options", function (data)
 	 	{
 			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, (!cracked)?data.options.needsStrengtheningListLength:data.options.crackedSkillsListLength);
+			
+			let showMore = document.getElementById(`showMore${(!cracked)?"ToStrengthen":"ToRepair"}`);
+			if (showMore != null)
+			{
+				showMore.previousSibling.remove();
+				showMore.remove(); // could have updated the list before we got the data back, so if there is an existing showMore button then remove it and replace it with a newer one
+			}
 
-			let showMore = document.createElement("a");
+			showMore = document.createElement("a");
+			showMore.id = `showMore${(!cracked)?"ToStrengthen":"ToRepair"}`;
 			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "";
 

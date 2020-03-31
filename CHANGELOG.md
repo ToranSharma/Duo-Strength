@@ -11,6 +11,7 @@ Changelog
 ### Fixed
 - Classname for bonus skill dividing lines. This fixes the adding of strength 
 bars on trees with bonus skills.
+- Show more link at end of lists briefly showing twice after a page change.
 
 [v1.2.10] - 2020-03-30
 -----------------

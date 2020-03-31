@@ -44,9 +44,10 @@ const QUESTION_CHECKED = "_1NmT0";
 const CRACKED_SKILL_OVERLAY_SELECTOR = "._7WUMp";
 const NEW_WORD_SELECTOR = "._2tgi3";
 const LEAGUE_TABLE = "_2ANgP";
-const SKILL_NAME_SELECTOR = "._378Tf._1YG0X._3qO9M._33VdW";
-const CHECKPOINT_CONTAINER_SELECTOR = "._1bcgw";
-const CHECKPOINT_POPOUT_SELECTOR = ".-WrFi._32ZXv._140Cx";
+const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = ".vwODZ";
+const SKILL_NAME_SELECTOR = "._1j18D._3DyOj._3scVN._2CXf4";
+const CHECKPOINT_CONTAINER_SELECTOR = "._3Lrsa";
+const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB._2Uetf";
 const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
 
 const flagYOffsets = {
@@ -1304,10 +1305,10 @@ function addPractiseButton(skillPopout)
 	if (skillPopout == null)
 		return false;
 	
-	if (document.querySelector(`${SKILL_POPOUT_LEVEL_CONTAINER}`) == null)
+	if (document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR) == null)
 		return false;
 
-	const skillLevel = document.querySelector(`.${SKILL_POPOUT_LEVEL_CONTAINER}`).textContent.slice(-3,-2);
+	const skillLevel = document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR).textContent.slice(-3,-2);
 	if (skillLevel == 5 || skillLevel == 0)
 		return false;
 
@@ -2656,7 +2657,7 @@ function getStrengths()
 		if (skillPopout != null && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
 			addPractiseButton(skillPopout);
 		// Add each skill to childListObserver
-		document.querySelectorAll(`.${SKILL_CONTAINER}`).forEach(
+		document.querySelectorAll(`[data-test="skill"]`).forEach(
 			(skill) => {
 				childListObserver.observe(skill, {childList: true});
 			}
@@ -3098,7 +3099,7 @@ let childListMutationHandle = function(mutationsList, observer)
 		)
 			skillRepaired = true;
 		else if (
-			mutation.target.className.includes(SKILL_CONTAINER) &&
+			mutation.target.getAttribute("data-test") == "skill" &&
 			mutation.addedNodes.length != 0 &&
 			mutation.target.querySelectorAll(`[data-test="skill-popout"]`).length != 0
 		)

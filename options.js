@@ -7,90 +7,65 @@ const ordinalLabels = {
 };
 let addButtonListItem;
 
+function optionActive(option)
+{
+	return (
+		(!option.className.includes("negative") && option.checked) ||
+		(option.className.includes("negative") && !option.checked) ||
+		(option.className.includes("selective") && !option.getAttribute("subOptionsEnabled").includes(option.value))
+	);
+}
+
+function setSubOptionsDisabled(option, disabled)
+{
+	option.parentNode.querySelectorAll(":scope>ul .option").forEach(
+		(subOption) => {
+			subOption.disabled = disabled;
+			if (disabled) subOption.parentNode.classList.add("off");
+			else subOption.parentNode.classList.remove("off");
+		}
+	);
+}
+
+function enableSubOptions(option)
+{
+	setSubOptionsDisabled(option, false);
+	directSubOptions = option.parentNode.querySelectorAll(":scope>ul>li>.option");
+	directSubOptions.forEach(
+		(subOption) => {
+			if (!optionActive(subOption))
+				setSubOptionsDisabled(subOption, true);
+			else
+				enableSubOptions(subOption);
+		}
+	);
+}
+
 function init()
 {
 	for (element of document.getElementsByClassName("option"))
 	{
 		// Go through all the option elements
-		if (element.parentNode.getElementsByTagName("ul").length !== 0)
+		if (element.parentNode.querySelectorAll("ul").length !== 0)
 		{
-			// If there are sub-options
-			if (element.id != "showTranslationText" && element.id != "practiceType")
+			// There are sub-options
+			if (!optionActive(element))
 			{
-				// Disabled means turn off subfeatures
-				if (!element.checked)
-				{
-					Array.from(element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option")).forEach(
-						(option) => {
-							option.disabled = true;
-							option.parentNode.classList.add("off");
-						}
-					);
-				}
-				element.addEventListener("change", function ()
-					{
-						Array.from(this.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option")).forEach(
-							(option) => {
-								option.disabled = !this.checked;
-								if (!this.checked)
-									option.parentNode.classList.add("off");
-								else
-									option.parentNode.classList.remove("off");
-							}
-						);
-					});
+				// Sub options should be disabled.
+				setSubOptionsDisabled(element, true);
 			}
-			else if (element.id == "showTranslationText")
-			{
-				// Enabled means turn off subfeatures
-				if (element.checked)
+			element.addEventListener("change", function ()
 				{
-					element.parentNode.querySelectorAll(":scope>ul>li>input.option").forEach(
-						(option) => {
-							option.disabled = true;
-							option.parentNode.classList.add("off")
-						}
-					);
-				}
-				element.addEventListener("change", function ()
+					if (!optionActive(this))
 					{
-						this.parentNode.querySelectorAll(":scope>ul>li>input.option").forEach(
-							(option) => {
-								option.disabled = this.checked;
-								if (this.checked)
-									option.parentNode.classList.add("off");
-								else
-									option.parentNode.classList.remove("off");
-							}
-						);
-					});
-
-			}
-			else if (element.id == "practiceType")
-			{
-				// Subfeatures only on if third option is selected
-				if (element.value != "2")
-				{
-					Array.from(element.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option")).forEach(
-						(option) => {
-							option.disabled = true;
-							option.parentNode.classList.add("off");
-						}
-					);
-				}
-				element.addEventListener("change", function ()
+						setSubOptionsDisabled(this, true);
+					}
+					else
 					{
-						Array.from(this.parentNode.getElementsByTagName("ul")[0].getElementsByClassName("option")).forEach(
-							(option) => {
-								option.disabled = (this.value != "2");
-								if (this.value != "2")
-									option.parentNode.classList.add("off");
-								else
-									option.parentNode.classList.remove("off");
-							}
-						);
-					});
-			}
+						enableSubOptions(this);
+					}
+				}
+			);
 		}
 
 		if (element.type == "number")
@@ -446,7 +421,6 @@ function newSortList(previousListItem)
 window.onload = () => {
 	chrome.runtime.sendMessage({type: "tabsRequest"},
 		(response) => {
-			console.log(response);
 			tabs = response.openedTabs;
 		}
 	);

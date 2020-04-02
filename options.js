@@ -7,12 +7,12 @@ const ordinalLabels = {
 };
 let addButtonListItem;
 
-function optionActive(option)
+function subOptionsActive(option)
 {
 	return (
 		(!option.className.includes("negative") && option.checked) ||
 		(option.className.includes("negative") && !option.checked) ||
-		(option.className.includes("selective") && !option.getAttribute("subOptionsEnabled").includes(option.value))
+		(option.className.includes("selective") && option.getAttribute("subOptionsEnabled").includes(option.value))
 	);
 }
 
@@ -33,7 +33,7 @@ function enableSubOptions(option)
 	directSubOptions = option.parentNode.querySelectorAll(":scope>ul>li>.option");
 	directSubOptions.forEach(
 		(subOption) => {
-			if (!optionActive(subOption))
+			if (!subOptionsActive(subOption))
 				setSubOptionsDisabled(subOption, true);
 			else
 				enableSubOptions(subOption);
@@ -49,14 +49,14 @@ function init()
 		if (element.parentNode.querySelectorAll("ul").length !== 0)
 		{
 			// There are sub-options
-			if (!optionActive(element))
+			if (!subOptionsActive(element))
 			{
 				// Sub options should be disabled.
 				setSubOptionsDisabled(element, true);
 			}
 			element.addEventListener("change", function ()
 				{
-					if (!optionActive(this))
+					if (!subOptionsActive(this))
 					{
 						setSubOptionsDisabled(this, true);
 					}
@@ -268,7 +268,7 @@ function saveOptions()
 			{
 				// first of this multi part
 				const option = element.parentNode.parentNode.id;
-				const parts = element.parentNode.parentNode.querySelectorAll(`select`);
+				const parts = element.parentNode.parentNode.querySelectorAll(`select.option`);
 				let value = parts[0].value;
 				for (let i = 1; i<parts.length; ++i)
 				{
@@ -375,16 +375,15 @@ function addSortListButtonClickHandler()
 
 function newSortList(previousListItem)
 {
-	const previousListSelect = previousListItem.querySelector(`select`);
+	const previousListSelect = previousListItem.querySelector(`select.option`);
 	const criterion = previousListSelect.value;
 	const invalidValues = [criterion, (criterion %2) ? (`${1 + +criterion}`) : (`${-1 + +criterion}`)];
 	const newList = previousListItem.cloneNode(true);
-	newList.querySelector(`select`).value = "0";
+	newList.querySelector(`select.option`).value = "0";
 
 	invalidValues.forEach(
 		(value) => {
-			const elementToRemove = newList.querySelector(`option[value="${value}"]`);
-			newList.querySelector(`select`).removeChild(elementToRemove);
+			newList.querySelectorAll(`option[value="${value}"]`).forEach((invalidOption) => invalidOption.remove());
 		}
 	);
 	
@@ -396,9 +395,11 @@ function newSortList(previousListItem)
 
 	newList.querySelector(`.option`).addEventListener("change", multiPartChangeHandler);
 
+	newList.querySelectorAll(".removeSortCriterion").forEach((cross) => cross.remove());
+
 	const removeButton = document.createElement("DIV");
 	removeButton.className = "removeSortCriterion";
-	removeButton.textContent = "+";
+	removeButton.textContent = "\u00d7";
 	removeButton.addEventListener("click",
 		(e) => {
 			for (let i = currentIndex; i < 3; ++i)

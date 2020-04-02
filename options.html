@@ -1,12 +1,15 @@
 <!doctype html>
 <html>
 <head>
+	<meta charset="utf-8" />
 	<title>Duo Strength Options</title>
 	<style>
 		body
 		{
 			width: 340px;
 			margin: 2em;
+			font-family: sans-serif;
+			font-size: 75%;
 		}
 
 		ul
@@ -60,13 +63,13 @@
 					{
 						content: "";
 						z-index: 1;
-						height: 50%;
+						height: calc(100% - 1.5em - 2px);
 						width: 1em;
 						border-style: dashed;
 						border-color: black;
 						border-width: 0px 0px 0px 1px;
 						position: absolute;
-						top: calc(25% - 2px);
+						top: calc(1.5em / 2);
 						left: calc(1.5em - 0.5px);
 						grid-column: 1;
 					}
@@ -78,17 +81,40 @@
 		input
 		{
 			z-index: 3;
+			font-size: 100%;
+			align-self: center;
+		}
+		input:disabled, select:disabled
+		{
+			opacity: 1;
 		}
 		input[type="checkbox"]
 		{
 			justify-self: center;
 			margin: 0;
-			align-self: center;
 		}
 		input[type="number"]
 		{
 			box-sizing: border-box;
 			width: 100%;
+			height: 1.5em;
+		}
+		input[type="number"].dummy
+		{
+			width: 3em;
+			top: calc(1.5em /2);
+		}
+		input[type="text"]
+		{
+			width: 100%;
+			box-sizing: border-box;
+		}
+		input[type="text"].dummy
+		{
+			left: 3em;
+			top: 0;
+			width: calc(100% - 3em);
+			transform: none;
 		}
 
 		.off
@@ -154,7 +180,6 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			transform: rotate(45deg);
 			cursor: pointer;
 			color: white;
 			background-color: #666;
@@ -166,6 +191,7 @@
 
 		select
 		{
+			font-size: 100%;
 			z-index: 3;
 			box-sizing: border-box;
 			width: fit-content;
@@ -174,13 +200,19 @@
 		{
 			background-color: rgb(235, 235, 228);
 		}
+		select.dummy
+		{
+			left: 3em;
+			transform: translate(0, -50%);
+		}
 		.dummy
 		{
 			position: absolute;
 			grid-column-start: 1;
-			left: calc(3.5em + 1px);
-			top: 1.5px;
-			box-shadow: inset 0px 0px 0 20px white;
+			left: calc(3em + 1.5em);
+			top: calc(1.5em /2);
+			transform: translate(-50%, -50%);
+			box-shadow: inset 0px 0px 0 1.5em white;
 		}
 		button
 		{
@@ -189,12 +221,14 @@
 		label
 		{
 			align-self: center;
+			height: 1.5em;
+			line-height: 1.5em;
 		}
 	</style>
 </head>
 <body>
 	<h1>Duo Strength Options</h1>
-	<h2>Enable or disable features here</h2>
+	<h2>Enable or Disable Features Here</h2>
 	<ul>
 		<li>
 			<input class="option" id="strengthBars" type="checkbox" checked="true" />
@@ -212,6 +246,7 @@
 			<label for="needsStrengtheningList">Needs Strengthening List</label>
 			<ul>
 				<li class="hasNumber">
+					<input class="dummy" type="number" disabled="true" />
 					<input class="option" id="needsStrengtheningListLength" type="number" value="10" min="1" />
 					<label for="needsStrengtheningListLength">Number of Skills Shown in List</label>
 				</li>
@@ -219,6 +254,17 @@
 					<span>Sorting Method</span>
 					<ul class="multiPart" id="needsStrengtheningListSortOrder">
 						<li class="hasSelect">
+							<select class="dummy" disabled="true">
+								<option value="0" selected="true">Tree Order</option>
+								<option value="1">Reverse Tree Order</option>
+								<option value="2">Alphabetical</option>
+								<option value="3">Reverse Alphabetical</option>
+								<option value="4">Random</option>
+								<option value="5">Strength Asc.</option>
+								<option value="6">Strength Desc.</option>
+								<option value="7">Crown Level Asc.</option>
+								<option value="8">Crown Level Desc.</option>
+							</select>
 							<select class="option" id="needsStrengtheningListSortOrder0">
 								<option value="0" selected="true">Tree Order</option>
 								<option value="1">Reverse Tree Order</option>
@@ -249,6 +295,7 @@
 			<label for="crackedSkillsList">Cracked Skills List</label>
 			<ul>
 				<li class="hasNumber">
+					<input class="dummy" type="number" disabled="true" />
 					<input class="option" id="crackedSkillsListLength" type="number" value="10" min="1" />
 					<label for="crackedSkillsListLength">Number of Skills Shown in List</label>
 				</li>
@@ -389,6 +436,14 @@
 			<label for="languagesInfo">Languages Info Table</label>
 			<ul>
 				<li class="hasSelect">
+					<select class="dummy" disabled="true">
+						<option value="0">Alphabetical</option>
+						<option value="1">Reverse Alphabetical</option>
+						<option value="2" selected="true">Total XP Desc.</option>
+						<option value="3">Total XP Asc.</option>
+						<option value="4">XP to Next Level Desc.</option>
+						<option value="5">XP to Next Level Asc.</option>
+					</select>
 					<select class="option" id="languagesInfoSortOrder">
 						<option value="0">Alphabetical</option>
 						<option value="1">Reverse Alphabetical</option>
@@ -411,6 +466,7 @@
 					<label for="revealHotKey">Enable Hotkey to unhide sentence</label>
 					<ul>
 						<li class="containsHotkeyInput">
+							<input class="dummy" type="text" disabled="true"/>
 							<input class="option" id="revealHotkeyCode" type="text" value="Ctrl+Alt+H"/>
 						</li>
 					</ul>
@@ -428,6 +484,6 @@
 	</ul>
 	<button id="enableAll">Enable all</button>
 	<button id="disableAll">Disable all</button>
-	<script src="options.js"></script>
+	<script type="text/javascript" charset="UTF-8" src="options.js"></script>
 </body>
 </html>

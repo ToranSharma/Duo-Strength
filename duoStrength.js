@@ -3373,6 +3373,8 @@ let childListMutationHandle = function(mutationsList, observer)
 		// Run check for translation type question
 		hideTranslationText();
 
+		document.getElementsByClassName(QUESTION_CONTAINER)[0].querySelectorAll(NEW_WORD_SELECTOR).forEach(newWord => newWord.click());
+
 		// Set up mutation observer for question change
 		childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0].firstChild, {childList:true});
 		
@@ -3387,6 +3389,7 @@ let childListMutationHandle = function(mutationsList, observer)
 		// Run check for translation type question
 
 		hideTranslationText();
+		document.getElementsByClassName(QUESTION_CONTAINER)[0].querySelectorAll(NEW_WORD_SELECTOR).forEach(newWord => newWord.click());
 	}
 	
 	if (lessonInputMethodChanged)

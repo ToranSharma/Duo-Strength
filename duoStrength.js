@@ -3697,12 +3697,14 @@ async function init()
 
 window.onunload = function()
 {
-	chrome.runtime.sendMessage({type: "pageClosed"});
+	if (typeof chrome.app.isInstalled != "undefined")
+		chrome.runtime.sendMessage({type: "pageClosed"});
 }
 
 document.body.onload = function()
 {
-	chrome.runtime.sendMessage({type: "showPageAction"});
+	if (typeof chrome.app.isInstalled != "undefined")
+		chrome.runtime.sendMessage({type: "showPageAction"});
 	chrome.runtime.onMessage.addListener(
 		(message) => {
 			if (message.type == "optionsChanged")

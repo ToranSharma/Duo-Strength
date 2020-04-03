@@ -11,7 +11,7 @@ const LIGHT_BLUE = "rgb(28, 176, 246)";
 const crownSrc = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
 
 // Duolingo class names:
-const BONUS_SKILL_DIVIDER = "_23P6X";
+const BONUS_SKILL_DIVIDER_SELECTOR = "._23P6X";
 const TOP_OF_TREE_WITH_IN_BETA = "_1uUHs _3tYmC";
 const TOP_OF_TREE = "_3GFex";
 const MOBILE_TOP_OF_TREE = "_3Y5Xu";
@@ -49,6 +49,9 @@ const SKILL_NAME_SELECTOR = "._1j18D._3DyOj._3scVN._2CXf4";
 const CHECKPOINT_CONTAINER_SELECTOR = "._3Lrsa";
 const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB._2Uetf";
 const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
+
+const SKILL_SELECTOR = `[data-test="skill-tree"] [data-test="skill"], [data-test="intro-lesson"]`;
+const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 
 const flagYOffsets = {
 	0:	"en",
@@ -375,6 +378,108 @@ function currentProgress()
 	return lessonsToNextCrownLevel;
 }
 
+function nextCheckpointIndex()
+{
+	const checkpoints = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR));
+	const firstLockedIndexReducer = (value, element, index) => {
+		const locked = element.querySelectorAll(`[src$="locked.svg"]`).length != 0;
+		if (value == -1 && locked)
+			return index;
+		else
+			return value;
+	}
+	return checkpoints.reduce(firstLockedIndexReducer, -1);
+}
+
+function lessonsToNextCheckpoint()
+{
+	let index = nextCheckpointIndex();
+	if (index == -1)
+		return -1;
+	const nextCheckpoint = document.querySelectorAll(CHECKPOINT_SELECTOR)[index];
+	const skillsAndCheckpoints = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}, ${CHECKPOINT_SELECTOR}`));
+	
+	const bonusSkillRow = document.querySelector(`${BONUS_SKILL_DIVIDER_SELECTOR} + div`);
+
+	index = skillsAndCheckpoints.indexOf(nextCheckpoint);
+	const skillsBeforeCheckpoint = skillsAndCheckpoints.filter(
+		(element, idx) => {
+			const type = element.getAttribute("data-test");
+			if (type != "checkpoint-badge")
+			{
+				// element is not a checkpoint
+				if (bonusSkillRow == null || !bonusSkillRow.contains(element))
+					return idx < index;
+			}
+		}
+	);
+	const level0SkillsBeforeCheckpoint = skillsBeforeCheckpoint.filter(
+		(element) => {
+			return element.querySelectorAll(`img[src$="juicy-crown-unlocked.svg"]`).length != 0;
+		}
+	);
+	return level0SkillsBeforeCheckpoint.reduce(
+		(total, element) => {
+			const skillTitle = element.querySelector(SKILL_NAME_SELECTOR).textContent;
+			const lessons = userData.language_data[languageCode].skills.find(skill => skill.short == skillTitle).missing_lessons;
+			return total + lessons;
+		}
+	, 0);
+}
+
+function progressEnds(numPointsToUse)
+{
+	let endIndex = progress.length - 1;
+	let lastDate = progress[endIndex][0];
+	const today = (new Date()).setHours(0,0,0,0);
+	
+	while (!hasMetGoal() && lastDate == today)
+	{
+		lastDate = progress[--endIndex][0];
+	}
+
+	const startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
+	
+	const numDays = (lastDate  - progress[startIndex][0]) / (1000*60*60*24) + 1; // inclusive of start and end
+	
+	return {
+		startIndex: startIndex,
+		endIndex: endIndex,
+		numDays: numDays
+	};
+}
+
+function progressMadeBetweenPoints(startIndex, endIndex)
+{
+	let level = progress[startIndex][1];
+	let lastProgress = progress[startIndex][2];
+	let progressMade = 0;
+
+	const points = progress.slice(startIndex, endIndex + 1);
+	points.forEach(
+		(point) => {
+			if (point[1] == level)
+			{
+				// this point is from the same level as the last
+				// just add the difference in progresses
+				progressMade += lastProgress - point[2];
+			}
+			else
+			{
+				// this point is from the next level
+				// add all the progress from the last point
+				// set level to the new level
+				progressMade += lastProgress;
+				level = point[1];
+			}
+
+			lastProgress = point[2];
+		}
+	);
+
+	return progressMade;
+}
+
 function crownTreeLevel()
 {
 	let skills = userData.language_data[languageCode].skills;
@@ -395,6 +500,15 @@ function crownTreeLevel()
 	}
 
 	return treeLevel;
+}
+
+function currentLanguageHistory()
+{
+	return calendar = userData.language_data[languageCode].calendar.filter(
+		(lesson) => {
+			return userData.language_data[languageCode].skills.find(skill => skill.id == lesson.skill_id) != null;
+		}
+	);
 }
 
 function daysToNextXPLevel(history, xpLeft /*, timezone*/)
@@ -432,44 +546,11 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 
 function daysToNextCrownLevel()
 {
-	let endIndex = progress.length - 1;
-	let lastDate = progress[endIndex][0];
-	let today = (new Date()).setHours(0,0,0,0);
+	const numPointsToUse = 7;
+	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
 	
-	while (!hasMetGoal() && lastDate == today)
-	{
-		lastDate = progress[--endIndex][0];
-	}
-
-	let numPointsToUse = 7;
-	let startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
-	let firstDate = progress[startIndex][0];
+	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
 	
-	let level = progress[startIndex][1];
-	let lastProgress = progress[startIndex][2];
-	let progressMade = 0;
-
-	for (let point of progress.slice(startIndex + 1, endIndex + 1))
-	{
-		if (point[1] != level)
-		{
-			// this point is from another level
-			progressMade += lastProgress;
-			lastProgress = point[2];
-			level = point[1];
-		}
-		else
-		{
-			// point from the same level so look at the change in progress
-			progressMade += lastProgress - point[2];
-			lastProgress = point[2];
-		}
-	}
-
-	let timePeriod = lastDate-firstDate; // in milliseconds
-	timePeriod /= 1000*60*60*24; // in days
-	let progressRate = progressMade / timePeriod; // in lessons per day
-
 	if (progressRate != 0)
 		return Math.ceil(currentProgress() / progressRate); // in days
 	else
@@ -490,43 +571,87 @@ function daysToNextCrownLevelByCalendar()
 		}
 	}
 
-	let calendar = userData.language_data[languageCode].calendar;
+	const calendar = currentLanguageHistory();
+
 	if (calendar.length == 0)
 		return -1;
 
-	let practiceTimes = Array();
 
-	let currentDate = (new Date()).setHours(0,0,0,0);	
+	let currentDay = (new Date()).setHours(0,0,0,0);	
 
-	for (let lesson of calendar)
-	{	
-		let date = (new Date(lesson.datetime)).setHours(0,0,0,0);
-		if (date == currentDate && !hasMetGoal)
-		{
-			// if the lesson is from today and the goal hasn't been met, then let's not include it
-			continue;
+	const practiceTimes = calendar.map(
+		(lesson) => {
+			return (new Date(lesson.datetime)).setHours(0,0,0,0);
 		}
-		else
-		{
-			practiceTimes.push(date);
-		}
-	}
+	).filter(lessonDay => lessonDay != currentDay);
 
-	let numLessons = practiceTimes.length;
-	let firstDate = practiceTimes[0]; // assuming sorted acending.
-	let lastDate = practiceTimes[numLessons-1];
+	const numLessons = practiceTimes.length;
+	const firstDay = practiceTimes[0]; // assuming sorted acending.
+	let lastDay = practiceTimes[numLessons - 1];
 
-	if (lastDate != currentDate)
+	if (lastDay != currentDay)
 	{
-		// lastDate isn't today, it would only be today if we have met our goal for today
-		// we therefore set the lastDate to yesterday, in case that wasn't already it and no lessons were completed yesterday.
-		lastDate = currentDate - (24*60*60*1000);
+		// lastDay isn't today, it would only be today if we have met our goal for today
+		// we therefore set the lastDay to yesterday, in case that wasn't already it and no lessons were completed yesterday.
+		lastDay = currentDay - (24*60*60*1000);
 	}
 
-	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // in days
-	let lessonRate = numLessons/timePeriod; // in lessons per day
+	const numDays = (lastDay - firstDay)/(1000*60*60*24) + 1; // in days
+	const lessonRate = numLessons/numDays; // in lessons per day
 
-	return Math.ceil(lessonsToNextCrownLevel/lessonRate);
+	if (lessonRate <= 0)
+		return -1;
+	else
+		return Math.ceil(lessonsToNextCrownLevel/lessonRate);
+}
+
+function daysToNextCheckpoint()
+{
+	const numPointsToUse = 7;
+	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
+
+	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
+	
+	if (progressRate != 0)
+		return lessonsToNextCheckpoint() / progressRate;
+	else
+		return -1;
+}
+
+function daysToNextCheckpointByCalendar()
+{
+	const calendar = currentLanguageHistory();
+	
+	if (calendar.length == 0)
+		return -1;
+
+	const currentDay = (new Date()).setHours(0,0,0,0);
+
+	const practiceTimes = calendar.map(
+		(lesson) => {
+			return (new Date(lesson.datetime)).setHours(0,0,0,0);
+		}
+	).filter(lessonDay => lessonDay != currentDay);
+
+	
+	const numLessons = practiceTimes.length;
+	const firstDay = practiceTimes[0];
+	let lastDay = practiceTimes[numLessons - 1];
+
+	if (lastDay != currentDay)
+	{
+		// if the last day isn't today, force it to yesterday
+		// this ensures we count potential days without lessons
+		lastDay = currentDay - (1000*60*60*24);
+	}
+
+	const numDays = (lastDay - firstDay) / (1000*60*60*24) + 1; // inclusive of start and end
+	const lessonRate = numLessons/numDays;
+
+	if (lessonRate <= 0)
+		return -1;
+	else
+		return Math.ceil(lessonsToNextCheckpoint() / lessonRate);
 }
 
 function graphSVG(data, ratio=1.5)
@@ -742,7 +867,7 @@ function addStrengths(strengths)
 		</div>
 	*/
 
-	let skillElements = Array.from(document.querySelectorAll(`[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"]`)); // Af4up is class of skill containing element, may change.
+	let skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR)); // Af4up is class of skill containing element, may change.
 	
 	let skills = Array();
 	/*
@@ -754,12 +879,7 @@ function addStrengths(strengths)
 	*/
 	let bonusElementsCount = 0;
 	
-	const bonusSkillDividers = Array.from(document.querySelectorAll(`.${BONUS_SKILL_DIVIDER}`));
-	let bonusSkillRow;
-	if (bonusSkillDividers.length != 0)
-	{
-		bonusSkillRow = bonusSkillDividers[0].nextElementSibling;
-	}
+	const bonusSkillRow = document.querySelector(`${BONUS_SKILL_DIVIDER_SELECTOR} + div`);
 
 	for (let i=0; i<skillElements.length; i++)
 	{
@@ -1922,7 +2042,7 @@ function displayXPBreakdown()
 			'level':			userData.language_data[languageCode].level,
 			'level_points':		userData.language_data[languageCode].level_points,
 			'points':			userData.language_data[languageCode].points,
-			'history':			userData.language_data[languageCode].calendar,
+			'history':			currentLanguageHistory(),
 			//'timezone':			userData.timezone_offset seems to not be available for every users, maybe depends on platform use.
 		};
 
@@ -2472,7 +2592,7 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 			{
 				// The next skill is locked, so a checkpoint test is needed.
 				let checkpointNumber;
-				const checkpoints = document.querySelectorAll(`[data-test="checkpoint-badge"]`);
+				const checkpoints = document.querySelectorAll(CHECKPOINT_SELECTOR);
 				checkpoints.forEach(
 					(checkpoint, index) => {
 						if (checkpointNumber == null && checkpoint.querySelector(`img`).src.includes(`unlocked`))

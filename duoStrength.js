@@ -128,44 +128,45 @@ function retrieveOptions()
 			// Set options to default settings
 			options =
 				{
-					"strengthBars":							true,
-						"strengthBarBackgrounds":				true, 
-					"needsStrengtheningList":				true,
-						"needsStrengtheningListLength":			"10",
-						"needsStrengtheningListSortOrder":		"0",
+					"strengthBars":								true,
+						"strengthBarBackgrounds":					true, 
+					"needsStrengtheningList":					true,
+						"needsStrengtheningListLength":				"10",
+						"needsStrengtheningListSortOrder":			"0",
 						"showBonusSkillsInNeedsStrengtheningList":	true,
-					"crackedSkillsList":					true,
-						"crackedSkillsListLength":				"10",
-						"crackedSkillsListSortOrder":			"0",
-						"showBonusSkillsInCrackedSkillsList":	true,
-					"skillSuggestion":						true,
-						"skillSuggestionMethod":				"0",
-						"hideSuggestionNonStrengthened":		true,
-						"hideSuggestionWithCrackedSkills":		true,
-					"focusFirstSkill":						true,
-					"practiseButton":						true,
-					"practiceType":							"0",
-						"lessonThreshold":						"4",
-					"checkpointButtons":					true,
-					"treeLevelBorder":						true,
-					"crownsInfo":							true,
-						"crownsMaximum":						true,
-							"crownsPercentage":						true,
-						"crownsGraph":							true,
-						"crownsBreakdown":						true,
-							"crownsBreakdownShowZerosRows":			true,
-							"bonusSkillsBreakdown":					true,
-						"crownsPrediction":						true,
-					"XPInfo":								true,
-						"XPBreakdown":							true,
-						"XPPrediction":							true,
-					"languagesInfo":						true,
-						"languagesInfoSortOrder":				"0",
-					"showTranslationText":					true,
-						"revealHotkey":							true,
-							"revealHotkeyCode":						"Ctrl+Alt+H",
-					"showToggleHidingTextButton":			true,
-					"showLeagues":							true,
+					"crackedSkillsList":						true,
+						"crackedSkillsListLength":					"10",
+						"crackedSkillsListSortOrder":				"0",
+						"showBonusSkillsInCrackedSkillsList":		true,
+					"skillSuggestion":							true,
+						"skillSuggestionMethod":					"0",
+						"hideSuggestionNonStrengthened":			true,
+						"hideSuggestionWithCrackedSkills":			true,
+					"focusFirstSkill":							true,
+					"practiseButton":							true,
+					"practiceType":								"0",
+						"lessonThreshold":							"4",
+					"checkpointButtons":						true,
+					"treeLevelBorder":							true,
+					"crownsInfo":								true,
+						"crownsMaximum":							true,
+							"crownsPercentage":							true,
+						"crownsGraph":								true,
+						"crownsBreakdown":							true,
+							"crownsBreakdownShowZerosRows":				true,
+							"bonusSkillsBreakdown":						true,
+						"checkpointPrediction":						true,
+						"crownsPrediction":							true,
+					"XPInfo":									true,
+						"XPBreakdown":								true,
+						"XPPrediction":								true,
+					"languagesInfo":							true,
+						"languagesInfoSortOrder":					"0",
+					"showTranslationText":						true,
+						"revealHotkey":								true,
+							"revealHotkeyCode":							"Ctrl+Alt+H",
+					"showToggleHidingTextButton":				true,
+					"showLeagues":								true,
 				};
 
 			if (Object.entries(data).length === 0)
@@ -324,10 +325,13 @@ function removeCrownsBreakdown()
 		crownsGraph.remove();
 
 	const crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
-	if (crownLevelBreakdownContainer != null) crownLevelBreakdownContainer.parentNode.removeChild(crownLevelBreakdownContainer);
+	if (crownLevelBreakdownContainer != null) crownLevelBreakdownContainer.remove(crownLevelBreakdownContainer);
+
+	const checkpointPrediction = document.getElementById("checkpointPrediction");
+	if (checkpointPrediction != null) checkpointPrediction.remove();
 
 	const treeCrownLevelPrediction = document.getElementById("treeCrownLevelPrediction");
-	if (treeCrownLevelPrediction != null) treeCrownLevelPrediction.parentNode.removeChild(treeCrownLevelPrediction);
+	if (treeCrownLevelPrediction != null) treeCrownLevelPrediction.remove();
 }
 
 function removeXPBox()
@@ -2007,7 +2011,7 @@ function displayCrownsBreakdown()
 		if (options.crownsBreakdown) crownLevelContainer.appendChild(breakdownContainer);
 
 		// Checkpoint Prediction
-		if (treeLevel == 0)
+		if (treeLevel == 0 && options.checkpointPrediction)
 		{
 			let numDays;
 			if (progress.length > 5)

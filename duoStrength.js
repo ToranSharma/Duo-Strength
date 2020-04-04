@@ -45,7 +45,7 @@ const CRACKED_SKILL_OVERLAY_SELECTOR = "._7WUMp";
 const NEW_WORD_SELECTOR = "._2tgi3";
 const LEAGUE_TABLE = "_1NIUo";
 const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = ".vwODZ";
-const SKILL_NAME_SELECTOR = "._1j18D._3DyOj._3scVN._2CXf4";
+const SKILL_NAME_SELECTOR = "._2CXf4";
 const CHECKPOINT_CONTAINER_SELECTOR = "._3Lrsa";
 const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB._2Uetf";
 const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
@@ -652,6 +652,45 @@ function daysToNextCheckpointByCalendar()
 		return -1;
 	else
 		return Math.ceil(lessonsToNextCheckpoint() / lessonRate);
+}
+
+function createPredictionElement(type, numDays)
+{
+	let id = "";
+	let target = "";
+
+	switch (type)
+	{
+		case "XPLevel":
+			id = "XPPrediction";
+			target = `the next level, Level\xA0${userData.language_data[languageCode].level + 1}`;
+			break;
+		case "crownLevel":
+			id = "treeCrownLevelPrediction";
+			target = `Level\xA0${crownTreeLevel() + 1}`;
+			break;
+		case "checkpoint":
+			id = "checkpointPrediction";
+			target = `the next checkpoint, Checkpoint\xA0${nextCheckpointIndex() + 1}`;
+			break;
+	}
+	const prediction = document.createElement("p");
+	prediction.id = id;
+
+	prediction.appendChild(
+		document.createTextNode(`At your current rate ${(type != "crownLevel") ? "you" : "your tree"} will reach ${target}, in about `)
+	);
+	prediction.appendChild(document.createElement("span"));
+	prediction.lastChild.textContent = numDays;
+	prediction.lastChild.style.fontWeight = "bold";
+	prediction.appendChild(
+		document.createTextNode(` days, on `)
+	);
+	prediction.appendChild(document.createElement("span"));
+	prediction.lastChild.textContent = new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
+	prediction.lastChild.style.fontWeight = "bold";
+
+	return prediction;
 }
 
 function graphSVG(data, ratio=1.5)
@@ -1967,43 +2006,51 @@ function displayCrownsBreakdown()
 		breakdownContainer.appendChild(breakdownList);
 		if (options.crownsBreakdown) crownLevelContainer.appendChild(breakdownContainer);
 
-		if (treeLevel != 5)
+		// Checkpoint Prediction
+		if (treeLevel == 0)
 		{
-			let prediction = document.createElement("p");
+			let numDays;
+			if (progress.length > 5)
+				numDays = daysToNextCheckpoint();
+			else
+				numDays = daysToNextCheckpointByCalendar();
+
+			if (numDays > 0)
+			{
+				const prediction = createPredictionElement("checkpoint", numDays);
+				prediction.style =
+				`
+					margin: 1em 1em 0;
+					text-align: center;
+					color: black;
+				`;
+
+				crownLevelContainer.appendChild(prediction);
+
+			}
+		}
+
+		// Crown Level prediction
+		if (treeLevel != 5 && options.crownsPrediction)
+		{
 			let numDays;
 			if (progress.length > 5)
 				numDays = daysToNextCrownLevel();
 			else
 				numDays = daysToNextCrownLevelByCalendar();
 
-			if (numDays == -1)
+			if (numDays != -1)
 			{
-				crownLevelContainer.style.marginBottom = "1em";
-				return false;
+				const prediction = createPredictionElement("crownLevel", numDays);
+				prediction.style =
+				`
+					margin: 1em 1em 0;
+					text-align: center;
+					color: black;
+				`;
+
+				crownLevelContainer.appendChild(prediction);
 			}
-
-			prediction.id = "treeCrownLevelPrediction";
-			prediction.appendChild(
-				document.createTextNode(`At your current rate your tree will reach Level\xA0${treeLevel + 1} in `)
-			);
-			prediction.appendChild(document.createElement("span"));
-			prediction.lastChild.textContent = numDays;
-			prediction.lastChild.style.fontWeight = "bold";
-			prediction.appendChild(
-				document.createTextNode(` days, on `)
-			);
-			prediction.appendChild(document.createElement("span"));
-			prediction.lastChild.textContent = new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
-			prediction.lastChild.style.fontWeight = "bold";
-
-			prediction.style =
-			`
-				margin: 1em;
-				text-align: center;
-				color: black;
-			`;
-
-			if (options.crownsPrediction) crownLevelContainer.appendChild(prediction);
 		}
 	}
 	else
@@ -2158,37 +2205,18 @@ function displayXPBreakdown()
 			languageLevelContainer.appendChild(currentLevelProgressElement);
 
 
-			let daysLeft = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
-			let projectedNextLevelCompletion = document.createElement("p");
-			projectedNextLevelCompletion.id = "XPPrediction";
-			projectedNextLevelCompletion.style =
-			`
-				margin-bottom: 0;
-				text-align: center;
-			`;
-			projectedNextLevelCompletion.appendChild(
-				document.createTextNode(
-					`At your current rate you will reach the next level, Level\xA0${data.level+1}, in about `
-				)
-			);
-			projectedNextLevelCompletion.appendChild(document.createElement("span"));
-			projectedNextLevelCompletion.lastChild.id = "XPPrediction";
-			projectedNextLevelCompletion.lastChild.style.fontWeight = "bold";
-			projectedNextLevelCompletion.lastChild.textContent = daysLeft;
-
-			projectedNextLevelCompletion.appendChild(
-				document.createTextNode(
-					` days, on `
-				)
-			);
+			const numDays = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
 			
-			projectedNextLevelCompletion.appendChild(document.createElement("span"));
-			projectedNextLevelCompletion.lastChild.id = "XPPredictionDate";
-			projectedNextLevelCompletion.lastChild.textContent = (new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000)).toLocaleDateString();
-			
-			if (daysLeft != -1 && options.XPPrediction)
+			if (numDays != -1 && options.XPPrediction)
 			{
-				container.appendChild(projectedNextLevelCompletion);
+				const prediction = createPredictionElement("XPLevel", numDays);
+				prediction.style =
+				`
+					margin-bottom: 0;
+					text-align: center;
+				`;
+
+				container.appendChild(prediction);
 			}
 		}
 		else

@@ -32,8 +32,11 @@ and level 5 is gold with a crown icon added to the bottom left corner.
   - Option to neable or disable the borders around the flags.
 - Option to enable or disable the display of the breakdown of bonus skills in 
 the crowns popup box.
-- Optionsto enable or disable the display of bonus skills in the needs 
+- Options to enable or disable the display of bonus skills in the needs 
 strengthening list and the cracked skills list.
+- Prediction to crowns info popup box of how long it will take to reach the next
+checkpoint for L0 trees.
+  - Option to enable or disable this predicition.
 
 ### Changed
 - The extension is now a `page action`.

@@ -3207,7 +3207,7 @@ let childListMutationHandle = function(mutationsList, observer)
 	let rootChildReplaced = false;
 	let rootChildContentsReplaced = false;
 	let mainBodyReplaced = false
-	let mainBodyContentsChanged = false ;
+	let sidebarToggled = false;
 	let popupChanged = false;
 	let popupIcon;
 	let lessonLoaded = false;
@@ -3227,8 +3227,18 @@ let childListMutationHandle = function(mutationsList, observer)
 			rootChildContentsReplaced = true;
 		else if (mutation.target == mainBodyContainer)
 			mainBodyReplaced = true;
-		else if (mutation.target == mainBody)
-			mainBodyContentsChanged = true;
+		else if (
+			mutation.target == mainBody &&
+			(
+				[
+					...Array.from(mutation.addedNodes),
+					...Array.from(mutation.removedNodes)
+				].some(
+					(addedNode) => addedNode.className.includes(SIDEBAR)
+				) // The sidebar was added or removed
+			)
+		)
+			sidebarToggled = true;
 		else if (
 			mutation.target.className == POPUP_ICON &&
 			mutation.addedNodes.length != 0
@@ -3306,7 +3316,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			return false;
 	}
 
-	if (mainBodyContentsChanged)
+	if (sidebarToggled)
 	{
 		// Switched between mobile and desktop layouts.
 
@@ -3346,7 +3356,6 @@ let childListMutationHandle = function(mutationsList, observer)
 				document.getElementById("fullStrengthMessageContainer").style.margin = mobileMargin;
 				document.getElementById("fullStrengthMessageContainer").style.width = mobileWidth;
 			}
-			
 		}
 		else
 		{

@@ -617,7 +617,7 @@ function daysToNextCheckpoint()
 	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
 	
 	if (progressRate != 0)
-		return lessonsToNextCheckpoint() / progressRate;
+		return Math.ceil(lessonsToNextCheckpoint() / progressRate);
 	else
 		return -1;
 }

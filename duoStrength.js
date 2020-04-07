@@ -871,7 +871,7 @@ function graphSVG(data, ratio=1.5)
 	return graph;
 }
 
-function addStrengths(strengths)
+function addStrengthBars(strengths)
 {
 	// Adds strength bars and percentages under each skill in the tree.
 	/*
@@ -2680,7 +2680,55 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 function getStrengths()
 {
-	// parses the data from duolingo.com/users/USERNAME and extracts strengths and skills that need strengthening
+	const strengths = [[],[]]; // first array holds strengths for normal skills, second for bonus skills
+	
+	const skills = userData.language_data[languageCode].skills;
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+
+	for (const skill of skills)
+	{
+		strengths[0].push([skill.strength,Boolean(skill.skill_progress.level)]); // first element is strength, second is a bool of whether to add strength bar for that skill
+	}
+
+	for (const bonusSkill of bonusSkills)
+	{
+		strengths[1].push([bonusSkill.strength,Boolean(bonusSkill.skill_progress.level)]);
+	}
+	
+	return strengths;
+}
+
+function getNeedsStrengthening()
+{
+	const needsStrengthening = [[],[]]; // first array holds skills that need strengthening, second holds bonus skills that need strengthening
+
+	const skills = userData.language_data[languageCode].skills;
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+
+	for (const skill of skills)
+	{
+		if (skill.strength != 1 && skill.strength != 0 && skill.skill_progress.level != 0)
+		{
+			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
+			needsStrengthening[0].push(skill);
+		}
+	}
+
+	for (const bonusSkill of bonusSkills)
+	{
+		if (bonusSkill.strength != 1 && bonusSkill.strength != 0 && bonusSkill.skill_progress.level != 0)
+		{
+			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
+			needsStrengthening[1].push(bonusSkill);
+		}
+	}
+
+	return needsStrengthening;
+}
+
+function processUserData()
+{
+	// Process the information from duolingo.com/users/USERNAME, stored in userData, before use
 	/*
 		Data comes formatted as such:
 		{
@@ -2695,15 +2743,13 @@ function getStrengths()
 		}
 		each skill in either skills or bonus_skills has a number of properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
-	
-	let strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
-	let needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
-	
-	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	let bonusSkills = userData.language_data[languageCode].bonus_skills;
 
-	function sortSkills(skill1,skill2)
-	{
+	// Skills appear to be inconsistantly ordered so need sorting for ease of use.
+
+	const skills = userData.language_data[languageCode].skills; 
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+
+	sortByTreePosition = (skill1,skill2) => {
 		if (skill1.coords_y < skill2.coords_y) // x above y give x
 		{
 			return -1;
@@ -2720,123 +2766,135 @@ function getStrengths()
 				return 1;
 			}
 		}
-	}
+	};
 
-	skills.sort(sortSkills);
-	bonusSkills.sort(sortSkills);
+	skills.sort(sortByTreePosition);
+	bonusSkills.sort(sortByTreePosition);
+}
 
-	for (let skill of skills)
-	{
-		strengths[0].push([skill.strength,Boolean(skill.skill_progress.level)]);
-		if(skill.strength != 1 && skill.strength != 0 && skill.skill_progress.level != 0)
-		{
-			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
-			needsStrengthening[0].push(skill);
-		}
-	}
-
-	for (let bonusSkill of bonusSkills)
-	{
-		strengths[1].push([bonusSkill.strength,Boolean(bonusSkill.skill_progress.level)]);
-		if(bonusSkill.strength != 1 && bonusSkill.strength != 0 && bonusSkill.skill_progress.level != 0)
-		{
-			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
-			needsStrengthening[1].push(bonusSkill);
-		}
-	}
-
-	const crackedSkills = getCrackedSkills();
-
-	if (options.strengthBars)
-		addStrengths(strengths); // call function to add these strengths under the skills
-	else
-		removeStrengthBars();
+function addFeatures()
+{
+	// Main function that calls all the subfunctions responsible for adding features to the page.
 	
-	if (options.XPInfo)
-		displayXPBreakdown();
-	else
-		removeXPBox();
+	// First we need to prepare the retrieved userData for use.
+	processUserData();
 
-	if (options.crownsInfo)
-		displayCrownsBreakdown();
-	else
-		removeCrownsBreakdown();
-
-	if (options.languagesInfo)
-		displayLanguagesInfo(getLanguagesInfo());
-	else
-		removeLanguagesInfo();
-
-	const fullyStrengthened = (
-		needsStrengthening[0].length +
-		((options.showBonusSkillsInNeedsStrengtheningList) ? needsStrengthening[1].length : 0)
-	) == 0;
-
-	const noCrackedSkills = (
-		crackedSkills[0].length +
-		((options.showBonusSkillsInCrackedSkillsList) ? crackedSkills[1].length : 0)
-	) == 0;
-
-	if (options.needsStrengtheningList && !fullyStrengthened)
-		displayNeedsStrengthening(needsStrengthening); // Not fully strengthened and the list is enabled.
-	else
-		removeNeedsStrengtheningBox(); // Remove if there happens to be one.
-
-	if (options.crackedSkillsList && !noCrackedSkills)
-		displayNeedsStrengthening(crackedSkills, true); // There are cracked skills and the list is enabled.
-	else
-		removeCrackedSkillsList(); // Remove if there happens to be one.
-
-	if (
-		(fullyStrengthened && noCrackedSkills) ||
-		(!fullyStrengthened && !options.hideSuggestionNonStrengthened) ||
-		(!noCrackedSkills && !options.hideSuggestionWithCrackedSkills)
-	)
+	// Strength Bars
 	{
-		// Either a fully strengthened tree, or
-		// Not fully strengthened but still show suggestion, or
-		// There are cracked skills but still show suggestion
-		
-		if (options.skillSuggestion)
-			displaySuggestion(skills, fullyStrengthened, noCrackedSkills);
+		const strengths = getStrengths();
+
+		if (options.strengthBars)
+			addStrengthBars(strengths);
 		else
-			removeSuggestion(); // if there happens to be one
-	}
-	else
-	{
-		// Should not be displaying a suggestion.
-		removeSuggestion() // if there happens to be one
+			removeStrengthBars();
 	}
 
-	const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
-
-	if (options.practiseButton)
+	// XP Info
 	{
-		if (skillPopout != null && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
-			addPractiseButton(skillPopout);
-		// Add each skill to childListObserver
-		document.querySelectorAll(`[data-test="skill"]`).forEach(
-			(skill) => {
-				childListObserver.observe(skill, {childList: true});
-			}
-		);
+		if (options.XPInfo)
+			displayXPBreakdown();
+		else
+			removeXPBox();
 	}
 
-	if (skillPopout != null)
-		skillPopout.scrollIntoView({block: "center"});
-
-	if (options.checkpointButtons)
+	// Crowns Info
 	{
-		const checkpointPopout = document.querySelector(CHECKPOINT_POPOUT_SELECTOR);
-		if (checkpointPopout != null)
-			addCheckpointButtons(checkpointPopout);
-		
-		// Add each checkpoint to childListObserver
-		document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR).forEach(
-			(checkpoint) => {
-				childListObserver.observe(checkpoint, {childList: true});
-			}
-		);
+		if (options.crownsInfo)
+			displayCrownsBreakdown();
+		else
+			removeCrownsBreakdown();
+	}
+
+	// Languages Info
+	{
+		if (options.languagesInfo)
+			displayLanguagesInfo(getLanguagesInfo());
+		else
+			removeLanguagesInfo();
+	}
+
+	// Lists of skills that need attention next
+	{
+		const needsStrengthening = getNeedsStrengthening();
+		const crackedSkills = getCrackedSkills();
+
+		const fullyStrengthened = (
+			needsStrengthening[0].length +
+			((options.showBonusSkillsInNeedsStrengtheningList) ? needsStrengthening[1].length : 0)
+		) == 0;
+
+		const noCrackedSkills = (
+			crackedSkills[0].length +
+			((options.showBonusSkillsInCrackedSkillsList) ? crackedSkills[1].length : 0)
+		) == 0;
+
+		if (options.needsStrengtheningList && !fullyStrengthened)
+			displayNeedsStrengthening(needsStrengthening); // Not fully strengthened and the list is enabled.
+		else
+			removeNeedsStrengtheningBox(); // Remove if there happens to be one.
+
+		if (options.crackedSkillsList && !noCrackedSkills)
+			displayNeedsStrengthening(crackedSkills, true); // There are cracked skills and the list is enabled.
+		else
+			removeCrackedSkillsList(); // Remove if there happens to be one.
+
+		if (
+			(fullyStrengthened && noCrackedSkills) ||
+			(!fullyStrengthened && !options.hideSuggestionNonStrengthened) ||
+			(!noCrackedSkills && !options.hideSuggestionWithCrackedSkills)
+		)
+		{
+			// Either a fully strengthened tree, or
+			// Not fully strengthened but still show suggestion, or
+			// There are cracked skills but still show suggestion
+			
+			if (options.skillSuggestion)
+				displaySuggestion(fullyStrengthened, noCrackedSkills);
+			else
+				removeSuggestion(); // if there happens to be one
+		}
+		else
+		{
+			// Should not be displaying a suggestion.
+			removeSuggestion() // if there happens to be one
+		}
+	}
+
+	// Practise Button in skill popouts
+	{
+		const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
+
+		if (options.practiseButton)
+		{
+			if (skillPopout != null && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
+				addPractiseButton(skillPopout);
+			// Add each skill to childListObserver
+			document.querySelectorAll(`[data-test="skill"]`).forEach(
+				(skill) => {
+					childListObserver.observe(skill, {childList: true});
+				}
+			);
+		}
+
+		if (skillPopout != null)
+			skillPopout.scrollIntoView({block: "center"});
+	}
+
+	// Redo checkpoint buttons on checkpoint popouts
+	{
+		if (options.checkpointButtons)
+		{
+			const checkpointPopout = document.querySelector(CHECKPOINT_POPOUT_SELECTOR);
+			if (checkpointPopout != null)
+				addCheckpointButtons(checkpointPopout);
+			
+			// Add each checkpoint to childListObserver
+			document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR).forEach(
+				(checkpoint) => {
+					childListObserver.observe(checkpoint, {childList: true});
+				}
+			);
+		}
 	}
 }
 
@@ -2982,7 +3040,7 @@ async function handleDataResponse(responseText)
 			retrieveProgressHistory().then(updateProgress);
 
 			usingOldData = false;
-			getStrengths();	// actual processing of the data.
+			addFeatures(); // actual processing of the data.
 		}
 	}
 	else
@@ -3003,7 +3061,7 @@ async function handleDataResponse(responseText)
 
 			retrieveProgressHistory().then(updateProgress);
 			usingOldData = false;
-			getStrengths();
+			addFeatures();
 		}
 	}
 }
@@ -3041,18 +3099,6 @@ function requestData()
 		);
 	});
 }
-
-/*
-Currently there is only one UI versions known to be in use.
-
-2019-08-01 the Daily goal box has been moved for some users to the side bar.
-This is just handled in the displayXPBreadown function.
-
-function checkUIVersion()
-{
-
-}
-*/
 
 function hideTranslationText(reveal = false, setupObserver = true)
 {

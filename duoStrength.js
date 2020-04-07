@@ -108,6 +108,7 @@ let username = "";
 let userData = {};
 let requestID = 0;
 let requestsPending = 0;
+let usingOldData;
 
 let rootElem;
 let rootChild;
@@ -2471,8 +2472,11 @@ function displayLanguagesInfo(languages)
 	}
 }
 
-function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
+function displaySuggestion(fullyStrengthened, noCrackedSkills)
 {
+	if (usingOldData)
+		return false; // If we haven't just got some new data the suggestion might be invalid so we won't
+
 	let topOfTree;
 	if (
 			document.querySelector(`[data-test="skill-tree"]`) != null &&
@@ -2539,7 +2543,8 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 				container.style.width = "calc(100% - 119px)";
 			}
 		}
-		let treeLevel = crownTreeLevel();
+		const skills = userData.language_data[languageCode].skills;
+		const treeLevel = crownTreeLevel();
 		let skillsByCrowns = [[],[],[],[],[],[]];
 
 		for (let skill of skills)
@@ -2668,7 +2673,8 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 	}
 	else
 	{
-		// Already made the box
+		// Already made the box.
+		// And we don't want to do anything otherwise the suggestion, if using the random option, will keep changing and might look a bit strange.
 	}
 }
 
@@ -2975,6 +2981,7 @@ async function handleDataResponse(responseText)
 
 			retrieveProgressHistory().then(updateProgress);
 
+			usingOldData = false;
 			getStrengths();	// actual processing of the data.
 		}
 	}
@@ -2995,6 +3002,7 @@ async function handleDataResponse(responseText)
 			userData = newUserData;
 
 			retrieveProgressHistory().then(updateProgress);
+			usingOldData = false;
 			getStrengths();
 		}
 	}
@@ -3008,6 +3016,7 @@ function requestData()
 		if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
 		{
 			// If there is already userData and not changing language, display current data while requesting new data.
+			usingOldData = true;
 			getStrengths(userData);
 		}
 
@@ -3559,7 +3568,8 @@ let childListMutationHandle = function(mutationsList, observer)
 	
 	if (skillRepaired)
 	{
-		getStrengths();
+		removeCrackedSkillsList();
+		requestData();
 	}
 	
 	if (skillPopoutAdded)

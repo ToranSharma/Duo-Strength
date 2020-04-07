@@ -55,6 +55,9 @@ can now be sorted by multiple criteria.
 - The popout box that appears under a skill when it is clicked is now made sure
 to be in view when the page loads, or when a skill is clicked and the new
 practise button is added.
+- Skill suggestions will only use new data. This is to prevent an invalid 
+suggestion being shown when exiting a lesson and the old data is processed 
+while wating for new data to retrieved.
 
 ### Fixed
 - The progress for different trees with the same target language but different 

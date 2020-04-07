@@ -3108,12 +3108,13 @@ function hideTranslationText(reveal = false, setupObserver = true)
 				hintSentence.title = "";
 			}
 
-			if (options.showToggleHidingTextButton)
+			let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
+
+			if (enableDisableButton.length == 0)
 			{
-				let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
-				if (enableDisableButton.length == 0)
+				// No enableDisableButton so make one and add it next to the question header if the option is enabled.
+				if (options.showToggleHidingTextButton)
 				{
-					// No enableDisableButton so make one and add it next to the question header
 					const headerContainer = document.createElement("div");
 					headerContainer.style =
 					`
@@ -3164,32 +3165,31 @@ function hideTranslationText(reveal = false, setupObserver = true)
 						hideTranslationText();
 					};
 
-					/*
-					if (questionArea.querySelectorAll(`[dir="ltr"]`).length > 0)
-					{
-						// LTR language, button goes to the right
-						enableDisableButton.style.float = "right";
-						enableDisableButton.style.marginLeft = "1em";
-					}
-					else if (questionArea.querySelectorAll(`[dir="rtl"]`).length > 0)
-					{
-						// RTL language, button goes to the left
-						enableDisableButton.style.float = "left";
-						enableDisableButton.style.marginRight = "1em";
-					}
-					
-					hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);
-					*/
-
 					headerContainer.appendChild(enableDisableButton);
 				}
-				else
+			}
+			else
+			{
+				// There is already an enableDisableButton.
+				if (options.showToggleHidingTextButton)
 				{
-					// There is already an enableDisableButton just update the text and function
+					// And it should be there, so just update the text and function
 
 					enableDisableButton = enableDisableButton[0];
 					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
 				}
+				else
+				{
+					// But we don't want it anymore
+					
+					const headerContainer = questionContainer.querySelector(`.hideTextEnableDisable`).parentNode;
+					const header = headerContainer.firstChild;
+					header.removeAttribute("style");
+					headerContainer.parentNode.insertBefore(header, headerContainer); // Move the header back to where it should be;
+					headerContainer.remove();
+
+				}
+				
 			}
 			return true;
 		}
@@ -3729,6 +3729,9 @@ async function init()
 			// so let's add a childList mutaion observer to lessonMainSection and run the checks then.
 
 			childListObserver.observe(lessonMainSection, {childList: true});
+
+			await optionsLoaded;
+			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
 		}
 		else
 		{
@@ -3825,9 +3828,7 @@ async function init()
 				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
 
 				/*
-				language = document.head.getElementsByTagName("title")[0].textContent.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
-				
-				language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
+				language seems to be quite difficult to set on first load, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
 				We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
 				
 

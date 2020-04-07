@@ -47,7 +47,7 @@ const LEAGUE_TABLE = "_1NIUo";
 const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = ".vwODZ";
 const SKILL_NAME_SELECTOR = "._2CXf4";
 const CHECKPOINT_CONTAINER_SELECTOR = "._3Lrsa";
-const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB._2Uetf";
+const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB";
 const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
 
 const SKILL_SELECTOR = `[data-test="skill-tree"] [data-test="skill"], [data-test="intro-lesson"]`;
@@ -1544,6 +1544,7 @@ function addCheckpointButtons(checkpointPopout)
 		background-color: white;
 		box-shadow: 0 0.25em rgba(255, 255, 255, 0.5);
 		transition: filter 0.2s;
+		cursor: pointer;
 	`;
 
 	redoTestButton.addEventListener("mouseleave", oml);

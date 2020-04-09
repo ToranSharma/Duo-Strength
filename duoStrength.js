@@ -54,45 +54,16 @@ const SKILL_SELECTOR = `[data-test="skill-tree"] [data-test="skill"], [data-test
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 
 const flagYOffsets = {
-	0:	"en",
-	32: "es",
-	64: "fr",
-	96: "de",
-	128: "ja",
-	160: "it",
-	193: "ko",
-	225: "zh",
-	257: "ru",
-	289: "pt",
-	321: "tr",
-	354: "nl",
-	386: "sv",
-	418: "ga",
-	450: "el",
-	482: "he",
-	515: "pl",
-	547: "no",
-	579: "da",
-	611: "hv",
-	643: "vi",
-	676: "ro",
-	708: "sw",
-	740: "eo",
-	772: "hu",
-	804: "cy",
-	837: "uk",
-	869: "kl",
-	901: "cs",
-	933: "hi",
-	965: "id",
-	998: "ha",
-	1030: "nv",
-	1062: "ar",
-	1094: "ca",
-	1126: "th",
-	1159: "gn",
-	1352: "ar",
-	1384: "gd",
+	0:	"en", 32: "es", 64: "fr", 96: "de",
+	128: "ja", 160: "it", 193: "ko", 225: "zh",
+	257: "ru", 289: "pt", 321: "tr", 354: "nl",
+	386: "sv", 418: "ga", 450: "el", 482: "he",
+	515: "pl", 547: "no", 579: "da", 611: "hv",
+	643: "vi", 676: "ro", 708: "sw", 740: "eo",
+	772: "hu", 804: "cy", 837: "uk", 869: "kl",
+	901: "cs", 933: "hi", 965: "id", 998: "ha",
+	1030: "nv", 1062: "ar", 1094: "ca", 1126: "th",
+	1159: "gn", 1352: "ar", 1384: "gd",
 };
 
 let languageCode = "";
@@ -122,8 +93,7 @@ let inMobileLayout;
 
 function retrieveOptions()
 {
-	return new Promise(function (resolve, reject)
-	{
+	return new Promise(function (resolve, reject){
 		chrome.storage.sync.get("options", function (data)
 		{
 			// Set options to default settings
@@ -2414,8 +2384,12 @@ function displayLanguagesInfo(languages)
 		languagesBox.className = WHITE_SIDEBAR_BOX_CONTAINER;
 		
 		const heading = document.createElement("H2");
-		heading.textContent = "Languages Info";
+		heading.textContent = `Languages Info`;
 		languagesBox.appendChild(heading);
+
+		const subHeading = document.createElement("H3");
+		subHeading.textContent = `From ${UICode[0].toUpperCase() + UICode[1]}`;
+		languagesBox.appendChild(subHeading);
 
 		const table = document.createElement("TABLE");
 		table.id = "languagesTable";

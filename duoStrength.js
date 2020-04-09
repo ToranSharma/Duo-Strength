@@ -8,7 +8,7 @@ const GREY = "rgb(229, 229, 229)";
 const DARK_BLUE = "rgb(24, 153, 214)";
 const LIGHT_BLUE = "rgb(28, 176, 246)";
 
-const crownSrc = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
+const imgSrcBaseUrl = "//d35aaqx5ub95lt.cloudfront.net/images";
 
 // Duolingo class names:
 const BONUS_SKILL_DIVIDER_SELECTOR = "._23P6X";
@@ -1847,7 +1847,7 @@ function displayCrownsBreakdown()
 		padding: 0 0.2em ;
 		z-index: 1;
 	`;
-	crownImg.src = crownSrc;
+	crownImg.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
 
 	imgContainer.appendChild(crownImg);
 	imgContainer.appendChild(levelContainer);

@@ -138,6 +138,7 @@ function retrieveOptions()
 							"revealHotkeyCode":							"Ctrl+Alt+H",
 					"showToggleHidingTextButton":				true,
 					"showLeagues":								true,
+					"wordsButton":								true,
 				};
 
 			if (Object.entries(data).length === 0)
@@ -328,6 +329,19 @@ function removeLanguagesInfo()
 	let languagesInfoBox = document.getElementById("languagesBox");
 	if (languagesInfoBox != null)
 		languagesInfoBox.parentNode.removeChild(languagesInfoBox);
+}
+
+function removeWordsButton()
+{
+	const wordsButton = document.querySelector(`[data-test="words-button"]`);
+	if (wordsButton != null)
+	{
+		wordsButton.parentNode.removeAttribute("style");
+		wordsButton.remove();
+	}
+	const wordsListBubble = document.querySelector(`#wordsListBubble`);
+	if (wordsListBubble != null)
+		wordsListBubble.remove();
 }
 
 function hasMetGoal()
@@ -1434,6 +1448,112 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	if (options.focusFirstSkill) firstSkillLink.focus();
 }
 
+function getSkillFromPopout(skillPopout)
+{
+	const skillTitle = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
+	return userData.language_data[languageCode].skills.filter(skill => skill.short == skillTitle)[0]
+}
+
+function addWordsButton(skillPopout)
+{
+	if (skillPopout == null) return false;
+
+	const words = getSkillFromPopout(skillPopout).words;
+
+	const tipsButton = skillPopout.querySelector(`[data-test="test-out-button"]`);
+	tipsButton.parentNode.style = `
+		position: relative;
+		width: 50%;
+	`;
+
+	const wordsButton = tipsButton.cloneNode(false); // don't copy the contained test out icon
+	wordsButton.setAttribute("data-test", "words-button");
+	wordsButton.textContent = "Words";
+	wordsButton.style = `
+		text-transform: capitalize;
+		width: auto;
+		padding: 0em 0.3em !important;
+	`;
+
+	tipsButton.parentNode.insertBefore(wordsButton, tipsButton);
+
+
+	wordsButton.addEventListener("click",
+		(event) => {
+			const smallButtonsContainer = event.target.parentNode;
+			const wordsListBubble = smallButtonsContainer.querySelector("#wordsListBubble");
+			if (wordsListBubble == null)
+				smallButtonsContainer.appendChild(createWordsListBubble(words, smallButtonsContainer));
+			else
+				wordsListBubble.remove();
+			event.stopPropagation();
+		}
+	);
+	skillPopout.firstChild.addEventListener("click",
+		(event) =>
+		{
+			const wordsListBubble = document.querySelector(`#wordsListBubble`);
+			if (wordsListBubble != null)
+				wordsListBubble.remove();
+		}
+	);
+}
+
+function createWordsListBubble(words, container)
+{
+	const bubble = document.createElement("div");
+	bubble.id = "wordsListBubble";
+	const textColor = window.getComputedStyle(container.parentNode).backgroundColor;
+	bubble.style = `
+		background-color: white;
+		color: ${textColor};
+		font-weight: bold;
+		position: absolute;
+		left: 0;
+		top: calc(100% + 0.5em);
+		z-index: 1;
+		border-radius: 1em;
+		box-shadow: 0.25em 0.25em rgba(0,0,0,0.2);
+		padding: 0.5em;
+		width: 200%;
+		transform: translate(-50%, 0);
+	`;
+	bubble.addEventListener("click", (event) => {event.stopPropagation();})
+
+	const arrow = document.createElement("div");
+	const arrowOffset = container.firstChild.offsetLeft + 0.5*container.firstChild.offsetWidth;
+	arrow.style = `
+		background-color: white;
+		position: absolute;
+		width: 0.5em;
+		height: 0.5em;
+		top: -0.25em;
+		left: 50%;
+		transform: translate(calc(-50% + ${arrowOffset}px), 0) rotate(45deg);
+	`;
+	bubble.appendChild(arrow);
+
+
+	const list = document.createElement("ul");
+	list.style = `
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		white-space: pre;
+	`;
+	bubble.appendChild(list);
+
+	words.forEach(
+		(word, index, words) => {
+			const li = document.createElement("li");
+			li.textContent = word + ((index +1 != words.length)?" \u00b7 ":"");
+			list.appendChild(li);
+		}
+	);
+
+	return bubble;
+}
+
 function addPractiseButton(skillPopout)
 {
 	if (skillPopout == null)
@@ -1461,8 +1581,7 @@ function addPractiseButton(skillPopout)
 	practiseButton.title = "Practising this skill will strengthen it, but will not contribute any progress towards earning the next crown.";
 	practiseButton.setAttribute("data-test", "practise-button");
 
-	skillTitle = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
-	urlTitle = userData.language_data[languageCode].skills.filter(skill => skill.short == skillTitle)[0].url_title;
+	const urlTitle = getSkillFromPopout(skillPopout).url_title;
 	practiseButton.addEventListener("click", (event) => {
 		window.location = `/skill/${languageCode}/${urlTitle}/practice`;
 	});
@@ -2835,16 +2954,36 @@ function addFeatures()
 		}
 	}
 
-	// Practise Button in skill popouts
+	// Practise and Words Button in skill popouts
 	{
 		const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
 
-		if (options.practiseButton)
+		if (options.practiseButton || options.wordsButton)
 		{
-			if (skillPopout != null && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
-				addPractiseButton(skillPopout);
+			if (skillPopout != null)
+			{
+				if (options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
+				{
+					const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
+					if (introLesson == null || !introLesson.contains(skillPopout))
+					{
+						// No introduction lesson, or if there is this skillPopout isn't from that skill
+						addPractiseButton(skillPopout);
+					}
+				}
+
+				if (options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) == null)
+				{
+					addWordsButton(skillPopout);
+				}
+				else
+				{
+					removeWordsButton();
+				}
+			}
+
 			// Add each skill to childListObserver
-			document.querySelectorAll(`[data-test="skill"]`).forEach(
+			document.querySelectorAll(SKILL_SELECTOR).forEach(
 				(skill) => {
 					childListObserver.observe(skill, {childList: true});
 				}
@@ -3595,7 +3734,14 @@ let childListMutationHandle = function(mutationsList, observer)
 	
 	if (skillPopoutAdded)
 	{
-		if (options.practiseButton) addPractiseButton(skillPopout);
+		const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
+		if (introLesson == null || !introLesson.contains(skillPopout))
+		{
+			// No introduction lesson, or if there is this skillPopout isn't from that skill
+			if (options.practiseButton) addPractiseButton(skillPopout);
+		}
+
+		if (options.wordsButton) addWordsButton(skillPopout);
 	}
 	
 	if (checkpointPopoutAdded)

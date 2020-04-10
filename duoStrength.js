@@ -3540,7 +3540,7 @@ let childListMutationHandle = function(mutationsList, observer)
 								if (treeLevel == 5)
 								{
 									const crown = document.createElement("IMG");
-									crown.src = crownSrc;
+									crown.src = imgSrcBaseUrl+"/juicy-crown.svg";
 									crown.style = `
 										position: 	absolute;
 										left: 0;

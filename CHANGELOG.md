@@ -3,6 +3,11 @@ Changelog
 
 [Unreleased]
 ------------
+-
+
+[v1.3.0] - 2020-04-10
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.0)
 ### Added
 - Hotkey to reveal a hidden sentence. By default the hotkey is Ctrl+Alt+H.
   - Options to enable/disable hotkey and change key combination.
@@ -676,6 +681,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.11...v1.3.0
 [v1.2.11]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.10...v1.2.11
 [v1.2.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.9...v1.2.10
 [v1.2.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.8...v1.2.9

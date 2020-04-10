@@ -49,6 +49,9 @@ const SKILL_NAME_SELECTOR = "._2CXf4";
 const CHECKPOINT_CONTAINER_SELECTOR = "._3Lrsa";
 const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB";
 const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
+const SMALL_BUTTONS_CONTAINER = "_2DR3u";
+const SMALL_BUTTON = "_32WtB _2i-mO _1LZ7U vy3TL _3iIWE _1Mkpg _1Dtxl _1sVAI sweRn _1BWZU _26exN QVrnU";
+const LOCKED_POPOUT = "_1PDfx";
 
 const SKILL_SELECTOR = `[data-test="skill-tree"] [data-test="skill"], [data-test="intro-lesson"]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
@@ -1458,15 +1461,40 @@ function addWordsButton(skillPopout)
 {
 	if (skillPopout == null) return false;
 
-	const words = getSkillFromPopout(skillPopout).words;
+	const skillData = getSkillFromPopout(skillPopout);
+	
+	const words = skillData.words;
+	const isLocked = skillData.locked;
 
+	let smallButtonsContainer;
+	let wordsButton;
 	const tipsButton = skillPopout.querySelector(`[data-test="test-out-button"]`);
-	tipsButton.parentNode.style = `
+	
+	if (tipsButton != null)
+	{
+		smallButtonsContainer = tipsButton.parentNode;
+		wordsButton = tipsButton.cloneNode(false); // don't copy the contained test out icon
+		tipsButton.parentNode.insertBefore(wordsButton, tipsButton);
+	}
+	else
+	{
+		smallButtonsContainer = document.createElement("div");
+		smallButtonsContainer.classList.add(SMALL_BUTTONS_CONTAINER);
+		const mainPopoutContainer = skillPopout.firstChild.firstChild;
+		mainPopoutContainer.insertBefore(smallButtonsContainer, mainPopoutContainer.firstChild);
+
+		wordsButton = document.createElement("button");
+		wordsButton.classList.add(...SMALL_BUTTON.split(" "));
+		smallButtonsContainer.appendChild(wordsButton);
+	}
+
+	smallButtonsContainer.style = `
 		position: relative;
 		width: 50%;
+		display: flex;
+		justify-content: flex-end;
 	`;
-
-	const wordsButton = tipsButton.cloneNode(false); // don't copy the contained test out icon
+	
 	wordsButton.setAttribute("data-test", "words-button");
 	wordsButton.textContent = "Words";
 	wordsButton.style = `
@@ -1475,15 +1503,18 @@ function addWordsButton(skillPopout)
 		padding: 0em 0.3em !important;
 	`;
 
-	tipsButton.parentNode.insertBefore(wordsButton, tipsButton);
-
+	if (isLocked)
+	{
+		wordsButton.style.backgroundColor = "darkgrey";
+		smallButtonsContainer.nextElementSibling.style.textAlign = "start";
+	}
 
 	wordsButton.addEventListener("click",
 		(event) => {
 			const smallButtonsContainer = event.target.parentNode;
 			const wordsListBubble = smallButtonsContainer.querySelector("#wordsListBubble");
 			if (wordsListBubble == null)
-				smallButtonsContainer.appendChild(createWordsListBubble(words, smallButtonsContainer));
+				smallButtonsContainer.appendChild(createWordsListBubble(words, smallButtonsContainer, isLocked));
 			else
 				wordsListBubble.remove();
 			event.stopPropagation();
@@ -1499,13 +1530,14 @@ function addWordsButton(skillPopout)
 	);
 }
 
-function createWordsListBubble(words, container)
+function createWordsListBubble(words, container, isLocked)
 {
 	const bubble = document.createElement("div");
 	bubble.id = "wordsListBubble";
-	const textColor = window.getComputedStyle(container.parentNode).backgroundColor;
+	const backgroundColor = isLocked ? "darkgrey" : "white";
+	const textColor = isLocked ? "white" : window.getComputedStyle(container.parentNode).backgroundColor;
 	bubble.style = `
-		background-color: white;
+		background-color: ${backgroundColor};
 		color: ${textColor};
 		font-weight: bold;
 		position: absolute;
@@ -1518,12 +1550,13 @@ function createWordsListBubble(words, container)
 		width: 200%;
 		transform: translate(-50%, 0);
 	`;
+
 	bubble.addEventListener("click", (event) => {event.stopPropagation();})
 
 	const arrow = document.createElement("div");
 	const arrowOffset = container.firstChild.offsetLeft + 0.5*container.firstChild.offsetWidth;
 	arrow.style = `
-		background-color: white;
+		background-color: ${backgroundColor};
 		position: absolute;
 		width: 0.5em;
 		height: 0.5em;

@@ -42,6 +42,8 @@ strengthening list and the cracked skills list.
 - Prediction to crowns info popup box of how long it will take to reach the next
 checkpoint for L0 trees.
   - Option to enable or disable this predicition.
+- Words list button to the popout bubble for each skill. This button shows the 
+list of words for that skill, including locked skills.
 
 ### Changed
 - The extension is now a `page action`.

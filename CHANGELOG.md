@@ -35,20 +35,20 @@ out the skills above.
 of each tree. A white/no border indicates that the tree is level 0 (not 
 completed), level 1 is blue, level 2 is green, level 3 is red, level 4 is orange
 and level 5 is gold with a crown icon added to the bottom left corner.
-  - Option to neable or disable the borders around the flags.
+  - Option to enable or disable the borders around the flags.
 - Option to enable or disable the display of the breakdown of bonus skills in 
 the crowns popup box.
 - Options to enable or disable the display of bonus skills in the needs 
 strengthening list and the cracked skills list.
 - Prediction to crowns info popup box of how long it will take to reach the next
 checkpoint for L0 trees.
-  - Option to enable or disable this predicition.
+  - Option to enable or disable this prediction.
 - Words list button to the popout bubble for each skill. This button shows the 
 list of words for that skill, including locked skills.
 
 ### Changed
 - The extension is now a `page action`.
-  - The Duo Strength Logo will now appear in the toolbar in all broswers.
+  - The Duo Strength Logo will now appear in the toolbar in all browsers.
   - Clicking on the logo will now open a popup window with the options page.
   - Modifying any of the options will cause the extension to refresh, displaying
   the new options.
@@ -57,7 +57,7 @@ list of words for that skill, including locked skills.
 can now be sorted by multiple criteria.
   - The list can now be sorted by skill strength and crown level, both ascending
   and descending.
-  - You an add further sorting criteria if any of the above are chosen. These
+  - You can add further sorting criteria if any of the above are chosen. These
   will define the order of any skills that are the same based on prior sorting
   criteria.
 - The popout box that appears under a skill when it is clicked is now made sure
@@ -65,14 +65,14 @@ to be in view when the page loads, or when a skill is clicked and the new
 practise button is added.
 - Skill suggestions will only use new data. This is to prevent an invalid 
 suggestion being shown when exiting a lesson and the old data is processed 
-while wating for new data to retrieved.
+while waiting for new data to be retrieved.
 
 ### Fixed
 - The progress for different trees with the same target language but different 
-base languages are now differentiated and stored separetely. This does mean 
+base languages are now differentiated and stored separately. This does mean 
 however that the progress history for each tree will blank again after the 
 update.
-- Crowns progress graph Y axis label alignment in firefox
+- Crowns progress graph Y axis label alignment in Firefox.
 
 [v1.2.11] - 2020-03-31
 -----------------

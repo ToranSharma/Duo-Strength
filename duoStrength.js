@@ -282,6 +282,17 @@ function removeCrackedSkillsList()
 	}
 }
 
+function removeFlagBorders()
+{
+	const flags = document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span>span:first-child`);
+	flags.forEach(
+		(flag) => {
+			flag.removeAttribute("style");
+			flag.querySelectorAll("img").forEach(img => img.remove());
+		}
+	);
+}
+
 function removeCrownsBreakdown()
 {
 	const maxCrowns = document.getElementById("maxCrowns");
@@ -856,6 +867,108 @@ function graphSVG(data, ratio=1.5)
 	graph.appendChild(points);
 
 	return graph;
+}
+
+function addFlagBorders()
+{
+	// Get the progress saved for all languages and users, async
+	languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
+
+	languageProgressPromise.then(
+		(data) => {
+			// Go through each row in the language change list, if it is still there.
+			if (document.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+				Array.from(document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span`)).forEach(
+					(container) => {
+						// There are two flags for each language, the first is the target language, the second is the base language.
+						const flag1 = container.firstChild;
+						const flag2 = flag1.nextElementSibling;
+						
+						// As the flags are all stored in one sprite sheet we determine which is displayed by the background positions.
+						const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
+						const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
+						
+
+						// Bbckground offsets in px as strings
+						const x1 = backgroundPosition1[0];
+						const y1 = backgroundPosition1[1];
+
+						const y2 = backgroundPosition2[1];
+						
+						// trim off px and make positive
+						const yOffset1 = Math.abs(parseInt(y1.slice(0,-2), 10));
+						const yOffset2 = Math.abs(parseInt(y2.slice(0,-2), 10));
+
+						// find the language code associated with those offsets
+						const code1 = flagYOffsets[yOffset1];
+						const code2 = flagYOffsets[yOffset2];
+
+						// height and width will need to be adjusted to account for the border that is to be added, so we save the original values
+						const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
+						const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
+				
+						langProgress = data.progress[`${username}${code1}${code2}`];
+
+						let color;
+						let treeLevel;
+						
+						if (langProgress == null)
+							treeLevel = 0;
+						else
+							treeLevel = langProgress[langProgress.length-1][1];
+
+						switch (treeLevel)
+						{
+							case 0:
+								color = "white";
+								break;
+							case 1:
+								color = BLUE;
+								break;
+							case 2:
+								color = GREEN;
+								break;
+							case 3:
+								color = RED;
+								break;
+							case 4:
+								color = ORANGE;
+								break;
+							case 5:
+								color = GOLD;
+								break;
+						}
+
+
+						flag1.style = 
+						`
+							border-color: ${color};
+							border-width: 4px;
+							border-style: solid;
+							border-radius: 10px;
+							background-position: calc(${x1} - 2px) calc(${y1} - 2px);
+							height: ${+height1 + 4}px;
+							width: ${+width1 + 4}px;
+						`;
+						
+						if (treeLevel == 5)
+						{
+							const crown = document.createElement("IMG");
+							crown.src = imgSrcBaseUrl+"/juicy-crown.svg";
+							crown.style = `
+								position: 	absolute;
+								left: 0;
+								bottom: 0;
+								width: 75%;
+								transform: translate(-50%, 50%);
+							`;
+							flag1.appendChild(crown);
+						}
+					}
+				);
+		}
+	);
+
 }
 
 function addStrengthBars(strengths)
@@ -3043,6 +3156,18 @@ function addFeatures()
 			);
 		}
 	}
+
+	// Flag Borders in Language List
+	{
+		if (options.treeLevelBorder && document.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+		{
+			addFlagBorders();
+		}
+		else
+		{
+			removeFlagBorders();
+		}
+	}
 }
 
 function httpGetAsync(url, responseHandler)
@@ -3629,103 +3754,8 @@ let childListMutationHandle = function(mutationsList, observer)
 
 		if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null && options.treeLevelBorder)
 		{
-			// Get the progress saved for all languages and users, async
-			languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
-
-			languageProgressPromise.then(
-				(data) => {
-					// Go through each row in the language change list, if it is still there.
-					if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null)
-						Array.from(popupIcon.querySelector(LANGUAGES_LIST_SELECTOR).querySelectorAll("._1vd9-")).forEach(
-							(container) => {
-								// There are two flags for each language, the first is the target language, the second is the base language.
-								const flag1 = container.firstChild;
-								const flag2 = flag1.nextElementSibling;
-								
-								// As the flags are all stored in one sprite sheet we determine which is displayed by the background positions.
-								const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
-								const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
-								
-
-								// Bbckground offsets in px as strings
-								const x1 = backgroundPosition1[0];
-								const y1 = backgroundPosition1[1];
-
-								const y2 = backgroundPosition2[1];
-								
-								// trim off px and make positive
-								const yOffset1 = Math.abs(parseInt(y1.slice(0,-2), 10));
-								const yOffset2 = Math.abs(parseInt(y2.slice(0,-2), 10));
-
-								// find the language code associated with those offsets
-								const code1 = flagYOffsets[yOffset1];
-								const code2 = flagYOffsets[yOffset2];
-
-								// height and width will need to be adjusted to account for the border that is to be added, so we save the original values
-								const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
-								const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
-						
-								langProgress = data.progress[`${username}${code1}${code2}`];
-
-								let color;
-								let treeLevel;
-								
-								if (langProgress == null)
-									treeLevel = 0;
-								else
-									treeLevel = langProgress[langProgress.length-1][1];
-
-								switch (treeLevel)
-								{
-									case 0:
-										color = "white";
-										break;
-									case 1:
-										color = BLUE;
-										break;
-									case 2:
-										color = GREEN;
-										break;
-									case 3:
-										color = RED;
-										break;
-									case 4:
-										color = ORANGE;
-										break;
-									case 5:
-										color = GOLD;
-										break;
-								}
-
-
-								flag1.style = 
-								`
-									border-color: ${color};
-									border-width: 4px;
-									border-style: solid;
-									border-radius: 10px;
-									background-position: calc(${x1} - 2px) calc(${y1} - 2px);
-									height: ${+height1 + 4}px;
-									width: ${+width1 + 4}px;
-								`;
-								
-								if (treeLevel == 5)
-								{
-									const crown = document.createElement("IMG");
-									crown.src = imgSrcBaseUrl+"/juicy-crown.svg";
-									crown.style = `
-										position: 	absolute;
-										left: 0;
-										bottom: 0;
-										width: 75%;
-										transform: translate(-50%, 50%);
-									`;
-									flag1.appendChild(crown);
-								}
-							}
-						);
-				}
-			);
+			// Language list added, add the flag borders
+			addFlagBorders();
 		}
 	}
 

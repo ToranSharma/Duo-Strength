@@ -17,6 +17,7 @@ const TOP_OF_TREE = "_3GFex";
 const MOBILE_TOP_OF_TREE = "_3Y5Xu";
 const SKILL_ROW = "_2GJb6";
 const SKILL_COLUMN = "QmbDT";
+const TRY_PLUS_BUTTON_SELECTOR = "._2x4yk._1rwed";
 const IN_BETA_LABEL = "_3yV19";
 const CROWN_POPUP_CONTAINER = "NugKJ";
 const CROWN_LOGO_CONTAINER = "_3uwBi";
@@ -1179,7 +1180,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 		) // Has the tree loaded from a page change
 	{
-		topOfTree = document.querySelector(`[data-test="skill-tree"]`).firstChild;
+		topOfTree = document.querySelector(`[data-test="skill-tree"]>div`);
 	}
 	else
 	{
@@ -1348,18 +1349,14 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			else
 				strengthenBox.style.marginTop = "0.5em";
 		}
-		else
+		else if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
 		{
 			// Not being pushed down by the IN BETA label,
-			if (inMobileLayout)
-			{
-				// In mobile layout so we don't need to make room for the try plus button.
-			}
-			else
-			{
-				// In desktop layout so let's make room for the TRY PLUS button to the right.
-				strengthenBox.style.width = "calc(100% - 119px)";	
-			}
+			// and there is a TRY PLUS button on the right which we have to make room for.
+			const boxRightEdge = topOfTree.getBoundingClientRect().right;
+			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
+			const offset = boxRightEdge - buttonLeftEdge;
+			strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
 		}
 	}
 
@@ -2729,7 +2726,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 		) // Has the tree loaded from a page change
 	{
-		topOfTree = document.querySelector(`[data-test="skill-tree"]`).firstChild;
+		topOfTree = document.querySelector(`[data-test="skill-tree"]>div`);
 	}
 	else
 	{
@@ -2770,18 +2767,14 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			else
 				container.style.marginTop = "0.5em";
 		}
-		else
+		else if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
 		{
-			// Not being pushed down by the IN BETA label.
-			if (inMobileLayout)
-			{
-				// In mobile layout so we don't need to make room for the try plus button.
-			}
-			else
-			{
-				// In desktop layout so let's make room for the TRY PLUS button to the right.
-				container.style.width = "calc(100% - 119px)";
-			}
+			// Not being pushed down by the IN BETA label,
+			// and there is a TRY PLUS button on the right which we have to make room for.
+			const boxRightEdge = topOfTree.getBoundingClientRect().right;
+			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
+			const offset = boxRightEdge - buttonLeftEdge;
+			container.style.width = `calc(100% - ${offset}px - 0.5em)`;
 		}
 		const skills = userData.language_data[languageCode].skills;
 		const treeLevel = crownTreeLevel();
@@ -3652,7 +3645,14 @@ let childListMutationHandle = function(mutationsList, observer)
 		let desktopMargin = "0 0 2em 0";
 
 		let mobileWidth = "auto";
-		let desktopWidth = "calc(100% - 119px)";
+		let desktopWidth;
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+		{
+			const boxRightEdge = document.querySelector(`[data-test="skill-tree"]>div`).getBoundingClientRect().right;
+			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
+			const offset = boxRightEdge - buttonLeftEdge;
+			desktopWidth = `calc(100% - ${offset}px - 0.5em)`;
+		}
 
 		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
 		{

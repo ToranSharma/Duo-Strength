@@ -54,7 +54,7 @@ const SMALL_BUTTONS_CONTAINER = "_2DR3u";
 const SMALL_BUTTON = "_32WtB _2i-mO _1LZ7U vy3TL _3iIWE _1Mkpg _1Dtxl _1sVAI sweRn _1BWZU _26exN QVrnU";
 const LOCKED_POPOUT = "_1PDfx";
 
-const SKILL_SELECTOR = `[data-test="skill-tree"] [data-test="skill"], [data-test="intro-lesson"]`;
+const SKILL_SELECTOR = `[data-test="skill-tree"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 
 const flagYOffsets = {
@@ -1028,11 +1028,22 @@ function addStrengthBars(strengths)
 
 	for (let i=0; i<skillElements.length; i++)
 	{
-		let elementContents = [
-			skillElements[i].querySelector(`[data-test="skill-icon"]`),
-			skillElements[i].firstChild.firstChild.lastChild
-		 ];
-
+		let elementContents;
+		if (skillElements[i].getAttribute("data-test") == "skill")
+		{
+			elementContents = [
+				skillElements[i].querySelector(`[data-test="skill-icon"]`),
+				skillElements[i].firstChild.firstChild.lastChild
+			];
+		}
+		else
+		{
+			// This is bonus skill that has not been purchased so is missing on of the inner containers.
+			elementContents = [
+				skillElements[i].querySelector(`[data-test="skill-icon"]`),
+				skillElements[i].firstChild.lastChild
+			];
+		}
 		/* old way of finding name element before new containers
 
 		// name is a span element, normally it is the last element but if the skill is clicked then a new div is created with the start lesson button etc below the name plate. So need to find the correct span element.
@@ -1564,7 +1575,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 function getSkillFromPopout(skillPopout)
 {
 	const skillTitle = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
-	return userData.language_data[languageCode].skills.filter(skill => skill.short == skillTitle)[0]
+	const allSkills = [...userData.language_data[languageCode].skills, ...userData.language_data[languageCode].bonus_skills];
+	return allSkills.find(skill => skill.short == skillTitle);
 }
 
 function addWordsButton(skillPopout)
@@ -2587,7 +2599,7 @@ function displayLanguagesInfo(languages)
 			displayedLanguages.length != languages.length ||
 			!displayedLanguages.every(
 				(language, index) => {
-					language == languages[index]
+					return language == languages[index][0];
 				}
 			)
 		);
@@ -2611,11 +2623,11 @@ function displayLanguagesInfo(languages)
 		else
 		{
 			// Number of languages or the order of them has changed, need to repopulate table.
-			const table = document.getElementById("languagesTable");
-			tableRowElements = languagesTable.querySelectorAll("table > tr");
+			const table = languagesBox.querySelector("#languagesTable");
+			const tableRowElements = table.querySelectorAll("table>tr");
 
 			// Clear current table
-			tableRowElements.forEach(row => table.removeChild(row));
+			tableRowElements.forEach(row => row.remove());
 
 			// Add new rows
 			languages.forEach(
@@ -3959,7 +3971,7 @@ async function init()
 		if (rootChild.firstChild.className == LESSON)
 		{
 			// in a lesson
-			// we probably got here from a link in the needs strengthenin list
+			// we probably got here from a link in the needs strengthening list
 
 			onMainPage = false;
 
@@ -3994,7 +4006,7 @@ async function init()
 				// there is a topBarDiv so we can continue to process the page to workout what to do
 
 				// set username via the href of a link to the profile
-				let profileTabHrefParts = document.querySelector("[data-test = \"profile-tab\"]").href.split("/");
+				let profileTabHrefParts = document.querySelector(`[data-test="profile-tab"]`).href.split("/");
 				username = profileTabHrefParts[profileTabHrefParts.length - 1];
 
 				// topBar Div is the direct container holding the navigation butons, has class _3F_8q

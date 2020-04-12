@@ -10,6 +10,7 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.2)
 ### Fixed
 - Languages table update error.
+- Words list for bonus skills.
 
 [v1.3.1] - 2020-04-12
 -----------------

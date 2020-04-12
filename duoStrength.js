@@ -1564,7 +1564,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 function getSkillFromPopout(skillPopout)
 {
 	const skillTitle = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
-	return userData.language_data[languageCode].skills.filter(skill => skill.short == skillTitle)[0]
+	const allSkills = [...userData.language_data[languageCode].skills, ...userData.language_data[languageCode].bonus_skills];
+	return allSkills.find(skill => skill.short == skillTitle);
 }
 
 function addWordsButton(skillPopout)
@@ -3959,7 +3960,7 @@ async function init()
 		if (rootChild.firstChild.className == LESSON)
 		{
 			// in a lesson
-			// we probably got here from a link in the needs strengthenin list
+			// we probably got here from a link in the needs strengthening list
 
 			onMainPage = false;
 
@@ -3994,7 +3995,7 @@ async function init()
 				// there is a topBarDiv so we can continue to process the page to workout what to do
 
 				// set username via the href of a link to the profile
-				let profileTabHrefParts = document.querySelector("[data-test = \"profile-tab\"]").href.split("/");
+				let profileTabHrefParts = document.querySelector(`[data-test="profile-tab"]`).href.split("/");
 				username = profileTabHrefParts[profileTabHrefParts.length - 1];
 
 				// topBar Div is the direct container holding the navigation butons, has class _3F_8q

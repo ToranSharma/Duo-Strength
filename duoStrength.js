@@ -2587,7 +2587,7 @@ function displayLanguagesInfo(languages)
 			displayedLanguages.length != languages.length ||
 			!displayedLanguages.every(
 				(language, index) => {
-					language == languages[index]
+					return language == languages[index][0];
 				}
 			)
 		);
@@ -2611,11 +2611,11 @@ function displayLanguagesInfo(languages)
 		else
 		{
 			// Number of languages or the order of them has changed, need to repopulate table.
-			const table = document.getElementById("languagesTable");
-			tableRowElements = languagesTable.querySelectorAll("table > tr");
+			const table = languagesBox.querySelector("#languagesTable");
+			const tableRowElements = table.querySelectorAll("table>tr");
 
 			// Clear current table
-			tableRowElements.forEach(row => table.removeChild(row));
+			tableRowElements.forEach(row => row.remove());
 
 			// Add new rows
 			languages.forEach(

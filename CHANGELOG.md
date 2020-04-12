@@ -11,6 +11,7 @@ Changelog
 ### Fixed
 - Languages table update error.
 - Words list for bonus skills.
+- Handling of mixture of purchased and unpurchased bonus skills.
 
 [v1.3.1] - 2020-04-12
 -----------------

@@ -1,17 +1,23 @@
 const GOLD = "rgb(250, 217, 29)";
 const RED = "rgb(244, 78, 81)";
 const ORANGE = "rgb(255, 150, 0)";
+const GREEN = "rgb(120, 200, 0)";
+const BLUE = "rgb(28, 176, 246)";
+const PURPLE = "rgb(206, 130, 255)";
 const GREY = "rgb(229, 229, 229)";
 const DARK_BLUE = "rgb(24, 153, 214)";
 const LIGHT_BLUE = "rgb(28, 176, 246)";
 
+const imgSrcBaseUrl = "//d35aaqx5ub95lt.cloudfront.net/images";
+
 // Duolingo class names:
-const BONUS_SKILL_DIVIDER = "_23P6X";
+const BONUS_SKILL_DIVIDER_SELECTOR = "._23P6X";
 const TOP_OF_TREE_WITH_IN_BETA = "_1uUHs _3tYmC";
 const TOP_OF_TREE = "_3GFex";
 const MOBILE_TOP_OF_TREE = "_3Y5Xu";
 const SKILL_ROW = "_2GJb6";
 const SKILL_COLUMN = "QmbDT";
+const TRY_PLUS_BUTTON_SELECTOR = "._2x4yk._1rwed";
 const IN_BETA_LABEL = "_3yV19";
 const CROWN_POPUP_CONTAINER = "NugKJ";
 const CROWN_LOGO_CONTAINER = "_3uwBi";
@@ -20,6 +26,7 @@ const CROWN_TOTAL_CONTAINER = "_2boWj";
 const DAILY_GOAL_POPUP_CONTAINER = "yRM09";
 const DAILY_GOAL_SIDEBAR_CONATINER = "_2hhXN";
 const SIDEBAR = "_3Nl60";
+const WHITE_SIDEBAR_BOX_CONTAINER = "_2iVqi";
 const POPUP_ICON = "_3gtu3 _1-Eux iDKFi";
 const GOLD_CROWN = "WZkQ9";
 const GREY_CROWN = "_3FM63";
@@ -37,8 +44,34 @@ const QUESTION_UNCHECKED = "zEs4P";
 const QUESTION_CHECKED = "_1NmT0";
 const CRACKED_SKILL_OVERLAY_SELECTOR = "._7WUMp";
 const NEW_WORD_SELECTOR = "._2tgi3";
+const LEAGUE_TABLE = "_1NIUo";
+const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = ".vwODZ";
+const SKILL_NAME_SELECTOR = "._2CXf4";
+const CHECKPOINT_CONTAINER_SELECTOR = "._3Lrsa";
+const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB";
+const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
+const SMALL_BUTTONS_CONTAINER = "_2DR3u";
+const SMALL_BUTTON = "_32WtB _2i-mO _1LZ7U vy3TL _3iIWE _1Mkpg _1Dtxl _1sVAI sweRn _1BWZU _26exN QVrnU";
+const LOCKED_POPOUT = "_1PDfx";
+
+const SKILL_SELECTOR = `[data-test="skill-tree"] [data-test="skill"], [data-test="intro-lesson"]`;
+const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
+
+const flagYOffsets = {
+	0:	"en", 32: "es", 64: "fr", 96: "de",
+	128: "ja", 160: "it", 193: "ko", 225: "zh",
+	257: "ru", 289: "pt", 321: "tr", 354: "nl",
+	386: "sv", 418: "ga", 450: "el", 482: "he",
+	515: "pl", 547: "no", 579: "da", 611: "hv",
+	643: "vi", 676: "ro", 708: "sw", 740: "eo",
+	772: "hu", 804: "cy", 837: "uk", 869: "kl",
+	901: "cs", 933: "hi", 965: "id", 998: "ha",
+	1030: "nv", 1062: "ar", 1094: "ca", 1126: "th",
+	1159: "gn", 1352: "ar", 1384: "gd",
+};
 
 let languageCode = "";
+let UICode = "";
 let language = "";
 let languageChanged = false;
 let languageChangesPending = 0;
@@ -50,6 +83,7 @@ let username = "";
 let userData = {};
 let requestID = 0;
 let requestsPending = 0;
+let usingOldData;
 
 let rootElem;
 let rootChild;
@@ -63,36 +97,54 @@ let inMobileLayout;
 
 function retrieveOptions()
 {
-	return new Promise(function (resolve, reject)
-	{
+	return new Promise(function (resolve, reject){
 		chrome.storage.sync.get("options", function (data)
 		{
 			// Set options to default settings
 			options =
 				{
-					"strengthBars":						true,
-					"strengthBarBackgrounds":			true, 
-					"needsStrengtheningList":			true,
-					"needsStrengtheningListLength":		"10",
-					"needsStrengtheningListSortOrder":	"0",
-					"crackedSkillsList":				true,
-					"crackedSkillsListLength":			"10",
-					"crackedSkillsListSortOrder":		"0",
-					"focusFirstSkill":					true,
-					"skillSuggestion":					true,
-					"skillSuggestionMethod":			"0",
-					"crownsInfo":						true,
-					"crownsMaximum":					true,
-					"crownsGraph":						true,
-					"crownsBreakdown":					true,
-					"crownsBreakdownShowZerosRows":		true,
-					"crownsPrediction":					true,
-					"XPInfo":							true,
-					"XPBreakdown":						true,
-					"XPPrediction":						true,
-					"showTranslationText":				true,
-					"showToggleHidingTextButton":		true,
+					"strengthBars":								true,
+						"strengthBarBackgrounds":					true, 
+					"needsStrengtheningList":					true,
+						"needsStrengtheningListLength":				"10",
+						"needsStrengtheningListSortOrder":			"0",
+						"showBonusSkillsInNeedsStrengtheningList":	true,
+					"crackedSkillsList":						true,
+						"crackedSkillsListLength":					"10",
+						"crackedSkillsListSortOrder":				"0",
+						"showBonusSkillsInCrackedSkillsList":		true,
+					"skillSuggestion":							true,
+						"skillSuggestionMethod":					"0",
+						"hideSuggestionNonStrengthened":			true,
+						"hideSuggestionWithCrackedSkills":			true,
+					"focusFirstSkill":							true,
+					"practiseButton":							true,
+					"practiceType":								"0",
+						"lessonThreshold":							"4",
+					"checkpointButtons":						true,
+					"treeLevelBorder":							true,
+					"crownsInfo":								true,
+						"crownsMaximum":							true,
+							"crownsPercentage":							true,
+						"crownsGraph":								true,
+						"crownsBreakdown":							true,
+							"crownsBreakdownShowZerosRows":				true,
+							"bonusSkillsBreakdown":						true,
+						"checkpointPrediction":						true,
+						"crownsPrediction":							true,
+					"XPInfo":									true,
+						"XPBreakdown":								true,
+						"XPPrediction":								true,
+					"languagesInfo":							true,
+						"languagesInfoSortOrder":					"0",
+					"showTranslationText":						true,
+						"revealHotkey":								true,
+							"revealHotkeyCode":							"Ctrl+Alt+H",
+					"showToggleHidingTextButton":				true,
+					"showLeagues":								true,
+					"wordsButton":								true,
 				};
+
 			if (Object.entries(data).length === 0)
 			{
 				// First time using version with options so nothing is set in storage.
@@ -120,7 +172,7 @@ function retrieveProgressHistory()
 	{
 		chrome.storage.sync.get("progress", function (data)
 		{
-			if (Object.entries(data).length === 0 || !data.progress.hasOwnProperty(username + languageCode))
+			if (Object.entries(data).length === 0 || !data.progress.hasOwnProperty(username + languageCode + UICode))
 			{
 				// No progress data or none for this user+lang combination
 				updateProgress();
@@ -128,7 +180,7 @@ function retrieveProgressHistory()
 			else
 			{
 				// We have some progress data saved.
-				progress = data.progress[username+languageCode];
+				progress = data.progress[username + languageCode + UICode];
 			}
 			resolve();
 		});
@@ -143,7 +195,7 @@ function storeProgressHistory()
 		{
 			if (Object.entries(data).length === 0)
 				data.progress = {};
-			data.progress[username+languageCode] = progress;
+			data.progress[username + languageCode + UICode] = progress;
 			chrome.storage.sync.set({"progress": data.progress});
 			resolve();
 		});
@@ -206,7 +258,7 @@ function resetLanguageFlags()
 
 function removeStrengthBars()
 {
-	let bars = document.getElementsByClassName("strengthBarHolder");
+	let bars = Array.from(document.getElementsByClassName("strengthBarHolder"));
 	for (let bar of bars)
 	{
 		bar.parentNode.removeChild(bar);
@@ -231,20 +283,42 @@ function removeCrackedSkillsList()
 	}
 }
 
+function removeFlagBorders()
+{
+	const flags = document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span>span:first-child`);
+	flags.forEach(
+		(flag) => {
+			flag.removeAttribute("style");
+			flag.querySelectorAll("img").forEach(img => img.remove());
+		}
+	);
+}
+
 function removeCrownsBreakdown()
 {
-	let maxCrowns = document.getElementById("maxCrowns");
-	if(maxCrowns != null) // is null after some language changes.
+	const maxCrowns = document.getElementById("maxCrowns");
+	if (maxCrowns != null) // is null after some language changes.
 	{
 		maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
 		maxCrowns.parentNode.removeChild(maxCrowns);
 	}
 
-	let crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
-	if (crownLevelBreakdownContainer != null) crownLevelBreakdownContainer.parentNode.removeChild(crownLevelBreakdownContainer);
+	const crownCountPercentage = document.getElementById("crownCountPercentage");
+	if (crownCountPercentage != null)
+		crownCountPercentage.remove();
 
-	let treeCrownLevelPrediction = document.getElementById("treeCrownLevelPrediction");
-	if (treeCrownLevelPrediction != null) treeCrownLevelPrediction.parentNode.removeChild(treeCrownLevelPrediction);
+	const crownsGraph = document.getElementById("crownsGraph");
+	if (crownsGraph != null)
+		crownsGraph.remove();
+
+	const crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
+	if (crownLevelBreakdownContainer != null) crownLevelBreakdownContainer.remove(crownLevelBreakdownContainer);
+
+	const checkpointPrediction = document.getElementById("checkpointPrediction");
+	if (checkpointPrediction != null) checkpointPrediction.remove();
+
+	const treeCrownLevelPrediction = document.getElementById("treeCrownLevelPrediction");
+	if (treeCrownLevelPrediction != null) treeCrownLevelPrediction.remove();
 }
 
 function removeXPBox()
@@ -263,6 +337,26 @@ function removeSuggestion()
 	{
 		suggestionContainer.parentNode.removeChild(suggestionContainer);
 	}
+}
+
+function removeLanguagesInfo()
+{
+	let languagesInfoBox = document.getElementById("languagesBox");
+	if (languagesInfoBox != null)
+		languagesInfoBox.parentNode.removeChild(languagesInfoBox);
+}
+
+function removeWordsButton()
+{
+	const wordsButton = document.querySelector(`[data-test="words-button"]`);
+	if (wordsButton != null)
+	{
+		wordsButton.parentNode.removeAttribute("style");
+		wordsButton.remove();
+	}
+	const wordsListBubble = document.querySelector(`#wordsListBubble`);
+	if (wordsListBubble != null)
+		wordsListBubble.remove();
 }
 
 function hasMetGoal()
@@ -288,6 +382,108 @@ function currentProgress()
 	return lessonsToNextCrownLevel;
 }
 
+function nextCheckpointIndex()
+{
+	const checkpoints = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR));
+	const firstLockedIndexReducer = (value, element, index) => {
+		const locked = element.querySelectorAll(`[src$="locked.svg"]`).length != 0;
+		if (value == -1 && locked)
+			return index;
+		else
+			return value;
+	}
+	return checkpoints.reduce(firstLockedIndexReducer, -1);
+}
+
+function lessonsToNextCheckpoint()
+{
+	let index = nextCheckpointIndex();
+	if (index == -1)
+		return -1;
+	const nextCheckpoint = document.querySelectorAll(CHECKPOINT_SELECTOR)[index];
+	const skillsAndCheckpoints = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}, ${CHECKPOINT_SELECTOR}`));
+	
+	const bonusSkillRow = document.querySelector(`${BONUS_SKILL_DIVIDER_SELECTOR} + div`);
+
+	index = skillsAndCheckpoints.indexOf(nextCheckpoint);
+	const skillsBeforeCheckpoint = skillsAndCheckpoints.filter(
+		(element, idx) => {
+			const type = element.getAttribute("data-test");
+			if (type != "checkpoint-badge")
+			{
+				// element is not a checkpoint
+				if (bonusSkillRow == null || !bonusSkillRow.contains(element))
+					return idx < index;
+			}
+		}
+	);
+	const level0SkillsBeforeCheckpoint = skillsBeforeCheckpoint.filter(
+		(element) => {
+			return element.querySelectorAll(`img[src$="juicy-crown-unlocked.svg"]`).length != 0;
+		}
+	);
+	return level0SkillsBeforeCheckpoint.reduce(
+		(total, element) => {
+			const skillTitle = element.querySelector(SKILL_NAME_SELECTOR).textContent;
+			const lessons = userData.language_data[languageCode].skills.find(skill => skill.short == skillTitle).missing_lessons;
+			return total + lessons;
+		}
+	, 0);
+}
+
+function progressEnds(numPointsToUse)
+{
+	let endIndex = progress.length - 1;
+	let lastDate = progress[endIndex][0];
+	const today = (new Date()).setHours(0,0,0,0);
+	
+	while (!hasMetGoal() && lastDate == today)
+	{
+		lastDate = progress[--endIndex][0];
+	}
+
+	const startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
+	
+	const numDays = (lastDate  - progress[startIndex][0]) / (1000*60*60*24) + 1; // inclusive of start and end
+	
+	return {
+		startIndex: startIndex,
+		endIndex: endIndex,
+		numDays: numDays
+	};
+}
+
+function progressMadeBetweenPoints(startIndex, endIndex)
+{
+	let level = progress[startIndex][1];
+	let lastProgress = progress[startIndex][2];
+	let progressMade = 0;
+
+	const points = progress.slice(startIndex, endIndex + 1);
+	points.forEach(
+		(point) => {
+			if (point[1] == level)
+			{
+				// this point is from the same level as the last
+				// just add the difference in progresses
+				progressMade += lastProgress - point[2];
+			}
+			else
+			{
+				// this point is from the next level
+				// add all the progress from the last point
+				// set level to the new level
+				progressMade += lastProgress;
+				level = point[1];
+			}
+
+			lastProgress = point[2];
+		}
+	);
+
+	return progressMade;
+}
+
 function crownTreeLevel()
 {
 	let skills = userData.language_data[languageCode].skills;
@@ -308,6 +504,15 @@ function crownTreeLevel()
 	}
 
 	return treeLevel;
+}
+
+function currentLanguageHistory()
+{
+	return calendar = userData.language_data[languageCode].calendar.filter(
+		(lesson) => {
+			return userData.language_data[languageCode].skills.find(skill => skill.id == lesson.skill_id) != null;
+		}
+	);
 }
 
 function daysToNextXPLevel(history, xpLeft /*, timezone*/)
@@ -345,44 +550,11 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 
 function daysToNextCrownLevel()
 {
-	let endIndex = progress.length - 1;
-	let lastDate = progress[endIndex][0];
-	let today = (new Date()).setHours(0,0,0,0);
+	const numPointsToUse = 7;
+	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
 	
-	while (!hasMetGoal() && lastDate == today)
-	{
-		lastDate = progress[--endIndex][0];
-	}
-
-	let numPointsToUse = 7;
-	let startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
-	let firstDate = progress[startIndex][0];
+	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
 	
-	let level = progress[startIndex][1];
-	let lastProgress = progress[startIndex][2];
-	let progressMade = 0;
-
-	for (let point of progress.slice(startIndex + 1, endIndex + 1))
-	{
-		if (point[1] != level)
-		{
-			// this point is from another level
-			progressMade += lastProgress;
-			lastProgress = point[2];
-			level = point[1];
-		}
-		else
-		{
-			// point from the same level so look at the change in progress
-			progressMade += lastProgress - point[2];
-			lastProgress = point[2];
-		}
-	}
-
-	let timePeriod = lastDate-firstDate; // in milliseconds
-	timePeriod /= 1000*60*60*24; // in days
-	let progressRate = progressMade / timePeriod; // in lessons per day
-
 	if (progressRate != 0)
 		return Math.ceil(currentProgress() / progressRate); // in days
 	else
@@ -403,43 +575,126 @@ function daysToNextCrownLevelByCalendar()
 		}
 	}
 
-	let calendar = userData.language_data[languageCode].calendar;
+	const calendar = currentLanguageHistory();
+
 	if (calendar.length == 0)
 		return -1;
 
-	let practiceTimes = Array();
 
-	let currentDate = (new Date()).setHours(0,0,0,0);	
+	let currentDay = (new Date()).setHours(0,0,0,0);	
 
-	for (let lesson of calendar)
-	{	
-		let date = (new Date(lesson.datetime)).setHours(0,0,0,0);
-		if (date == currentDate && !hasMetGoal)
-		{
-			// if the lesson is from today and the goal hasn't been met, then let's not include it
-			continue;
+	const practiceTimes = calendar.map(
+		(lesson) => {
+			return (new Date(lesson.datetime)).setHours(0,0,0,0);
 		}
-		else
-		{
-			practiceTimes.push(date);
-		}
-	}
+	).filter(lessonDay => lessonDay != currentDay);
 
-	let numLessons = practiceTimes.length;
-	let firstDate = practiceTimes[0]; // assuming sorted acending.
-	let lastDate = practiceTimes[numLessons-1];
+	const numLessons = practiceTimes.length;
+	const firstDay = practiceTimes[0]; // assuming sorted acending.
+	let lastDay = practiceTimes[numLessons - 1];
 
-	if (lastDate != currentDate)
+	if (lastDay != currentDay)
 	{
-		// lastDate isn't today, it would only be today if we have met our goal for today
-		// we therefore set the lastDate to yesterday, in case that wasn't already it and no lessons were completed yesterday.
-		lastDate = currentDate - (24*60*60*1000);
+		// lastDay isn't today, it would only be today if we have met our goal for today
+		// we therefore set the lastDay to yesterday, in case that wasn't already it and no lessons were completed yesterday.
+		lastDay = currentDay - (24*60*60*1000);
 	}
 
-	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // in days
-	let lessonRate = numLessons/timePeriod; // in lessons per day
+	const numDays = (lastDay - firstDay)/(1000*60*60*24) + 1; // in days
+	const lessonRate = numLessons/numDays; // in lessons per day
 
-	return Math.ceil(lessonsToNextCrownLevel/lessonRate);
+	if (lessonRate <= 0)
+		return -1;
+	else
+		return Math.ceil(lessonsToNextCrownLevel/lessonRate);
+}
+
+function daysToNextCheckpoint()
+{
+	const numPointsToUse = 7;
+	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
+
+	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
+	
+	if (progressRate != 0)
+		return Math.ceil(lessonsToNextCheckpoint() / progressRate);
+	else
+		return -1;
+}
+
+function daysToNextCheckpointByCalendar()
+{
+	const calendar = currentLanguageHistory();
+	
+	if (calendar.length == 0)
+		return -1;
+
+	const currentDay = (new Date()).setHours(0,0,0,0);
+
+	const practiceTimes = calendar.map(
+		(lesson) => {
+			return (new Date(lesson.datetime)).setHours(0,0,0,0);
+		}
+	).filter(lessonDay => lessonDay != currentDay);
+
+	
+	const numLessons = practiceTimes.length;
+	const firstDay = practiceTimes[0];
+	let lastDay = practiceTimes[numLessons - 1];
+
+	if (lastDay != currentDay)
+	{
+		// if the last day isn't today, force it to yesterday
+		// this ensures we count potential days without lessons
+		lastDay = currentDay - (1000*60*60*24);
+	}
+
+	const numDays = (lastDay - firstDay) / (1000*60*60*24) + 1; // inclusive of start and end
+	const lessonRate = numLessons/numDays;
+
+	if (lessonRate <= 0)
+		return -1;
+	else
+		return Math.ceil(lessonsToNextCheckpoint() / lessonRate);
+}
+
+function createPredictionElement(type, numDays)
+{
+	let id = "";
+	let target = "";
+
+	switch (type)
+	{
+		case "XPLevel":
+			id = "XPPrediction";
+			target = `the next level, Level\xA0${userData.language_data[languageCode].level + 1}`;
+			break;
+		case "crownLevel":
+			id = "treeCrownLevelPrediction";
+			target = `Level\xA0${crownTreeLevel() + 1}`;
+			break;
+		case "checkpoint":
+			id = "checkpointPrediction";
+			target = `the next checkpoint, Checkpoint\xA0${nextCheckpointIndex() + 1}`;
+			break;
+	}
+	const prediction = document.createElement("p");
+	prediction.id = id;
+
+	prediction.appendChild(
+		document.createTextNode(`At your current rate ${(type != "crownLevel") ? "you" : "your tree"} will reach ${target}, in about `)
+	);
+	prediction.appendChild(document.createElement("span"));
+	prediction.lastChild.textContent = numDays;
+	prediction.lastChild.style.fontWeight = "bold";
+	prediction.appendChild(
+		document.createTextNode(` days, on `)
+	);
+	prediction.appendChild(document.createElement("span"));
+	prediction.lastChild.textContent = new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
+	prediction.lastChild.style.fontWeight = "bold";
+
+	return prediction;
 }
 
 function graphSVG(data, ratio=1.5)
@@ -490,7 +745,8 @@ function graphSVG(data, ratio=1.5)
 
 	let labels = document.createElementNS(svgns, "g");
 	labels.setAttributeNS(null, "id", "labels");
-	labels.setAttributeNS(null, "font-size", String(Math.min(6,0.1*height)));
+	const fontSize = String(Math.min(6,0.1*height));
+	labels.setAttributeNS(null, "font-size", fontSize);
 	labels.setAttributeNS(null, "font-family", "sans-serif");
 	
 	let yLabels = document.createElementNS(svgns, "g");
@@ -519,11 +775,9 @@ function graphSVG(data, ratio=1.5)
 	yTitle.textContent = "# Lessons Towards Next Level";
 	yTitle.setAttributeNS(null, "id", "yTitle");
 	yTitle.setAttributeNS(null, "x", "0");
-	yTitle.setAttributeNS(null, "y", `${0.5*height}`);
+	yTitle.setAttributeNS(null, "y", `0`);
 	yTitle.setAttributeNS(null, "text-anchor", "middle");
-	yTitle.setAttributeNS(null, "alignment-baseline", "text-before-edge");
-	yTitle.setAttributeNS(null, "transform-origin", `0 ${0.5*height}`);
-	yTitle.setAttributeNS(null, "transform", "rotate(-90)");
+	yTitle.setAttributeNS(null, "transform", `translate(${fontSize}, ${0.5*height}) rotate(-90)`);
 	yTitle.setAttributeNS(null, "font-size", 0.068*height);
 	labels.appendChild(yTitle);
 
@@ -616,7 +870,109 @@ function graphSVG(data, ratio=1.5)
 	return graph;
 }
 
-function addStrengths(strengths)
+function addFlagBorders()
+{
+	// Get the progress saved for all languages and users, async
+	languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
+
+	languageProgressPromise.then(
+		(data) => {
+			// Go through each row in the language change list, if it is still there.
+			if (document.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+				Array.from(document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span`)).forEach(
+					(container) => {
+						// There are two flags for each language, the first is the target language, the second is the base language.
+						const flag1 = container.firstChild;
+						const flag2 = flag1.nextElementSibling;
+						
+						// As the flags are all stored in one sprite sheet we determine which is displayed by the background positions.
+						const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
+						const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
+						
+
+						// Bbckground offsets in px as strings
+						const x1 = backgroundPosition1[0];
+						const y1 = backgroundPosition1[1];
+
+						const y2 = backgroundPosition2[1];
+						
+						// trim off px and make positive
+						const yOffset1 = Math.abs(parseInt(y1.slice(0,-2), 10));
+						const yOffset2 = Math.abs(parseInt(y2.slice(0,-2), 10));
+
+						// find the language code associated with those offsets
+						const code1 = flagYOffsets[yOffset1];
+						const code2 = flagYOffsets[yOffset2];
+
+						// height and width will need to be adjusted to account for the border that is to be added, so we save the original values
+						const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
+						const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
+				
+						langProgress = data.progress[`${username}${code1}${code2}`];
+
+						let color;
+						let treeLevel;
+						
+						if (langProgress == null)
+							treeLevel = 0;
+						else
+							treeLevel = langProgress[langProgress.length-1][1];
+
+						switch (treeLevel)
+						{
+							case 0:
+								color = "white";
+								break;
+							case 1:
+								color = BLUE;
+								break;
+							case 2:
+								color = GREEN;
+								break;
+							case 3:
+								color = RED;
+								break;
+							case 4:
+								color = ORANGE;
+								break;
+							case 5:
+								color = GOLD;
+								break;
+						}
+
+
+						flag1.style = 
+						`
+							border-color: ${color};
+							border-width: 4px;
+							border-style: solid;
+							border-radius: 10px;
+							background-position: calc(${x1} - 2px) calc(${y1} - 2px);
+							height: ${+height1 + 4}px;
+							width: ${+width1 + 4}px;
+						`;
+						
+						if (treeLevel == 5)
+						{
+							const crown = document.createElement("IMG");
+							crown.src = imgSrcBaseUrl+"/juicy-crown.svg";
+							crown.style = `
+								position: 	absolute;
+								left: 0;
+								bottom: 0;
+								width: 75%;
+								transform: translate(-50%, 50%);
+							`;
+							flag1.appendChild(crown);
+						}
+					}
+				);
+		}
+	);
+
+}
+
+function addStrengthBars(strengths)
 {
 	// Adds strength bars and percentages under each skill in the tree.
 	/*
@@ -656,7 +1012,7 @@ function addStrengths(strengths)
 		</div>
 	*/
 
-	let skillElements = Array.from(document.querySelectorAll(`[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"]`)); // Af4up is class of skill containing element, may change.
+	let skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR)); // Af4up is class of skill containing element, may change.
 	
 	let skills = Array();
 	/*
@@ -668,12 +1024,7 @@ function addStrengths(strengths)
 	*/
 	let bonusElementsCount = 0;
 	
-	const bonusSkillDividers = Array.from(document.querySelectorAll(`.${BONUS_SKILL_DIVIDER}`));
-	let bonusSkillRow;
-	if (bonusSkillDividers.length != 0)
-	{
-		bonusSkillRow = bonusSkillDividers[0].nextElementSibling;
-	}
+	const bonusSkillRow = document.querySelector(`${BONUS_SKILL_DIVIDER_SELECTOR} + div`);
 
 	for (let i=0; i<skillElements.length; i++)
 	{
@@ -716,6 +1067,21 @@ function addStrengths(strengths)
 	}
 	
 	let numBarsAdded = 0;
+
+	let strengthBarBackground = document.createElement("div");
+	strengthBarBackground.className = "strengthBarBackground";
+	strengthBarBackground.style =
+	`
+		position: absolute;
+		display: inline-block;
+		width: 100%;
+		height: 1em;
+		left: 0;
+		background-color: #e5e5e5;
+		border-radius: 0.5em;
+		z-index: 1;
+	`;
+
 	
 	for (let i = 0; i< skills.length; i++)
 	{
@@ -736,25 +1102,10 @@ function addStrengths(strengths)
 				display: ${display};
 				margin-top: 0.5em;
 				margin-bottom: -8px;
-				line-height: 1em;
 			`;
 			
 			nameElement.parentNode.style.width = "100%";
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
-
-			let strengthBarBackground = document.createElement("div");
-			strengthBarBackground.className = "strengthBarBackground";
-			strengthBarBackground.style =
-			`
-				position: absolute;
-				display: inline-block;
-				width: 100%;
-				height: 1em;
-				left: 0;
-				background-color: #e5e5e5;
-				border-radius: 0.5em;
-				z-index: 1;
-			`;
 
 			let strengthBar = document.createElement("div");
 			strengthBar.className = "strengthBar";
@@ -786,22 +1137,29 @@ function addStrengths(strengths)
 			`;
 			strengthValue.textContent = strength*100 + "%";
 			
-			if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground);
-			strengthBarHolder.appendChild(strengthBar);
-			strengthBarHolder.appendChild(strengthValue);
-			
-			numBarsAdded ++; // added a bar so increment counter.
-			
-		} else // we already have the elements made previously, just update their values.
-		{
-			let strengthBar = document.getElementById(name + "StrengthBar");
-			strengthBar.style.width = (strength*100)+"%";
-			strengthBar.style.backgroundColor = (strength == 1.0 ? GOLD : RED);
-			
-			let strengthValue = document.getElementById(name + "StrengthValue");
-			strengthValue.textContent = strength*100 + "%";
+		if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground.cloneNode());
+		strengthBarHolder.appendChild(strengthBar);
+		strengthBarHolder.appendChild(strengthValue);
+		
+		numBarsAdded ++; // added a bar so increment counter.
+		
+	} else // we already have the elements made previously, just update their values.
+	{
+		let strengthBar = document.getElementById(name + "StrengthBar");
+		strengthBar.style.width = (strength*100)+"%";
+		strengthBar.style.backgroundColor = (strength == 1.0 ? GOLD : RED);
+		
+		let strengthValue = document.getElementById(name + "StrengthValue");
+		strengthValue.textContent = strength*100 + "%";
 
-			strengthBar.parentNode.style.display = display;
+		strengthBar.parentNode.style.display = display;
+		
+		const background = strengthBar.parentNode.querySelector(`.strengthBarBackground`);
+		if (options.strengthBarBackgrounds && background == null)
+				strengthBar.parentNode.insertBefore(strengthBarBackground.cloneNode(),strengthBar);
+		else if (!options.strengthBarBackgrounds && background != null)
+			background.remove();
+				
 		}
 	}
 }
@@ -822,7 +1180,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 		) // Has the tree loaded from a page change
 	{
-		topOfTree = document.querySelector(`[data-test="skill-tree"]`).firstChild;
+		topOfTree = document.querySelector(`[data-test="skill-tree"]>div`);
 	}
 	else
 	{
@@ -845,6 +1203,26 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		2: Alphabetical
 		3: Reverse Aphabetical
 		4: Random
+		5: Strength Ascending
+		6: Strength Descending
+		7: Crown Level Ascending
+		8: Crown Level Descending
+
+
+		The option needsStrengtheningListSortOrder is a string with comma seperated criteria.
+		There are a maxium of 3 levels of sorting, after which no ambigutity should be left in the order of the skills.
+		The first criterion is the Primary sorting criterion.
+		The second is the Secondary sorting criterion, which gives the order to items that are the same when sorted by the Primary sorting criterion.
+		The thrid is the Tertiay sorting criterion, which sort out any items that are still the same after the first two rounds of sorting.
+
+		Note that criteria [0-4] leave no ambiguity in the sorting order, so no further sorting is needed after using one of these.
+
+		While it is not guaranteed by the ECMAscript standard, if a sorting function returns 0 that should leave the two items being compared unchanged relative to each other.
+
+		Assuming this behaviour, we will sort by the criteria in reverse order, so that this order is left intact when the higher level sorting puts items on the same level.
+
+		Tested on Chrome, Firefox and Opera, all seem to sort correctly as of 2020-02-16
+
 	*/
 	function sortSkillsAlphabetical(a, b)
 	{
@@ -863,30 +1241,80 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		}
 	}
 
+	function sortSkillsByStrength(a, b)
+	{
+		if (a.strength === b.strength)
+			return 0;
+		
+		return (a.strength < b.strength) ? -1 : 1;
+	}
+
+	function sortSkillsByCrownLevel(a, b)
+	{
+		if (a.skill_progress.level === b.skill_progress.level)
+			return 0;
+		
+		return (a.skill_progress.level < b.skill_progress.level) ? -1 : 1;
+	}
+
+
+	const sortingCriteria = (
+		(!cracked) ? options.needsStrengtheningListSortOrder : options.crackedSkillsListSortOrder
+	).split(",");
+
 	if (needsSorting)
-		switch ((!cracked)?options.needsStrengtheningListSortOrder:options.crackedSkillsListSortOrder)
+	{
+		for (criterion of sortingCriteria.reverse())
 		{
-			case "0":
-				break;
-			case "1":
-				needsStrengthening[0].reverse();
-				needsStrengthening[1].reverse();
-				break;
-			case "2":
-				needsStrengthening[0].sort(sortSkillsAlphabetical);
-				needsStrengthening[1].sort(sortSkillsAlphabetical);
-				break;
-			case "3":
-				needsStrengthening[0].sort(sortSkillsAlphabetical);
-				needsStrengthening[1].sort(sortSkillsAlphabetical);
-				needsStrengthening[0].reverse();
-				needsStrengthening[1].reverse();
-				break;
-			case "4":
-				shuffle(needsStrengthening[0]);
-				shuffle(needsStrengthening[1]);
-				break;
+			switch (criterion)
+			{
+				case "0":
+					break;
+				case "1":
+					needsStrengthening[0].reverse();
+					needsStrengthening[1].reverse();
+					break;
+				case "2":
+					needsStrengthening[0].sort(sortSkillsAlphabetical);
+					needsStrengthening[1].sort(sortSkillsAlphabetical);
+					break;
+				case "3":
+					needsStrengthening[0].sort(sortSkillsAlphabetical);
+					needsStrengthening[1].sort(sortSkillsAlphabetical);
+					needsStrengthening[0].reverse();
+					needsStrengthening[1].reverse();
+					break;
+				case "4":
+					shuffle(needsStrengthening[0]);
+					shuffle(needsStrengthening[1]);
+					break;
+				case "5":
+					needsStrengthening[0].sort(sortSkillsByStrength);
+					needsStrengthening[1].sort(sortSkillsByStrength);
+					break;
+				case "6":
+					needsStrengthening[0].sort(
+						(a, b) => -1 * sortSkillsByStrength(a, b)
+					);
+					needsStrengthening[1].sort(
+						(a, b) => -1 * sortSkillsByStrength(a, b)
+					);
+					break;
+				case "7":
+					needsStrengthening[0].sort(sortSkillsByCrownLevel);
+					needsStrengthening[1].sort(sortSkillsByCrownLevel);
+					break
+				case "8":
+					needsStrengthening[0].sort(
+						(a, b) => -1 * sortSkillsByCrownLevel(a, b)
+					);
+					needsStrengthening[1].sort(
+						(a, b) => -1 * sortSkillsByCrownLevel(a, b)
+					);
+					break;
+			}
 		}
+	}
 	
 	topOfTree.style =
 	`
@@ -921,31 +1349,32 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			else
 				strengthenBox.style.marginTop = "0.5em";
 		}
-		else
+		else if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
 		{
 			// Not being pushed down by the IN BETA label,
-			if (inMobileLayout)
-			{
-				// In mobile layout so we don't need to make room for the try plus button.
-			}
-			else
-			{
-				// In desktop layout so let's make room for the TRY PLUS button to the right.
-				strengthenBox.style.width = "calc(100% - 119px)";	
-			}
+			// and there is a TRY PLUS button on the right which we have to make room for.
+			const boxRightEdge = topOfTree.getBoundingClientRect().right;
+			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
+			const offset = boxRightEdge - buttonLeftEdge;
+			strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
 		}
 	}
 
-	let numSkillsToBeStrengthened = needsStrengthening[0].length + needsStrengthening[1].length;
+	let numSkillsToBeStrengthened = needsStrengthening[0].length;
+	
+	if (
+		(!cracked && options.showBonusSkillsInNeedsStrengtheningList) ||
+		(cracked && options.showBonusSkillsInCrackedSkillsList)
+	)
+		numSkillsToBeStrengthened += needsStrengthening[1].length;
 
-	strengthenBox.textContent = "";
+	strengthenBox.textContent = `Your tree has ${numSkillsToBeStrengthened}`;
 
 	if (!cracked)
 	{
 		strengthenBox.textContent +=
 		`
-			Your tree has ${numSkillsToBeStrengthened} 
-			${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that need": " skill that needs"}
+			${(numSkillsToBeStrengthened != 1) ? " skills that need": " skill that needs"}
 			strengthening:
 		`;
 	}
@@ -953,8 +1382,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	{
 		strengthenBox.textContent +=
 		`
-			Your tree has ${numSkillsToBeStrengthened} 
-			${(needsStrengthening[0].length + needsStrengthening[1].length != 1) ? " skills that are": " skill that is"}
+			${(numSkillsToBeStrengthened != 1) ? " skills that are": " skill that is"}
 			cracked:
 		`;
 	}
@@ -965,17 +1393,26 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
 		let skillLink = document.createElement("a");
+		skillLink.style.color = "blue";
 		if (i < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][i].url_title}${(needsStrengthening[0][i].skill_progress.level == 5)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[0][i].title;
+			const skill = needsStrengthening[0][i];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
+			                 `${(skill.skill_progress.level == 5 ||
+							     options.practiceType == "1" ||
+							     (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+							    ) ? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = i - needsStrengthening[0].length;
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex].url_title}${(needsStrengthening[1][bonusSkillIndex].skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[1][bonusSkillIndex].title;
+			const skill = needsStrengthening[1][bonusSkillIndex];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		}
 
 		strengthenBox.appendChild(skillLink);
@@ -996,17 +1433,31 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	if (numSkillsToShow == numSkillsToBeStrengthened)
 	{
 		const skillLink = document.createElement("a");
+		skillLink.style.color = "blue";
 		// we are showing every skill that needs to be stregnthened.
-		if (needsStrengthening[1].length > 0)
+		if (needsStrengthening[1].length > 0 && 
+			(
+				(!cracked && options.showBonusSkillsInNeedsStrengtheningList) ||
+				(cracked && options.showBonusSkillsInCrackedSkillsList)
+			)
+		)
 		{
 			// last skill to be displayed is a bonus skill
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][needsStrengthening[1].length - 1].url_title}${(needsStrengthening[1][needsStrengthening[1].length - 1].skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[1][needsStrengthening[1].length - 1].title;
+			const skill = needsStrengthening[1][needsStrengthening[1].length -1];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		} else
 		{
 			// last skill to be displayed is a normal skill
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][needsStrengthening[0].length -1].url_title}${(needsStrengthening[0][needsStrengthening[0].length -1].skill_progress.level == 5)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[0][needsStrengthening[0].length -1].title;
+			const skill = needsStrengthening[0][needsStrengthening[0].length -1];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
+			                 `${(skill.skill_progress.level == 5 ||
+								 options.practiceType == "1" ||
+								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+							    )? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		}
 		
 		strengthenBox.appendChild(skillLink);
@@ -1015,18 +1466,27 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	{
 		// some skills that need to be strengthened are not being shown, so the last one we are showing is just the next one in the order we have
 		const skillLink = document.createElement("a");
+		skillLink.color = "blue";
 		let lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
 		if (lastIndexToBeShown < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[0][lastIndexToBeShown].url_title}${(needsStrengthening[0][lastIndexToBeShown].skill_progress.level == 5)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[0][lastIndexToBeShown].title;
+			const skill = needsStrengthening[0][lastIndexToBeShown];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
+			                 `${(skill.skill_progress.level == 5 ||
+							     options.practiceType == "1" ||
+								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+							    )? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
 			let bonusSkillIndex = lastIndexToBeShown - needsStrengthening[0].length;
-			skillLink.href = `/skill/${languageCode}/${needsStrengthening[1][bonusSkillIndex].url_title}${(needsStrengthening[1][bonusSkillIndex].skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = needsStrengthening[1][bonusSkillIndex].title;
+			const skill = needsStrengthening[1][bonusSkillIndex];
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
+			skillLink.textContent = skill.title;
 		}
 		strengthenBox.appendChild(skillLink);
 		strengthenBox.appendChild(document.createTextNode(", "));
@@ -1048,6 +1508,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 			showMore = document.createElement("a");
 			showMore.id = `showMore${(!cracked)?"ToStrengthen":"ToRepair"}`;
+			showMore.style.color = "blue";
 			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "";
 
@@ -1100,6 +1561,244 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	if (options.focusFirstSkill) firstSkillLink.focus();
 }
 
+function getSkillFromPopout(skillPopout)
+{
+	const skillTitle = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
+	return userData.language_data[languageCode].skills.filter(skill => skill.short == skillTitle)[0]
+}
+
+function addWordsButton(skillPopout)
+{
+	if (skillPopout == null) return false;
+
+	const skillData = getSkillFromPopout(skillPopout);
+	
+	const words = skillData.words;
+	const isLocked = skillData.locked;
+
+	let smallButtonsContainer;
+	let wordsButton;
+	const tipsButton = skillPopout.querySelector(`[data-test="test-out-button"]`);
+	
+	if (tipsButton != null)
+	{
+		smallButtonsContainer = tipsButton.parentNode;
+		wordsButton = tipsButton.cloneNode(false); // don't copy the contained test out icon
+		tipsButton.parentNode.insertBefore(wordsButton, tipsButton);
+	}
+	else
+	{
+		smallButtonsContainer = document.createElement("div");
+		smallButtonsContainer.classList.add(SMALL_BUTTONS_CONTAINER);
+		const mainPopoutContainer = skillPopout.firstChild.firstChild;
+		mainPopoutContainer.insertBefore(smallButtonsContainer, mainPopoutContainer.firstChild);
+
+		wordsButton = document.createElement("button");
+		wordsButton.classList.add(...SMALL_BUTTON.split(" "));
+		smallButtonsContainer.appendChild(wordsButton);
+	}
+
+	smallButtonsContainer.style = `
+		position: relative;
+		width: 50%;
+		display: flex;
+		justify-content: flex-end;
+	`;
+	
+	wordsButton.setAttribute("data-test", "words-button");
+	wordsButton.textContent = "Words";
+	wordsButton.style = `
+		text-transform: capitalize;
+		width: auto;
+		padding: 0em 0.3em !important;
+	`;
+
+	if (isLocked)
+	{
+		wordsButton.style.backgroundColor = "darkgrey";
+		smallButtonsContainer.nextElementSibling.style.textAlign = "start";
+	}
+
+	wordsButton.addEventListener("click",
+		(event) => {
+			const smallButtonsContainer = event.target.parentNode;
+			const wordsListBubble = smallButtonsContainer.querySelector("#wordsListBubble");
+			if (wordsListBubble == null)
+				smallButtonsContainer.appendChild(createWordsListBubble(words, smallButtonsContainer, isLocked));
+			else
+				wordsListBubble.remove();
+			event.stopPropagation();
+		}
+	);
+	skillPopout.firstChild.addEventListener("click",
+		(event) =>
+		{
+			const wordsListBubble = document.querySelector(`#wordsListBubble`);
+			if (wordsListBubble != null)
+				wordsListBubble.remove();
+		}
+	);
+}
+
+function createWordsListBubble(words, container, isLocked)
+{
+	const bubble = document.createElement("div");
+	bubble.id = "wordsListBubble";
+	const backgroundColor = isLocked ? "darkgrey" : "white";
+	const textColor = isLocked ? "white" : window.getComputedStyle(container.parentNode).backgroundColor;
+	bubble.style = `
+		background-color: ${backgroundColor};
+		color: ${textColor};
+		font-weight: bold;
+		position: absolute;
+		left: 0;
+		top: calc(100% + 0.5em);
+		z-index: 1;
+		border-radius: 1em;
+		box-shadow: 0.25em 0.25em rgba(0,0,0,0.2);
+		padding: 0.5em;
+		width: 200%;
+		transform: translate(-50%, 0);
+	`;
+
+	bubble.addEventListener("click", (event) => {event.stopPropagation();})
+
+	const arrow = document.createElement("div");
+	const arrowOffset = container.firstChild.offsetLeft + 0.5*container.firstChild.offsetWidth;
+	arrow.style = `
+		background-color: ${backgroundColor};
+		position: absolute;
+		width: 0.5em;
+		height: 0.5em;
+		top: -0.25em;
+		left: 50%;
+		transform: translate(calc(-50% + ${arrowOffset}px), 0) rotate(45deg);
+	`;
+	bubble.appendChild(arrow);
+
+
+	const list = document.createElement("ul");
+	list.style = `
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		white-space: pre;
+	`;
+	bubble.appendChild(list);
+
+	words.forEach(
+		(word, index, words) => {
+			const li = document.createElement("li");
+			li.textContent = word + ((index +1 != words.length)?" \u00b7 ":"");
+			list.appendChild(li);
+		}
+	);
+
+	return bubble;
+}
+
+function addPractiseButton(skillPopout)
+{
+	if (skillPopout == null)
+		return false;
+	
+	if (document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR) == null)
+		return false;
+
+	const skillLevel = document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR).textContent.slice(-3,-2);
+	if (skillLevel == 5 || skillLevel == 0)
+		return false;
+
+	const startButton = document.querySelector(`[data-test="start-button"]`);
+	startButton.textContent = "START LESSON";
+
+	const startButtonContainer = startButton.parentNode;
+
+	const practiseButtonContainer = startButtonContainer.cloneNode(true);
+	practiseButtonContainer.style.marginTop = "0.5em";
+
+	Array.from(practiseButtonContainer.childNodes).slice(0,-1).forEach(button => button.remove());
+
+	const practiseButton = practiseButtonContainer.firstChild;
+	practiseButton.textContent = "Practise";
+	practiseButton.title = "Practising this skill will strengthen it, but will not contribute any progress towards earning the next crown.";
+	practiseButton.setAttribute("data-test", "practise-button");
+
+	const urlTitle = getSkillFromPopout(skillPopout).url_title;
+	practiseButton.addEventListener("click", (event) => {
+		window.location = `/skill/${languageCode}/${urlTitle}/practice`;
+	});
+
+	startButtonContainer.parentNode.insertBefore(practiseButtonContainer, startButtonContainer.nextSibling);
+
+	skillPopout.scrollIntoView({block: "center"});
+}
+
+function addCheckpointButtons(checkpointPopout)
+{
+	if (checkpointPopout == null)
+		return false;
+
+	if (checkpointPopout.querySelector(`[data-test="checkpoint-start-button"]`) != null)
+		return false;
+
+	const checkpointNumber = Array.from(document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR)).indexOf(checkpointPopout.parentNode);
+	popoutContent = checkpointPopout.firstChild.firstChild;
+
+	oml = function ()
+	{
+		this.style.boxShadow = `0 0.25em rgba(255, 255, 255, 0.5)`;
+		this.style.transform = "none";
+	};
+	omd = function ()
+	{
+		this.style.boxShadow = "none";
+		this.style.transform = "translate(0, 0.3em)";
+	};
+	omu = function ()
+	{
+		this.style.boxShadow = `0 0.25em rgba(255, 255, 255, 0.5)`;
+		this.style.transform = "none";
+	};
+
+	const redoTestButton = document.createElement("BUTTON");
+	redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
+	redoTestButton.style = 
+	`
+		font-size: 80%;
+		margin-top: 1em;
+		width: 100%;
+		color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
+		border: 0;
+		border-radius: 1em;
+		padding: .8em;
+		font-weight: 700;
+		background-color: white;
+		box-shadow: 0 0.25em rgba(255, 255, 255, 0.5);
+		transition: filter 0.2s;
+		cursor: pointer;
+	`;
+
+	redoTestButton.addEventListener("mouseleave", oml);
+	redoTestButton.addEventListener("mousedown", omd);
+	redoTestButton.addEventListener("mouseup", omu);
+	redoTestButton.addEventListener("click", () => window.location = `/checkpoint/${languageCode}/${checkpointNumber}`);
+
+	testOutButton = redoTestButton.cloneNode(true);
+	testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
+
+	testOutButton.addEventListener("mouseleave", oml);
+	testOutButton.addEventListener("mousedown", omd);
+	testOutButton.addEventListener("mouseup", omu);
+	testOutButton.addEventListener("click", () => window.location = `/bigtest/${languageCode}/${checkpointNumber}`);
+			
+
+	popoutContent.appendChild(redoTestButton);
+	popoutContent.appendChild(testOutButton);
+
+	popoutContent.scrollIntoView({block: "center"});
+}
+
 function getCrackedSkills()
 {
 	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY_SELECTOR));
@@ -1117,13 +1816,83 @@ function getCrackedSkills()
 		userData.language_data[languageCode].skills.filter(skill => crackedSkillNames.includes(skill.short)),
 		userData.language_data[languageCode].bonus_skills.filter(skill => crackedSkillNames.includes(skill.short)),
 	];
+
+	crackedSkillElements.forEach(
+		(crackedSkillOverlay) => {
+			const parentElement = crackedSkillOverlay.parentNode;
+			childListObserver.observe(parentElement, {childList: true});
+		}
+	)
+
 	return crackedSkills;
+}
+
+function getLanguagesInfo()
+{
+	languages = userData.languages.filter(language => language.learning);
+	
+	languagesInfo = languages.map(language => [
+		language.language_string,
+		language.level,
+		language.points,
+		(language.level != 25) ? language.to_next_level: "-"
+	]);
+
+	/*
+		Sort the list based on the option saved:
+		0: Alphabetical
+		1: Reverse Alphabetical
+		2: XP - Descending
+		3: XP - Ascending
+		4: XP to Next Level - Descending
+		5: XP to Next Level - Ascending
+	*/
+	function sortAlphabetical(a, b)
+	{
+		return (a[0] < b[0]) ? -1 : 1;
+	}
+
+	function sortXPDescending(a, b)
+	{
+		return (a[2] < b[2]) ? 1 : -1;
+	}
+
+	function sortXPToNextLevelDescending(a, b)
+	{
+		return (a[3] < b[3]) ? 1 : -1;
+	}
+
+	switch (options.languagesInfoSortOrder)
+	{
+		case "0":
+			languagesInfo.sort(sortAlphabetical);
+			break;
+		case "1":
+			languagesInfo.sort(sortAlphabetical).reverse();
+			break;
+		case "2":
+			languagesInfo.sort(sortXPDescending);
+			break;
+		case "3":
+			languagesInfo.sort(sortXPDescending).reverse();
+			break;
+		case "4":
+			languagesInfo.sort(sortXPToNextLevelDescending);
+			break;
+		case "5":
+			languagesInfo.sort(sortXPToNextLevelDescending).reverse();
+			break;
+	}
+
+	return languagesInfo;
 }
 
 function displayCrownsBreakdown()
 {
-	if (Object.entries(userData).length == 0)
+	if (Object.entries(userData).length == 0 || document.getElementsByClassName(CROWN_POPUP_CONTAINER).length === 0)
 		return false;
+
+	removeCrownsBreakdown(); // Remove if there is anything, in case it is still visible when we call
 
 	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	let bonusSkills = userData.language_data[languageCode].bonus_skills;
@@ -1188,6 +1957,7 @@ function displayCrownsBreakdown()
 
 
 	let maximumCrownCountContainer;
+	let crownCountPercentage;
 	if (options.crownsMaximum)
 	{
 		maximumCrownCountContainer = document.createElement("span");
@@ -1277,6 +2047,7 @@ function displayCrownsBreakdown()
 
 		// Generate a graph for the data.
 		let graph = graphSVG(crownsEarnedInWeek);
+		graph.id = "crownsGraph";
 		graph.width = "100%";
 		graph.style.margin = "1em 1em 0 1em";
 
@@ -1338,14 +2109,22 @@ function displayCrownsBreakdown()
 		padding: 0 0.2em ;
 		z-index: 1;
 	`;
-	crownImg.src = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg"; // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
+	crownImg.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
 
 	imgContainer.appendChild(crownImg);
 	imgContainer.appendChild(levelContainer);
 
-	if(document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so let's add it.
+	if (document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so let's add it.
 	{
-		if (options.crownsMaximum) crownTotalContainer.appendChild(maximumCrownCountContainer);
+		if (options.crownsMaximum)
+		{
+			crownTotalContainer.appendChild(maximumCrownCountContainer);
+			if (options.crownsPercentage)
+			{
+				crownTotalContainer.parentNode.appendChild(crownCountPercentage);
+			}
+		}
+
 
 		breakdownContainer.appendChild(document.createElement("p"));
 		breakdownContainer.lastChild.style = "text-align: center; color: black;";
@@ -1400,7 +2179,7 @@ function displayCrownsBreakdown()
 		}
 
 
-		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
+		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0 && options.bonusSkillsBreakdown)
 		{
 			// The tree has some bonus skills so let's display a breakdown of their crown levels.
 			let bonusSkillsBreakdownHeader = document.createElement("h3");
@@ -1465,43 +2244,51 @@ function displayCrownsBreakdown()
 		breakdownContainer.appendChild(breakdownList);
 		if (options.crownsBreakdown) crownLevelContainer.appendChild(breakdownContainer);
 
-		if (treeLevel != 5)
+		// Checkpoint Prediction
+		if (treeLevel == 0 && options.checkpointPrediction)
 		{
-			let prediction = document.createElement("p");
+			let numDays;
+			if (progress.length > 5)
+				numDays = daysToNextCheckpoint();
+			else
+				numDays = daysToNextCheckpointByCalendar();
+
+			if (numDays > 0)
+			{
+				const prediction = createPredictionElement("checkpoint", numDays);
+				prediction.style =
+				`
+					margin: 1em 1em 0;
+					text-align: center;
+					color: black;
+				`;
+
+				crownLevelContainer.appendChild(prediction);
+
+			}
+		}
+
+		// Crown Level prediction
+		if (treeLevel != 5 && options.crownsPrediction)
+		{
 			let numDays;
 			if (progress.length > 5)
 				numDays = daysToNextCrownLevel();
 			else
 				numDays = daysToNextCrownLevelByCalendar();
 
-			if (numDays == -1)
+			if (numDays != -1)
 			{
-				crownLevelContainer.style.marginBottom = "1em";
-				return false;
+				const prediction = createPredictionElement("crownLevel", numDays);
+				prediction.style =
+				`
+					margin: 1em 1em 0;
+					text-align: center;
+					color: black;
+				`;
+
+				crownLevelContainer.appendChild(prediction);
 			}
-
-			prediction.id = "treeCrownLevelPrediction";
-			prediction.appendChild(
-				document.createTextNode(`At your current rate your tree will reach Level\xA0${treeLevel + 1} in `)
-			);
-			prediction.appendChild(document.createElement("span"));
-			prediction.lastChild.textContent = numDays;
-			prediction.lastChild.style.fontWeight = "bold";
-			prediction.appendChild(
-				document.createTextNode(` days, on `)
-			);
-			prediction.appendChild(document.createElement("span"));
-			prediction.lastChild.textContent = new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
-			prediction.lastChild.style.fontWeight = "bold";
-
-			prediction.style =
-			`
-				margin: 1em;
-				text-align: center;
-				color: black;
-			`;
-
-			if (options.crownsPrediction) crownLevelContainer.appendChild(prediction);
 		}
 	}
 	else
@@ -1540,13 +2327,39 @@ function displayXPBreakdown()
 			'level':			userData.language_data[languageCode].level,
 			'level_points':		userData.language_data[languageCode].level_points,
 			'points':			userData.language_data[languageCode].points,
-			'history':			userData.language_data[languageCode].calendar,
+			'history':			currentLanguageHistory(),
 			//'timezone':			userData.timezone_offset seems to not be available for every users, maybe depends on platform use.
 		};
 
 	let levelProgressPercentage = (data.level_progress*100)/(data.level_points);
 
-	if(document.getElementById("XPBox") == null)
+	const currentXPBox = document.getElementById("XPBox");
+	let removeCurrentBox = false;
+
+	if (currentXPBox != null)
+	{
+		// truth table
+		// boxExists wantBox startOver
+		//		1		1		0
+		// 		1	 	0		1
+		// 		-----------------
+		// 		0		1		1
+		// 		0		0		0
+		//
+		//	Want XOR, or can split into two cases as shown
+		//	if the feature exists, then the output should be NOT the option
+		//	else it should be the same as the option
+		//
+		if ( (currentXPBox.querySelector(`#XPBreakdown`) != null) ? !options.XPBreakdown : options.XPBreakdown)
+			removeCurrentBox = true;
+		if ( (currentXPBox.querySelector(`#XPPrediction`) != null) ? !options.XPPrediction : options.XPPrediction)
+			removeCurrentBox = true
+	}
+
+	if (removeCurrentBox)
+		currentXPBox.remove();
+
+	if (document.getElementById("XPBox") == null)
 	{
 		// We haven't made the XP Box yet
 
@@ -1558,10 +2371,11 @@ function displayXPBreakdown()
 			color: black;
 		`;
 
+		let languageLevelContainer = document.createElement("div");
+		languageLevelContainer.id = "XPBreakdown";
+
 		let XPHeader = document.createElement("h2");
 		XPHeader.textContent = data.language_string+ " XP";
-
-		let languageLevelContainer = document.createElement("div");
 
 		languageLevelContainer.appendChild(XPHeader);
 
@@ -1629,36 +2443,18 @@ function displayXPBreakdown()
 			languageLevelContainer.appendChild(currentLevelProgressElement);
 
 
-			let daysLeft = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
-			let projectedNextLevelCompletion = document.createElement("p");
-			projectedNextLevelCompletion.style =
-			`
-				margin-bottom: 0;
-				text-align: center;
-			`;
-			projectedNextLevelCompletion.appendChild(
-				document.createTextNode(
-					`At your current rate you will reach the next level, Level\xA0${data.level+1}, in about `
-				)
-			);
-			projectedNextLevelCompletion.appendChild(document.createElement("span"));
-			projectedNextLevelCompletion.lastChild.id = "XPPrediction";
-			projectedNextLevelCompletion.lastChild.style.fontWeight = "bold";
-			projectedNextLevelCompletion.lastChild.textContent = daysLeft;
-
-			projectedNextLevelCompletion.appendChild(
-				document.createTextNode(
-					` days, on `
-				)
-			);
+			const numDays = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
 			
-			projectedNextLevelCompletion.appendChild(document.createElement("span"));
-			projectedNextLevelCompletion.lastChild.id = "XPPredictionDate";
-			projectedNextLevelCompletion.lastChild.textContent = (new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000)).toLocaleDateString();
-			
-			if (daysLeft != -1 && options.XPPrediction)
+			if (numDays != -1 && options.XPPrediction)
 			{
-				container.appendChild(projectedNextLevelCompletion);
+				const prediction = createPredictionElement("XPLevel", numDays);
+				prediction.style =
+				`
+					margin-bottom: 0;
+					text-align: center;
+				`;
+
+				container.appendChild(prediction);
 			}
 		}
 		else
@@ -1773,8 +2569,151 @@ function displayXPBreakdown()
 	}
 }
 
-function displaySuggestion(skills, bonusSkills)
+function displayLanguagesInfo(languages)
 {
+	const sidebar = document.querySelector(`.${SIDEBAR}`);
+	if (sidebar == null)
+		return false;
+
+	let languagesBox = document.getElementById("languagesBox");
+
+	if (languagesBox != null)
+	{
+		// We already have a languagesBox.
+	
+		const displayedLanguages = Array.from(languagesBox.querySelectorAll(`table > tr > td:first-child`)).map(td => td.textContent);
+		// Need to repopulate the table if there are a different number of languages, or the order of the languages is different
+		const repopulate = (
+			displayedLanguages.length != languages.length ||
+			!displayedLanguages.every(
+				(language, index) => {
+					language == languages[index]
+				}
+			)
+		);
+
+		if (!repopulate)
+		{	
+			// Number and order of languages is unchanged, just update the data.
+			for (languageInfo of languages)
+			{
+				const tableRow = document.getElementById(`${languageInfo[0]}Row`);
+				const tableDataElements = tableRow.querySelectorAll("td");
+
+				languageInfo.forEach(
+					(data, index) => {
+						const tableData = tableDataElements[index];
+						tableData.textContent = data;
+					}
+				);
+			}
+		}
+		else
+		{
+			// Number of languages or the order of them has changed, need to repopulate table.
+			const table = document.getElementById("languagesTable");
+			tableRowElements = languagesTable.querySelectorAll("table > tr");
+
+			// Clear current table
+			tableRowElements.forEach(row => table.removeChild(row));
+
+			// Add new rows
+			languages.forEach(
+				(languageInfo, index) => {
+					const tableRow = document.createElement("TR");
+					tableRow.id = `${languageInfo[0]}Row`;
+					tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
+					table.appendChild(tableRow);
+
+					languageInfo.forEach(
+						(data) => {
+							const tableData = document.createElement("TD");
+							tableData.style.padding = "0";
+							tableData.textContent = data;
+							tableRow.appendChild(tableData);
+						}
+					);
+				}
+			);
+		}
+	}
+	else
+	{
+		// Need to make a languagesBox.
+		
+		languagesBox = document.createElement("DIV");
+		languagesBox.id = "languagesBox";
+		languagesBox.className = WHITE_SIDEBAR_BOX_CONTAINER;
+		
+		const heading = document.createElement("H2");
+		heading.textContent = `Languages Info`;
+		languagesBox.appendChild(heading);
+
+		const subHeading = document.createElement("H3");
+		subHeading.textContent = `From ${UICode[0].toUpperCase() + UICode[1]}`;
+		languagesBox.appendChild(subHeading);
+
+		const table = document.createElement("TABLE");
+		table.id = "languagesTable";
+		languagesBox.appendChild(table);
+
+		const tableHead = document.createElement("THEAD");
+		table.appendChild(tableHead);
+		const tableHeadRow = document.createElement("TR");
+		tableHeadRow.style.borderBottom = "1px solid black";
+		tableHead.appendChild(tableHeadRow);
+		
+		const tableHeading = document.createElement("TH");
+		tableHeading.style.padding = "0";
+
+		tableHeading.textContent = "Language";
+		tableHeading.style.width = "30%";
+		tableHeadRow.appendChild(tableHeading.cloneNode(true));
+		
+		tableHeading.textContent = "Level";
+		tableHeading.style.width = "20%";
+		tableHeadRow.appendChild(tableHeading.cloneNode(true));
+
+		tableHeading.textContent = "Total XP";
+		tableHeading.style.width = "25%";
+		tableHeadRow.appendChild(tableHeading.cloneNode(true));
+
+		tableHeading.textContent = "XP to Next Level";
+		tableHeading.style.width = "25%";
+		tableHeadRow.appendChild(tableHeading.cloneNode(true));
+
+		languages.forEach(
+			(languageInfo, index) => {
+				const tableRow = document.createElement("TR");
+				tableRow.id = `${languageInfo[0]}Row`;
+				tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
+				table.appendChild(tableRow);
+
+				languageInfo.forEach(
+					(data) => {
+						const tableData = document.createElement("TD");
+						tableData.style.padding = "0";
+						tableData.textContent = data;
+						tableRow.appendChild(tableData);
+					}
+				);
+			}
+		);
+
+		// Add the new side bar box to the page
+		const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONATINER}`);
+		if (dailyGoalBox == null)
+			return false;
+
+		sidebar.insertBefore(languagesBox, dailyGoalBox.nextSibling);
+	}
+}
+
+function displaySuggestion(fullyStrengthened, noCrackedSkills)
+{
+	if (usingOldData)
+		return false; // If we haven't just got some new data the suggestion might be invalid so we won't
+
 	let topOfTree;
 	if (
 			document.querySelector(`[data-test="skill-tree"]`) != null &&
@@ -1787,14 +2726,14 @@ function displaySuggestion(skills, bonusSkills)
 
 		) // Has the tree loaded from a page change
 	{
-		topOfTree = document.querySelector(`[data-test="skill-tree"]`).firstChild;
+		topOfTree = document.querySelector(`[data-test="skill-tree"]>div`);
 	}
 	else
 	{
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
 		if(onMainPage)
 		{
-			setTimeout(function(){displaySuggestion(skills, bonusSkills);}, 50);
+			setTimeout(function(){displaySuggestion(skills, fullyStrengthened, noCrackedSkills);}, 50);
 		}
 		else
 		{
@@ -1828,20 +2767,17 @@ function displaySuggestion(skills, bonusSkills)
 			else
 				container.style.marginTop = "0.5em";
 		}
-		else
+		else if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
 		{
-			// Not being pushed down by the IN BETA label.
-			if (inMobileLayout)
-			{
-				// In mobile layout so we don't need to make room for the try plus button.
-			}
-			else
-			{
-				// In desktop layout so let's make room for the TRY PLUS button to the right.
-				container.style.width = "calc(100% - 119px)";
-			}
+			// Not being pushed down by the IN BETA label,
+			// and there is a TRY PLUS button on the right which we have to make room for.
+			const boxRightEdge = topOfTree.getBoundingClientRect().right;
+			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
+			const offset = boxRightEdge - buttonLeftEdge;
+			container.style.width = `calc(100% - ${offset}px - 0.5em)`;
 		}
-		let treeLevel = crownTreeLevel();
+		const skills = userData.language_data[languageCode].skills;
+		const treeLevel = crownTreeLevel();
 		let skillsByCrowns = [[],[],[],[],[],[]];
 
 		for (let skill of skills)
@@ -1878,43 +2814,57 @@ function displaySuggestion(skills, bonusSkills)
 			{
 				event.target.style.fontWeight = 'bold';
 				event.target.style.textDecoration = 'underline';
-			});
+			}
+		);
 
 		link.addEventListener('blur',
 			function(event)
 			{
 				event.target.style.fontWeight = 'normal';
 				event.target.style.textDecoration = 'none';
-			});
+			}
+		);
 		
-		let fullStrengthMessage = document.createElement("p");
+		let suggestionMessage = document.createElement("p");
 		if (treeLevel == 5)
 		{
-			fullStrengthMessage.appendChild(
-				document.createTextNode(
-					`Your ${language} tree is fully strengthened and at Level 5! Why not do a `
-				)
-			);
+			let messageText = `Your ${language} tree is `
+			if (fullyStrengthened)
+				messageText += `fully strengthened and `;
+			
+			messageText += `at Level 5`;
 
-			fullStrengthMessage.appendChild(document.createElement("a"));
-			fullStrengthMessage.lastChild.href = "/practice";
-			fullStrengthMessage.lastChild.textContent = "general practice";
+			if (noCrackedSkills)
+				messageText += ` with no cracked skills`;
+
+			messageText += `! Why not do a `;
+
+			suggestionMessage.textContent = messageText;
+
+			suggestionMessage.appendChild(document.createElement("a"));
+			suggestionMessage.lastChild.href = "/practice";
+			suggestionMessage.lastChild.style.color = "blue";
+			suggestionMessage.lastChild.textContent = "general practice";
 		}
 		else if (treeLevel == 0)
 		{
 			// Tree not finished, so suggest the next skill that is not yet been completed.
 			let nextSkill = skillsByCrowns[0][0];
 			
-			fullStrengthMessage.textContent = "All the skills that you have learnt so far are fully strengthened. ";
+			if (fullyStrengthened && noCrackedSkills)
+				suggestionMessage.textContent = `All the skills that you have learnt so far are fully strengthened, and none are cracked. `;
+			else if (fullyStrengthened)
+				suggestionMessage.textContent = `All the skills that you have learnt so far are fully strengthened. `;
+			else if (noCrackedSkills)
+				suggestionMessage.textContent = `None of the skills that you have learnt so far are cracked. `
 
 			if (nextSkill.locked)
 			{
 				// The next skill is locked, so a checkpoint test is needed.
 				let checkpointNumber;
-				const checkpoints = document.querySelectorAll(`[data-test="checkpoint-badge"]`);
+				const checkpoints = document.querySelectorAll(CHECKPOINT_SELECTOR);
 				checkpoints.forEach(
-					(checkpoint, index) =>
-					{
+					(checkpoint, index) => {
 						if (checkpointNumber == null && checkpoint.querySelector(`img`).src.includes(`unlocked`))
 							checkpointNumber = index;
 					}
@@ -1922,7 +2872,7 @@ function displaySuggestion(skills, bonusSkills)
 				link.href = `/checkpoint/${languageCode}/${checkpointNumber}/`;
 				link.textContent = `Checkpoint ${checkpointNumber +1}`;
 
-				fullStrengthMessage.textContent += "To unlock more skills you need to complete: ";
+				suggestionMessage.textContent += "To unlock more skills you need to complete: ";
 			}
 			else
 			{
@@ -1930,19 +2880,25 @@ function displaySuggestion(skills, bonusSkills)
 				link.href = `/skill/${languageCode}/${nextSkill.url_title}/`;
 				link.textContent = nextSkill.title;
 
-				fullStrengthMessage.textContent += "The next skill to learn is: ";
+				suggestionMessage.textContent += "The next skill to learn is: ";
 			}
 			
-			fullStrengthMessage.appendChild(link);
+			suggestionMessage.appendChild(link);
 		}
 		else
 		{
-			fullStrengthMessage.textContent =
-				`Your ${language} tree is fully strengthened. Why not practice this skill to work towards getting your tree to Level\xA0${treeLevel + 1}: `;
-			fullStrengthMessage.appendChild(link);
+			if (fullyStrengthened && noCrackedSkills)
+				suggestionMessage.textContent = `Your ${language} tree is fully strengthened, and there are no cracked cracked skills. `;
+			else if (fullyStrengthened)
+				suggestionMessage.textContent = `Your ${language} tree is fully strengthened. `;
+			else if (noCrackedSkills)
+				suggestionMessage.textContent = `None of the skills in your ${language} tree are cracked. `
+			
+			suggestionMessage.textContent += `Why not practise this skill to work towards getting your tree to Level\xA0${treeLevel + 1}: `;
+			suggestionMessage.appendChild(link);
 		}
 
-		container.appendChild(fullStrengthMessage);
+		container.appendChild(suggestionMessage);
 
 		topOfTree.appendChild(container);
 
@@ -1950,13 +2906,62 @@ function displaySuggestion(skills, bonusSkills)
 	}
 	else
 	{
-		// Already made the box
+		// Already made the box.
+		// And we don't want to do anything otherwise the suggestion, if using the random option, will keep changing and might look a bit strange.
 	}
 }
 
 function getStrengths()
 {
-	// parses the data from duolingo.com/users/USERNAME and extracts strengths and skills that need strengthening
+	const strengths = [[],[]]; // first array holds strengths for normal skills, second for bonus skills
+	
+	const skills = userData.language_data[languageCode].skills;
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+
+	for (const skill of skills)
+	{
+		strengths[0].push([skill.strength,Boolean(skill.skill_progress.level)]); // first element is strength, second is a bool of whether to add strength bar for that skill
+	}
+
+	for (const bonusSkill of bonusSkills)
+	{
+		strengths[1].push([bonusSkill.strength,Boolean(bonusSkill.skill_progress.level)]);
+	}
+	
+	return strengths;
+}
+
+function getNeedsStrengthening()
+{
+	const needsStrengthening = [[],[]]; // first array holds skills that need strengthening, second holds bonus skills that need strengthening
+
+	const skills = userData.language_data[languageCode].skills;
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+
+	for (const skill of skills)
+	{
+		if (skill.strength != 1 && skill.strength != 0 && skill.skill_progress.level != 0)
+		{
+			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
+			needsStrengthening[0].push(skill);
+		}
+	}
+
+	for (const bonusSkill of bonusSkills)
+	{
+		if (bonusSkill.strength != 1 && bonusSkill.strength != 0 && bonusSkill.skill_progress.level != 0)
+		{
+			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
+			needsStrengthening[1].push(bonusSkill);
+		}
+	}
+
+	return needsStrengthening;
+}
+
+function processUserData()
+{
+	// Process the information from duolingo.com/users/USERNAME, stored in userData, before use
 	/*
 		Data comes formatted as such:
 		{
@@ -1971,17 +2976,13 @@ function getStrengths()
 		}
 		each skill in either skills or bonus_skills has a number of properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
-	
-	let strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
-	let needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
-	
-	languageCode = Object.keys(userData.language_data)[0]; // only one child of 'language_data', a code for active language.
 
-	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	let bonusSkills = userData.language_data[languageCode].bonus_skills;
+	// Skills appear to be inconsistantly ordered so need sorting for ease of use.
 
-	function sortSkills(skill1,skill2)
-	{
+	const skills = userData.language_data[languageCode].skills; 
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+
+	sortByTreePosition = (skill1,skill2) => {
 		if (skill1.coords_y < skill2.coords_y) // x above y give x
 		{
 			return -1;
@@ -1998,59 +2999,167 @@ function getStrengths()
 				return 1;
 			}
 		}
-	}
+	};
 
-	skills.sort(sortSkills);
-	bonusSkills.sort(sortSkills);
+	skills.sort(sortByTreePosition);
+	bonusSkills.sort(sortByTreePosition);
+}
 
-	for (let skill of skills)
-	{
-		strengths[0].push([skill.strength,Boolean(skill.skill_progress.level)]);
-		if(skill.strength != 1 && skill.strength != 0 && skill.skill_progress.level != 0)
-		{
-			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
-			needsStrengthening[0].push(skill);
-		}
-	}
-
-	for (let bonusSkill of bonusSkills)
-	{
-		strengths[1].push([bonusSkill.strength,Boolean(bonusSkill.skill_progress.level)]);
-		if(bonusSkill.strength != 1 && bonusSkill.strength != 0 && bonusSkill.skill_progress.level != 0)
-		{
-			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
-			needsStrengthening[1].push(bonusSkill);
-		}
-	}
-
-	const crackedSkills = getCrackedSkills();
-
-	if (options.strengthBars) addStrengths(strengths); // call function to add these strengths under the skills
+function addFeatures()
+{
+	// Main function that calls all the subfunctions responsible for adding features to the page.
 	
-	if (options.XPInfo) displayXPBreakdown();
+	// First we need to prepare the retrieved userData for use.
+	processUserData();
 
-	const practiceNeeded = ((needsStrengthening[0].length + needsStrengthening[1].length != 0) && options.needsStrengtheningList)
-						|| ((crackedSkills[0].length + crackedSkills[1].length != 0) && options.crackedSkillsList);
-	if (practiceNeeded)
+	// Strength Bars
 	{
-		removeSuggestion(); // Remove the suggestion box if there happens to be one.
-		if (needsStrengthening[0].length + needsStrengthening[1].length != 0)
+		const strengths = getStrengths();
+
+		if (options.strengthBars)
+			addStrengthBars(strengths);
+		else
+			removeStrengthBars();
+	}
+
+	// XP Info
+	{
+		if (options.XPInfo)
+			displayXPBreakdown();
+		else
+			removeXPBox();
+	}
+
+	// Crowns Info
+	{
+		if (options.crownsInfo)
+			displayCrownsBreakdown();
+		else
+			removeCrownsBreakdown();
+	}
+
+	// Languages Info
+	{
+		if (options.languagesInfo)
+			displayLanguagesInfo(getLanguagesInfo());
+		else
+			removeLanguagesInfo();
+	}
+
+	// Lists of skills that need attention next
+	{
+		const needsStrengthening = getNeedsStrengthening();
+		const crackedSkills = getCrackedSkills();
+
+		const fullyStrengthened = (
+			needsStrengthening[0].length +
+			((options.showBonusSkillsInNeedsStrengtheningList) ? needsStrengthening[1].length : 0)
+		) == 0;
+
+		const noCrackedSkills = (
+			crackedSkills[0].length +
+			((options.showBonusSkillsInCrackedSkillsList) ? crackedSkills[1].length : 0)
+		) == 0;
+
+		if (options.needsStrengtheningList && !fullyStrengthened)
+			displayNeedsStrengthening(needsStrengthening); // Not fully strengthened and the list is enabled.
+		else
+			removeNeedsStrengtheningBox(); // Remove if there happens to be one.
+
+		if (options.crackedSkillsList && !noCrackedSkills)
+			displayNeedsStrengthening(crackedSkills, true); // There are cracked skills and the list is enabled.
+		else
+			removeCrackedSkillsList(); // Remove if there happens to be one.
+
+		if (
+			(fullyStrengthened && noCrackedSkills) ||
+			(!fullyStrengthened && !options.hideSuggestionNonStrengthened) ||
+			(!noCrackedSkills && !options.hideSuggestionWithCrackedSkills)
+		)
 		{
-			// Something needs strengthening.
-			if (options.needsStrengtheningList) displayNeedsStrengthening(needsStrengthening); // if there are skills needing to be strengthened, call function to display this list
+			// Either a fully strengthened tree, or
+			// Not fully strengthened but still show suggestion, or
+			// There are cracked skills but still show suggestion
+			
+			if (options.skillSuggestion)
+				displaySuggestion(fullyStrengthened, noCrackedSkills);
+			else
+				removeSuggestion(); // if there happens to be one
 		}
-		if (crackedSkills[0].length + crackedSkills[1].length != 0)
+		else
 		{
-			// There are some cracked skills.
-			if (options.crackedSkillsList) displayNeedsStrengthening(crackedSkills, true);
+			// Should not be displaying a suggestion.
+			removeSuggestion() // if there happens to be one
 		}
 	}
-	else
+
+	// Practise and Words Button in skill popouts
 	{
-		// Nothing that needs strengthening!
-		removeNeedsStrengtheningBox(); // Remove the needStrengthingBox if there happns to be one.
-		removeCrackedSkillsList();
-		if (options.skillSuggestion) displaySuggestion(skills);
+		const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
+
+		if (options.practiseButton || options.wordsButton)
+		{
+			if (skillPopout != null)
+			{
+				if (options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
+				{
+					const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
+					if (introLesson == null || !introLesson.contains(skillPopout))
+					{
+						// No introduction lesson, or if there is this skillPopout isn't from that skill
+						addPractiseButton(skillPopout);
+					}
+				}
+
+				if (options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) == null)
+				{
+					addWordsButton(skillPopout);
+				}
+				else
+				{
+					removeWordsButton();
+				}
+			}
+
+			// Add each skill to childListObserver
+			document.querySelectorAll(SKILL_SELECTOR).forEach(
+				(skill) => {
+					childListObserver.observe(skill, {childList: true});
+				}
+			);
+		}
+
+		if (skillPopout != null)
+			skillPopout.scrollIntoView({block: "center"});
+	}
+
+	// Redo checkpoint buttons on checkpoint popouts
+	{
+		if (options.checkpointButtons)
+		{
+			const checkpointPopout = document.querySelector(CHECKPOINT_POPOUT_SELECTOR);
+			if (checkpointPopout != null)
+				addCheckpointButtons(checkpointPopout);
+			
+			// Add each checkpoint to childListObserver
+			document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR).forEach(
+				(checkpoint) => {
+					childListObserver.observe(checkpoint, {childList: true});
+				}
+			);
+		}
+	}
+
+	// Flag Borders in Language List
+	{
+		if (options.treeLevelBorder && document.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+		{
+			addFlagBorders();
+		}
+		else
+		{
+			removeFlagBorders();
+		}
 	}
 }
 
@@ -2145,15 +3254,17 @@ function requestResponseMutationHandle(mutationsList, url, responseHandler)
 
 async function handleDataResponse(responseText)
 {
-	let newUserData = JSON.parse(responseText); // store response text as JSON object.
-	let newDataLanguageCode = Object.keys(newUserData.language_data)[0];
-	let newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
+	const newUserData = JSON.parse(responseText); // store response text as JSON object.
+	const newDataLanguageCode = newUserData.learning_language;
+	const newDataUICode = newUserData.ui_language;
+	const newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
 
 	if (language == '')
 	{
 		// no lanuage set , then this must be the first load and we need to set the lanuage now.
 		language = newDataLanguageString;
 		languageCode = newDataLanguageCode;
+		UICode = newDataUICode;
 	}
 	if (languageChangesPending > 1)
 	{
@@ -2170,7 +3281,7 @@ async function handleDataResponse(responseText)
 	if (languageChanged)
 	{
 		// The language change hasn't been resolved yet.
-		if (newDataLanguageString == language)
+		if (newDataLanguageCode + newDataUICode == languageCode + UICode)
 		{
 			// language change has happened but the data isn't up to date yet as it is not matching the current active language
 			// so request the data, but only if still on the main page. Safe to not wait as the httpRequest will take some time.
@@ -2186,17 +3297,21 @@ async function handleDataResponse(responseText)
 			userData = newUserData;
 
 			languageCode = newDataLanguageCode;
+			UICode = newDataUICode;
 			language = newDataLanguageString;
+
 			resetLanguageFlags();
+
 			retrieveProgressHistory().then(updateProgress);
 
-			getStrengths();	// actual processing of the data.
+			usingOldData = false;
+			addFeatures(); // actual processing of the data.
 		}
 	}
 	else
 	{
 		// No language change
-		if (newDataLanguageString != language)
+		if (newDataLanguageCode + newDataUICode != languageCode + UICode)
 		{
 			// But the language srting data has changed, this may be a response from an older but slower request
 			if (requestsPending == 0)
@@ -2210,7 +3325,8 @@ async function handleDataResponse(responseText)
 			userData = newUserData;
 
 			retrieveProgressHistory().then(updateProgress);
-			getStrengths();
+			usingOldData = false;
+			addFeatures();
 		}
 	}
 }
@@ -2223,6 +3339,7 @@ function requestData()
 		if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
 		{
 			// If there is already userData and not changing language, display current data while requesting new data.
+			usingOldData = true;
 			getStrengths(userData);
 		}
 
@@ -2248,23 +3365,16 @@ function requestData()
 	});
 }
 
-/*
-Currently there is only one UI versions known to be in use.
-
-2019-08-01 the Daily goal box has been moved for some users to the side bar.
-This is just handled in the displayXPBreadown function.
-
-function checkUIVersion()
-{
-
-}
-*/
-
 function hideTranslationText(reveal = false, setupObserver = true)
 {
 	if (document.getElementsByClassName(QUESTION_CONTAINER).length == 0)
 		return false;
+	
 	const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
+
+	if (questionContainer.firstChild == null)
+		return false; // Duo ecouragement message, no question box, do nothing.
+
 	const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
 
 	if (questionTypeString != null && questionTypeString.includes("translate"))
@@ -2292,6 +3402,25 @@ function hideTranslationText(reveal = false, setupObserver = true)
 					hintSentence.title = "";
 				};
 				hintSentence.title = "Click to Show Sentence";
+
+				if (options.revealHotkey)
+				{
+					hintSentence.tile += " or Press " + options.revealHotkeyCode;
+					document.onkeydown = (e) => {
+						const hotkeyList = options.revealHotkeyCode.split("+");
+						const numKeys = hotkeyList.length;
+						if (
+							e.key.toUpperCase() == hotkeyList[numKeys-1] &&
+							( (hotkeyList.includes("Ctrl") && e.ctrlKey) || !hotkeyList.includes("Ctrl") ) &&
+							( (hotkeyList.includes("Shift") && e.shiftKey) || !hotkeyList.includes("Shift") ) &&
+							( (hotkeyList.includes("Meta") && e.metaKey) || !hotkeyList.includes("Meta") ) &&
+							( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
+						)
+						{
+							hideTranslationText(true, false);
+						}
+					};
+				}
 			}
 			else
 			{
@@ -2299,12 +3428,13 @@ function hideTranslationText(reveal = false, setupObserver = true)
 				hintSentence.title = "";
 			}
 
-			if (options.showToggleHidingTextButton)
+			let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
+
+			if (enableDisableButton.length == 0)
 			{
-				let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
-				if (enableDisableButton.length == 0)
+				// No enableDisableButton so make one and add it next to the question header if the option is enabled.
+				if (options.showToggleHidingTextButton)
 				{
-					// No enableDisableButton so make one and add it next to the question header
 					const headerContainer = document.createElement("div");
 					headerContainer.style =
 					`
@@ -2355,32 +3485,31 @@ function hideTranslationText(reveal = false, setupObserver = true)
 						hideTranslationText();
 					};
 
-					/*
-					if (questionArea.querySelectorAll(`[dir="ltr"]`).length > 0)
-					{
-						// LTR language, button goes to the right
-						enableDisableButton.style.float = "right";
-						enableDisableButton.style.marginLeft = "1em";
-					}
-					else if (questionArea.querySelectorAll(`[dir="rtl"]`).length > 0)
-					{
-						// RTL language, button goes to the left
-						enableDisableButton.style.float = "left";
-						enableDisableButton.style.marginRight = "1em";
-					}
-					
-					hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);
-					*/
-
 					headerContainer.appendChild(enableDisableButton);
 				}
-				else
+			}
+			else
+			{
+				// There is already an enableDisableButton.
+				if (options.showToggleHidingTextButton)
 				{
-					// There is already an enableDisableButton just update the text and function
+					// And it should be there, so just update the text and function
 
 					enableDisableButton = enableDisableButton[0];
 					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
 				}
+				else
+				{
+					// But we don't want it anymore
+					
+					const headerContainer = questionContainer.querySelector(`.hideTextEnableDisable`).parentNode;
+					const header = headerContainer.firstChild;
+					header.removeAttribute("style");
+					headerContainer.parentNode.insertBefore(header, headerContainer); // Move the header back to where it should be;
+					headerContainer.remove();
+
+				}
+				
 			}
 			return true;
 		}
@@ -2398,12 +3527,17 @@ let childListMutationHandle = function(mutationsList, observer)
 	let rootChildReplaced = false;
 	let rootChildContentsReplaced = false;
 	let mainBodyReplaced = false
-	let mainBodyContentsChanged = false ;
+	let sidebarToggled = false;
 	let popupChanged = false;
 	let popupIcon;
 	let lessonLoaded = false;
 	let lessonQuestionChanged = false;
 	let lessonInputMethodChanged = false;
+	let skillRepaired = false;
+	let skillPopoutAdded = false;
+	let skillPopout;
+	let checkpointPopoutAdded = false;
+	let checkpointPopout;
 	
 	for (let mutation of mutationsList)
 	{
@@ -2413,9 +3547,22 @@ let childListMutationHandle = function(mutationsList, observer)
 			rootChildContentsReplaced = true;
 		else if (mutation.target == mainBodyContainer)
 			mainBodyReplaced = true;
-		else if (mutation.target == mainBody)
-			mainBodyContentsChanged = true;
-		else if (mutation.target.className == POPUP_ICON)
+		else if (
+			mutation.target == mainBody &&
+			(
+				[
+					...Array.from(mutation.addedNodes),
+					...Array.from(mutation.removedNodes)
+				].some(
+					(addedNode) => addedNode.className.includes(SIDEBAR)
+				) // The sidebar was added or removed
+			)
+		)
+			sidebarToggled = true;
+		else if (
+			mutation.target.className == POPUP_ICON &&
+			mutation.addedNodes.length != 0
+		)
 		{
 			popupChanged = true;
 			popupIcon = mutation.target;
@@ -2426,6 +3573,31 @@ let childListMutationHandle = function(mutationsList, observer)
 			lessonQuestionChanged = true;
 		else if (mutation.target.parentNode.parentNode.className.includes(QUESTION_CONTAINER))
 			lessonInputMethodChanged = true;
+		else if (
+			mutation.target.attributes.hasOwnProperty("data-test") &&
+			mutation.target.attributes["data-test"].value == "skill-icon" &&
+			mutation.removedNodes.length == 1 &&
+			`.${mutation.removedNodes[0].className}` == CRACKED_SKILL_OVERLAY_SELECTOR
+		)
+			skillRepaired = true;
+		else if (
+			mutation.target.getAttribute("data-test") == "skill" &&
+			mutation.addedNodes.length != 0 &&
+			mutation.target.querySelectorAll(`[data-test="skill-popout"]`).length != 0
+		)
+		{
+			skillPopoutAdded = true;
+			skillPopout = mutation.target.querySelector(`[data-test="skill-popout"]`);
+		}
+		else if (
+			`.${mutation.target.className}` == CHECKPOINT_CONTAINER_SELECTOR &&
+			mutation.addedNodes.length != 0 &&
+			mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR) != null
+		)
+		{
+			checkpointPopoutAdded = true;
+			checkpointPopout = mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR);
+		}
 	}
 
 	if (rootChildReplaced)
@@ -2463,7 +3635,8 @@ let childListMutationHandle = function(mutationsList, observer)
 		else
 			return false;
 	}
-	if (mainBodyContentsChanged)
+
+	if (sidebarToggled)
 	{
 		// Switched between mobile and desktop layouts.
 
@@ -2472,7 +3645,14 @@ let childListMutationHandle = function(mutationsList, observer)
 		let desktopMargin = "0 0 2em 0";
 
 		let mobileWidth = "auto";
-		let desktopWidth = "calc(100% - 119px)";
+		let desktopWidth;
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+		{
+			const boxRightEdge = document.querySelector(`[data-test="skill-tree"]>div`).getBoundingClientRect().right;
+			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
+			const offset = boxRightEdge - buttonLeftEdge;
+			desktopWidth = `calc(100% - ${offset}px - 0.5em)`;
+		}
 
 		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
 		{
@@ -2503,7 +3683,6 @@ let childListMutationHandle = function(mutationsList, observer)
 				document.getElementById("fullStrengthMessageContainer").style.margin = mobileMargin;
 				document.getElementById("fullStrengthMessageContainer").style.width = mobileWidth;
 			}
-			
 		}
 		else
 		{
@@ -2531,8 +3710,10 @@ let childListMutationHandle = function(mutationsList, observer)
 
 			// Try and add the XP box again as the sidebar has come back
 			if (options.XPInfo) displayXPBreakdown();
+			if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 		}
 	}
+
 	if (popupChanged)
 	{
 		// Crown or streak pop up box has appeared or dissapeared.
@@ -2542,7 +3723,8 @@ let childListMutationHandle = function(mutationsList, observer)
 			// Language change has still yet to be resolved, let's not display the info as it is likely not for this language.
 			return false;
 		}
-		else if (popupIcon.getElementsByClassName(GOLD_CROWN).length + popupIcon.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
+
+		if (popupIcon.getElementsByClassName(GOLD_CROWN).length + popupIcon.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
 		{
 			// Crowns has had the change.
 			if (options.crownsInfo && popupIcon.lastChild.nodeName == 'DIV')
@@ -2555,6 +3737,7 @@ let childListMutationHandle = function(mutationsList, observer)
 				// Pop-up box disappeared
 			}
 		}
+
 		if (popupIcon.getElementsByClassName(COLOURED_FLAME).length +  popupIcon.getElementsByClassName(GREY_FLAME).length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
 		{
 			// Streak/XP has had the change.
@@ -2568,7 +3751,14 @@ let childListMutationHandle = function(mutationsList, observer)
 				// Pop-up box disappeared
 			}
 		}
+
+		if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null && options.treeLevelBorder)
+		{
+			// Language list added, add the flag borders
+			addFlagBorders();
+		}
 	}
+
 	if (lessonLoaded)
 	{
 		// Question section loaded.
@@ -2584,17 +3774,42 @@ let childListMutationHandle = function(mutationsList, observer)
 		const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
 		classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
 	}
+	
 	if (lessonQuestionChanged)
 	{
 		// Run check for translation type question
 
 		hideTranslationText();
 	}
+	
 	if (lessonInputMethodChanged)
 	{
 		// Need to re run question hiding as the question box has been replaced.
 
 		hideTranslationText(undefined, false);
+	}
+	
+	if (skillRepaired)
+	{
+		removeCrackedSkillsList();
+		requestData();
+	}
+	
+	if (skillPopoutAdded)
+	{
+		const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
+		if (introLesson == null || !introLesson.contains(skillPopout))
+		{
+			// No introduction lesson, or if there is this skillPopout isn't from that skill
+			if (options.practiseButton) addPractiseButton(skillPopout);
+		}
+
+		if (options.wordsButton) addWordsButton(skillPopout);
+	}
+	
+	if (checkpointPopoutAdded)
+	{
+		if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);
 	}
 };
 
@@ -2713,9 +3928,16 @@ async function init()
 	childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
 	
 	mainBodyContainer = rootChild.lastChild;
-	mainBody = mainBodyContainer.firstChild;
-	
+	if (mainBodyContainer == null)
+		return false;
+
 	childListObserver.observe(mainBodyContainer, {childList:true}); // Observing for changes to its children to detect if the mainBody element has been replaced.
+
+
+	mainBody = mainBodyContainer.firstChild;
+	if (mainBody == null)
+		return false;
+	
 	childListObserver.observe(mainBody,{childList:true}); // Observing for changes to its children to detect moving between mobile and desktop layout.
 	
 	if (mainBody.getElementsByClassName(SIDEBAR).length == 0)
@@ -2747,6 +3969,9 @@ async function init()
 			// so let's add a childList mutaion observer to lessonMainSection and run the checks then.
 
 			childListObserver.observe(lessonMainSection, {childList: true});
+
+			await optionsLoaded;
+			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
 		}
 		else
 		{
@@ -2822,6 +4047,9 @@ async function init()
 				*/
 				classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
 
+				// set up observer for language logo popup
+				childListObserver.observe(languageLogo.lastChild, {childList: true});
+
 				// set up observers for crown and streak nav hovers
 				childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
 				childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
@@ -2840,9 +4068,7 @@ async function init()
 				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
 
 				/*
-				language = document.head.getElementsByTagName("title")[0].textContent.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
-				
-				language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
+				language seems to be quite difficult to set on first load, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
 				We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
 				
 
@@ -2850,12 +4076,46 @@ async function init()
 				*/
 
 				await optionsLoaded;
+
+				if (document.getElementsByClassName(LEAGUE_TABLE).length != 0)
+				{
+					if (options.showLeagues)
+						document.getElementsByClassName(LEAGUE_TABLE)[0].style.removeProperty('display');
+					else
+						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
+				}
+
+				const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
+
+				if (skillPopout != null)
+					skillPopout.scrollIntoView({block: "center"});
+
+				// Done all the prep we need, let's get some data to process
 				requestData();
 			}
 		}
 	}
 }
 
-document.body.onload = init(); // call function to start display sequence on first load
+window.onunload = function()
+{
+	if (typeof chrome.app.isInstalled != "undefined")
+		chrome.runtime.sendMessage({type: "pageClosed"});
+}
+
+document.body.onload = function()
+{
+	if (typeof chrome.app.isInstalled != "undefined")
+		chrome.runtime.sendMessage({type: "showPageAction"});
+	chrome.runtime.onMessage.addListener(
+		(message) => {
+			if (message.type == "optionsChanged")
+			{
+				init();
+			}
+		}
+	);
+	init();
+}; // call function to start display sequence on first load
 
 //observer.disconnet(); can't disconnect as always needed while page is loaded.

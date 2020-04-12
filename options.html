@@ -1,11 +1,15 @@
 <!doctype html>
 <html>
 <head>
+	<meta charset="utf-8" />
 	<title>Duo Strength Options</title>
 	<style>
 		body
 		{
+			width: 340px;
 			margin: 2em;
+			font-family: sans-serif;
+			font-size: 75%;
 		}
 
 		ul
@@ -24,7 +28,6 @@
 			background-color: white;
 			position: relative;
 		}
-		
 			li > ul
 			{
 				grid-column: span 2;
@@ -34,11 +37,16 @@
 					grid-template-columns: 3em 3em 1fr;
 					box-sizing: content-box;
 				}
+				li > ul > li.containsHotkeyInput
+				{
+					grid-template-columns: 3em 1fr;
+				}
 					li > ul > li::before
 					{
 						content: "";
 						z-index: 1;
 						width: 100%;
+						min-height: 1.2em;
 						height: calc(100% + 0.2em);
 						border-style: dashed;
 						border-color: black;
@@ -55,43 +63,135 @@
 					{
 						content: "";
 						z-index: 1;
-						height: 50%;
+						height: calc(100% - 1.5em - 2px);
 						width: 1em;
 						border-style: dashed;
 						border-color: black;
 						border-width: 0px 0px 0px 1px;
 						position: absolute;
-						top: calc(25% - 2px);
+						top: calc(1.5em / 2);
 						left: calc(1.5em - 0.5px);
 						grid-column: 1;
+					}
+					li > ul > li:last-child > ul::after
+					{
+						border-style: none;
 					}
 
 		input
 		{
 			z-index: 3;
+			font-size: 100%;
+			align-self: center;
+		}
+		input:disabled, select:disabled
+		{
+			opacity: 1;
 		}
 		input[type="checkbox"]
 		{
 			justify-self: center;
 			margin: 0;
-			align-self: center;
 		}
 		input[type="number"]
 		{
 			box-sizing: border-box;
 			width: 100%;
+			height: 1.5em;
+		}
+		input[type="number"].dummy
+		{
+			width: 3em;
+			top: calc(1.5em /2);
+		}
+		input[type="text"]
+		{
+			width: 100%;
+			box-sizing: border-box;
+		}
+		input[type="text"].dummy
+		{
+			left: 3em;
+			top: 0;
+			width: calc(100% - 3em);
+			transform: none;
 		}
 
+		.off
+		{
+			color: grey;
+		}
 		.hasSelect
 		{
 			grid-template-columns: 3em fit-content(100%) 1fr;
 		}
-			.hasSelect label
+			.hasSelect > label
 			{
 				padding-left: 1em;
 			}
+
+		.hasNumber label
+		{
+			padding-left: 1em;
+		}
+		.selectFirst
+		{
+			grid-template-columns: fit-content(100%) 1fr;
+		}
+			.selectFirst > label
+			{
+				padding-left: 1em;
+			}
+		.labelFirst
+		{
+			grid-template-columns: 3em fit-content(calc(100% - 6em)) 3em;
+		}
+			.labelFirst > label
+			{
+				padding-left: 0;
+				padding-right: 0.5em;
+				z-index: 3;
+				background-color: white;
+			}
+		.textOnly
+		{
+			grid-template-columns: 3em 1fr;
+		}
+			.textOnly span
+			{
+				background-color: white;
+				z-index: 3;
+				padding-left: 0.5em;
+			}
+		.addSortList
+		{
+			color: blue;
+			cursor: pointer;
+		}
+		.removeSortCriterion
+		{
+			position: absolute;
+			right: 0;
+			top: calc(50% - 0.35em);
+			border-radius: 100%;
+			width: 0.7em;
+			height: 0.7em;
+			font-size: 175%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			color: white;
+			background-color: #666;
+		}
+			.removeSortCriterion:hover
+			{
+				background-color: black;
+			}
+
 		select
 		{
+			font-size: 100%;
 			z-index: 3;
 			box-sizing: border-box;
 			width: fit-content;
@@ -100,23 +200,35 @@
 		{
 			background-color: rgb(235, 235, 228);
 		}
+		select.dummy
+		{
+			left: 3em;
+			transform: translate(0, -50%);
+		}
 		.dummy
 		{
 			position: absolute;
 			grid-column-start: 1;
-			left: calc(3.5em + 1px);
-			top: 1.5px;
-			box-shadow: inset 0px 0px 0 20px white;
+			left: calc(3em + 1.5em);
+			top: calc(1.5em /2);
+			transform: translate(-50%, -50%);
+			box-shadow: inset 0px 0px 0 1.5em white;
 		}
 		button
 		{
 			width: 6em;
 		}
+		label
+		{
+			align-self: center;
+			height: 1.5em;
+			line-height: 1.5em;
+		}
 	</style>
 </head>
 <body>
 	<h1>Duo Strength Options</h1>
-	<h2>Enable or disable features here</h2>
+	<h2>Enable or Disable Features Here</h2>
 	<ul>
 		<li>
 			<input class="option" id="strengthBars" type="checkbox" checked="true" />
@@ -133,19 +245,48 @@
 			<input class="option" id="needsStrengtheningList" type="checkbox" checked="true" />
 			<label for="needsStrengtheningList">Needs Strengthening List</label>
 			<ul>
-				<li>
+				<li class="hasNumber">
+					<input class="dummy" type="number" disabled="true" />
 					<input class="option" id="needsStrengtheningListLength" type="number" value="10" min="1" />
 					<label for="needsStrengtheningListLength">Number of Skills Shown in List</label>
 				</li>
-				<li class="hasSelect">
-					<select class="option" id="needsStrengtheningListSortOrder">
-						<option value="0" selected="true">Tree Order</option>
-						<option value="1">Reverse Tree Order</option>
-						<option value="2">Alphabetical</option>
-						<option value="3">Reverse Alphabetical</option>
-						<option value="4">Random</option>
-					</select>
-					<label for="needsStrengtheningListSortOrder">Order of Skills in List</label>
+				<li class="textOnly">
+					<span>Sorting Method</span>
+					<ul class="multiPart" id="needsStrengtheningListSortOrder">
+						<li class="hasSelect">
+							<select class="dummy" disabled="true">
+								<option value="0" selected="true">Tree Order</option>
+								<option value="1">Reverse Tree Order</option>
+								<option value="2">Alphabetical</option>
+								<option value="3">Reverse Alphabetical</option>
+								<option value="4">Random</option>
+								<option value="5">Strength Asc.</option>
+								<option value="6">Strength Desc.</option>
+								<option value="7">Crown Level Asc.</option>
+								<option value="8">Crown Level Desc.</option>
+							</select>
+							<select class="option" id="needsStrengtheningListSortOrder0">
+								<option value="0" selected="true">Tree Order</option>
+								<option value="1">Reverse Tree Order</option>
+								<option value="2">Alphabetical</option>
+								<option value="3">Reverse Alphabetical</option>
+								<option value="4">Random</option>
+								<option value="5">Strength Asc.</option>
+								<option value="6">Strength Desc.</option>
+								<option value="7">Crown Level Asc.</option>
+								<option value="8">Crown Level Desc.</option>
+							</select>
+							<label for="needsStrengtheningListSortOrder">Primary</label>
+						</li>
+						<li class="textOnly">
+							<span class="addSortList">Add another sorting criterion</span>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="showBonusSkillsInNeedsStrengtheningList" type="checkbox" checked="true" />
+					<label for="showBonusSkillsInNeedsStrengtheningList">Show Bonus Skills in List</label>
 				</li>
 			</ul>
 		</li>
@@ -153,7 +294,8 @@
 			<input class="option" id="crackedSkillsList" type="checkbox" checked="true" />
 			<label for="crackedSkillsList">Cracked Skills List</label>
 			<ul>
-				<li>
+				<li class="hasNumber">
+					<input class="dummy" type="number" disabled="true" />
 					<input class="option" id="crackedSkillsListLength" type="number" value="10" min="1" />
 					<label for="crackedSkillsListLength">Number of Skills Shown in List</label>
 				</li>
@@ -167,6 +309,35 @@
 					</select>
 					<label for="crackedSkillsListSortOrder">Order of Skills in List</label>
 				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="showBonusSkillsInCrackedSkillsList" type="checkbox" checked="true" />
+					<label for="showBonusSkillsInCrackedSkillsList">Show Bonus Skills in List</label>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
+			<label for="skillSuggestion">Skill Suggestion</label>
+			<ul>
+				<li class="hasSelect">
+					<select class="option" id="skillSuggestionMethod">
+						<option value="0" selected="true">Random</option>
+						<option value="1">First</option>
+						<option value="2">Last</option>
+					</select>
+					<label for="skillSuggestionMethod"> Skill at the Current Tree Level</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="hideSuggestionNonStrengthened" type="checkbox" checked="true" />
+					<label for="hideSuggestionNonStrengthened">Hide Suggestion When Not Fully Strengthened</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="hideSuggestionWithCrackedSkills" type="checkbox" checked="true" />
+					<label for="hideSuggestionWithCrackedSkills">Hide Suggestion When There Are Cracked Skills </label>
+				</li>
 			</ul>
 		</li>
 		<li>
@@ -174,18 +345,34 @@
 			<label for="focusFirstSkill">Focus First Skill in Lists</label>
 		</li>
 		<li>
-			<input class="option" id="skillSuggestion" type="checkbox" checked="true" />
-			<label for="skillSuggestion">Fully Strengthened Tree Skill Suggestion</label>
+			<input class="option" id="practiseButton" type="checkbox" checked="true" />
+			<label for="practiseButton">Practise Button in Skill Popout Box</label>
+		</li>
+		<li class="selectFirst">
+			<select class="option selective" subOptionsEnabled="2" id="practiceType">
+				<option value="0" selected="true">Lessons (Earn Crowns)</selected>
+				<option value="1">Practice (Strengthen Only)</option>
+				<option value="2">Lessons up to Threshold</option>
+			</select>
+			<label for="practiceType">Practice Type for List Links</label>
 			<ul>
-				<li class="hasSelect">
-					<select class="option" id= "skillSuggestionMethod">
-						<option value="0" selected="true">Random</option>
-						<option value="1">First</option>
-						<option value="2">Last</option>
-					</select>
-					<label for="skillSuggestionMethod"> Skill at the Current Crown Level</label>
+				<li class="labelFirst">
+					<label for="lessonThreshold">Practice only on skills with crown level &ge;</label>
+					<input class="option" id="lessonThreshold" type="number" value="4" min="1" max="4" />
 				</li>
 			</ul>
+		</li>
+		<li>
+			<input class="option" id="wordsButton" type="checkbox" check="true" />
+			<label for="wordsButton">Words Button in Skill Popout Box</label>
+		</li>
+		<li>
+			<input class="option" id="checkpointButtons" type="checkbox" checked="true" />
+			<label for="checkpointButtons">Retry &amp; Test Out Buttons on Completed Checkpoints</label>
+		</li>
+		<li>
+			<input class="option" id="treeLevelBorder" type="checkbox" checked="true" />
+			<label for="treeLevelBorder">Border on Flags in Language List to Show Tree Level</label>
 		</li>
 		<li>
 			<input class="option" id="crownsInfo" type="checkbox" checked="true" />
@@ -195,6 +382,13 @@
 					<input class="dummy" type="checkbox" disabled="true" />
 					<input class="option" id="crownsMaximum" type="checkbox" checked="true" />
 					<label for="crownsMaximum">Crowns Maximum</label>
+					<ul>
+						<li>
+							<input class="dummy" type="checkbox" disabled="true" />
+							<input class="option" id="crownsPercentage" type="checkbox" checked="true" />
+							<label for="crownsPercentage">Percentage of Maxiumum</label>
+						</li>
+					</ul>
 				</li>
 				<li>
 					<input class="dummy" type="checkbox" disabled="true" />
@@ -211,12 +405,22 @@
 							<input class="option" id="crownsBreakdownShowZerosRows" type="checkbox" checked="true;">
 							<label for="crownsBreakdownShowZerosRows">Show Rows with Zero Skills</label>
 						</li>
+						<li>
+							<input class="dummy" type="checkbox" disabled="true" />
+							<input class="option" id="bonusSkillsBreakdown" type="checkbox" checked="true;">
+							<label for="bonusSkillsBreakdown">Show Bonus Skills Breakdown</label>
+						</li>
 					</ul>
 				</li>
 				<li>
 					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="checkpointPrediction" type="checkbox" checked="true" />
+					<label for="checkpointPrediction">Next Checkpoint Prediction</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
 					<input class="option" id="crownsPrediction" type="checkbox" checked="true" />
-					<label for="crownsPrediction">Crowns Prediction</label>
+					<label for="crownsPrediction">Crown Level Prediction</label>
 				</li>
 			</ul>
 		</li>
@@ -237,19 +441,58 @@
 			</ul>
 		</li>
 		<li>
-			<input class="option" id="showTranslationText" type="checkbox" checked="true" />
+			<input class="option" id="languagesInfo" type="checkbox" checked="true" />
+			<label for="languagesInfo">Languages Info Table</label>
+			<ul>
+				<li class="hasSelect">
+					<select class="dummy" disabled="true">
+						<option value="0">Alphabetical</option>
+						<option value="1">Reverse Alphabetical</option>
+						<option value="2" selected="true">Total XP Desc.</option>
+						<option value="3">Total XP Asc.</option>
+						<option value="4">XP to Next Level Desc.</option>
+						<option value="5">XP to Next Level Asc.</option>
+					</select>
+					<select class="option" id="languagesInfoSortOrder">
+						<option value="0">Alphabetical</option>
+						<option value="1">Reverse Alphabetical</option>
+						<option value="2" selected="true">Total XP Desc.</option>
+						<option value="3">Total XP Asc.</option>
+						<option value="4">XP to Next Level Desc.</option>
+						<option value="5">XP to Next Level Asc.</option>
+					</select>
+					<label for="languagesInfoSortOrder">Order of languages</label>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<input class="option negative" id="showTranslationText" type="checkbox" checked="true" />
 			<label for="showTranslationText">Show Translation Text</label>
+			<ul>
+				<li>
+					<input class="dummy" type="checkbox" disabled="true" />
+					<input class="option" id="revealHotkey" type="checkbox" checked="true" />
+					<label for="revealHotKey">Enable Hotkey to unhide sentence</label>
+					<ul>
+						<li class="containsHotkeyInput">
+							<input class="dummy" type="text" disabled="true"/>
+							<input class="option" id="revealHotkeyCode" type="text" value="Ctrl+Alt+H"/>
+						</li>
+					</ul>
+				</li>
+			</ul>
 		</li>
 		<li>
 			<input class="option" id="showToggleHidingTextButton" type="checkbox" checked="true" />
-			<label for="showToggleHidingTextButton">Show Button in Lessons to Toggle Above</label>
+			<label for="showToggleHidingTextButton">Show Button in Lessons to Toggle Sentence Hiding</label>
+		</li>
+		<li>
+			<input class="option" id="showLeagues" type="checkbox" checked="true" />
+			<label for="showLeagues">Show League Table</label>
 		</li>
 	</ul>
 	<button id="enableAll">Enable all</button>
 	<button id="disableAll">Disable all</button>
-	<p>
-		Note that any currently open duolingo pages will need to be refreshed to enable these changes.
-	</p>
-	<script src="options.js"></script>
+	<script type="text/javascript" charset="UTF-8" src="options.js"></script>
 </body>
 </html>

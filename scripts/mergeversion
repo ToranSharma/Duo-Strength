@@ -3,13 +3,19 @@
 
 CURRENTBRANCH=$( git rev-parse --abbrev-ref HEAD )
 
-git checkout master
-git merge --no-ff $CURRENTBRANCH
-git push
+if [[ $CURRENTBRANCH == release-* ]] || [[ $CURRENTBRANCH == hotfix-* ]]
+then
+	git checkout master
+	git merge --no-ff $CURRENTBRANCH
+	git push
 
-git checkout develop
-git merge --no-ff $CURRENTBRANCH
-git push
+	git checkout develop
+	git merge --no-ff $CURRENTBRANCH
+	git push
 
-git push --delete origin $CURRENTBRANCH
-git branch -d $CURRENTBRANCH
+	git push --delete origin $CURRENTBRANCH
+	git branch -d $CURRENTBRANCH
+else
+	echo "Current branch is not a release or hotfix branch"
+	exit 1
+fi

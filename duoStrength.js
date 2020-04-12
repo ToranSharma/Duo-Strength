@@ -4099,14 +4099,12 @@ async function init()
 
 window.onunload = function()
 {
-	if (typeof chrome.app.isInstalled != "undefined")
-		chrome.runtime.sendMessage({type: "pageClosed"});
+	chrome.runtime.sendMessage({type: "pageClosed"});
 }
 
 document.body.onload = function()
 {
-	if (typeof chrome.app.isInstalled != "undefined")
-		chrome.runtime.sendMessage({type: "showPageAction"});
+	chrome.runtime.sendMessage({type: "showPageAction"});
 	chrome.runtime.onMessage.addListener(
 		(message) => {
 			if (message.type == "optionsChanged")

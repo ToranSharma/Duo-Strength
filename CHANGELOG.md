@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v1.3.1] - 2020-04-12
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.1)
+### Fixed
+- Firefox issue with chrome runtime isInstalled check to prevent debug errors.
+
 [v1.3.0] - 2020-04-12
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.0)
@@ -684,6 +690,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.0...v1.3.1
 [v1.3.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.11...v1.3.0
 [v1.2.11]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.10...v1.2.11
 [v1.2.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.9...v1.2.10

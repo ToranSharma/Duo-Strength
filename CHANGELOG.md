@@ -20,6 +20,8 @@ today, but this is now possible without meeting the daily goal.
 ### Fixed
 - Prediction dates by calendar to check if number of lessons for current 
 language that are useable is not zero.
+- Strength bar and skill suggestion handling of intro lesson when first
+starting a new language.
 
 [v1.3.2] - 2020-04-13
 -----------------

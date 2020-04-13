@@ -1073,7 +1073,10 @@ function addStrengthBars(strengths)
 	for (let i=0; i<skillElements.length; i++)
 	{
 		let elementContents;
-		if (skillElements[i].getAttribute("data-test") == "skill")
+		if (
+			skillElements[i].getAttribute("data-test") == "skill" ||
+			skillElements[i].getAttribute("data-test") == "intro-lesson"
+		)
 		{
 			elementContents = [
 				skillElements[i].querySelector(`[data-test="skill-icon"]`),
@@ -2789,9 +2792,9 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	else
 	{
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
-		if(onMainPage)
+		if(onMainPage && document.querySelector(`[data-test="intro-lesson"]`) == null)
 		{
-			setTimeout(function(){displaySuggestion(skills, fullyStrengthened, noCrackedSkills);}, 50);
+			setTimeout(function(){displaySuggestion(fullyStrengthened, noCrackedSkills);}, 50);
 		}
 		else
 		{

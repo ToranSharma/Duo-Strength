@@ -5,6 +5,24 @@ Changelog
 ------------
 -
 
+[v1.3.3] - 2020-04-13
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.3)
+### Added
+- Version number to options page heading for easy viewing.
+
+### Changed
+- hasMetGoal function has been updated to calculate XP earned today and compare
+that to the daily goal. Before it was checked if the streak had been extended
+today, but this is now possible without meeting the daily goal.
+- Languages with 0 total XP are no longer displayed in the languages info box.
+
+### Fixed
+- Prediction dates by calendar to check if number of lessons for current 
+language that are useable is not zero.
+- Strength bar and skill suggestion handling of intro lesson when first
+starting a new language.
+
 [v1.3.2] - 2020-04-13
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.2)
@@ -698,6 +716,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.2...v1.3.3
 [v1.3.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.1...v1.3.2
 [v1.3.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.0...v1.3.1
 [v1.3.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.11...v1.3.0

@@ -8,6 +8,9 @@ Changelog
 [v1.3.3] - 2020-04-13
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.3)
+### Added
+- Version number to options page heading for easy viewing.
+
 ### Changed
 - hasMetGoal function has been updated to calculate XP earned today and compare
 that to the daily goal. Before it was checked if the streak had been extended

@@ -1885,9 +1885,11 @@ function getCrackedSkills()
 
 function getLanguagesInfo()
 {
-	languages = userData.languages.filter(language => language.learning);
+	const languages = userData.languages
+		.filter(language => language.learning) // Only select languages that are being learnt.
+		.filter(language => language.points != 0); // Remove languages that have 0 XP as they aren't really being learnt.
 	
-	languagesInfo = languages.map(language => [
+	const languagesInfo = languages.map(language => [
 		language.language_string,
 		language.level,
 		language.points,

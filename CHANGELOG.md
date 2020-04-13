@@ -15,6 +15,7 @@ Changelog
 - hasMetGoal function has been updated to calculate XP earned today and compare
 that to the daily goal. Before it was checked if the streak had been extended
 today, but this is now possible without meeting the daily goal.
+- Languages with 0 total XP are no longer displayed in the languages info box.
 
 ### Fixed
 - Prediction dates by calendar to check if number of lessons for current 

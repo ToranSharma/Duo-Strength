@@ -5,6 +5,18 @@ Changelog
 ------------
 -
 
+[v1.3.3] - 2020-04-13
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.3)
+### Changed
+- hasMetGoal function has been updated to calculate XP earned today and compare
+that to the daily goal. Before it was checked if the streak had been extended
+today, but this is now possible without meeting the daily goal.
+
+### Fixed
+- Prediction dates by calendar to check if number of lessons for current 
+language that are useable is not zero.
+
 [v1.3.2] - 2020-04-13
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.2)
@@ -698,6 +710,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.2...v1.3.3
 [v1.3.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.1...v1.3.2
 [v1.3.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.0...v1.3.1
 [v1.3.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.2.11...v1.3.0

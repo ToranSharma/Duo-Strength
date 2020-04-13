@@ -361,7 +361,21 @@ function removeWordsButton()
 
 function hasMetGoal()
 {
-	return userData.streak_extended_today;
+	const goal = userData.daily_goal;
+	const currentDate = (new Date()).setHours(0,0,0,0);
+	const lessonsToday = userData.calendar.filter(
+		(entry) => {
+			const day = (new Date(entry.datetime)).setHours(0,0,0,0);
+			return day == currentDate;
+		}
+	);
+	
+	const XPToday = lessonsToday.reduce(
+		(total, lesson) => {
+			return total + lesson.improvement;
+		}, 0)
+
+	return XPToday >= goal;
 }
 
 function currentProgress()
@@ -517,29 +531,40 @@ function currentLanguageHistory()
 
 function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 {
+	const currentDate = (new Date()).setHours(0,0,0,0);
+	const metGoal = hasMetGoal();
+
 	if (history.length == 0)
-	{
 		return -1;
-	}
+
 	let xpTotal = 0;
 	
-	let firstDate = (new Date(history[0].datetime)).setHours(0,0,0,0);
+	const firstDate = (new Date(history[0].datetime)).setHours(0,0,0,0);
+	if (firstDate == currentDate && !metGoal)
+	{
+		// The only data from this language is for today and the goal has yet to me met.
+		return -1;
+	}
+
 	let lastDate;
 
-	for (let lesson of history)
+	for (const lesson of history)
 	{
-		xpTotal += lesson.improvement;
-		let date = (new Date(lesson.datetime)).setHours(0,0,0,0);
-		lastDate = date;
+		const date = (new Date(lesson.datetime)).setHours(0,0,0,0);
+		if (date != currentDate || metGoal)
+		{
+			// Not from today
+			// or it is and the goal has been met
+			xpTotal += lesson.improvement;
+			lastDate = date;
+		}
+		else
+		{
+			// otherwise ignore
+		}
 	}
-
-	let currentDate = (new Date()).setHours(0,0,0,0);
-
-	if (lastDate != currentDate || !hasMetGoal())
-	{
-		// lastDate isn't today or it is and the goal hasn't been met, so we don't include today in the calculation, use yesterday
-		lastDate = currentDate - (24*60*60*1000);
-	}
+	// Note that lastDate cannot be undefined as that would mean all lessons in history were today and the goal had not been met.
+	// But we would have exited before as firstDate would have then been today, and the goal was not met.
 
 	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // number of days, inclusive of start and end.
 
@@ -583,13 +608,23 @@ function daysToNextCrownLevelByCalendar()
 
 	let currentDay = (new Date()).setHours(0,0,0,0);	
 
-	const practiceTimes = calendar.map(
+	let practiceTimes = calendar.map(
 		(lesson) => {
 			return (new Date(lesson.datetime)).setHours(0,0,0,0);
 		}
-	).filter(lessonDay => lessonDay != currentDay);
+	);
+	
+	if (!hasMetGoal())
+	{
+		// Not met the goal today so don't use data from today.
+		practiceTimes = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+	}
 
 	const numLessons = practiceTimes.length;
+	
+	if (numLessons == 0) // possible if only calendar entries for this language are from today, and we have't met our goal
+		return -1;
+
 	const firstDay = practiceTimes[0]; // assuming sorted acending.
 	let lastDay = practiceTimes[numLessons - 1];
 
@@ -631,14 +666,23 @@ function daysToNextCheckpointByCalendar()
 
 	const currentDay = (new Date()).setHours(0,0,0,0);
 
-	const practiceTimes = calendar.map(
+	let practiceTimes = calendar.map(
 		(lesson) => {
 			return (new Date(lesson.datetime)).setHours(0,0,0,0);
 		}
-	).filter(lessonDay => lessonDay != currentDay);
+	);
 
+	if (!hasMetGoal())
+	{
+		// Not met the goal today so don't use data from today.
+		practiceTimes = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+	}
 	
 	const numLessons = practiceTimes.length;
+
+	if (numLessons == 0) // possible if only calendar entries for this language are from today, and we have't met our goal
+		return 0;
+
 	const firstDay = practiceTimes[0];
 	let lastDay = practiceTimes[numLessons - 1];
 
@@ -1029,7 +1073,10 @@ function addStrengthBars(strengths)
 	for (let i=0; i<skillElements.length; i++)
 	{
 		let elementContents;
-		if (skillElements[i].getAttribute("data-test") == "skill")
+		if (
+			skillElements[i].getAttribute("data-test") == "skill" ||
+			skillElements[i].getAttribute("data-test") == "intro-lesson"
+		)
 		{
 			elementContents = [
 				skillElements[i].querySelector(`[data-test="skill-icon"]`),
@@ -1841,9 +1888,11 @@ function getCrackedSkills()
 
 function getLanguagesInfo()
 {
-	languages = userData.languages.filter(language => language.learning);
+	const languages = userData.languages
+		.filter(language => language.learning) // Only select languages that are being learnt.
+		.filter(language => language.points != 0); // Remove languages that have 0 XP as they aren't really being learnt.
 	
-	languagesInfo = languages.map(language => [
+	const languagesInfo = languages.map(language => [
 		language.language_string,
 		language.level,
 		language.points,
@@ -2743,9 +2792,9 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	else
 	{
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
-		if(onMainPage)
+		if(onMainPage && document.querySelector(`[data-test="intro-lesson"]`) == null)
 		{
-			setTimeout(function(){displaySuggestion(skills, fullyStrengthened, noCrackedSkills);}, 50);
+			setTimeout(function(){displaySuggestion(fullyStrengthened, noCrackedSkills);}, 50);
 		}
 		else
 		{

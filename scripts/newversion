@@ -47,7 +47,7 @@ git checkout $PARENTBRANCH
 git checkout -b "$BRANCHTYPE-$VERNUM"
 
 sed -i -b "/\"version\"/ s/$OLDVERNUM/$VERNUM/" manifest.json
-sed -b -b "/id=\"version\"/ s/$OLDVERNUM/$VERNUM/" options.html
+sed -i -b "/id=\"version\"/ s/$OLDVERNUM/$VERNUM/" options.html
 
 git add manifest.json
 git commit -m "Increment version number to $VERNUM"

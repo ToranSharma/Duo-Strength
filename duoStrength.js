@@ -346,6 +346,15 @@ function removeLanguagesInfo()
 		languagesInfoBox.parentNode.removeChild(languagesInfoBox);
 }
 
+function removePractiseButton()
+{
+	const practiseButton = document.querySelector(`[data-test="practise-button"]`);
+	if (practiseButton != null)
+	{
+		practiseButton.remove();
+	}
+}
+
 function removeWordsButton()
 {
 	const wordsButton = document.querySelector(`[data-test="words-button"]`);
@@ -1761,12 +1770,14 @@ function addPractiseButton(skillPopout)
 	if (skillPopout == null)
 		return false;
 	
-	if (document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR) == null)
-		return false;
+	const levelContainer = document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR);
+	if (levelContainer == null)
+		return false; // Locked skill so don't do anything
 
-	const skillLevel = document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR).textContent.slice(-3,-2);
-	if (skillLevel == 5 || skillLevel == 0)
-		return false;
+	const skillLevel = levelContainer.textContent.slice(-3,-2);
+	const maxLevel = levelContainer.textContent.slice(-1);
+	if (skillLevel === maxLevel || skillLevel === "0")
+		return false; // Skill is at max level so only practising is possible
 
 	const startButton = document.querySelector(`[data-test="start-button"]`);
 	startButton.textContent = "START LESSON";
@@ -3164,6 +3175,7 @@ function addFeatures()
 			{
 				if (options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
 				{
+					// Want practise button and there isn't one.
 					const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
 					if (introLesson == null || !introLesson.contains(skillPopout))
 					{
@@ -3171,13 +3183,20 @@ function addFeatures()
 						addPractiseButton(skillPopout);
 					}
 				}
+				else if (!options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"`) != null)
+				{
+					// Don't want practise button but there is one. 
+					removePractiseButton();
+				}
 
 				if (options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) == null)
 				{
+					// Want words button and there isn't one
 					addWordsButton(skillPopout);
 				}
-				else
+				else if(!options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) != null)
 				{
+					// Don't want words button, but there is one.
 					removeWordsButton();
 				}
 			}
@@ -3507,7 +3526,7 @@ function hideTranslationText(reveal = false, setupObserver = true)
 					`;
 
 					const questionHeader = questionContainer.querySelector(`[data-test="challenge-header"]`);
-					questionHeader.style.width = `fit-content`;
+					questionHeader.style.width = `max-content`;
 					questionHeader.parentNode.insertBefore(headerContainer, questionHeader);
 					headerContainer.appendChild(questionHeader);
 

@@ -1761,12 +1761,14 @@ function addPractiseButton(skillPopout)
 	if (skillPopout == null)
 		return false;
 	
-	if (document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR) == null)
-		return false;
+	const levelContainer = document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR);
+	if (levelContainer == null)
+		return false; // Locked skill so don't do anything
 
-	const skillLevel = document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR).textContent.slice(-3,-2);
-	if (skillLevel == 5 || skillLevel == 0)
-		return false;
+	const skillLevel = levelContainer.textContent.slice(-3,-2);
+	const maxLevel = levelContainer.textContent.slice(-1);
+	if (skillLevel === maxLevel || skillLevel === "0")
+		return false; // Skill is at max level so only practising is possible
 
 	const startButton = document.querySelector(`[data-test="start-button"]`);
 	startButton.textContent = "START LESSON";

@@ -123,7 +123,7 @@
 		}
 		.hasSelect
 		{
-			grid-template-columns: 3em fit-content(100%) 1fr;
+			grid-template-columns: 3em max-content 1fr;
 		}
 			.hasSelect > label
 			{
@@ -136,7 +136,7 @@
 		}
 		.selectFirst
 		{
-			grid-template-columns: fit-content(100%) 1fr;
+			grid-template-columns: max-content 1fr;
 		}
 			.selectFirst > label
 			{
@@ -144,7 +144,7 @@
 			}
 		.labelFirst
 		{
-			grid-template-columns: 3em fit-content(calc(100% - 6em)) 3em;
+			grid-template-columns: 3em max-content 3em;
 		}
 			.labelFirst > label
 			{
@@ -194,7 +194,7 @@
 			font-size: 100%;
 			z-index: 3;
 			box-sizing: border-box;
-			width: fit-content;
+			width: max-content;
 		}
 		select:disabled
 		{
@@ -227,7 +227,7 @@
 	</style>
 </head>
 <body>
-	<h1>Duo Strength Options <span id="version">v1.3.3</span></h1>
+	<h1>Duo Strength Options <span id="version">v1.3.4</span></h1>
 	<h2>Enable or Disable Features Here</h2>
 	<ul>
 		<li>

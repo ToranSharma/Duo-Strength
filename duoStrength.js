@@ -3526,7 +3526,7 @@ function hideTranslationText(reveal = false, setupObserver = true)
 					`;
 
 					const questionHeader = questionContainer.querySelector(`[data-test="challenge-header"]`);
-					questionHeader.style.width = `fit-content`;
+					questionHeader.style.width = `max-content`;
 					questionHeader.parentNode.insertBefore(headerContainer, questionHeader);
 					headerContainer.appendChild(questionHeader);
 

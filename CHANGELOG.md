@@ -5,6 +5,16 @@ Changelog
 ------------
 -
 
+[v1.3.4] - 2020-04-15
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.4)
+### Fixed
+- Practise Button removed from bonus skills as they are either L0 so unfinished
+or L1 and golden where only practising is possible.
+- Practise Button and Words Button response to options update while popup is
+displayed.
+- Enable/Disable Text Hiding button width to be consistent across browsers.
+
 [v1.3.3] - 2020-04-13
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.3)
@@ -716,6 +726,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.3...v1.3.4
 [v1.3.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.2...v1.3.3
 [v1.3.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.1...v1.3.2
 [v1.3.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.0...v1.3.1

@@ -346,6 +346,15 @@ function removeLanguagesInfo()
 		languagesInfoBox.parentNode.removeChild(languagesInfoBox);
 }
 
+function removePractiseButton()
+{
+	const practiseButton = document.querySelector(`[data-test="practise-button"]`);
+	if (practiseButton != null)
+	{
+		practiseButton.remove();
+	}
+}
+
 function removeWordsButton()
 {
 	const wordsButton = document.querySelector(`[data-test="words-button"]`);
@@ -3166,6 +3175,7 @@ function addFeatures()
 			{
 				if (options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
 				{
+					// Want practise button and there isn't one.
 					const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
 					if (introLesson == null || !introLesson.contains(skillPopout))
 					{
@@ -3173,13 +3183,20 @@ function addFeatures()
 						addPractiseButton(skillPopout);
 					}
 				}
+				else if (!options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"`) != null)
+				{
+					// Don't want practise button but there is one. 
+					removePractiseButton();
+				}
 
 				if (options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) == null)
 				{
+					// Want words button and there isn't one
 					addWordsButton(skillPopout);
 				}
-				else
+				else if(!options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) != null)
 				{
+					// Don't want words button, but there is one.
 					removeWordsButton();
 				}
 			}

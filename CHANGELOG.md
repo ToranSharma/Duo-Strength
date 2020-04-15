@@ -11,6 +11,8 @@ Changelog
 ### Fixed
 - Practise Button removed from bonus skills as they are either L0 so unfinished
 or L1 and golden where only practising is possible.
+- Practise Button and Words Button response to options update while popup is
+displayed.
 
 [v1.3.3] - 2020-04-13
 -----------------

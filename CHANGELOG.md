@@ -5,6 +5,20 @@ Changelog
 ------------
 -
 
+[v1.3.5] - 2020-04-18
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.5)
+### Changed
+- Skill popout is opened and then centred in the view when the tree is loaded
+after clicking the practise button.
+- Skill selector to only choose skills that are children of a tree section.
+This removes a conflict with
+[DuolingoNextLesson userscript](https://github.com/camiloaa/duolingonextlesson).
+
+### Fixed
+- Checkpoint redo buttons added to congratulation message shown when the golden
+owl which replaces the last checkpoint is clicked on.
+
 [v1.3.4] - 2020-04-15
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.4)
@@ -726,6 +740,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.4...v1.3.5
 [v1.3.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.3...v1.3.4
 [v1.3.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.2...v1.3.3
 [v1.3.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.1...v1.3.2

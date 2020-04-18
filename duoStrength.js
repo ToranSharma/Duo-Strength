@@ -49,12 +49,13 @@ const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = ".vwODZ";
 const SKILL_NAME_SELECTOR = "._2CXf4";
 const CHECKPOINT_CONTAINER_SELECTOR = "._3Lrsa";
 const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB";
+const CHECKPOINT_BLURB_SELECTOR = "._3-EWe";
 const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
 const SMALL_BUTTONS_CONTAINER = "_2DR3u";
 const SMALL_BUTTON = "_32WtB _2i-mO _1LZ7U vy3TL _3iIWE _1Mkpg _1Dtxl _1sVAI sweRn _1BWZU _26exN QVrnU";
 const LOCKED_POPOUT = "_1PDfx";
 
-const SKILL_SELECTOR = `[data-test="skill-tree"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href]`;
+const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 
 const flagYOffsets = {
@@ -94,6 +95,8 @@ let mobileTopBarDiv;
 
 let onMainPage;
 let inMobileLayout;
+
+let lastSkill;
 
 function retrieveOptions()
 {
@@ -246,6 +249,25 @@ function updateProgress()
 
 	storeProgressHistory();
 	return true;
+}
+
+function retrieveLastSkill()
+{
+	return new Promise(
+		function (resolve, reject)
+		{
+			chrome.storage.sync.get("lastSkill", function (data)
+				{
+					resolve(data.lastSkill);
+				}
+			);
+		}
+	);
+}
+
+function resetLastSkillStorage()
+{
+	chrome.storage.sync.remove("lastSkill");
 }
 
 function resetLanguageFlags()
@@ -921,6 +943,24 @@ function graphSVG(data, ratio=1.5)
 	graph.appendChild(points);
 
 	return graph;
+}
+
+async function openLastSkillPopout()
+{
+	if (lastSkill == null)
+		return false;
+
+	const skillName = lastSkill.skillName;
+
+	const skillNameElement = Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).find(elem => elem.textContent == skillName);
+	if (skillNameElement == null)
+		return false;
+
+	skillNameElement.click();
+	resetLastSkillStorage();
+	lastSkill = undefined;
+
+	return true;
 }
 
 function addFlagBorders()
@@ -1796,6 +1836,14 @@ function addPractiseButton(skillPopout)
 
 	const urlTitle = getSkillFromPopout(skillPopout).url_title;
 	practiseButton.addEventListener("click", (event) => {
+		const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
+		const lastSkill = {
+			skillName: skillName,
+			urlTitle: urlTitle
+		};
+
+		chrome.storage.sync.set({lastSkill: lastSkill});
+
 		window.location = `/skill/${languageCode}/${urlTitle}/practice`;
 	});
 
@@ -1804,20 +1852,31 @@ function addPractiseButton(skillPopout)
 	skillPopout.scrollIntoView({block: "center"});
 }
 
-function addCheckpointButtons(checkpointPopout)
+function addCheckpointButtons(checkpointPopout, completedMessage = false)
 {
 	if (checkpointPopout == null)
 		return false;
 
-	if (checkpointPopout.querySelector(`[data-test="checkpoint-start-button"]`) != null)
+	if (!completedMessage && checkpointPopout.querySelector(`[data-test="checkpoint-start-button"]`) != null)
 		return false;
 
-	const checkpointNumber = Array.from(document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR)).indexOf(checkpointPopout.parentNode);
-	popoutContent = checkpointPopout.firstChild.firstChild;
+	let checkpointNumber;
+	if (!completedMessage)
+	{
+		checkpointNumber = Array.from(document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR)).indexOf(checkpointPopout.parentNode);
+		popoutContent = checkpointPopout.firstChild.firstChild;
+	}
+	else
+	{
+		// CHECKPOINT_CONTAINER_SELECTOR only selects completed checkpoint castles and not the golden owl
+		// so the last checkpoint in this case is one more than last checkpoint.
+		checkpointNumber = document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR).length;
+		popoutContent = checkpointPopout;
+	}
 
 	oml = function ()
 	{
-		this.style.boxShadow = `0 0.25em rgba(255, 255, 255, 0.5)`;
+		this.style.boxShadow = `0 0.25em ${(!completedMessage) ? "rgba(255, 255, 255, 0.5)" : "grey"}`;
 		this.style.transform = "none";
 	};
 	omd = function ()
@@ -1827,7 +1886,7 @@ function addCheckpointButtons(checkpointPopout)
 	};
 	omu = function ()
 	{
-		this.style.boxShadow = `0 0.25em rgba(255, 255, 255, 0.5)`;
+		this.style.boxShadow = `0 0.25em ${(!completedMessage) ? "rgba(255, 255, 255, 0.5)" : "grey"}`;
 		this.style.transform = "none";
 	};
 
@@ -1848,6 +1907,23 @@ function addCheckpointButtons(checkpointPopout)
 		transition: filter 0.2s;
 		cursor: pointer;
 	`;
+
+
+	if (completedMessage)
+	{
+		redoTestButton.style.border = `2px solid grey`;
+		redoTestButton.style.color = "grey";
+		redoTestButton.style.backgroundColor = GOLD;
+		redoTestButton.style.width = "75%";
+		redoTestButton.style.alignSelf = "center";
+		redoTestButton.style.boxShadow = `0 0.25em grey`;
+
+		popoutContent.style.padding = "0 0 0.5em 0"
+	}
+	else if (checkpointPopout.querySelector(CHECKPOINT_BLURB_SELECTOR) == null)
+	{
+		popoutContent.style.width = "300px";
+	}
 
 	redoTestButton.addEventListener("mouseleave", oml);
 	redoTestButton.addEventListener("mousedown", omd);
@@ -3606,6 +3682,7 @@ let childListMutationHandle = function(mutationsList, observer)
 {
 	let rootChildReplaced = false;
 	let rootChildContentsReplaced = false;
+	let rootChildRemovedNodes = [];
 	let mainBodyReplaced = false
 	let sidebarToggled = false;
 	let popupChanged = false;
@@ -3624,7 +3701,10 @@ let childListMutationHandle = function(mutationsList, observer)
 		if (mutation.target == rootElem)
 			rootChildReplaced = true;
 		else if (mutation.target == rootChild)
+		{
 			rootChildContentsReplaced = true;
+			rootChildRemovedNodes = rootChildRemovedNodes.concat(Array.from(mutation.removedNodes));
+		}
 		else if (mutation.target == mainBodyContainer)
 			mainBodyReplaced = true;
 		else if (
@@ -3687,19 +3767,43 @@ let childListMutationHandle = function(mutationsList, observer)
 	}
 	else if (rootChildContentsReplaced)
 	{
-		// Check if there is both the topbar and the main page elem.
-		if (rootChild.childElementCount == 2)
+		if (
+			rootChildRemovedNodes.find(
+				(node) => {
+					return node.querySelector(`[src$="trophy.svg"]`) != null;
+				}
+			) != null
+		)
 		{
-			// not just changed into a lesson
-			languageChanged = false;
-			init();
+			// The trophy image was the descendant of one of the removed nodes.
+			// Don't need to do anything.
 		}
 		else
 		{
-			// Entered a lesson in the normal way, through the skill tree.
-			// Need to set up observer on lessonMainSection for when the first question loads
+			// Check if there is both the topbar and the main page elem.
+			if (rootChild.childElementCount == 2)
+			{
+				// not just changed into a lesson
+				languageChanged = false;
+				init();
+			}
+			else if (rootChild.childElementCount == 1)
+			{
+				// Entered a lesson in the normal way, through the skill tree.
+				// Need to set up observer on lessonMainSection for when the first question loads
 
-			childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0], {childList:true});
+				childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0], {childList:true});
+			}
+			else 
+			{
+				const trophy = rootChild.querySelector(`[src$="trophy.svg"]`);
+				if (trophy != null)
+				{
+					// The golden owl has been clicked and the congratulation message is being displayed
+					const messageContainer = trophy.nextElementSibling;
+					addCheckpointButtons(messageContainer, true);
+				}
+			}
 		}
 	}
 	else if (mainBodyReplaced)
@@ -4039,7 +4143,7 @@ async function init()
 		if (rootChild.firstChild.className == LESSON)
 		{
 			// in a lesson
-			// we probably got here from a link in the needs strengthening list
+			// we probably got here from a link in the needs strengthening list or from a practiseButton
 
 			onMainPage = false;
 
@@ -4052,6 +4156,18 @@ async function init()
 
 			await optionsLoaded;
 			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
+
+			lastSkill = await retrieveLastSkill();
+			const pageUrl = window.location.href;
+			if (lastSkill != null && !pageUrl.includes(`/${lastSkill.urlTitle}/practice`))
+			{
+				// The lesson we have just entered does not match the lastSkill that was stored.
+				// We must has closed duolingo before it could be cleared properly after the lesson
+				// Let's clear this up now.
+				chrome.storage.sync.remove("lastSkill");
+				lastSkill = undefined;
+			}
+
 		}
 		else
 		{
@@ -4164,6 +4280,8 @@ async function init()
 					else
 						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
 				}
+
+				await openLastSkillPopout();
 
 				const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
 

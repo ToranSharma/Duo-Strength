@@ -95,6 +95,8 @@ let mobileTopBarDiv;
 let onMainPage;
 let inMobileLayout;
 
+let lastSkill;
+
 function retrieveOptions()
 {
 	return new Promise(function (resolve, reject){
@@ -246,6 +248,25 @@ function updateProgress()
 
 	storeProgressHistory();
 	return true;
+}
+
+function retrieveLastSkill()
+{
+	return new Promise(
+		function (resolve, reject)
+		{
+			chrome.storage.sync.get("lastSkill", function (data)
+				{
+					resolve(data.lastSkill);
+				}
+			);
+		}
+	);
+}
+
+function resetLastSkillStorage()
+{
+	chrome.storage.sync.remove("lastSkill");
 }
 
 function resetLanguageFlags()
@@ -921,6 +942,24 @@ function graphSVG(data, ratio=1.5)
 	graph.appendChild(points);
 
 	return graph;
+}
+
+async function openLastSkillPopout()
+{
+	if (lastSkill == null)
+		return false;
+
+	const skillName = lastSkill.skillName;
+
+	const skillNameElement = Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).find(elem => elem.textContent == skillName);
+	if (skillNameElement == null)
+		return false;
+
+	skillNameElement.click();
+	resetLastSkillStorage();
+	lastSkill = undefined;
+
+	return true;
 }
 
 function addFlagBorders()
@@ -1796,6 +1835,14 @@ function addPractiseButton(skillPopout)
 
 	const urlTitle = getSkillFromPopout(skillPopout).url_title;
 	practiseButton.addEventListener("click", (event) => {
+		const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
+		const lastSkill = {
+			skillName: skillName,
+			urlTitle: urlTitle
+		};
+
+		chrome.storage.sync.set({lastSkill: lastSkill});
+
 		window.location = `/skill/${languageCode}/${urlTitle}/practice`;
 	});
 
@@ -4039,7 +4086,7 @@ async function init()
 		if (rootChild.firstChild.className == LESSON)
 		{
 			// in a lesson
-			// we probably got here from a link in the needs strengthening list
+			// we probably got here from a link in the needs strengthening list or from a practiseButton
 
 			onMainPage = false;
 
@@ -4052,6 +4099,18 @@ async function init()
 
 			await optionsLoaded;
 			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
+
+			lastSkill = await retrieveLastSkill();
+			const pageUrl = window.location.href;
+			if (!pageUrl.includes(`/${lastSkill.urlTitle}/practice`))
+			{
+				// The lesson we have just entered does not match the lastSkill that was stored.
+				// We must has closed duolingo before it could be cleared properly after the lesson
+				// Let's clear this up now.
+				chrome.storage.sync.remove("lastSkill");
+				lastSkill = undefined;
+			}
+
 		}
 		else
 		{
@@ -4164,6 +4223,8 @@ async function init()
 					else
 						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
 				}
+
+				await openLastSkillPopout();
 
 				const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
 

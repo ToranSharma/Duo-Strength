@@ -50,6 +50,7 @@ sed -i -b "/\"version\"/ s/$OLDVERNUM/$VERNUM/" manifest.json
 sed -i -b "/id=\"version\"/ s/$OLDVERNUM/$VERNUM/" options.html
 
 git add manifest.json
+git add options.html
 git commit -m "Increment version number to $VERNUM"
 
 DATE=$( date +"%F" )

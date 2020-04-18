@@ -11,6 +11,9 @@ Changelog
 ### Changed
 - Skill popout is opened and then centred in the view when the tree is loaded
 after clicking the practise button.
+- Skill selector to only choose skills that are children of a tree section.
+This removes a conflict with
+[DuolingoNextLesson userscript](https://github.com/camiloaa/duolingonextlesson).
 
 ### Fixed
 - Checkpoint redo buttons added to congratulation message shown when the golden

@@ -55,7 +55,7 @@ const SMALL_BUTTONS_CONTAINER = "_2DR3u";
 const SMALL_BUTTON = "_32WtB _2i-mO _1LZ7U vy3TL _3iIWE _1Mkpg _1Dtxl _1sVAI sweRn _1BWZU _26exN QVrnU";
 const LOCKED_POPOUT = "_1PDfx";
 
-const SKILL_SELECTOR = `[data-test="skill-tree"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href]`;
+const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 
 const flagYOffsets = {

@@ -12,6 +12,10 @@ Changelog
 - Skill popout is opened and then centred in the view when the tree is loaded
 after clicking the practise button.
 
+### Fixed
+- Checkpoint redo buttons added to congratulation message shown when the golden
+owl which replaces the last checkpoint is clicked on.
+
 [v1.3.4] - 2020-04-15
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.4)

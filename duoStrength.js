@@ -4159,7 +4159,7 @@ async function init()
 
 			lastSkill = await retrieveLastSkill();
 			const pageUrl = window.location.href;
-			if (!pageUrl.includes(`/${lastSkill.urlTitle}/practice`))
+			if (lastSkill != null && !pageUrl.includes(`/${lastSkill.urlTitle}/practice`))
 			{
 				// The lesson we have just entered does not match the lastSkill that was stored.
 				// We must has closed duolingo before it could be cleared properly after the lesson

@@ -1712,6 +1712,10 @@ function addWordsButton(skillPopout)
 		display: flex;
 		justify-content: flex-end;
 	`;
+
+	smallButtonsContainer.parentNode.style = `
+		overflow: visible;
+	`;
 	
 	wordsButton.setAttribute("data-test", "words-button");
 	wordsButton.textContent = "Words";

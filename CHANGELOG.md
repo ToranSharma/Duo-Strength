@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v1.3.6] - 2020-04-19
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.6)
+### Fixed
+- Words list bubble being cut off if longer than the skill popout below.
+
 [v1.3.5] - 2020-04-18
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.5)
@@ -740,6 +746,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.5...v1.3.6
 [v1.3.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.4...v1.3.5
 [v1.3.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.3...v1.3.4
 [v1.3.3]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.2...v1.3.3

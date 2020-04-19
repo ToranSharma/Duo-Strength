@@ -54,9 +54,11 @@ const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
 const SMALL_BUTTONS_CONTAINER = "_2DR3u";
 const SMALL_BUTTON = "_32WtB _2i-mO _1LZ7U vy3TL _3iIWE _1Mkpg _1Dtxl _1sVAI sweRn _1BWZU _26exN QVrnU";
 const LOCKED_POPOUT = "_1PDfx";
+const GOLDEN_OWL_CHECKPOINT_SELECTOR = `._1FtA8`;
 
 const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
+const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -388,6 +390,22 @@ function removeWordsButton()
 	const wordsListBubble = document.querySelector(`#wordsListBubble`);
 	if (wordsListBubble != null)
 		wordsListBubble.remove();
+}
+
+function removeCheckpointButtons()
+{
+	const redoTestButton = document.querySelector(`[data-test="redo-test-button"]`);
+	if (redoTestButton != null)
+	{
+		redoTestButton.parentNode.removeAttribute("style");
+		redoTestButton.remove();
+	}
+
+	const testOutButton = document.querySelector(`[data-test="test-out-button"]`);
+	if (testOutButton != null)
+	{
+		testOutButton.remove();
+	}
 }
 
 function hasMetGoal()
@@ -951,12 +969,33 @@ async function openLastSkillPopout()
 		return false;
 
 	const skillName = lastSkill.skillName;
+	const checkpointNumber = lastSkill.checkpointNumber;
 
-	const skillNameElement = Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).find(elem => elem.textContent == skillName);
-	if (skillNameElement == null)
-		return false;
+	if (skillName != null)
+	{
+		const skillNameElement = Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).find(elem => elem.textContent == skillName);
+		if (skillNameElement == null)
+			return false;
 
-	skillNameElement.click();
+		skillNameElement.click();
+	}
+	else if (checkpointNumber != null)
+	{
+		const checkpointElements = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR));
+		if (checkpointNumber < checkpointElements.length)
+		{
+			checkpointElements[checkpointNumber].click();
+		}
+		else
+		{
+			const goldenOwlCheckpoint = document.querySelector(GOLDEN_OWL_CHECKPOINT_SELECTOR);
+			if (goldenOwlCheckpoint == null)
+				return false;
+
+			goldenOwlCheckpoint.click();
+		}
+	}
+
 	resetLastSkillStorage();
 	lastSkill = undefined;
 
@@ -1712,6 +1751,10 @@ function addWordsButton(skillPopout)
 		display: flex;
 		justify-content: flex-end;
 	`;
+
+	smallButtonsContainer.parentNode.style = `
+		overflow: visible;
+	`;
 	
 	wordsButton.setAttribute("data-test", "words-button");
 	wordsButton.textContent = "Words";
@@ -1891,6 +1934,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 	};
 
 	const redoTestButton = document.createElement("BUTTON");
+	redoTestButton.setAttribute("data-test", "redo-test-button");
 	redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
 	redoTestButton.style = 
 	`
@@ -1925,18 +1969,36 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		popoutContent.style.width = "300px";
 	}
 
+	const storeCheckpointSource = () => {
+		const lastSkill = {
+			checkpointNumber: checkpointNumber
+		}
+		chrome.storage.sync.set({lastSkill: lastSkill});
+	};
+
 	redoTestButton.addEventListener("mouseleave", oml);
 	redoTestButton.addEventListener("mousedown", omd);
 	redoTestButton.addEventListener("mouseup", omu);
-	redoTestButton.addEventListener("click", () => window.location = `/checkpoint/${languageCode}/${checkpointNumber}`);
+	redoTestButton.addEventListener("click",
+		(event) => {
+			storeCheckpointSource();
+			window.location = `/checkpoint/${languageCode}/${checkpointNumber}`;
+		}
+	);
 
 	testOutButton = redoTestButton.cloneNode(true);
 	testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
+	testOutButton.setAttribute("data-test", "test-out-button");
 
 	testOutButton.addEventListener("mouseleave", oml);
 	testOutButton.addEventListener("mousedown", omd);
 	testOutButton.addEventListener("mouseup", omu);
-	testOutButton.addEventListener("click", () => window.location = `/bigtest/${languageCode}/${checkpointNumber}`);
+	testOutButton.addEventListener("click",
+		(event) => {
+			storeCheckpointSource();
+			window.location = `/bigtest/${languageCode}/${checkpointNumber}`
+		}
+	);
 			
 
 	popoutContent.appendChild(redoTestButton);
@@ -3259,21 +3321,11 @@ function addFeatures()
 						addPractiseButton(skillPopout);
 					}
 				}
-				else if (!options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"`) != null)
-				{
-					// Don't want practise button but there is one. 
-					removePractiseButton();
-				}
 
 				if (options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) == null)
 				{
 					// Want words button and there isn't one
 					addWordsButton(skillPopout);
-				}
-				else if(!options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) != null)
-				{
-					// Don't want words button, but there is one.
-					removeWordsButton();
 				}
 			}
 
@@ -3284,18 +3336,40 @@ function addFeatures()
 				}
 			);
 		}
-
-		if (skillPopout != null)
-			skillPopout.scrollIntoView({block: "center"});
+		if (!options.practiseButton)
+		{
+			// Don't want practise button, let's remove it if there is one there.
+			removePractiseButton();
+		}
+		if (!options.wordsButton)
+		{
+			// Don't want words button, let's remove it if there is one there.
+			removeWordsButton();
+		}
 	}
 
 	// Redo checkpoint buttons on checkpoint popouts
 	{
 		if (options.checkpointButtons)
 		{
-			const checkpointPopout = document.querySelector(CHECKPOINT_POPOUT_SELECTOR);
-			if (checkpointPopout != null)
-				addCheckpointButtons(checkpointPopout);
+			if (document.querySelector(`[data-test="redo-test-button"]`) == null)
+			{
+				// Want checkpoint buttons and don't have any.
+				const checkpointPopout = document.querySelector(CHECKPOINT_POPOUT_SELECTOR);
+				const goldenOwlTrophy = document.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR);
+				if (checkpointPopout != null)
+				{
+					// There is a normal checkpoint popout displayed, let's add the buttons to it.
+					addCheckpointButtons(checkpointPopout);
+				}
+				else if (goldenOwlTrophy != null)
+				{
+					// The golden owl trophy congratulation message is displayed, let's add the buttons after the message.
+					const messageContainer = goldenOwlTrophy.nextElementSibling;
+					addCheckpointButtons(messageContainer, true);
+				}
+			}
+
 			
 			// Add each checkpoint to childListObserver
 			document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR).forEach(
@@ -3304,6 +3378,18 @@ function addFeatures()
 				}
 			);
 		}
+		else
+		{
+			// Don't want the checkpoint point buttons, let's remove any that might exists
+			removeCheckpointButtons();
+		}
+	}
+
+	// Centre the view on any skill or checkpoint popout
+	{
+		const popout = document.querySelector(`[data-test="skill-popout"], ${CHECKPOINT_POPOUT_SELECTOR}`);
+		if (popout != null)
+			popout.scrollIntoView({block: "center"});
 	}
 
 	// Flag Borders in Language List
@@ -3770,7 +3856,7 @@ let childListMutationHandle = function(mutationsList, observer)
 		if (
 			rootChildRemovedNodes.find(
 				(node) => {
-					return node.querySelector(`[src$="trophy.svg"]`) != null;
+					return node.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR) != null;
 				}
 			) != null
 		)
@@ -3796,12 +3882,22 @@ let childListMutationHandle = function(mutationsList, observer)
 			}
 			else 
 			{
-				const trophy = rootChild.querySelector(`[src$="trophy.svg"]`);
+				const trophy = rootChild.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR);
 				if (trophy != null)
 				{
 					// The golden owl has been clicked and the congratulation message is being displayed
 					const messageContainer = trophy.nextElementSibling;
-					addCheckpointButtons(messageContainer, true);
+					// If the message is shown after coming out of a checkpoint redo
+					// then the languageCode may not be known yet.
+					if (languageCode != "")
+					{
+						// It is known so add the buttons.
+						addCheckpointButtons(messageContainer, true);
+					}
+					else
+					{
+						// It isn't known yet so we do nothing until it is loaded and the buttons will be added in addFeatures
+					}
 				}
 			}
 		}
@@ -4111,9 +4207,18 @@ async function init()
 	rootChild = rootElem.childNodes[0];
 	childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
 	
-	mainBodyContainer = rootChild.lastChild;
-	if (mainBodyContainer == null)
-		return false;
+	if (rootChild.querySelector(`:scope > [data-focus-guard]`) != null)
+	{
+		// The golden owl message is being displayed.
+		// This means that the mainBodyCointainer is just before these new elements as the second child of rootChild
+		mainBodyCointainer = rootChild.querySelector(`:scope > [data-focus-guard]`).previousElementSibling;
+	}
+	else
+	{
+		mainBodyContainer = rootChild.lastChild;
+		if (mainBodyContainer == null)
+			return false;
+	}
 
 	childListObserver.observe(mainBodyContainer, {childList:true}); // Observing for changes to its children to detect if the mainBody element has been replaced.
 
@@ -4159,10 +4264,34 @@ async function init()
 
 			lastSkill = await retrieveLastSkill();
 			const pageUrl = window.location.href;
-			if (lastSkill != null && !pageUrl.includes(`/${lastSkill.urlTitle}/practice`))
+			let currentUrlNotStored = true;
+			{
+				const somethingIsStored = lastSkill != null;
+				if (somethingIsStored && lastSkill.urlTitle != null)
+				{
+					// Stored last skill was a practice session.
+					if (pageUrl.includes(`/${lastSkill.urlTitle}/practice`))
+					{
+						// The current url matches up with the practice session stored.
+						currentUrlNotStored = false;
+					}
+				}
+
+				if (somethingIsStored && lastSkill.checkpointNumber != null)
+				{
+					// Stored last skill was a checkpoint
+					if (pageUrl.includes(`/${lastSkill.checkpointNumber}`))
+					{
+						// The current url matched up with the checkpoint stored.
+						currentUrlNotStored = false;
+					}
+				}
+			}
+
+			if (currentUrlNotStored)
 			{
 				// The lesson we have just entered does not match the lastSkill that was stored.
-				// We must has closed duolingo before it could be cleared properly after the lesson
+				// We must have closed duolingo before it could be cleared properly after the lesson
 				// Let's clear this up now.
 				chrome.storage.sync.remove("lastSkill");
 				lastSkill = undefined;
@@ -4283,10 +4412,10 @@ async function init()
 
 				await openLastSkillPopout();
 
-				const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
+				const popout = document.querySelector(`[data-test="skill-popout"], ${CHECKPOINT_POPOUT_SELECTOR}`);
 
-				if (skillPopout != null)
-					skillPopout.scrollIntoView({block: "center"});
+				if (popout != null)
+					popout.scrollIntoView({block: "center"});
 
 				// Done all the prep we need, let's get some data to process
 				requestData();

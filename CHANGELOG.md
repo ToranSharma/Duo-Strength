@@ -8,8 +8,13 @@ Changelog
 [v1.3.6] - 2020-04-19
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.6)
+### Changed
+- Checkpoint popout is opened then centred in the view ehen the tree is loaded
+after clicking one of the checkpoint redo buttons.
+
 ### Fixed
 - Words list bubble being cut off if longer than the skill popout below.
+- Removal of checkpoint and skill popout addition buttons on options change.
 
 [v1.3.5] - 2020-04-18
 -----------------

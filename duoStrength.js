@@ -4207,9 +4207,18 @@ async function init()
 	rootChild = rootElem.childNodes[0];
 	childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
 	
-	mainBodyContainer = rootChild.lastChild;
-	if (mainBodyContainer == null)
-		return false;
+	if (rootChild.querySelector(`:scope > [data-focus-guard]`) != null)
+	{
+		// The golden owl message is being displayed.
+		// This means that the mainBodyCointainer is just before these new elements as the second child of rootChild
+		mainBodyCointainer = rootChild.querySelector(`:scope > [data-focus-guard]`).previousElementSibling;
+	}
+	else
+	{
+		mainBodyContainer = rootChild.lastChild;
+		if (mainBodyContainer == null)
+			return false;
+	}
 
 	childListObserver.observe(mainBodyContainer, {childList:true}); // Observing for changes to its children to detect if the mainBody element has been replaced.
 

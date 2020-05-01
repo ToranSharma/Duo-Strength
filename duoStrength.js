@@ -3918,11 +3918,11 @@ let childListMutationHandle = function(mutationsList, observer)
 
 
 		// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks.
-		// But also make sure that this page hasn't removed to top bar, if it has just stop.
+		// But also make sure that this page hasn't removed to top bar, if it has let's run init again to see what is going on.
 		if (document.body.contains(topBarDiv))
 			classNameMutationHandle(mutationsList, null);
 		else
-			return false;
+			init();
 	}
 
 	if (sidebarToggled)
@@ -4221,6 +4221,13 @@ async function init()
 		// The golden owl message is being displayed.
 		// This means that the mainBodyCointainer is just before these new elements as the second child of rootChild
 		mainBodyCointainer = rootChild.querySelector(`:scope > [data-focus-guard]`).previousElementSibling;
+	}
+	else if((/^\/courses/).test(window.location.pathname))
+	{
+		// On the courses page, here the main body container is the first child of rootChild for some reason.
+		mainBodyContainer = rootChild.firstChild;
+		if (mainBodyContainer == null)
+			return false;
 	}
 	else
 	{

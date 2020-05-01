@@ -18,6 +18,7 @@ displayed before we have any userData.
 ### Fixed
 - Detection of new words in sentences so that they are not hidden by the
 sentence hiding option.
+- Handling of the extension loading on the courses or words page.
 
 [v1.3.6] - 2020-04-19
 -----------------

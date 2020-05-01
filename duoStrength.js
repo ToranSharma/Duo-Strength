@@ -2037,8 +2037,11 @@ function getCrackedSkills()
 
 function getLanguagesInfo()
 {
-	const languages = userData.languages
-		.filter(language => language.learning) // Only select languages that are being learnt.
+	let languages = userData.languages;
+	if (languages === undefined)
+		return [];
+	
+	languages = languages.filter(language => language.learning) // Only select languages that are being learnt.
 		.filter(language => language.points != 0); // Remove languages that have 0 XP as they aren't really being learnt.
 	
 	const languagesInfo = languages.map(language => [
@@ -2784,6 +2787,12 @@ function displayLanguagesInfo(languages)
 	const sidebar = document.querySelector(`.${SIDEBAR}`);
 	if (sidebar == null)
 		return false;
+
+	if (languages.length == 0)
+	{
+		removeLanguagesInfo();
+		return false;
+	}
 
 	let languagesBox = document.getElementById("languagesBox");
 

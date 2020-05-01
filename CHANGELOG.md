@@ -11,6 +11,9 @@ Changelog
 ### Changed
 - Reworded reveal sentence hotkey option to make it clearer that it is only
 affects the current sentence.
+- Languages info now handles the case of there being no languages object of the
+user data being undefined. This would happen if the box is trying to be
+displayed before we have any userData.
 
 ### Fixed
 - Detection of new words in sentences so that they are not hidden by the

@@ -12,6 +12,10 @@ Changelog
 - Reworded reveal sentence hotkey option to make it clearer that it is only
 affects the current sentence.
 
+### Fixed
+- Detection of new words in sentences so that they are not hidden by the
+sentence hiding option.
+
 [v1.3.6] - 2020-04-19
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.6)

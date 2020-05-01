@@ -43,7 +43,7 @@ const LESSON_BOTTOM_SECTION = "_1obm2";
 const QUESTION_UNCHECKED = "zEs4P";
 const QUESTION_CHECKED = "_1NmT0";
 const CRACKED_SKILL_OVERLAY_SELECTOR = "._7WUMp";
-const NEW_WORD_SELECTOR = "._2tgi3";
+const NEW_WORD_SELECTOR = "._2o9QZ";
 const LEAGUE_TABLE = "_1NIUo";
 const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = ".vwODZ";
 const SKILL_NAME_SELECTOR = "._2CXf4";
@@ -2037,8 +2037,11 @@ function getCrackedSkills()
 
 function getLanguagesInfo()
 {
-	const languages = userData.languages
-		.filter(language => language.learning) // Only select languages that are being learnt.
+	let languages = userData.languages;
+	if (languages === undefined)
+		return [];
+	
+	languages = languages.filter(language => language.learning) // Only select languages that are being learnt.
 		.filter(language => language.points != 0); // Remove languages that have 0 XP as they aren't really being learnt.
 	
 	const languagesInfo = languages.map(language => [
@@ -2784,6 +2787,12 @@ function displayLanguagesInfo(languages)
 	const sidebar = document.querySelector(`.${SIDEBAR}`);
 	if (sidebar == null)
 		return false;
+
+	if (languages.length == 0)
+	{
+		removeLanguagesInfo();
+		return false;
+	}
 
 	let languagesBox = document.getElementById("languagesBox");
 
@@ -3909,11 +3918,11 @@ let childListMutationHandle = function(mutationsList, observer)
 
 
 		// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks.
-		// But also make sure that this page hasn't removed to top bar, if it has just stop.
+		// But also make sure that this page hasn't removed to top bar, if it has let's run init again to see what is going on.
 		if (document.body.contains(topBarDiv))
 			classNameMutationHandle(mutationsList, null);
 		else
-			return false;
+			init();
 	}
 
 	if (sidebarToggled)
@@ -4212,6 +4221,13 @@ async function init()
 		// The golden owl message is being displayed.
 		// This means that the mainBodyCointainer is just before these new elements as the second child of rootChild
 		mainBodyCointainer = rootChild.querySelector(`:scope > [data-focus-guard]`).previousElementSibling;
+	}
+	else if((/^\/courses/).test(window.location.pathname))
+	{
+		// On the courses page, here the main body container is the first child of rootChild for some reason.
+		mainBodyContainer = rootChild.firstChild;
+		if (mainBodyContainer == null)
+			return false;
 	}
 	else
 	{

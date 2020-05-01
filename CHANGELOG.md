@@ -5,6 +5,21 @@ Changelog
 ------------
 -
 
+[v1.3.7] - 2020-05-01
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.7)
+### Changed
+- Reworded reveal sentence hotkey option to make it clearer that it is only
+affects the current sentence.
+- Languages info now handles the case of there being no languages object of the
+user data being undefined. This would happen if the box is trying to be
+displayed before we have any userData.
+
+### Fixed
+- Detection of new words in sentences so that they are not hidden by the
+sentence hiding option.
+- Handling of the extension loading on the courses or words page.
+
 [v1.3.6] - 2020-04-19
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.6)
@@ -753,6 +768,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.6...v1.3.7
 [v1.3.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.5...v1.3.6
 [v1.3.5]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.4...v1.3.5
 [v1.3.4]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.3...v1.3.4

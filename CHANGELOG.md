@@ -8,6 +8,9 @@ Changelog
 [v1.3.8] - 2020-05-02
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.8)
+### Added
+- Maxiumum tree level message to crowns info popup.
+
 ### Fixed
 - Detection of L0 skills for use in calculating the number of lessons until the
 next checkpoint.

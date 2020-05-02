@@ -2503,6 +2503,14 @@ function displayCrownsBreakdown()
 				crownLevelContainer.appendChild(prediction);
 			}
 		}
+		
+		if (treeLevel === 5)
+		{
+			const maxLevelMessage = document.createElement("p");
+			maxLevelMessage.style.color = "black";
+			maxLevelMessage.textContent = "You have reached the maximum tree level!";
+			crownLevelContainer.appendChild(maxLevelMessage);
+		}
 	}
 	else
 	{

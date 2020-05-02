@@ -482,7 +482,7 @@ function lessonsToNextCheckpoint()
 	);
 	const level0SkillsBeforeCheckpoint = skillsBeforeCheckpoint.filter(
 		(element) => {
-			return element.querySelectorAll(`img[src$="juicy-crown-unlocked.svg"]`).length != 0;
+			return element.querySelectorAll(`[data-test="level-crown"]`).length == 0;
 		}
 	);
 	return level0SkillsBeforeCheckpoint.reduce(

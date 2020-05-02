@@ -17,6 +17,9 @@ Changelog
 ### Fixed
 - Detection of L0 skills for use in calculating the number of lessons until the
 next checkpoint.
+- Crowns progress graph showing no progress when crowns info popup is already
+displayed when the features are added. The progress history is now always
+loaded first before adding features.
 
 [v1.3.7] - 2020-05-01
 -----------------

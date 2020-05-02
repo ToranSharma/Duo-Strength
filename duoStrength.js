@@ -482,7 +482,7 @@ function lessonsToNextCheckpoint()
 	);
 	const level0SkillsBeforeCheckpoint = skillsBeforeCheckpoint.filter(
 		(element) => {
-			return element.querySelectorAll(`img[src$="juicy-crown-unlocked.svg"]`).length != 0;
+			return element.querySelectorAll(`[data-test="level-crown"]`).length == 0;
 		}
 	);
 	return level0SkillsBeforeCheckpoint.reduce(
@@ -2503,6 +2503,14 @@ function displayCrownsBreakdown()
 				crownLevelContainer.appendChild(prediction);
 			}
 		}
+		
+		if (treeLevel === 5)
+		{
+			const maxLevelMessage = document.createElement("p");
+			maxLevelMessage.style.color = "black";
+			maxLevelMessage.textContent = "You have reached the maximum tree level!";
+			crownLevelContainer.appendChild(maxLevelMessage);
+		}
 	}
 	else
 	{
@@ -3553,7 +3561,8 @@ async function handleDataResponse(responseText)
 
 			resetLanguageFlags();
 
-			retrieveProgressHistory().then(updateProgress);
+			await retrieveProgressHistory();
+			updateProgress();
 
 			usingOldData = false;
 			addFeatures(); // actual processing of the data.
@@ -3575,7 +3584,9 @@ async function handleDataResponse(responseText)
 			// Not a language change and the data is for the current language, just process it.
 			userData = newUserData;
 
-			retrieveProgressHistory().then(updateProgress);
+			await retrieveProgressHistory()
+			updateProgress();
+
 			usingOldData = false;
 			addFeatures();
 		}

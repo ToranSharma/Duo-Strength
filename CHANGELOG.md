@@ -11,6 +11,9 @@ Changelog
 ### Added
 - Maxiumum tree level message to crowns info popup.
 
+### Changed
+- Renamed 'Crown Level Prediction' option to 'Tree Level Prediction'.
+
 ### Fixed
 - Detection of L0 skills for use in calculating the number of lessons until the
 next checkpoint.

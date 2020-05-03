@@ -5,6 +5,16 @@ Changelog
 ------------
 -
 
+[v1.3.9] - 2020-05-03
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.9)
+### Fixed
+- Detection for Latin and Gaelic flags when adding the tree level flag borders.
+- Handling of situation where an unpurchased skill is not added to the tree as a
+link to the shop. This happens when the page is loaded onto a tree without bonus
+skills, but is then the language is changed to one where there only one bonus
+skill that has been purchased.
+
 [v1.3.8] - 2020-05-02
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.8)
@@ -784,6 +794,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.8...v1.3.9
 [v1.3.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.7...v1.3.8
 [v1.3.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.6...v1.3.7
 [v1.3.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.5...v1.3.6

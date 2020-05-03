@@ -70,7 +70,10 @@ const flagYOffsets = {
 	772: "hu", 804: "cy", 837: "uk", 869: "kl",
 	901: "cs", 933: "hi", 965: "id", 998: "ha",
 	1030: "nv", 1062: "ar", 1094: "ca", 1126: "th",
-	1159: "gn", 1352: "ar", 1384: "gd",
+	1159: "gn",
+	// 1191: "ambassador", 1223: "duolingo",
+	// 1255: "troubleshooting", 1287: "teachers",
+	1320: "la", 1352: "gd",
 };
 
 let languageCode = "";
@@ -1160,7 +1163,10 @@ function addStrengthBars(strengths)
 
 	for (let i=0; i<skillElements.length; i++)
 	{
+		const isBonusSkill = bonusSkillRow != null && bonusSkillRow.contains(skillElements[i]);
+
 		let elementContents;
+
 		if (
 			skillElements[i].getAttribute("data-test") == "skill" ||
 			skillElements[i].getAttribute("data-test") == "intro-lesson"
@@ -1193,23 +1199,38 @@ function addStrengthBars(strengths)
 
 		// Check if this skill is in the bonus skill section.
 		// In the bonus skill section if the row is sandwiched between two divs with class _32Q0j, that contain an hr.
-		if (bonusSkillRow != null && bonusSkillRow.contains(skillElements[i]))
+		if (isBonusSkill)
 		{
 			// this skill is in the bonus skill section.
-			elementContents.push(strengths[1][bonusElementsCount][0]);
-			elementContents.push(strengths[1][bonusElementsCount][1]);
-			bonusElementsCount ++;
+			if (bonusSkillRow.childElementCount != strengths[1].length)
+			{
+				// One of the bonus skills is missing, this is a duolingo bug that is caused by the page being loaded on a tree that does not have bonus skills,
+				// then switching to a tree that has only one skill purchased.
+				// In this case the unpurchased skill that is normally greyed out and links to the shop to buy it, is not added for some reason.
+				// We then have to work out which skill this is that we are displaying and choose the appropriate strength value.
+				//
+				// Given we know that the missing skill has not been purchased, it is therefore going to be at L0, and therefore have strength 0.
+				// The skill that is displayed will be the other one then.
+				//
+				// Note this all assumes every tree that has bonus skills, has two.
+				
+				const bonusIndex = (strengths[1][0][0] == 0)? 1 : 0;
+				elementContents = elementContents.concat(strengths[1][bonusIndex]);
+				bonusElementsCount = 1;
+			}
+			else
+			{
+				elementContents = elementContents.concat(strengths[1][bonusElementsCount ++]);
+			}
 
-			skills.push(elementContents);
 		}
 		else
 		{
 			// Normal skill
-			elementContents.push(strengths[0][i - bonusElementsCount][0]);
-			elementContents.push(strengths[0][i - bonusElementsCount][1]);
-			
-			skills.push(elementContents);
+			elementContents = elementContents.concat(strengths[0][i - bonusElementsCount]);
 		}
+		
+		skills.push(elementContents);
 	}
 	
 	let numBarsAdded = 0;

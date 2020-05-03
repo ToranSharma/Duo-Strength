@@ -10,6 +10,10 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.9)
 ### Fixed
 - Detection for Latin and Gaelic flags when adding the tree level flag borders.
+- Handling of situation where an unpurchased skill is not added to the tree as a
+link to the shop. This happens when the page is loaded onto a tree without bonus
+skills, but is then the language is changed to one where there only one bonus
+skill that has been purchased.
 
 [v1.3.8] - 2020-05-02
 -----------------

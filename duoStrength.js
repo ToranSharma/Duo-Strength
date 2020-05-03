@@ -70,7 +70,10 @@ const flagYOffsets = {
 	772: "hu", 804: "cy", 837: "uk", 869: "kl",
 	901: "cs", 933: "hi", 965: "id", 998: "ha",
 	1030: "nv", 1062: "ar", 1094: "ca", 1126: "th",
-	1159: "gn", 1352: "ar", 1384: "gd",
+	1159: "gn",
+	// 1191: "ambassador", 1223: "duolingo",
+	// 1255: "troubleshooting", 1287: "teachers",
+	1320: "la", 1352: "gd",
 };
 
 let languageCode = "";

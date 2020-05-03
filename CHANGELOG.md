@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v1.3.9] - 2020-05-03
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.9)
+### Fixed
+- Detection for Latin and Gaelic flags when adding the tree level flag borders.
+
 [v1.3.8] - 2020-05-02
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.8)
@@ -784,6 +790,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.8...v1.3.9
 [v1.3.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.7...v1.3.8
 [v1.3.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.6...v1.3.7
 [v1.3.6]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.5...v1.3.6

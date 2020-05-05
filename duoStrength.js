@@ -2600,7 +2600,12 @@ function displayXPBreakdown()
 	if (removeCurrentBox)
 		currentXPBox.remove();
 
-	if (document.getElementById("XPBox") == null)
+	if (
+		(!inMobileLayout && document.querySelectorAll(`.${DAILY_GOAL_SIDEBAR_CONATINER} #XPBox`).length === 0)
+		||
+		(inMobileLayout && document.querySelectorAll(`.${DAILY_GOAL_POPUP_CONTAINER} #XPBox`).length === 0)
+	)
+
 	{
 		// We haven't made the XP Box yet
 
@@ -4027,11 +4032,13 @@ let childListMutationHandle = function(mutationsList, observer)
 				document.getElementById("fullStrengthMessageContainer").style.width = desktopWidth;
 			}
 			
-
-			// Try and add the XP box again as the sidebar has come back
-			if (options.XPInfo) displayXPBreakdown();
-			if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 		}
+		// Try and add the Crowns and XP info in case the popups are there.
+		if (options.XPInfo) displayXPBreakdown();
+		if (options.crownsInfo) displayCrownsBreakdown();
+
+		// Try to add the languages info incase the sidebar has been added back.
+		if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 	}
 
 	if (popupChanged)

@@ -18,19 +18,19 @@ const MOBILE_TOP_OF_TREE = "_3Y5Xu";
 const SKILL_COLUMN = "QmbDT";
 const TRY_PLUS_BUTTON_SELECTOR = "._2x4yk._1rwed";
 const IN_BETA_LABEL = "_3yV19";
-const CROWN_POPUP_CONTAINER = "NugKJ";
-const CROWN_LOGO_CONTAINER = "_3uwBi";
-const CROWN_DESCRIPTION_CONTAINER = "_27NkX";
-const CROWN_TOTAL_CONTAINER = "_2boWj";
-const DAILY_GOAL_POPUP_CONTAINER = "yRM09";
+const CROWN_POPUP_CONTAINER = "_3hTDu";
+const CROWN_LOGO_CONTAINER = "_3W5VZ";
+const CROWN_DESCRIPTION_CONTAINER = "_13krJ";
+const CROWN_TOTAL_CONTAINER = "_1dP1I";
+const DAILY_GOAL_POPUP_CONTAINER = "_2ewG5"; // parent of streak flame and descript, and the 7 small flames
 const DAILY_GOAL_SIDEBAR_CONATINER = "_2hhXN";
 const SIDEBAR = "_3Nl60";
 const WHITE_SIDEBAR_BOX_CONTAINER = "_2iVqi";
-const POPUP_ICON = "_3gtu3 _1-Eux iDKFi";
-const GOLD_CROWN = "WZkQ9";
-const GREY_CROWN = "_3FM63";
-const COLOURED_FLAME = "_2ctH6";
-const GREY_FLAME = "_27oya";
+const POPUP_ICON = "z0qDl _1rcDl _3xl-g";
+const GOLD_CROWN = "_3JJjF";
+const LIT_FLAME = "_2ES5X";
+const BLUE_FLAME = "_144wX";
+const GREY_FLAME = "_9Fm3O";
 const ACTIVE_TAB = "_2lkuX";
 const TOP_BAR = "_1frzL";
 const NAVIGATION_BUTTON = "_1hmv9";
@@ -49,7 +49,7 @@ const SKILL_NAME_SELECTOR = "._2CXf4";
 const CHECKPOINT_CONTAINER_SELECTOR = "._3Lrsa";
 const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB";
 const CHECKPOINT_BLURB_SELECTOR = "._3-EWe";
-const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
+const LANGUAGES_LIST_SELECTOR = ".eanIR";
 const SMALL_BUTTONS_CONTAINER = "_2DR3u";
 const SMALL_BUTTON = "_32WtB _2i-mO _1LZ7U vy3TL _3iIWE _1Mkpg _1Dtxl _1sVAI sweRn _1BWZU _26exN QVrnU";
 const LOCKED_POPOUT = "_1PDfx";
@@ -4044,7 +4044,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			return false;
 		}
 
-		if (popupIcon.getElementsByClassName(GOLD_CROWN).length + popupIcon.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
+		if (popupIcon.getElementsByClassName(GOLD_CROWN).length != 0) // Grey crown doesn't seem to have its own class now, it has the same as gold.
 		{
 			// Crowns has had the change.
 			if (options.crownsInfo && popupIcon.lastChild.nodeName == 'DIV')
@@ -4058,7 +4058,12 @@ let childListMutationHandle = function(mutationsList, observer)
 			}
 		}
 
-		if (popupIcon.getElementsByClassName(COLOURED_FLAME).length +  popupIcon.getElementsByClassName(GREY_FLAME).length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
+		if (
+			popupIcon.getElementsByClassName(LIT_FLAME).length
+			+ popupIcon.getElementsByClassName(GREY_FLAME).length
+			+ popupIcon.getElementsByClassName(BLUE_FLAME).length
+			!= 0
+		) // Lit flame for streak extended today, grey for not, blue possibly for frozen with duolingo plus?
 		{
 			// Streak/XP has had the change.
 			if (options.XPInfo && popupIcon.lastChild.nodeName == 'DIV')

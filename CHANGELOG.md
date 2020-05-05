@@ -8,8 +8,13 @@ Changelog
 [v1.3.10] - 2020-05-05
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.10)
+### Added
+- Support of blue streak flame for mobile XP info adding. This may be from
+duolingo plus.
+
 ### Fixed
 - Class name values for the top bar and its navigation buttons.
+- Class name values for language change, crowns info and streak info popups.
 
 [v1.3.9] - 2020-05-03
 -----------------

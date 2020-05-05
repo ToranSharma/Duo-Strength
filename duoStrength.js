@@ -15,7 +15,6 @@ const BONUS_SKILL_DIVIDER_SELECTOR = "._23P6X";
 const TOP_OF_TREE_WITH_IN_BETA = "_1uUHs _3tYmC";
 const TOP_OF_TREE = "_3GFex";
 const MOBILE_TOP_OF_TREE = "_3Y5Xu";
-const SKILL_ROW = "_2GJb6";
 const SKILL_COLUMN = "QmbDT";
 const TRY_PLUS_BUTTON_SELECTOR = "._2x4yk._1rwed";
 const IN_BETA_LABEL = "_3yV19";
@@ -33,8 +32,8 @@ const GREY_CROWN = "_3FM63";
 const COLOURED_FLAME = "_2ctH6";
 const GREY_FLAME = "_27oya";
 const ACTIVE_TAB = "_2lkuX";
-const TOP_BAR = "_3F_8q";
-const NAVIGATION_BUTTON = "_3MT82";
+const TOP_BAR = "_1frzL";
+const NAVIGATION_BUTTON = "_1hmv9";
 const QUESTION_CONTAINER = "_2NEKS";
 const LOGIN_PAGE = "_11AR-";
 const LESSON = "_7TCY- _160QG";
@@ -4388,6 +4387,7 @@ async function init()
 				let storiesNav;
 				// let discussionNav;
 				let shopNav;
+				// languageLogo declared globally for use outside init;
 				let crownNav;
 				let streakNav;
 

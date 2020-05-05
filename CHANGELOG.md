@@ -5,6 +5,19 @@ Changelog
 ------------
 -
 
+[v1.3.10] - 2020-05-05
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.10)
+### Added
+- Support of blue streak flame for mobile XP info adding. This may be from
+duolingo plus.
+
+### Fixed
+- Class name values for the top bar and its navigation buttons.
+- Class name values for language change, crowns info and streak info popups.
+- Handling of changing between mobile and desktop layout while crown and XP
+popups are displayed.
+
 [v1.3.9] - 2020-05-03
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.9)
@@ -794,6 +807,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.9...v1.3.10
 [v1.3.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.8...v1.3.9
 [v1.3.8]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.7...v1.3.8
 [v1.3.7]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.6...v1.3.7

@@ -4378,8 +4378,8 @@ async function init()
 				// there is a topBarDiv so we can continue to process the page to workout what to do
 
 				// set username via the href of a link to the profile
-				let profileTabHrefParts = document.querySelector(`[data-test="profile-tab"]`).href.split("/");
-				username = profileTabHrefParts[profileTabHrefParts.length - 1];
+				let profileLinkHrefParts = document.querySelector(`[href^="/profile/"]`).href.split("/");
+				username = profileLinkHrefParts[profileLinkHrefParts.length - 1];
 
 				// topBar Div is the direct container holding the navigation butons, has class _3F_8q
 				// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];

@@ -8,6 +8,9 @@ Changelog
 [v1.3.11] - 2020-05-18
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.11)
+### Added
+- Option to toggle the hiding of translation sentences that contain new words.
+
 ### Fixed
 - Username extraction from page.
 

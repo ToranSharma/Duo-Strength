@@ -147,6 +147,7 @@ function retrieveOptions()
 					"showTranslationText":						true,
 						"revealHotkey":								true,
 							"revealHotkeyCode":							"Ctrl+Alt+H",
+						"showNewWords":								true,
 					"showToggleHidingTextButton":				true,
 					"showLeagues":								true,
 					"wordsButton":								true,
@@ -3678,8 +3679,24 @@ function hideTranslationText(reveal = false, setupObserver = true)
 			const hintSentence = challengeTranslatePrompt.querySelector('[data-test="hint-sentence"]');
 			
 
-			if (hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length != 0)
-				return false; // There is a new word, so we don't want to be hiding this sentence.
+			if (options.showNewWords && hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length != 0)
+			{
+				// There is a new word, so we don't want to be hiding this sentence.
+				hintSentence.style.filter = "none";
+				hintSentence.title = "";
+				const enableDisableButton = questionContainer.querySelector(`.hideTextEnableDisable`);
+				if (enableDisableButton !== null)
+				{
+					// Remove the enable disable button
+					const headerContainer = questionContainer.querySelector(`.hideTextEnableDisable`).parentNode;
+					const header = headerContainer.firstChild;
+					header.removeAttribute("style");
+					headerContainer.parentNode.insertBefore(header, headerContainer); // Move the header back to where it should be;
+					headerContainer.remove();
+				}
+
+				return false;
+			}
 
 			if (options.showTranslationText == false && reveal == false)
 			{

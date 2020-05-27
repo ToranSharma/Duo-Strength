@@ -3,7 +3,9 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Changed
+- Extension is run when page is ready, rather than fully loaded. This should
+ give a very small speed improvement, more so on slower networks.
 
 [v1.3.11] - 2020-05-18
 -----------------

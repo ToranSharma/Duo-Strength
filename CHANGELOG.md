@@ -10,6 +10,9 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.12)
 ### Changed
 - Content script and page action page matches to include the preview subdomain.
+- Increased scale on crown image behind crown count total to match old sizing.
+The image is now big enough to cover the widest maxiumum three digit crown
+total e.g. 999/999.
 
 ### Added
 - Detection of no element with a link to the user's profile, and thus nowhere

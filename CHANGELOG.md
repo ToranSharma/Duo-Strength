@@ -11,12 +11,15 @@ Changelog
 ### Changed
 - Content script and page action page matches to include the preview subdomain.
 - Increased scale on crown image behind crown count total to match old sizing.
-The image is now big enough to cover the widest maxiumum three digit crown
+The image is now big enough to cover the widest maximum three digit crown
 total e.g. 999/999.
 
 ### Added
 - Detection of no element with a link to the user's profile, and thus nowhere
 to the username from. An error message is send to the console in this case.
+- Tooltip giving lesson rate and number of lessons left to the words 
+`current rate` in the prediction text for tree level and checkpoint
+predictions.
 
 [v1.3.11] - 2020-05-18
 -----------------

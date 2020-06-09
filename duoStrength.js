@@ -633,9 +633,17 @@ function daysToNextCrownLevel()
 	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
 	
 	if (progressRate != 0)
-		return Math.ceil(currentProgress() / progressRate); // in days
+	{
+		return {
+			time: Math.ceil(currentProgress() / progressRate), // in days
+			rate: progressRate,
+			lessonsLeft: currentProgress()
+		}
+	}
 	else
-		return -1;
+	{
+		return {time: -1};
+	}
 }
 
 function daysToNextCrownLevelByCalendar()
@@ -655,8 +663,9 @@ function daysToNextCrownLevelByCalendar()
 	const calendar = currentLanguageHistory();
 
 	if (calendar.length == 0)
-		return -1;
-
+	{
+		return {time: -1};
+	}
 
 	let currentDay = (new Date()).setHours(0,0,0,0);	
 
@@ -675,7 +684,9 @@ function daysToNextCrownLevelByCalendar()
 	const numLessons = practiceTimes.length;
 	
 	if (numLessons == 0) // possible if only calendar entries for this language are from today, and we have't met our goal
-		return -1;
+	{
+		return {time: -1};
+	}
 
 	const firstDay = practiceTimes[0]; // assuming sorted acending.
 	let lastDay = practiceTimes[numLessons - 1];
@@ -691,9 +702,17 @@ function daysToNextCrownLevelByCalendar()
 	const lessonRate = numLessons/numDays; // in lessons per day
 
 	if (lessonRate <= 0)
-		return -1;
+	{
+		return {time: -1};
+	}
 	else
-		return Math.ceil(lessonsToNextCrownLevel/lessonRate);
+	{
+		return {
+			time: Math.ceil(lessonsToNextCrownLevel/lessonRate), // in days
+			rate: progressRate,
+			lessonsLeft: numLessons
+		}
+	}
 }
 
 function daysToNextCheckpoint()
@@ -704,9 +723,17 @@ function daysToNextCheckpoint()
 	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
 	
 	if (progressRate != 0)
-		return Math.ceil(lessonsToNextCheckpoint() / progressRate);
+	{
+		return {
+			time: Math.ceil(lessonsToNextCheckpoint() / progressRate), // in days
+			rate: progressRate,
+			lessonsLeft: lessonsToNextCheckpoint()
+		}
+	}
 	else
-		return -1;
+	{
+		return {time: -1};
+	}
 }
 
 function daysToNextCheckpointByCalendar()
@@ -714,7 +741,9 @@ function daysToNextCheckpointByCalendar()
 	const calendar = currentLanguageHistory();
 	
 	if (calendar.length == 0)
-		return -1;
+	{
+		return {time: -1};
+	}
 
 	const currentDay = (new Date()).setHours(0,0,0,0);
 
@@ -733,7 +762,13 @@ function daysToNextCheckpointByCalendar()
 	const numLessons = practiceTimes.length;
 
 	if (numLessons == 0) // possible if only calendar entries for this language are from today, and we have't met our goal
-		return 0;
+	{
+		return {
+			time: 0,
+			rate: lessonRate,
+			lessonsLeft: numLessons
+		};
+	}
 
 	const firstDay = practiceTimes[0];
 	let lastDay = practiceTimes[numLessons - 1];
@@ -749,12 +784,20 @@ function daysToNextCheckpointByCalendar()
 	const lessonRate = numLessons/numDays;
 
 	if (lessonRate <= 0)
-		return -1;
+	{
+		return {time: -1};
+	}
 	else
-		return Math.ceil(lessonsToNextCheckpoint() / lessonRate);
+	{
+		return {
+			time: Math.ceil(lessonsToNextCheckpoint() / lessonRate), // in days
+			rate: lessonRate,
+			lessonsLeft: numLessons
+		}
+	}
 }
 
-function createPredictionElement(type, numDays)
+function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 {
 	let id = "";
 	let target = "";
@@ -778,7 +821,23 @@ function createPredictionElement(type, numDays)
 	prediction.id = id;
 
 	prediction.appendChild(
-		document.createTextNode(`At your current rate ${(type != "crownLevel") ? "you" : "your tree"} will reach ${target}, in about `)
+		document.createTextNode(`At your `)
+	);
+
+	prediction.appendChild(
+		document.createElement("span")
+	);
+	prediction.lastChild.textContent = "current rate";
+	if (type !== "XPLevel")
+	{
+		prediction.lastChild.title = `${Number(rate).toFixed(2)} lessons/day with ${lessonsLeft} lesson to go`;
+		prediction.lastChild.style["text-decoration"] = "underline dashed #777";
+		prediction.lastChild.style["text-underline-position"] = "under";
+		prediction.style["line-height"] = "120%";
+	}
+
+	prediction.appendChild(
+		document.createTextNode(` ${(type != "crownLevel") ? "you" : "your tree"} will reach ${target}, in about `)
 	);
 	prediction.appendChild(document.createElement("span"));
 	prediction.lastChild.textContent = numDays;
@@ -2480,15 +2539,11 @@ function displayCrownsBreakdown()
 		// Checkpoint Prediction
 		if (treeLevel == 0 && options.checkpointPrediction)
 		{
-			let numDays;
-			if (progress.length > 5)
-				numDays = daysToNextCheckpoint();
-			else
-				numDays = daysToNextCheckpointByCalendar();
+			const predictionData = (progress.length > 5) ? daysToNextCheckpoint() : daysToNextCheckpointByCalendar();
 
-			if (numDays > 0)
+			if (predictionData.time > 0)
 			{
-				const prediction = createPredictionElement("checkpoint", numDays);
+				const prediction = createPredictionElement("checkpoint", predictionData);
 				prediction.style =
 				`
 					margin: 1em 1em 0;
@@ -2504,15 +2559,11 @@ function displayCrownsBreakdown()
 		// Crown Level prediction
 		if (treeLevel != 5 && options.crownsPrediction)
 		{
-			let numDays;
-			if (progress.length > 5)
-				numDays = daysToNextCrownLevel();
-			else
-				numDays = daysToNextCrownLevelByCalendar();
+			const predictionData = (progress.length > 5) ? daysToNextCrownLevel() : daysToNextCrownLevelByCalendar();
 
-			if (numDays != -1)
+			if (predictionData.time != -1)
 			{
-				const prediction = createPredictionElement("crownLevel", numDays);
+				const prediction = createPredictionElement("crownLevel", predictionData);
 				prediction.style =
 				`
 					margin: 1em 1em 0;
@@ -2693,7 +2744,7 @@ function displayXPBreakdown()
 			
 			if (numDays != -1 && options.XPPrediction)
 			{
-				const prediction = createPredictionElement("XPLevel", numDays);
+				const prediction = createPredictionElement("XPLevel", {time: numDays});
 				prediction.style =
 				`
 					margin-bottom: 0;

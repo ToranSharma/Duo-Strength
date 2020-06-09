@@ -11,6 +11,10 @@ Changelog
 ### Changed
 - Content script and page action page matches to include the preview subdomain.
 
+### Added
+- Detection of no element with a link to the user's profile, and thus nowhere
+to the username from. An error message is send to the console in this case.
+
 [v1.3.11] - 2020-05-18
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.11)

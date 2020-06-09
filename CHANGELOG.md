@@ -5,6 +5,22 @@ Changelog
 ------------
 -
 
+[v1.3.12] - 2020-06-09
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.12)
+### Changed
+- Content script and page action page matches to include the preview subdomain.
+- Increased scale on crown image behind crown count total to match old sizing.
+The image is now big enough to cover the widest maximum three digit crown
+total e.g. 999/999.
+
+### Added
+- Detection of no element with a link to the user's profile, and thus nowhere
+to the username from. An error message is send to the console in this case.
+- Tooltip giving lesson rate and number of lessons left to the words 
+`current rate` in the prediction text for tree level and checkpoint
+predictions.
+
 [v1.3.11] - 2020-05-18
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.11)
@@ -816,6 +832,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.12]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.11...v1.3.12
 [v1.3.11]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.10...v1.3.11
 [v1.3.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.9...v1.3.10
 [v1.3.9]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.8...v1.3.9

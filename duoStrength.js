@@ -3538,7 +3538,7 @@ function httpGetAsync(url, responseHandler)
 					}
 				}
 			};
-			xmlHttp.open('GET', '${url+'?id='+requestID}', true);
+			xmlHttp.open('GET', '${url+'&DuoStrengthRequestId='+requestID}', true);
 			xmlHttp.send(null);
 		})()`;
 

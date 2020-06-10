@@ -13,7 +13,8 @@ Changelog
 the pages cookies, where it is stored under the name `logged_out_uuid`. This is
 due to the issue that it is possible for a user's username can't be taken from
 the webpage itself, while the userId stored in the cookies is always there.
-- The username is then defined once the user data has been recieved.
+- The username is then defined once the user data has been received.
+- Request id URL parameter renamed to avoid confusion with the userId.
 
 [v1.3.12] - 2020-06-09
 -----------------

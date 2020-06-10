@@ -5,7 +5,7 @@ Changelog
 ------------
 -
 
-[v1.3.13] - 2020-06-10
+[v1.3.13] - 2020-06-11
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.13)
 ### Changed

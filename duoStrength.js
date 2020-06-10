@@ -18,12 +18,12 @@ const MOBILE_TOP_OF_TREE = "_3Y5Xu";
 const SKILL_COLUMN = "QmbDT";
 const TRY_PLUS_BUTTON_SELECTOR = "._2x4yk._1rwed";
 const IN_BETA_LABEL = "_3yV19";
-const CROWN_POPUP_CONTAINER = "_3hTDu";
+const CROWNS_POPUP_CONTAINER = "_3hTDu";
 const CROWN_LOGO_CONTAINER = "_3W5VZ";
 const CROWN_DESCRIPTION_CONTAINER = "_13krJ";
 const CROWN_TOTAL_CONTAINER = "_1dP1I";
 const DAILY_GOAL_POPUP_CONTAINER = "_2ewG5"; // parent of streak flame and descript, and the 7 small flames
-const DAILY_GOAL_SIDEBAR_CONATINER = "_2hhXN";
+const DAILY_GOAL_SIDEBAR_CONTAINER = "_2hhXN";
 const SIDEBAR = "_3Nl60";
 const WHITE_SIDEBAR_BOX_CONTAINER = "_2iVqi";
 const POPUP_ICON = "z0qDl _1rcDl _3xl-g";
@@ -58,6 +58,9 @@ const GOLDEN_OWL_CHECKPOINT_SELECTOR = `._1FtA8`;
 const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
+const BOTTOM_NAV_SELECTOR = `._1hese`;
+const AD_SELECTOR = `._3OXAs`;
+const CROWN_TOTAL_SELECTOR = `.o5hnp`;
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -85,6 +88,7 @@ let languageLogo;
 let options = {};
 let progress = [];
 let username = "";
+let userId = "";
 let userData = {};
 let requestID = 0;
 let requestsPending = 0;
@@ -95,12 +99,14 @@ let rootChild;
 let mainBody;
 let mainBodyContainer;
 let topBarDiv;
-let mobileTopBarDiv;
 
 let onMainPage;
 let inMobileLayout;
 
 let lastSkill;
+
+const classNameObserver = new MutationObserver(classNameMutationHandle);
+const childListObserver = new MutationObserver(childListMutationHandle);
 
 function retrieveOptions()
 {
@@ -131,6 +137,8 @@ function retrieveOptions()
 					"checkpointButtons":						true,
 					"treeLevelBorder":							true,
 					"crownsInfo":								true,
+						"crownsInfoInSidebar":						false,
+						"crownsInfoInPopup":						true,
 						"crownsMaximum":							true,
 							"crownsPercentage":							true,
 						"crownsGraph":								true,
@@ -140,6 +148,8 @@ function retrieveOptions()
 						"checkpointPrediction":						true,
 						"crownsPrediction":							true,
 					"XPInfo":									true,
+						"XPInfoInSidebar":							true,
+						"XPInfoInPopup":							false,
 						"XPBreakdown":								true,
 						"XPPrediction":								true,
 					"languagesInfo":							true,
@@ -323,38 +333,32 @@ function removeFlagBorders()
 
 function removeCrownsBreakdown()
 {
-	const maxCrowns = document.getElementById("maxCrowns");
-	if (maxCrowns != null) // is null after some language changes.
+	document.querySelectorAll(".maxCrowns").forEach(
+		(maxCrowns) =>
+		{
+			maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
+			maxCrowns.remove();
+		}
+	);
+
+	document.querySelectorAll(".crownCountPercentage, .crownsGraph, .crownLevelBreakdownContainer, .checkpointPrediction, .treeCrownLevelPrediction")
+		.forEach(element => element.remove());
+
+	//if (!options.crownsInfoInSidebar)
 	{
-		maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
-		maxCrowns.parentNode.removeChild(maxCrowns);
+		document.querySelectorAll(".sidebarCrownsInfoContainer").forEach(element => element.remove());
 	}
-
-	const crownCountPercentage = document.getElementById("crownCountPercentage");
-	if (crownCountPercentage != null)
-		crownCountPercentage.remove();
-
-	const crownsGraph = document.getElementById("crownsGraph");
-	if (crownsGraph != null)
-		crownsGraph.remove();
-
-	const crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
-	if (crownLevelBreakdownContainer != null) crownLevelBreakdownContainer.remove(crownLevelBreakdownContainer);
-
-	const checkpointPrediction = document.getElementById("checkpointPrediction");
-	if (checkpointPrediction != null) checkpointPrediction.remove();
-
-	const treeCrownLevelPrediction = document.getElementById("treeCrownLevelPrediction");
-	if (treeCrownLevelPrediction != null) treeCrownLevelPrediction.remove();
 }
 
-function removeXPBox()
+function removeXPBoxes()
 {
-	let xpBox = document.getElementById("XPBox");
-	if (xpBox != null)
-	{
-		xpBox.parentNode.removeChild(xpBox);	
-	}
+	document.querySelectorAll(".XPBox").forEach(
+		box =>
+		{
+			box.parentNode.removeAttribute("style");
+			box.remove();
+		}
+	);
 }
 
 function removeSuggestion()
@@ -802,23 +806,23 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	let id = "";
 	let target = "";
 
+	const prediction = document.createElement("p");
+
 	switch (type)
 	{
 		case "XPLevel":
-			id = "XPPrediction";
+			prediction.id = "XPPrediction";
 			target = `the next level, Level\xA0${userData.language_data[languageCode].level + 1}`;
 			break;
 		case "crownLevel":
-			id = "treeCrownLevelPrediction";
+			prediction.classList.add("treeCrownLevelPrediction");
 			target = `Level\xA0${crownTreeLevel() + 1}`;
 			break;
 		case "checkpoint":
-			id = "checkpointPrediction";
+			prediction.classList.add("checkpointPrediction");
 			target = `the next checkpoint, Checkpoint\xA0${nextCheckpointIndex() + 1}`;
 			break;
 	}
-	const prediction = document.createElement("p");
-	prediction.id = id;
 
 	prediction.appendChild(
 		document.createTextNode(`At your `)
@@ -2182,10 +2186,27 @@ function getLanguagesInfo()
 
 function displayCrownsBreakdown()
 {
-	if (Object.entries(userData).length == 0 || document.getElementsByClassName(CROWN_POPUP_CONTAINER).length === 0)
+	if (Object.entries(userData).length === 0)
+	{
 		return false;
+	}
 
 	removeCrownsBreakdown(); // Remove if there is anything, in case it is still visible when we call
+	
+	const isSidebar = document.querySelector(`.${SIDEBAR}`) !== null;
+	const isPopupContainer = document.querySelector(`.${CROWNS_POPUP_CONTAINER}`) !== null;
+
+	const somethingToDo = (
+		(options.crownsInfoInSidebar && isSidebar)
+		||
+		((inMobileLayout || options.crownsInfoInPopup) && isPopupContainer)
+	);
+	
+	if (!somethingToDo)
+	{
+		return false;
+	}
+
 
 	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
 	let bonusSkills = userData.language_data[languageCode].bonus_skills;
@@ -2206,295 +2227,292 @@ function displayCrownsBreakdown()
 
 	let treeLevel = crownTreeLevel();
 
-	let crownLevelContainer;
-	if (inMobileLayout)
-		crownLevelContainer = document.getElementsByClassName(CROWN_POPUP_CONTAINER)[1];
-	else
-		crownLevelContainer = document.getElementsByClassName(CROWN_POPUP_CONTAINER)[0];
+	const placesToAdd = [];
 
-	if (!inMobileLayout)
+	if ((inMobileLayout || options.crownsInfoInPopup) && isPopupContainer)
 	{
-		crownLevelContainer.style =
-		`
-			flex-wrap: wrap;
-			justify-content: center;
-			overflow-y: auto;
-			max-height: calc(100vh - ${(70+20)}px);
-		`;
-	}
-	else
-	{
-		crownLevelContainer.style =
-		`
-			flex-wrap: wrap;
-			justify-content: center;
-		`;
-
-		crownLevelContainer.parentNode.style =
-		`
-			overflow-y: auto;
-			max-height: calc(100vh - ${(58+90)}px);
-		`;
-	}
-	let crownLogoContainer = document.getElementsByClassName(CROWN_LOGO_CONTAINER)[inMobileLayout? 1 : 0];
-	const crownCountImg = crownLogoContainer.querySelector(`:scope > img`);
-	crownCountImg.style["transform"] = "scale(1.3)";
-
-	let crownDescriptionContainer = document.getElementsByClassName(CROWN_DESCRIPTION_CONTAINER)[inMobileLayout ? 1 : 0];
-
-	crownDescriptionContainer.style.width = '50%';
-
-	let crownTotalContainer;
-	crownTotalContainer = crownLevelContainer.getElementsByClassName(CROWN_TOTAL_CONTAINER)[0];
-
-
-	let maximumCrownCountContainer;
-	let crownCountPercentage;
-	if (options.crownsMaximum)
-	{
-		maximumCrownCountContainer = document.createElement("span");
-		maximumCrownCountContainer.id = "maxCrowns";
-		maximumCrownCountContainer.textContent = "/" + maxCrownCount;
+		const crownsPopupContainer = document.querySelector(`.${CROWNS_POPUP_CONTAINER}`);
+		placesToAdd.push(crownsPopupContainer);
 		
-		if (options.crownsPercentage)
+		// Style the popup container appropriately
+		if (!inMobileLayout)
 		{
-			crownCountPercentage = document.createElement("span");
-			crownCountPercentage.id = "crownCountPercentage";
-			crownCountPercentage.textContent = `(${(100*crownTotalContainer.textContent/maxCrownCount).toFixed(1)}%)`;
-			crownCountPercentage.style = `
-				font-size: 0.8em;
-				position: absolute;
-				transform: translate(-50%, -50%);
-				left: 50%;
-				top: calc(50% + 1.3em);
-				color: #cd7900;
+			crownsPopupContainer.style =
+			`
+				flex-wrap: wrap;
+				justify-content: center;
+				overflow-y: auto;
+				max-height: calc(100vh - ${(70+20)}px);
+			`;
+		}
+		else
+		{
+			crownsPopupContainer.style =
+			`
+				flex-wrap: wrap;
+				justify-content: center;
+			`;
+
+			crownsPopupContainer.parentNode.style =
+			`
+				overflow-y: auto;
+				max-height: calc(100vh - ${(58+90)}px);
 			`;
 		}
 	}
 
-	// Add crowns progress graph
-	if (options.crownsGraph && crownTreeLevel() != 5)
+	if (options.crownsInfoInSidebar && isSidebar)
 	{
-		let crownsEarnedInWeek = [];
-		// will hold number of crowns earned each day for seven days
-		// crownsEarnedInWeek[0] : week ago;
-		// crownsEarnedInWeek[6] : today;
+		const sidebarCrownsInfoContainer = document.createElement("div");
+		sidebarCrownsInfoContainer.classList.add(WHITE_SIDEBAR_BOX_CONTAINER);
+		sidebarCrownsInfoContainer.classList.add("sidebarCrownsInfoContainer");
+		sidebarCrownsInfoContainer.style =
+		`
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+		`;
+		document.querySelector(`.${SIDEBAR}`).insertBefore(sidebarCrownsInfoContainer, document.querySelector(AD_SELECTOR));
 
-		let dateToday = (new Date()).setHours(0,0,0,0);
-		let msInDay = 24*60*60*1000;
-		
-		let day = dateToday;
-		let i = progress.length - 1; // used to index into progress
-		while (day > dateToday - 7*msInDay && i > 0)
+		placesToAdd.push(sidebarCrownsInfoContainer);
+
+		// Add crowns icon and count
+		const crownLogoContainer = document.createElement("div");
+		crownLogoContainer.classList.add(CROWN_LOGO_CONTAINER);
+		crownLogoContainer.style =
+		`
+			width: max-content;
+			height: max-content;
+		`;
+		sidebarCrownsInfoContainer.appendChild(crownLogoContainer);
+
+		const crownImg = document.createElement("img");
+		crownImg.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
+		crownImg.classList.add(GOLD_CROWN);
+		crownLogoContainer.appendChild(crownImg);
+
+		const crownTotalContainer = document.createElement("span");
+		crownTotalContainer.classList.add(CROWN_TOTAL_CONTAINER);
+		crownTotalContainer.textContent = document.querySelector(CROWN_TOTAL_SELECTOR).textContent;
+		crownLogoContainer.appendChild(crownTotalContainer);
+
+		// Add Crowns Header and Text
+		sidebarCrownsInfoContainer.appendChild(document.createElement("div"));
+		sidebarCrownsInfoContainer.lastChild.style["width"] = "50%";
+		sidebarCrownsInfoContainer.lastChild.classList.add(CROWN_DESCRIPTION_CONTAINER);
+		sidebarCrownsInfoContainer.lastChild.appendChild(document.createElement("h2"));
+		sidebarCrownsInfoContainer.lastChild.lastChild.textContent = "Crowns";
+		sidebarCrownsInfoContainer.lastChild.lastChild.style["margin"] = "0";
+		sidebarCrownsInfoContainer.lastChild.appendChild(document.createElement("p"));
+		sidebarCrownsInfoContainer.lastChild.lastChild.textContent = "Level up your skills to earn crowns!";
+		sidebarCrownsInfoContainer.lastChild.lastChild.style =
+		`
+			margin: 10px 0 0 0;
+			color: #777;
+		`;
+	}
+
+	placesToAdd.forEach(
+		(place) => 
 		{
-			// Loop through the last week backwards.
-			// Also stop if we run out of progress entries to use.
+			crownsInfoContainer = place;
 
-			if (progress[i][0] == day)
+			const crownLogoContainer = crownsInfoContainer.querySelector(`.${CROWN_LOGO_CONTAINER}`);
+			const crownCountImg = crownLogoContainer.querySelector(`:scope > img`);
+			crownCountImg.style["transform"] = "scale(1.3)";
+
+			const crownDescriptionContainer = document.querySelector(`.${CROWN_DESCRIPTION_CONTAINER}`); // Only exists in popup container
+			if (crownDescriptionContainer !== null)
 			{
-				// If there is progress for the day we are testing
-				// prepend the array with the change in number of crowns left
-				// compared to the previous progress entry
+				crownDescriptionContainer.style.width = '50%';
+			}
 
-				crownsEarnedInWeek.unshift(progress[i-1][2] - progress[i][2]);
-				i--;
+			const crownTotalContainer = crownsInfoContainer.querySelector(`.${CROWN_TOTAL_CONTAINER}`);
 
-				if (progress[i][0] == day)
+			let maximumCrownCountContainer;
+			let crownCountPercentage;
+			if (options.crownsMaximum)
+			{
+				maximumCrownCountContainer = document.createElement("span");
+				maximumCrownCountContainer.classList.add("maxCrowns");
+				maximumCrownCountContainer.textContent = "/" + maxCrownCount;
+				
+				if (options.crownsPercentage)
 				{
-					// If the previous progress entry is from the same day
-					// a level boundary was crossed.
-					// This progress entry then holds the number of crowns left
-					// at the time of getting to the next crown level.
-
-					// We then add the remaining number of crowns from the previous
-					// progress entry that must have been earned to level up
-					//
-					crownsEarnedInWeek[0] = crownsEarnedInWeek[0] + progress[i-1][2];
-					i--;
+					crownCountPercentage = document.createElement("span");
+					crownCountPercentage.classList.add("crownCountPercentage");
+					crownCountPercentage.textContent = `(${(100*crownTotalContainer.textContent/maxCrownCount).toFixed(1)}%)`;
+					crownCountPercentage.style = `
+						font-size: 0.8em;
+						position: absolute;
+						transform: translate(-50%, -50%);
+						left: 50%;
+						top: calc(50% + 1.3em);
+						color: #cd7900;
+					`;
 				}
 			}
-			else
+
+			// Add crowns progress graph
+			if (options.crownsGraph && crownTreeLevel() != 5)
 			{
-				// The progress entry isn't for the day we are testing,
-				// so no crowns were earned on that day.
+				let crownsEarnedInWeek = [];
+				// will hold number of crowns earned each day for seven days
+				// crownsEarnedInWeek[0] : week ago;
+				// crownsEarnedInWeek[6] : today;
 
-				crownsEarnedInWeek.unshift(0);
+				let dateToday = (new Date()).setHours(0,0,0,0);
+				let msInDay = 24*60*60*1000;
+				
+				let day = dateToday;
+				let i = progress.length - 1; // used to index into progress
+				while (day > dateToday - 7*msInDay && i > 0)
+				{
+					// Loop through the last week backwards.
+					// Also stop if we run out of progress entries to use.
 
-				// Note we don't decrement i as we haven't used the info in this
-				// progress entry.
+					if (progress[i][0] == day)
+					{
+						// If there is progress for the day we are testing
+						// prepend the array with the change in number of crowns left
+						// compared to the previous progress entry
+
+						crownsEarnedInWeek.unshift(progress[i-1][2] - progress[i][2]);
+						i--;
+
+						if (progress[i][0] == day)
+						{
+							// If the previous progress entry is from the same day
+							// a level boundary was crossed.
+							// This progress entry then holds the number of crowns left
+							// at the time of getting to the next crown level.
+
+							// We then add the remaining number of crowns from the previous
+							// progress entry that must have been earned to level up
+							//
+							crownsEarnedInWeek[0] = crownsEarnedInWeek[0] + progress[i-1][2];
+							i--;
+						}
+					}
+					else
+					{
+						// The progress entry isn't for the day we are testing,
+						// so no crowns were earned on that day.
+
+						crownsEarnedInWeek.unshift(0);
+
+						// Note we don't decrement i as we haven't used the info in this
+						// progress entry.
+					}
+					
+					// decrement the timestamp by a day
+					day = day - msInDay;
+				}
+
+				while (crownsEarnedInWeek.length != 7)
+				{
+					// If we ran out of progress entries for a whole week
+					// we will fill the rest with zeros.
+
+					crownsEarnedInWeek.unshift(0);
+				}
+
+
+				// Generate a graph for the data.
+				let graph = graphSVG(crownsEarnedInWeek);
+				graph.classList.add("crownsGraph");
+				graph.width = "100%";
+				graph.style["marginTop"] = "1em";
+				graph.style["padding"] = "0 1em";
+
+				crownsInfoContainer.appendChild(graph);
 			}
-			
-			// decrement the timestamp by a day
-			day = day - msInDay;
-		}
 
-		while (crownsEarnedInWeek.length != 7)
-		{
-			// If we ran out of progress entries for a whole week
-			// we will fill the rest with zeros.
+			// Add breakdown table
 
-			crownsEarnedInWeek.unshift(0);
-		}
+			let breakdownContainer = document.createElement("div");
+			breakdownContainer.classList.add("crownLevelBreakdownContainer");
+			breakdownContainer.style =
+			`
+				margin: 1em 1em 0 1em;
+				text-align: left;
+				flex-grow: 1;
+				color: black;
+			`;
 
+			let treeLevelContainer = document.createElement("div");
+			treeLevelContainer.classList.add("treeLevel");
+			treeLevelContainer.style = "display: inline-block";
+			treeLevelContainer.textContent = treeLevel;
 
-		// Generate a graph for the data.
-		let graph = graphSVG(crownsEarnedInWeek);
-		graph.id = "crownsGraph";
-		graph.width = "100%";
-		graph.style.margin = "1em 1em 0 1em";
-
-		crownLevelContainer.appendChild(graph);
-	}
-
-	// Add breakdown table
-
-	let breakdownContainer = document.createElement("div");
-	breakdownContainer.id = "crownLevelBreakdownContainer";
-	breakdownContainer.style =
-	`
-		margin: 1em 1em 0 1em;
-		text-align: left;
-		flex-grow: 1;
-		color: black;
-	`;
-
-	let treeLevelContainer = document.createElement("div");
-	treeLevelContainer.id = "treeLevel";
-	treeLevelContainer.style = "display: inline-block";
-	treeLevelContainer.textContent = treeLevel;
-
-	let breakdownList = document.createElement("ul");
-	breakdownList.id = "breakdownList";
-	breakdownList.style =
-	`
-		display: grid;
-		grid-auto-rows: 1.5em;
-		align-items: center;
-	`;
-	
-	let imgContainer = document.createElement("div");
-	imgContainer.style =
-	`
-		position: relative;
-		display: inline-block;
-		width: 100%;
-		justify-self:center;
-	`;
-	
-	let levelContainer = document.createElement("div");
-	levelContainer.style =
-	`
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
-		z-index: 2;
-		color: #cd7900;
-	`;
-
-	let crownImg = document.createElement("img");
-	crownImg.alt = "crown";
-	// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
-	crownImg.style =
-	`
-		width: 100%;
-		padding: 0 0.2em ;
-		z-index: 1;
-	`;
-	crownImg.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
-
-	imgContainer.appendChild(crownImg);
-	imgContainer.appendChild(levelContainer);
-
-	if (document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so let's add it.
-	{
-		if (options.crownsMaximum)
-		{
-			crownTotalContainer.appendChild(maximumCrownCountContainer);
-			if (options.crownsPercentage)
-			{
-				crownTotalContainer.parentNode.appendChild(crownCountPercentage);
-			}
-		}
-
-
-		breakdownContainer.appendChild(document.createElement("p"));
-		breakdownContainer.lastChild.style = "text-align: center; color: black;";
-		breakdownContainer.lastChild.textContent = "Your tree is at Level\xA0";
-		breakdownContainer.lastChild.appendChild(treeLevelContainer);
-
-		for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; ++crownLevel)
-		{
-			let skillCount = crownLevelCount[0][crownLevel];
-
-			if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
-				continue;
-
-			let crownCount = skillCount * crownLevel;
-		
-			imgContainer.lastChild.id = "crownLevel" + crownLevel + "Count";
-			imgContainer.lastChild.textContent = crownLevel;
-
-			let breakdownListItem = document.createElement("li");
-			breakdownListItem.className = "crownLevelItem";
-			breakdownListItem.style =
+			let breakdownList = document.createElement("ul");
+			breakdownList.classList.add("breakdownList");
+			breakdownList.style =
 			`
 				display: grid;
+				grid-auto-rows: 1.5em;
 				align-items: center;
-				justify-items: right;
-				grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 			`;
-
-			const skillCountSpan = document.createElement("span");
-			skillCountSpan.textContent = skillCount;
-			breakdownListItem.appendChild(skillCountSpan);
-
-			const skillsAtSpan = document.createElement("span");
-			skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
-			skillsAtSpan.style.justifySelf = "center";
-			breakdownListItem.appendChild(skillsAtSpan);
-
-			breakdownListItem.appendChild(imgContainer);
-			imgContainer = imgContainer.cloneNode(true);
-
-			breakdownListItem.appendChild(document.createTextNode("="));
 			
-			const crownCountSpan = document.createElement("span");
-			crownCountSpan.textContent = crownCount;
-			breakdownListItem.appendChild(crownCountSpan);
-
-			const crownsSpan = document.createElement("span");
-			crownsSpan.textContent = `crown${(crownCount == 1 )?"":"s"}`;
-			breakdownListItem.appendChild(crownsSpan);
-
-			breakdownList.appendChild(breakdownListItem);
-		}
-
-
-		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0 && options.bonusSkillsBreakdown)
-		{
-			// The tree has some bonus skills so let's display a breakdown of their crown levels.
-			let bonusSkillsBreakdownHeader = document.createElement("h3");
-			bonusSkillsBreakdownHeader.textContent = "Bonus Skills";
-			bonusSkillsBreakdownHeader.style =
+			let imgContainer = document.createElement("div");
+			imgContainer.style =
 			`
-				margin: 0;
-				font-size: 100%;
-				justify-self: center
+				position: relative;
+				display: inline-block;
+				width: 100%;
+				justify-self:center;
+			`;
+			
+			let levelContainer = document.createElement("div");
+			levelContainer.style =
+			`
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translateX(-50%) translateY(-50%);
+				z-index: 2;
+				color: #cd7900;
 			`;
 
-			breakdownList.appendChild(bonusSkillsBreakdownHeader);
+			let crownImg = document.createElement("img");
+			crownImg.alt = "crown";
+			// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
+			crownImg.style =
+			`
+				width: 100%;
+				padding: 0 0.2em ;
+				z-index: 1;
+			`;
+			crownImg.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
 
-			for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+			imgContainer.appendChild(crownImg);
+			imgContainer.appendChild(levelContainer);
+
+			if (options.crownsMaximum)
 			{
-				let skillCount = crownLevelCount[1][crownLevel];
+				crownTotalContainer.appendChild(maximumCrownCountContainer);
+				if (options.crownsPercentage)
+				{
+					crownTotalContainer.parentNode.appendChild(crownCountPercentage);
+				}
+			}
+
+
+			breakdownContainer.appendChild(document.createElement("p"));
+			breakdownContainer.lastChild.style = "text-align: center; color: black;";
+			breakdownContainer.lastChild.textContent = "Your tree is at Level\xA0";
+			breakdownContainer.lastChild.appendChild(treeLevelContainer);
+
+			for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; ++crownLevel)
+			{
+				let skillCount = crownLevelCount[0][crownLevel];
 
 				if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
-				continue;
+					continue;
 
 				let crownCount = skillCount * crownLevel;
 			
-				imgContainer.lastChild.id = "bonusSkillCrownLevel" + crownLevel + "Count";
+				imgContainer.lastChild.classList.add("crownLevel" + crownLevel + "Count");
 				imgContainer.lastChild.textContent = crownLevel;
 
 				let breakdownListItem = document.createElement("li");
@@ -2506,7 +2524,7 @@ function displayCrownsBreakdown()
 					justify-items: right;
 					grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 				`;
-				
+
 				const skillCountSpan = document.createElement("span");
 				skillCountSpan.textContent = skillCount;
 				breakdownListItem.appendChild(skillCountSpan);
@@ -2531,87 +2549,147 @@ function displayCrownsBreakdown()
 
 				breakdownList.appendChild(breakdownListItem);
 			}
-		}
-		
-		breakdownContainer.appendChild(breakdownList);
-		if (options.crownsBreakdown) crownLevelContainer.appendChild(breakdownContainer);
 
-		// Checkpoint Prediction
-		if (treeLevel == 0 && options.checkpointPrediction)
-		{
-			const predictionData = (progress.length > 5) ? daysToNextCheckpoint() : daysToNextCheckpointByCalendar();
 
-			if (predictionData.time > 0)
+			if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0 && options.bonusSkillsBreakdown)
 			{
-				const prediction = createPredictionElement("checkpoint", predictionData);
-				prediction.style =
+				// The tree has some bonus skills so let's display a breakdown of their crown levels.
+				let bonusSkillsBreakdownHeader = document.createElement("h3");
+				bonusSkillsBreakdownHeader.textContent = "Bonus Skills";
+				bonusSkillsBreakdownHeader.style =
 				`
-					margin: 1em 1em 0;
-					text-align: center;
-					color: black;
+					margin: 0;
+					font-size: 100%;
+					justify-self: center
 				`;
 
-				crownLevelContainer.appendChild(prediction);
+				breakdownList.appendChild(bonusSkillsBreakdownHeader);
 
+				for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+				{
+					let skillCount = crownLevelCount[1][crownLevel];
+
+					if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
+					continue;
+
+					let crownCount = skillCount * crownLevel;
+				
+					imgContainer.lastChild.classList.add("bonusSkillCrownLevel" + crownLevel + "Count");
+					imgContainer.lastChild.textContent = crownLevel;
+
+					let breakdownListItem = document.createElement("li");
+					breakdownListItem.className = "crownLevelItem";
+					breakdownListItem.style =
+					`
+						display: grid;
+						align-items: center;
+						justify-items: right;
+						grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
+					`;
+					
+					const skillCountSpan = document.createElement("span");
+					skillCountSpan.textContent = skillCount;
+					breakdownListItem.appendChild(skillCountSpan);
+
+					const skillsAtSpan = document.createElement("span");
+					skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
+					skillsAtSpan.style.justifySelf = "center";
+					breakdownListItem.appendChild(skillsAtSpan);
+
+					breakdownListItem.appendChild(imgContainer);
+					imgContainer = imgContainer.cloneNode(true);
+
+					breakdownListItem.appendChild(document.createTextNode("="));
+					
+					const crownCountSpan = document.createElement("span");
+					crownCountSpan.textContent = crownCount;
+					breakdownListItem.appendChild(crownCountSpan);
+
+					const crownsSpan = document.createElement("span");
+					crownsSpan.textContent = `crown${(crownCount == 1 )?"":"s"}`;
+					breakdownListItem.appendChild(crownsSpan);
+
+					breakdownList.appendChild(breakdownListItem);
+				}
 			}
-		}
+			
+			breakdownContainer.appendChild(breakdownList);
+			if (options.crownsBreakdown) crownsInfoContainer.appendChild(breakdownContainer);
 
-		// Crown Level prediction
-		if (treeLevel != 5 && options.crownsPrediction)
-		{
-			const predictionData = (progress.length > 5) ? daysToNextCrownLevel() : daysToNextCrownLevelByCalendar();
-
-			if (predictionData.time != -1)
+			// Checkpoint Prediction
+			if (treeLevel == 0 && options.checkpointPrediction)
 			{
-				const prediction = createPredictionElement("crownLevel", predictionData);
-				prediction.style =
-				`
-					margin: 1em 1em 0;
-					text-align: center;
-					color: black;
-				`;
+				const predictionData = (progress.length > 5) ? daysToNextCheckpoint() : daysToNextCheckpointByCalendar();
 
-				crownLevelContainer.appendChild(prediction);
+				if (predictionData.time > 0)
+				{
+					const prediction = createPredictionElement("checkpoint", predictionData);
+					prediction.style =
+					`
+						margin: 1em 1em 0;
+						text-align: center;
+						color: black;
+					`;
+
+					crownsInfoContainer.appendChild(prediction);
+
+				}
 			}
-		}
-		
-		if (treeLevel === 5)
-		{
-			const maxLevelMessage = document.createElement("p");
-			maxLevelMessage.style.color = "black";
-			maxLevelMessage.textContent = "You have reached the maximum tree level!";
-			crownLevelContainer.appendChild(maxLevelMessage);
-		}
-	}
-	else
-	{
-		// We have already added the breakdown data, just update it.
 
-		for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
-		{
-			let levelContainerElement = document.getElementById("crownLevel" + crownLevel + "Count");
-			levelContainerElement.textContent = crownLevel;
-		}
-		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
-		{
-			for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+			// Crown Level prediction
+			if (treeLevel != 5 && options.crownsPrediction)
 			{
-				let levelContainerElement = document.getElementById("bonusSkillCrownLevel" + crownLevel + "Count");
-				levelContainerElement.textContent = crownLevel;
+				const predictionData = (progress.length > 5) ? daysToNextCrownLevel() : daysToNextCrownLevelByCalendar();
+
+				if (predictionData.time != -1)
+				{
+					const prediction = createPredictionElement("crownLevel", predictionData);
+					prediction.style =
+					`
+						margin: 1em 1em 0;
+						text-align: center;
+						color: black;
+					`;
+
+					crownsInfoContainer.appendChild(prediction);
+				}
+			}
+			
+			if (treeLevel === 5)
+			{
+				const maxLevelMessage = document.createElement("p");
+				maxLevelMessage.style.color = "black";
+				maxLevelMessage.textContent = "You have reached the maximum tree level!";
+				crownsInfoContainer.appendChild(maxLevelMessage);
 			}
 		}
-
-		document.getElementById("maxCrowns").textContent = "/" + maxCrownCount;
-		document.getElementById("treeLevel").textContent = treeLevel;
-	}
+	);
 }
 
 function displayXPBreakdown()
 {
-	if (Object.entries(userData).length == 0
-		|| (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length === 0 && document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER).length === 0))
+	if (Object.entries(userData).length === 0)
+	{
 		return false;
+	}
+
+	// First remove any existing XP Boxes
+	removeXPBoxes();
+
+	const isSidebarContainer = document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`) !== null;
+	const isPopupContainer = document.querySelector(`.${DAILY_GOAL_POPUP_CONTAINER}`) !== null;
+
+	const somethingToDo = (
+		(options.XPInfoInSidebar && isSidebarContainer)
+		||
+		((inMobileLayout || options.XPInfoInPopup) && isPopupContainer)
+	);
 	
+	if (!somethingToDo)
+	{
+		return false;
+	}
+
 	let data =
 		{
 			'language_string':	userData.language_data[languageCode].language_string,
@@ -2625,243 +2703,134 @@ function displayXPBreakdown()
 
 	let levelProgressPercentage = (data.level_progress*100)/(data.level_points);
 
-	const currentXPBox = document.getElementById("XPBox");
-	let removeCurrentBox = false;
+	let container = document.createElement("div");
+	container.classList.add("XPBox");
+	container.style = 
+	`
+		margin-top: 1em;
+		color: black;
+	`;
 
-	if (currentXPBox != null)
+	let languageLevelContainer = document.createElement("div");
+	languageLevelContainer.classList.add("XPBreakdown");
+
+	let XPHeader = document.createElement("h2");
+	XPHeader.textContent = data.language_string+ " XP";
+
+	languageLevelContainer.appendChild(XPHeader);
+
+	let languageLevelElement = document.createElement("p");
+	languageLevelElement.classList.add("xpTotalAndLevel");
+	languageLevelElement.textContent = "Level " + data.level;
+	languageLevelElement.style =
+	`
+		font-size: 175%;
+		font-weight: bold;
+		text-align: center;
+		color: ${ORANGE};
+	`;
+
+	let languageXPElement = document.createElement("span");
+	languageXPElement.textContent = data.points + " XP - ";
+	languageXPElement.style =
+	`
+		color: black;
+		font-weight: normal;
+	`;
+	
+	languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
+	languageLevelContainer.appendChild(languageLevelElement);
+	if (options.XPBreakdown) container.appendChild(languageLevelContainer);
+	
+	if (data.level != 25)
 	{
-		// truth table
-		// boxExists wantBox startOver
-		//		1		1		0
-		// 		1	 	0		1
-		// 		-----------------
-		// 		0		1		1
-		// 		0		0		0
-		//
-		//	Want XOR, or can split into two cases as shown
-		//	if the feature exists, then the output should be NOT the option
-		//	else it should be the same as the option
-		//
-		if ( (currentXPBox.querySelector(`#XPBreakdown`) != null) ? !options.XPBreakdown : options.XPBreakdown)
-			removeCurrentBox = true;
-		if ( (currentXPBox.querySelector(`#XPPrediction`) != null) ? !options.XPPrediction : options.XPPrediction)
-			removeCurrentBox = true
-	}
-
-	if (removeCurrentBox)
-		currentXPBox.remove();
-
-	if (
-		(!inMobileLayout && document.querySelectorAll(`.${DAILY_GOAL_SIDEBAR_CONATINER} #XPBox`).length === 0)
-		||
-		(inMobileLayout && document.querySelectorAll(`.${DAILY_GOAL_POPUP_CONTAINER} #XPBox`).length === 0)
-	)
-
-	{
-		// We haven't made the XP Box yet
-
-		let container = document.createElement("div");
-		container.id = "XPBox";
-		container.style = 
+		let nextLevelProgressElement = document.createElement("p");
+		nextLevelProgressElement.style =
 		`
-			margin-top: 1em;
-			color: black;
-		`;
-
-		let languageLevelContainer = document.createElement("div");
-		languageLevelContainer.id = "XPBreakdown";
-
-		let XPHeader = document.createElement("h2");
-		XPHeader.textContent = data.language_string+ " XP";
-
-		languageLevelContainer.appendChild(XPHeader);
-
-		let languageLevelElement = document.createElement("p");
-		languageLevelElement.id = "xpTotalAndLevel";
-		languageLevelElement.textContent = "Level " + data.level;
-		languageLevelElement.style =
-		`
-			font-size: 175%;
-			font-weight: bold;
 			text-align: center;
-			color: ${ORANGE};
+			margin-bottom: 0;
 		`;
+		nextLevelProgressElement.textContent = `${data.level_points - data.level_progress} XP till Level ${data.level+1}`;
 
-		let languageXPElement = document.createElement("span");
-		languageXPElement.textContent = data.points + " XP - ";
-		languageXPElement.style =
+		let languageLevelProgressBarContainer = document.createElement("div");
+		languageLevelProgressBarContainer.className = "languageLevelProgressBar";
+		languageLevelProgressBarContainer.style =
 		`
-			color: black;
-			font-weight: normal;
+			height: 0.5em;
+			width: 100%;
+			background-color: ${GREY};
+			border-radius: 0.25em;
 		`;
+
+		let languageLevelProgressBar = document.createElement("div");
+		languageLevelProgressBar.className = "languageLevelProgressBar";
+		languageLevelProgressBar.style =
+		`
+			height: 100%;
+			width: ${levelProgressPercentage}%;
+			background-color: ${ORANGE};
+			border-radius: 0.25em;
+		`;
+
+		languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
+
+		let currentLevelProgressElement = document.createElement("p");
+		currentLevelProgressElement.style = "text-align: center;";
+		currentLevelProgressElement.textContent = `(${data.level_progress}/${data.level_points} XP - ${Number(levelProgressPercentage).toFixed(1)}%)`;
+
+		languageLevelContainer.appendChild(nextLevelProgressElement);
+		languageLevelContainer.appendChild(languageLevelProgressBarContainer);
+		languageLevelContainer.appendChild(currentLevelProgressElement);
+
+
+		const numDays = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
 		
-		languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
-		languageLevelContainer.appendChild(languageLevelElement);
-		if (options.XPBreakdown) container.appendChild(languageLevelContainer);
-		
-		if (data.level != 25)
+		if (numDays != -1 && options.XPPrediction)
 		{
-			let nextLevelProgressElement = document.createElement("p");
-			nextLevelProgressElement.style =
+			const prediction = createPredictionElement("XPLevel", {time: numDays});
+			prediction.style =
 			`
-				text-align: center;
 				margin-bottom: 0;
-			`;
-			nextLevelProgressElement.textContent = `${data.level_points - data.level_progress} XP till Level ${data.level+1}`;
-
-			let languageLevelProgressBarContainer = document.createElement("div");
-			languageLevelProgressBarContainer.className = "languageLevelProgressBar";
-			languageLevelProgressBarContainer.style =
-			`
-				height: 0.5em;
-				width: 100%;
-				background-color: ${GREY};
-				border-radius: 0.25em;
+				text-align: center;
 			`;
 
-			let languageLevelProgressBar = document.createElement("div");
-			languageLevelProgressBar.className = "languageLevelProgressBar";
-			languageLevelProgressBar.style =
-			`
-				height: 100%;
-				width: ${levelProgressPercentage}%;
-				background-color: ${ORANGE};
-				border-radius: 0.25em;
-			`;
-
-			languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
-
-			let currentLevelProgressElement = document.createElement("p");
-			currentLevelProgressElement.style = "text-align: center;";
-			currentLevelProgressElement.textContent = `(${data.level_progress}/${data.level_points} XP - ${Number(levelProgressPercentage).toFixed(1)}%)`;
-
-			languageLevelContainer.appendChild(nextLevelProgressElement);
-			languageLevelContainer.appendChild(languageLevelProgressBarContainer);
-			languageLevelContainer.appendChild(currentLevelProgressElement);
-
-
-			const numDays = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
-			
-			if (numDays != -1 && options.XPPrediction)
-			{
-				const prediction = createPredictionElement("XPLevel", {time: numDays});
-				prediction.style =
-				`
-					margin-bottom: 0;
-					text-align: center;
-				`;
-
-				container.appendChild(prediction);
-			}
-		}
-		else
-		{
-			// Reached max level
-			let maxLevelMessage = document.createElement("p");
-			maxLevelMessage.textContent = "You have reached the maximum level!";
-			languageLevelContainer.appendChild(maxLevelMessage);
-		}
-		
-		if (document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER).length != 0)
-		{
-			// If there is a Daily Goal box in the sidebar put the breakdown in that.
-			document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER)[0].appendChild(container);
-		}
-		else if (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length != 0)
-		{
-			// Otherwise if there is a Daily Goal box pop-up box, put the breakdown in that.
-			if (inMobileLayout)
-				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[1].appendChild(container);
-			else
-				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[0].appendChild(container);
-			
-			if(!inMobileLayout)
-			{
-				container.parentNode.style =
-				`
-					overflow-y: auto;
-					max-height: calc(100vh - ${(58+90)}px);
-				`;
-			}
-			else
-			{
-				container.parentNode.parentNode.style =
-				`
-					overflow-y: auto;
-					max-height: calc(100vh - ${(58+90)}px);
-				`;
-			}
-		}
-		else
-		{
-			// Neither is about so we just don't do anything. Shouldn't get to this point as we should have exited the function at the start.
+			container.appendChild(prediction);
 		}
 	}
 	else
 	{
-		// We already have the XP Box, let's just update the values, if we want a breakdown.
-		if (options.XPBreakdown)
+		// Reached max level
+		let maxLevelMessage = document.createElement("p");
+		maxLevelMessage.textContent = "You have reached the maximum level!";
+		languageLevelContainer.appendChild(maxLevelMessage);
+	}
+	
+	// Add the XPBoxes in the chosen places
+
+	if (options.XPInfoInSidebar && isSidebarContainer)
+	{
+		document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`).appendChild(container.cloneNode(true));
+	}
+
+	if ((inMobileLayout || options.XPInfoInPopup) && isPopupContainer)
+	{
+		document.querySelector(`.${DAILY_GOAL_POPUP_CONTAINER}`).appendChild(container);
+		
+		if(!inMobileLayout)
 		{
-			let languageLevelElement = document.getElementById("xpTotalAndLevel");
-			let languageXPElement = languageLevelElement.childNodes[0];
-			languageXPElement.textContent = data.points + " XP - ";
-			languageLevelElement.textContent = "Level " + data.level;
-			languageLevelElement.insertBefore(languageXPElement,languageLevelElement.childNodes[0]);
-			
-			if (languageLevelElement.nextSibling != null)
-			{
-				// Wasn't level 25 ...
-				if (data.level != 25)
-				{
-					// ... and still aren't
-					let languageLevelProgressBarContainer = document.getElementsByClassName("languageLevelProgressBar")[0];
-					languageLevelProgressBarContainer.style =
-					`
-						height: 0.5em;
-						width: 100%;
-						background-color: ${GREY};
-						border-radius: 0.25em;
-					`;
-
-					let languageLevelProgressBar = document.getElementsByClassName("languageLevelProgressBar")[1];
-					languageLevelProgressBar.style =
-					`
-						height: 100%;
-						width: ${levelProgressPercentage}%;
-						background-color: ${ORANGE};
-						border-radius: 0.25em;
-					`;
-
-					let nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
-					nextLevelProgressElement.textContent = `${data.level_points - data.level_progress} XP till Level ${data.level+1}`;
-
-					let currentLevelProgressElement = languageLevelProgressBarContainer.nextSibling;
-					currentLevelProgressElement.textContent =
-					`
-						(${data.level_progress}/${data.level_points} XP - ${Number(levelProgressPercentage).toFixed(1)}%)
-					`;
-
-				}
-				else
-				{
-					// ... but is now, so let's remove all the irrelevant info
-					while (languageLevelElement.nextSibling != null)
-					{
-						languageLevelElement.parentNode.removeChild(languageLevelElement.nextSibling);
-					}
-
-					let maxLevelMessage = document.createElement("p");
-					maxLevelMessage.style = "margin-bottom: 0";
-					maxLevelMessage.textContent = "You have reached the maximum level!";
-					languageLevelElement.parentNode.appendChild(maxLevelMessage);
-				}
-			}
+			container.parentNode.style =
+			`
+				overflow-y: auto;
+				max-height: calc(100vh - ${(58+90)}px);
+			`;
 		}
-		if (options.XPPrediction && document.getElementById("XPPredicition")!= null)
+		else
 		{
-			let daysLeft = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
-			document.getElementById("XPPrediction").textContent = daysLeft;
-			document.getElementById("XPPredictionDate").textContent = (new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000)).toLocaleDateString();
+			container.parentNode.parentNode.style =
+			`
+				overflow-y: auto;
+				max-height: calc(100vh - ${(58+90)}px);
+			`;
 		}
 	}
 }
@@ -3004,7 +2973,7 @@ function displayLanguagesInfo(languages)
 		);
 
 		// Add the new side bar box to the page
-		const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONATINER}`);
+		const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`);
 		if (dailyGoalBox == null)
 			return false;
 
@@ -3330,7 +3299,7 @@ function addFeatures()
 		if (options.XPInfo)
 			displayXPBreakdown();
 		else
-			removeXPBox();
+			removeXPBoxes();
 	}
 
 	// Crowns Info
@@ -3537,7 +3506,7 @@ function httpGetAsync(url, responseHandler)
 					}
 				}
 			};
-			xmlHttp.open('GET', '${url+'?id='+requestID}', true);
+			xmlHttp.open('GET', '${url+'&DuoStrengthRequestId='+requestID}', true);
 			xmlHttp.send(null);
 		})()`;
 
@@ -3593,6 +3562,8 @@ async function handleDataResponse(responseText)
 	const newDataLanguageCode = newUserData.learning_language;
 	const newDataUICode = newUserData.ui_language;
 	const newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
+
+	username = newUserData.username;
 
 	if (language == '')
 	{
@@ -3682,7 +3653,7 @@ function requestData()
 		}
 
 		httpGetAsync( // asks for data and async calls handle function when ready.
-			encodeURI(window.location.origin+"/users/"+username),
+			encodeURI(window.location.origin+"/api/1/users/show?id="+userId),
 			function (responseText, responseID)
 			{
 				if (languageChangesPending > 1 && responseID != requestID - 1)
@@ -3876,13 +3847,13 @@ function hideTranslationText(reveal = false, setupObserver = true)
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
-let childListMutationHandle = function(mutationsList, observer)
+function childListMutationHandle(mutationsList, observer)
 {
 	let rootChildReplaced = false;
 	let rootChildContentsReplaced = false;
 	let rootChildRemovedNodes = [];
 	let mainBodyReplaced = false
-	let sidebarToggled = false;
+	let bottomNavToggled = false;
 	let popupChanged = false;
 	let popupIcon;
 	let lessonLoaded = false;
@@ -3897,26 +3868,33 @@ let childListMutationHandle = function(mutationsList, observer)
 	for (let mutation of mutationsList)
 	{
 		if (mutation.target == rootElem)
+		{
 			rootChildReplaced = true;
+		}
 		else if (mutation.target == rootChild)
 		{
 			rootChildContentsReplaced = true;
 			rootChildRemovedNodes = rootChildRemovedNodes.concat(Array.from(mutation.removedNodes));
 		}
 		else if (mutation.target == mainBodyContainer)
+		{
 			mainBodyReplaced = true;
+		}
 		else if (
-			mutation.target == mainBody &&
+			mutation.target.parentNode === rootChild
+			&&
 			(
 				[
 					...Array.from(mutation.addedNodes),
 					...Array.from(mutation.removedNodes)
 				].some(
-					(addedNode) => addedNode.className.includes(SIDEBAR)
-				) // The sidebar was added or removed
+					(addedNode) => addedNode.className.includes(BOTTOM_NAV_SELECTOR.substring(1))
+				) // The bottom nav was added or removed
 			)
 		)
-			sidebarToggled = true;
+		{
+			bottomNavToggled = true;
+		}
 		else if (
 			mutation.target.className == POPUP_ICON &&
 			mutation.addedNodes.length != 0
@@ -4028,7 +4006,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			init();
 	}
 
-	if (sidebarToggled)
+	if (bottomNavToggled)
 	{
 		// Switched between mobile and desktop layouts.
 
@@ -4054,9 +4032,9 @@ let childListMutationHandle = function(mutationsList, observer)
 			desktopWidth = "auto";
 		}
 
-		if (document.getElementsByClassName(SIDEBAR).length == 0)
+		if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
 		{
-			// No sidebar so we are in mobile layout.
+			// There is the bottom navigation bar so we are in the mobile layout.
 			inMobileLayout = true;
 
 			if (document.getElementById("strengthenBox") != null)
@@ -4078,7 +4056,7 @@ let childListMutationHandle = function(mutationsList, observer)
 		}
 		else
 		{
-			// There is a sidebar so we are in normal desktop layout.
+			// There is not a bottom navigation bar so we are in normal desktop layout.
 			inMobileLayout = false;
 
 			if (document.getElementById("strengthenBox") != null)
@@ -4100,6 +4078,11 @@ let childListMutationHandle = function(mutationsList, observer)
 			}
 			
 		}
+
+		// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
+		setUpObservers();
+
+
 		// Try and add the Crowns and XP info in case the popups are there.
 		if (options.XPInfo) displayXPBreakdown();
 		if (options.crownsInfo) displayCrownsBreakdown();
@@ -4212,7 +4195,7 @@ let childListMutationHandle = function(mutationsList, observer)
 	}
 };
 
-let classNameMutationHandle = function(mutationsList, observer)
+function classNameMutationHandle(mutationsList, observer)
 {
 	/*
 		First we go through all the mutations to check if any of them are a language change.
@@ -4252,7 +4235,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 		removeNeedsStrengtheningBox();
 		removeCrackedSkillsList();
 		removeCrownsBreakdown();
-		removeXPBox();
+		removeXPBoxes();
 		removeSuggestion();
 		progress = [];
 		// now get the new data
@@ -4262,10 +4245,10 @@ let classNameMutationHandle = function(mutationsList, observer)
 	if (pageChanged)
 	{
 		// There has been a page change, either to or from the main page.
-		// Just in case there is also a language change still going on we won't set languageChanged to false.
+
 
 		// check if we are now on the main page
-		if (topBarDiv.childNodes[0].className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
+		if (window.location.pathname == "/learn")
 		{
 			// on main page
 			// check if language has been previously set as we only set it in init if we were on the main page
@@ -4274,6 +4257,11 @@ let classNameMutationHandle = function(mutationsList, observer)
 			{
 				// language has previously been set so not first time on main page, let's just get some new data.
 				requestData();
+
+				if (inMobileLayout)
+				{
+					setUpObservers(); // topBarDiv gets replaced when changing to the shop in mobile layout;
+				}
 			}
 			else
 			{
@@ -4310,8 +4298,102 @@ let classNameMutationHandle = function(mutationsList, observer)
 	}
 };
 
-let classNameObserver = new MutationObserver(classNameMutationHandle);
-let childListObserver = new MutationObserver(childListMutationHandle);
+function setUpObservers()
+{
+
+	// topBar Div is the direct container holding the navigation butons
+	// Safer to use class name, which may also change...
+	topBarDiv = rootChild.querySelector(`.${TOP_BAR}`);
+	const bottomNav = rootChild.querySelector(BOTTOM_NAV_SELECTOR);
+
+	// Declare nav buttons that we will need to observe
+
+	let homeNav;
+	let storiesNav;
+	// let discussionNav;
+	let shopNav;
+	// languageLogo declared globally for use outside init;
+	let crownNav;
+	let streakNav;
+
+	if (!inMobileLayout)
+	{
+		// In normal layout, with everything in the top bar.
+
+		let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
+		// if numNavButtons = 4 then there is no stories button.
+		// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+
+		homeNav = topBarDiv.childNodes[0];
+
+		if (numNavButtons == 5)
+		{
+			storiesNav = topBarDiv.childNodes[2];
+			/* unused/unusable
+			discussionNav = topBarDiv.childNodes[4];
+			*/
+			shopNav = topBarDiv.childNodes[6];
+			languageLogo = topBarDiv.childNodes[10];
+			crownNav = topBarDiv.childNodes[11];
+			streakNav = topBarDiv.childNodes[12];
+		}
+		else
+		{
+			/* unused/unusable
+			discussionNav = topBarDiv.childNodes[2];
+			*/
+			shopNav = topBarDiv.childNodes[4];
+			languageLogo = topBarDiv.childNodes[8];
+			crownNav = topBarDiv.childNodes[9];
+			streakNav = topBarDiv.childNodes[10];
+		}
+
+		// set up observers for page changes
+		classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
+		/* unused/unusable
+		classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
+		*/
+		classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
+	}
+	else
+	{
+		// In mobile layout with the bottom nav bar.
+		// topBarDiv contains langageLogo, crownNav, streakNav
+		// bottomNav contains homeNav, storiesNav, discussionNav, shopNav, profileNav,
+
+		homeNav = bottomNav.childNodes[1];
+		storiesNav = bottomNav.childNodes[2]; // Always a stories button in mobile layout.
+		/* unused/unusable
+		discussionNav = bottomNav.childNodes[3];
+		*/
+		shopNav = bottomNav.childNodes[4];
+
+		languageLogo = topBarDiv.childNodes[0];
+		crownNav = topBarDiv.childNodes[1];
+		streakNav = topBarDiv.childNodes[2];
+		
+		const homeImg = homeNav.querySelector(`img`);
+		const shopImg = shopNav.querySelector(`img`);
+		
+		classNameObserver.observe(homeImg, {attributes: true});
+		classNameObserver.observe(shopImg, {attributes: true});
+	}
+	
+
+	// set up observer for language logo popup
+	childListObserver.observe(languageLogo.lastChild, {childList: true});
+
+	// set up observers for crown and streak nav hovers
+	childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
+	childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
+
+	// need to set up Observer on language logo for language change detection
+	// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
+	classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+
+	// set up the observer to check for layout changes where the bottomNav might be added or removed
+	childListObserver.observe(topBarDiv.parentNode.parentNode, {childList: true});
+}
 
 async function init()
 {
@@ -4344,6 +4426,7 @@ async function init()
 		mainBodyContainer = rootChild.lastChild;
 		if (mainBodyContainer == null)
 			return false;
+
 	}
 
 	childListObserver.observe(mainBodyContainer, {childList:true}); // Observing for changes to its children to detect if the mainBody element has been replaced.
@@ -4353,9 +4436,7 @@ async function init()
 	if (mainBody == null)
 		return false;
 	
-	childListObserver.observe(mainBody,{childList:true}); // Observing for changes to its children to detect moving between mobile and desktop layout.
-	
-	if (mainBody.getElementsByClassName(SIDEBAR).length == 0)
+	if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
 		inMobileLayout = true;
 	else
 		inMobileLayout = false;
@@ -4434,7 +4515,7 @@ async function init()
 				So it is enough to just test for the number of children of rootChild to check for a topBarDiv.
 			*/
 
-			if (rootChild.childElementCount == 1)
+			if (rootChild.childElementCount === 1)
 			{
 				// no topBarDiv so nothing left to do
 				onMainPage = false;
@@ -4444,98 +4525,22 @@ async function init()
 			{
 				// there is a topBarDiv so we can continue to process the page to workout what to do
 
-				// set username via the href of a link to the profile
-				const profileLinkElement = document.querySelector(`[href^="/profile/"]`);
-				if (profileLinkElement === null)
-				{
-					// no element with the username in has been found
-					console.error("Username could not be pulled from the page:\nNo link to the user's profile found");
-					return false;
-				}
-				else
-				{
-					const profileLinkHrefParts = document.querySelector(`[href^="/profile/"]`).href.split("/");
-					username = profileLinkHrefParts[profileLinkHrefParts.length - 1];
-				}
 
+				// Get user id from the pages cookies, it is stored under the key logged_out_uuid
+				userId = document.cookie.split("; ")
+										.find(cookie => cookie.startsWith("logged_out_uuid"))
+										.split("=")[1];
 
-				// topBar Div is the direct container holding the navigation butons, has class _3F_8q
-				// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];
-				// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
-				// Safer to use class name, which may also change...
-				// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
-				topBarDiv = rootChild.getElementsByClassName(TOP_BAR)[0];
-				mobileTopBarDiv = rootChild.getElementsByClassName(TOP_BAR)[1];
-				
-				// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
-				let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
-				// if numNavButtons = 4 then there is no stories button.
-				// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+				setUpObservers();
 
-				let homeNav = topBarDiv.childNodes[0];
-
-				let storiesNav;
-				// let discussionNav;
-				let shopNav;
-				// languageLogo declared globally for use outside init;
-				let crownNav;
-				let streakNav;
-
-				if (numNavButtons == 5)
-				{
-					storiesNav = topBarDiv.childNodes[2];
-					/* unused/unusable
-					discussionNav = topBarDiv.childNodes[4];
-					*/
-					shopNav = topBarDiv.childNodes[6];
-					languageLogo = topBarDiv.childNodes[10];
-					crownNav = topBarDiv.childNodes[11];
-					streakNav = topBarDiv.childNodes[12];
-				}
-				else
-				{
-					/* unused/unusable
-					discussionNav = topBarDiv.childNodes[2];
-					*/
-					shopNav = topBarDiv.childNodes[4];
-					languageLogo = topBarDiv.childNodes[8];
-					crownNav = topBarDiv.childNodes[9];
-					streakNav = topBarDiv.childNodes[10];
-				}
-				
-				// set up observers for page changes
-				classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
-				/* unused/unusable
-				classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
-				*/
-				classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
-
-				// set up observer for language logo popup
-				childListObserver.observe(languageLogo.lastChild, {childList: true});
-
-				// set up observers for crown and streak nav hovers
-				childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
-				childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
-
-				if (homeNav.className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
-				{
-					// Seems as though the main page is now at /learn and the tab is not active, but we leave the check in case
-					// on home page
-					onMainPage = true;
-				}
-				else
-					onMainPage = false;
-
-				// need to set up Observer on language logo for language change detection
-				// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
-				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+				onMainPage = window.location.pathname === "/learn"
 
 				/*
-				language seems to be quite difficult to set on first load, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
-				We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
-				
+					language seems to be quite difficult to set on first load, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
+					We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
+					
 
-				Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
+					Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
 				*/
 
 				await optionsLoaded;

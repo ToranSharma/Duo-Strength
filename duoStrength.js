@@ -58,6 +58,7 @@ const GOLDEN_OWL_CHECKPOINT_SELECTOR = `._1FtA8`;
 const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
+const BOTTOM_NAV_SELECTOR = `._1hese`;
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -96,12 +97,14 @@ let rootChild;
 let mainBody;
 let mainBodyContainer;
 let topBarDiv;
-let mobileTopBarDiv;
 
 let onMainPage;
 let inMobileLayout;
 
 let lastSkill;
+
+const classNameObserver = new MutationObserver(classNameMutationHandle);
+const childListObserver = new MutationObserver(childListMutationHandle);
 
 function retrieveOptions()
 {
@@ -2207,11 +2210,7 @@ function displayCrownsBreakdown()
 
 	let treeLevel = crownTreeLevel();
 
-	let crownLevelContainer;
-	if (inMobileLayout)
-		crownLevelContainer = document.getElementsByClassName(CROWN_POPUP_CONTAINER)[1];
-	else
-		crownLevelContainer = document.getElementsByClassName(CROWN_POPUP_CONTAINER)[0];
+	let crownLevelContainer = document.querySelector(`.${CROWN_POPUP_CONTAINER}`);
 
 	if (!inMobileLayout)
 	{
@@ -2237,11 +2236,11 @@ function displayCrownsBreakdown()
 			max-height: calc(100vh - ${(58+90)}px);
 		`;
 	}
-	let crownLogoContainer = document.getElementsByClassName(CROWN_LOGO_CONTAINER)[inMobileLayout? 1 : 0];
+	let crownLogoContainer = document.querySelector(`.${CROWN_LOGO_CONTAINER}`);
 	const crownCountImg = crownLogoContainer.querySelector(`:scope > img`);
 	crownCountImg.style["transform"] = "scale(1.3)";
 
-	let crownDescriptionContainer = document.getElementsByClassName(CROWN_DESCRIPTION_CONTAINER)[inMobileLayout ? 1 : 0];
+	let crownDescriptionContainer = document.querySelector(`.${CROWN_DESCRIPTION_CONTAINER}`);
 
 	crownDescriptionContainer.style.width = '50%';
 
@@ -2771,10 +2770,7 @@ function displayXPBreakdown()
 		else if (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length != 0)
 		{
 			// Otherwise if there is a Daily Goal box pop-up box, put the breakdown in that.
-			if (inMobileLayout)
-				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[1].appendChild(container);
-			else
-				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[0].appendChild(container);
+			document.querySelector(`.${DAILY_GOAL_POPUP_CONTAINER}`).appendChild(container);
 			
 			if(!inMobileLayout)
 			{
@@ -3879,13 +3875,13 @@ function hideTranslationText(reveal = false, setupObserver = true)
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
-let childListMutationHandle = function(mutationsList, observer)
+function childListMutationHandle(mutationsList, observer)
 {
 	let rootChildReplaced = false;
 	let rootChildContentsReplaced = false;
 	let rootChildRemovedNodes = [];
 	let mainBodyReplaced = false
-	let sidebarToggled = false;
+	let bottomNavToggled = false;
 	let popupChanged = false;
 	let popupIcon;
 	let lessonLoaded = false;
@@ -3900,26 +3896,33 @@ let childListMutationHandle = function(mutationsList, observer)
 	for (let mutation of mutationsList)
 	{
 		if (mutation.target == rootElem)
+		{
 			rootChildReplaced = true;
+		}
 		else if (mutation.target == rootChild)
 		{
 			rootChildContentsReplaced = true;
 			rootChildRemovedNodes = rootChildRemovedNodes.concat(Array.from(mutation.removedNodes));
 		}
 		else if (mutation.target == mainBodyContainer)
+		{
 			mainBodyReplaced = true;
+		}
 		else if (
-			mutation.target == mainBody &&
+			mutation.target.parentNode === rootChild
+			&&
 			(
 				[
 					...Array.from(mutation.addedNodes),
 					...Array.from(mutation.removedNodes)
 				].some(
-					(addedNode) => addedNode.className.includes(SIDEBAR)
-				) // The sidebar was added or removed
+					(addedNode) => addedNode.className.includes(BOTTOM_NAV_SELECTOR.substring(1))
+				) // The bottom nav was added or removed
 			)
 		)
-			sidebarToggled = true;
+		{
+			bottomNavToggled = true;
+		}
 		else if (
 			mutation.target.className == POPUP_ICON &&
 			mutation.addedNodes.length != 0
@@ -4031,7 +4034,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			init();
 	}
 
-	if (sidebarToggled)
+	if (bottomNavToggled)
 	{
 		// Switched between mobile and desktop layouts.
 
@@ -4057,9 +4060,9 @@ let childListMutationHandle = function(mutationsList, observer)
 			desktopWidth = "auto";
 		}
 
-		if (document.getElementsByClassName(SIDEBAR).length == 0)
+		if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
 		{
-			// No sidebar so we are in mobile layout.
+			// There is the bottom navigation bar so we are in the mobile layout.
 			inMobileLayout = true;
 
 			if (document.getElementById("strengthenBox") != null)
@@ -4081,7 +4084,7 @@ let childListMutationHandle = function(mutationsList, observer)
 		}
 		else
 		{
-			// There is a sidebar so we are in normal desktop layout.
+			// There is not a bottom navigation bar so we are in normal desktop layout.
 			inMobileLayout = false;
 
 			if (document.getElementById("strengthenBox") != null)
@@ -4103,6 +4106,11 @@ let childListMutationHandle = function(mutationsList, observer)
 			}
 			
 		}
+
+		// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
+		setUpObservers();
+
+
 		// Try and add the Crowns and XP info in case the popups are there.
 		if (options.XPInfo) displayXPBreakdown();
 		if (options.crownsInfo) displayCrownsBreakdown();
@@ -4215,7 +4223,7 @@ let childListMutationHandle = function(mutationsList, observer)
 	}
 };
 
-let classNameMutationHandle = function(mutationsList, observer)
+function classNameMutationHandle(mutationsList, observer)
 {
 	/*
 		First we go through all the mutations to check if any of them are a language change.
@@ -4265,10 +4273,10 @@ let classNameMutationHandle = function(mutationsList, observer)
 	if (pageChanged)
 	{
 		// There has been a page change, either to or from the main page.
-		// Just in case there is also a language change still going on we won't set languageChanged to false.
+
 
 		// check if we are now on the main page
-		if (topBarDiv.childNodes[0].className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
+		if (window.location.pathname == "/learn")
 		{
 			// on main page
 			// check if language has been previously set as we only set it in init if we were on the main page
@@ -4277,6 +4285,11 @@ let classNameMutationHandle = function(mutationsList, observer)
 			{
 				// language has previously been set so not first time on main page, let's just get some new data.
 				requestData();
+
+				if (inMobileLayout)
+				{
+					setUpObservers(); // topBarDiv gets replaced when changing to the shop in mobile layout;
+				}
 			}
 			else
 			{
@@ -4313,8 +4326,102 @@ let classNameMutationHandle = function(mutationsList, observer)
 	}
 };
 
-let classNameObserver = new MutationObserver(classNameMutationHandle);
-let childListObserver = new MutationObserver(childListMutationHandle);
+function setUpObservers()
+{
+
+	// topBar Div is the direct container holding the navigation butons
+	// Safer to use class name, which may also change...
+	topBarDiv = rootChild.querySelector(`.${TOP_BAR}`);
+	const bottomNav = rootChild.querySelector(BOTTOM_NAV_SELECTOR);
+
+	// Declare nav buttons that we will need to observe
+
+	let homeNav;
+	let storiesNav;
+	// let discussionNav;
+	let shopNav;
+	// languageLogo declared globally for use outside init;
+	let crownNav;
+	let streakNav;
+
+	if (!inMobileLayout)
+	{
+		// In normal layout, with everything in the top bar.
+
+		let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
+		// if numNavButtons = 4 then there is no stories button.
+		// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+
+		homeNav = topBarDiv.childNodes[0];
+
+		if (numNavButtons == 5)
+		{
+			storiesNav = topBarDiv.childNodes[2];
+			/* unused/unusable
+			discussionNav = topBarDiv.childNodes[4];
+			*/
+			shopNav = topBarDiv.childNodes[6];
+			languageLogo = topBarDiv.childNodes[10];
+			crownNav = topBarDiv.childNodes[11];
+			streakNav = topBarDiv.childNodes[12];
+		}
+		else
+		{
+			/* unused/unusable
+			discussionNav = topBarDiv.childNodes[2];
+			*/
+			shopNav = topBarDiv.childNodes[4];
+			languageLogo = topBarDiv.childNodes[8];
+			crownNav = topBarDiv.childNodes[9];
+			streakNav = topBarDiv.childNodes[10];
+		}
+
+		// set up observers for page changes
+		classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
+		/* unused/unusable
+		classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
+		*/
+		classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
+	}
+	else
+	{
+		// In mobile layout with the bottom nav bar.
+		// topBarDiv contains langageLogo, crownNav, streakNav
+		// bottomNav contains homeNav, storiesNav, discussionNav, shopNav, profileNav,
+
+		homeNav = bottomNav.childNodes[1];
+		storiesNav = bottomNav.childNodes[2]; // Always a stories button in mobile layout.
+		/* unused/unusable
+		discussionNav = bottomNav.childNodes[3];
+		*/
+		shopNav = bottomNav.childNodes[4];
+
+		languageLogo = topBarDiv.childNodes[0];
+		crownNav = topBarDiv.childNodes[1];
+		streakNav = topBarDiv.childNodes[2];
+		
+		const homeImg = homeNav.querySelector(`img`);
+		const shopImg = shopNav.querySelector(`img`);
+		
+		classNameObserver.observe(homeImg, {attributes: true});
+		classNameObserver.observe(shopImg, {attributes: true});
+	}
+	
+
+	// set up observer for language logo popup
+	childListObserver.observe(languageLogo.lastChild, {childList: true});
+
+	// set up observers for crown and streak nav hovers
+	childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
+	childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
+
+	// need to set up Observer on language logo for language change detection
+	// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
+	classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+
+	// set up the observer to check for layout changes where the bottomNav might be added or removed
+	childListObserver.observe(topBarDiv.parentNode.parentNode, {childList: true});
+}
 
 async function init()
 {
@@ -4347,6 +4454,7 @@ async function init()
 		mainBodyContainer = rootChild.lastChild;
 		if (mainBodyContainer == null)
 			return false;
+
 	}
 
 	childListObserver.observe(mainBodyContainer, {childList:true}); // Observing for changes to its children to detect if the mainBody element has been replaced.
@@ -4356,9 +4464,7 @@ async function init()
 	if (mainBody == null)
 		return false;
 	
-	childListObserver.observe(mainBody,{childList:true}); // Observing for changes to its children to detect moving between mobile and desktop layout.
-	
-	if (mainBody.getElementsByClassName(SIDEBAR).length == 0)
+	if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
 		inMobileLayout = true;
 	else
 		inMobileLayout = false;
@@ -4437,7 +4543,7 @@ async function init()
 				So it is enough to just test for the number of children of rootChild to check for a topBarDiv.
 			*/
 
-			if (rootChild.childElementCount == 1)
+			if (rootChild.childElementCount === 1)
 			{
 				// no topBarDiv so nothing left to do
 				onMainPage = false;
@@ -4453,80 +4559,16 @@ async function init()
 										.find(cookie => cookie.startsWith("logged_out_uuid"))
 										.split("=")[1];
 
-				// topBar Div is the direct container holding the navigation butons
-				// Safer to use class name, which may also change...
-				topBarDiv = rootChild.getElementsByClassName(TOP_BAR)[0];
-				mobileTopBarDiv = rootChild.getElementsByClassName(TOP_BAR)[1];
-				
-				// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
-				let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
-				// if numNavButtons = 4 then there is no stories button.
-				// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+				setUpObservers();
 
-				let homeNav = topBarDiv.childNodes[0];
-
-				let storiesNav;
-				// let discussionNav;
-				let shopNav;
-				// languageLogo declared globally for use outside init;
-				let crownNav;
-				let streakNav;
-
-				if (numNavButtons == 5)
-				{
-					storiesNav = topBarDiv.childNodes[2];
-					/* unused/unusable
-					discussionNav = topBarDiv.childNodes[4];
-					*/
-					shopNav = topBarDiv.childNodes[6];
-					languageLogo = topBarDiv.childNodes[10];
-					crownNav = topBarDiv.childNodes[11];
-					streakNav = topBarDiv.childNodes[12];
-				}
-				else
-				{
-					/* unused/unusable
-					discussionNav = topBarDiv.childNodes[2];
-					*/
-					shopNav = topBarDiv.childNodes[4];
-					languageLogo = topBarDiv.childNodes[8];
-					crownNav = topBarDiv.childNodes[9];
-					streakNav = topBarDiv.childNodes[10];
-				}
-				
-				// set up observers for page changes
-				classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
-				/* unused/unusable
-				classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
-				*/
-				classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
-
-				// set up observer for language logo popup
-				childListObserver.observe(languageLogo.lastChild, {childList: true});
-
-				// set up observers for crown and streak nav hovers
-				childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
-				childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
-
-				if (homeNav.className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
-				{
-					// Seems as though the main page is now at /learn and the tab is not active, but we leave the check in case
-					// on home page
-					onMainPage = true;
-				}
-				else
-					onMainPage = false;
-
-				// need to set up Observer on language logo for language change detection
-				// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
-				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+				onMainPage = window.location.pathname === "/learn"
 
 				/*
-				language seems to be quite difficult to set on first load, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
-				We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
-				
+					language seems to be quite difficult to set on first load, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
+					We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
+					
 
-				Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
+					Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
 				*/
 
 				await optionsLoaded;

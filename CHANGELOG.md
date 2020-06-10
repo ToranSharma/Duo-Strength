@@ -16,6 +16,10 @@ the webpage itself, while the userId stored in the cookies is always there.
 - The username is then defined once the user data has been received.
 - Request id URL parameter renamed to avoid confusion with the userId.
 
+### Fixed
+- Initialisation of the extension when in mobile layout.
+- Handling of switched between mobile and desktop layouts.
+
 [v1.3.12] - 2020-06-09
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.12)

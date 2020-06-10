@@ -5,6 +5,16 @@ Changelog
 ------------
 -
 
+[v1.3.13] - 2020-06-10
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.13)
+### Changed
+- The user's data file is now requested using their userId, which is taken from
+the pages cookies, where it is stored under the name `logged_out_uuid`. This is
+due to the issue that it is possible for a user's username can't be taken from
+the webpage itself, while the userId stored in the cookies is always there.
+- The username is then defined once the user data has been recieved.
+
 [v1.3.12] - 2020-06-09
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.12)
@@ -832,6 +842,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.13]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.12...v1.3.13
 [v1.3.12]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.11...v1.3.12
 [v1.3.11]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.10...v1.3.11
 [v1.3.10]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.9...v1.3.10

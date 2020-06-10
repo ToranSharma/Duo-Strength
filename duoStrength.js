@@ -85,6 +85,7 @@ let languageLogo;
 let options = {};
 let progress = [];
 let username = "";
+let userId = "";
 let userData = {};
 let requestID = 0;
 let requestsPending = 0;
@@ -3594,6 +3595,8 @@ async function handleDataResponse(responseText)
 	const newDataUICode = newUserData.ui_language;
 	const newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
 
+	username = newUserData.username;
+
 	if (language == '')
 	{
 		// no lanuage set , then this must be the first load and we need to set the lanuage now.
@@ -3682,7 +3685,7 @@ function requestData()
 		}
 
 		httpGetAsync( // asks for data and async calls handle function when ready.
-			encodeURI(window.location.origin+"/users/"+username),
+			encodeURI(window.location.origin+"/api/1/users/show?id="+userId),
 			function (responseText, responseID)
 			{
 				if (languageChangesPending > 1 && responseID != requestID - 1)
@@ -4444,26 +4447,14 @@ async function init()
 			{
 				// there is a topBarDiv so we can continue to process the page to workout what to do
 
-				// set username via the href of a link to the profile
-				const profileLinkElement = document.querySelector(`[href^="/profile/"]`);
-				if (profileLinkElement === null)
-				{
-					// no element with the username in has been found
-					console.error("Username could not be pulled from the page:\nNo link to the user's profile found");
-					return false;
-				}
-				else
-				{
-					const profileLinkHrefParts = document.querySelector(`[href^="/profile/"]`).href.split("/");
-					username = profileLinkHrefParts[profileLinkHrefParts.length - 1];
-				}
 
+				// Get user id from the pages cookies, it is stored under the key logged_out_uuid
+				userId = document.cookie.split("; ")
+										.find(cookie => cookie.startsWith("logged_out_uuid"))
+										.split("=")[1];
 
-				// topBar Div is the direct container holding the navigation butons, has class _3F_8q
-				// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];
-				// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
+				// topBar Div is the direct container holding the navigation butons
 				// Safer to use class name, which may also change...
-				// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
 				topBarDiv = rootChild.getElementsByClassName(TOP_BAR)[0];
 				mobileTopBarDiv = rootChild.getElementsByClassName(TOP_BAR)[1];
 				

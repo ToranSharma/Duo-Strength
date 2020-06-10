@@ -20,6 +20,10 @@ the webpage itself, while the userId stored in the cookies is always there.
 - Initialisation of the extension when in mobile layout.
 - Handling of switched between mobile and desktop layouts.
 
+### Added
+- Options to toggle the adding of the crowns and XP info in both the side bar
+and in the crown and streak popups.
+
 [v1.3.12] - 2020-06-09
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.12)

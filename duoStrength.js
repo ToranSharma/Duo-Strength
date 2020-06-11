@@ -146,7 +146,7 @@ function retrieveOptions()
 							"crownsBreakdownShowZerosRows":				true,
 							"bonusSkillsBreakdown":						true,
 						"checkpointPrediction":						true,
-						"crownsPrediction":							true,
+						"treeLevelPrediction":						true,
 					"XPInfo":									true,
 						"XPInfoInSidebar":							true,
 						"XPInfoInPopup":							false,
@@ -222,7 +222,7 @@ function storeProgressHistory()
 
 function updateProgress()
 {
-	let entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()];
+	let entry = [(new Date()).setHours(0,0,0,0),currentTreeLevel(),currentProgress()];
 
 	if (progress.length == 0)
 	{
@@ -231,10 +231,10 @@ function updateProgress()
 	else if (progress[progress.length-1][0] == entry[0])
 	{
 		// Already have an entry for today.
-		// If there is a entry before that, check if we went up a crown level then.
+		// If there is a entry before that, check if we went up a tree level then.
 		if (progress.length > 1 && progress[progress.length-1][1] != progress[progress.length-2][1])
 		{
-			// The last stored entry was the first at the crown level, so let's not overwrite it
+			// The last stored entry was the first at the tree level, so let's not overwrite it
 			progress.push(entry);
 		}
 		else
@@ -251,7 +251,7 @@ function updateProgress()
 
 		if (entry[1] != progress[progress.length-1][1] || entry[2] != progress[progress.length-1][2])
 		{
-			// This entry's progress or crown data is different so some progress has been made,
+			// This entry's progress or tree level data is different so some progress has been made,
 			// Let's save it.
 			progress.push(entry);
 		} 
@@ -341,13 +341,8 @@ function removeCrownsBreakdown()
 		}
 	);
 
-	document.querySelectorAll(".crownCountPercentage, .crownsGraph, .crownLevelBreakdownContainer, .checkpointPrediction, .treeCrownLevelPrediction")
+	document.querySelectorAll(".sidebarCrownsInfoContainer, .crownCountPercentage, .crownsGraph, .crownLevelBreakdownContainer, .checkpointPrediction, .treeLevelPrediction")
 		.forEach(element => element.remove());
-
-	//if (!options.crownsInfoInSidebar)
-	{
-		document.querySelectorAll(".sidebarCrownsInfoContainer").forEach(element => element.remove());
-	}
 }
 
 function removeXPBoxes()
@@ -437,19 +432,19 @@ function hasMetGoal()
 function currentProgress()
 {
 	let skills = userData.language_data[languageCode].skills;
-	let treeLevel = crownTreeLevel();
-	let lessonsToNextCrownLevel = 0;
+	let treeLevel = currentTreeLevel();
+	let lessonsToNextTreeLevel = 0;
 	for (let skill of skills)
 	{
 		//if (skill.locked) continue;
 		
 		if (skill.skill_progress.level == treeLevel)
 		{
-			lessonsToNextCrownLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
+			lessonsToNextTreeLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
 		}
 	}
 
-	return lessonsToNextCrownLevel;
+	return lessonsToNextTreeLevel;
 }
 
 function nextCheckpointIndex()
@@ -554,7 +549,7 @@ function progressMadeBetweenPoints(startIndex, endIndex)
 	return progressMade;
 }
 
-function crownTreeLevel()
+function currentTreeLevel()
 {
 	let skills = userData.language_data[languageCode].skills;
 
@@ -629,7 +624,7 @@ function daysToNextXPLevel(history, xpLeft)
 	return Math.ceil(xpLeft/xpRate);
 }
 
-function daysToNextCrownLevel()
+function daysToNextTreeLevel()
 {
 	const numPointsToUse = 7;
 	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
@@ -652,17 +647,17 @@ function daysToNextCrownLevel()
 	}
 }
 
-function daysToNextCrownLevelByCalendar()
+function daysToNextTreeLevelByCalendar()
 {
 	let skills = userData.language_data[languageCode].skills;
-	let treeLevel = crownTreeLevel();
-	let lessonsToNextCrownLevel = 0;
+	let treeLevel = currentTreeLevel();
+	let lessonsToNextTreeLevel = 0;
 
 	for (let skill of skills)
 	{
 		if (skill.skill_progress.level == treeLevel)
 		{
-			lessonsToNextCrownLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
+			lessonsToNextTreeLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
 		}
 	}
 
@@ -714,9 +709,9 @@ function daysToNextCrownLevelByCalendar()
 	else
 	{
 		return {
-			time: Math.ceil(lessonsToNextCrownLevel/lessonRate), // in days
+			time: Math.ceil(lessonsToNextTreeLevel/lessonRate), // in days
 			rate: lessonRate,
-			lessonsLeft: lessonsToNextCrownLevel
+			lessonsLeft: lessonsToNextTreeLevel
 		}
 	}
 }
@@ -821,9 +816,9 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 			prediction.id = "XPPrediction";
 			target = `the next level, Level\xA0${userData.language_data[languageCode].level + 1}`;
 			break;
-		case "crownLevel":
-			prediction.classList.add("treeCrownLevelPrediction");
-			target = `Level\xA0${crownTreeLevel() + 1}`;
+		case "treeLevel":
+			prediction.classList.add("treeLevelPrediction");
+			target = `Level\xA0${currentTreeLevel() + 1}`;
 			break;
 		case "checkpoint":
 			prediction.classList.add("checkpointPrediction");
@@ -848,7 +843,7 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	}
 
 	prediction.appendChild(
-		document.createTextNode(` ${(type != "crownLevel") ? "you" : "your tree"} will reach ${target}, in about `)
+		document.createTextNode(` ${(type != "treeLevel") ? "you" : "your tree"} will reach ${target}, in about `)
 	);
 	prediction.appendChild(document.createElement("span"));
 	prediction.lastChild.textContent = numDays;
@@ -1022,7 +1017,7 @@ function graphSVG(data, ratio=1.5)
 		point.setAttributeNS(null, "r", "1.25");
 		
 		let title = document.createElementNS(svgns, "title");
-		title.textContent = `${data[i]} crown level contributing lesson${data[i]!=1?"s":""}`;
+		title.textContent = `${data[i]} tree level contributing lesson${data[i]!=1?"s":""}`;
 
 		if (data[i] == 0)
 			point.setAttributeNS(null, "fill", "white");
@@ -2232,7 +2227,7 @@ function displayCrownsBreakdown()
 
 	let maxCrownCount = skills.length*5 + bonusSkills.length;
 
-	let treeLevel = crownTreeLevel();
+	let treeLevel = currentTreeLevel();
 
 	const placesToAdd = [];
 
@@ -2334,6 +2329,7 @@ function displayCrownsBreakdown()
 				crownDescriptionContainer.style.width = '50%';
 			}
 
+			// Add max crowns and crowns precentage
 			const crownTotalContainer = crownsInfoContainer.querySelector(`.${CROWN_TOTAL_CONTAINER}`);
 
 			let maximumCrownCountContainer;
@@ -2344,11 +2340,13 @@ function displayCrownsBreakdown()
 				maximumCrownCountContainer.classList.add("maxCrowns");
 				maximumCrownCountContainer.textContent = "/" + maxCrownCount;
 				
+				crownTotalContainer.appendChild(maximumCrownCountContainer);
+
 				if (options.crownsPercentage)
 				{
 					crownCountPercentage = document.createElement("span");
 					crownCountPercentage.classList.add("crownCountPercentage");
-					crownCountPercentage.textContent = `(${(100*crownTotalContainer.textContent/maxCrownCount).toFixed(1)}%)`;
+					crownCountPercentage.textContent = `(${(100*document.querySelector(CROWN_TOTAL_SELECTOR).textContent/maxCrownCount).toFixed(1)}%)`;
 					crownCountPercentage.style = `
 						font-size: 0.8em;
 						position: absolute;
@@ -2357,16 +2355,18 @@ function displayCrownsBreakdown()
 						top: calc(50% + 1.3em);
 						color: #cd7900;
 					`;
+
+					crownTotalContainer.parentNode.appendChild(crownCountPercentage);
 				}
 			}
 
 			// Add crowns progress graph
-			if (options.crownsGraph && crownTreeLevel() != 5)
+			if (options.crownsGraph && currentTreeLevel() != 5)
 			{
-				let crownsEarnedInWeek = [];
-				// will hold number of crowns earned each day for seven days
-				// crownsEarnedInWeek[0] : week ago;
-				// crownsEarnedInWeek[6] : today;
+				let treeLevelProgressInWeek = [];
+				// will hold number of tree level progressing lessons done each day for seven days
+				// treeLevelProgressInWeek[0] : week ago;
+				// treeLevelProgressInWeek[6] : today;
 
 				let dateToday = (new Date()).setHours(0,0,0,0);
 				let msInDay = 24*60*60*1000;
@@ -2381,32 +2381,32 @@ function displayCrownsBreakdown()
 					if (progress[i][0] == day)
 					{
 						// If there is progress for the day we are testing
-						// prepend the array with the change in number of crowns left
+						// prepend the array with the change in number of lessons left
 						// compared to the previous progress entry
 
-						crownsEarnedInWeek.unshift(progress[i-1][2] - progress[i][2]);
+						treeLevelProgressInWeek.unshift(progress[i-1][2] - progress[i][2]);
 						i--;
 
 						if (progress[i][0] == day)
 						{
 							// If the previous progress entry is from the same day
 							// a level boundary was crossed.
-							// This progress entry then holds the number of crowns left
-							// at the time of getting to the next crown level.
+							// This progress entry then holds the number of lessons left
+							// at the time of getting to the next tree level.
 
-							// We then add the remaining number of crowns from the previous
+							// We then add the remaining number of lessons from the previous
 							// progress entry that must have been earned to level up
 							//
-							crownsEarnedInWeek[0] = crownsEarnedInWeek[0] + progress[i-1][2];
+							treeLevelProgressInWeek[0] = treeLevelProgressInWeek[0] + progress[i-1][2];
 							i--;
 						}
 					}
 					else
 					{
 						// The progress entry isn't for the day we are testing,
-						// so no crowns were earned on that day.
+						// so no tree level contributing lessons were earned on that day.
 
-						crownsEarnedInWeek.unshift(0);
+						treeLevelProgressInWeek.unshift(0);
 
 						// Note we don't decrement i as we haven't used the info in this
 						// progress entry.
@@ -2416,17 +2416,17 @@ function displayCrownsBreakdown()
 					day = day - msInDay;
 				}
 
-				while (crownsEarnedInWeek.length != 7)
+				while (treeLevelProgressInWeek.length != 7)
 				{
 					// If we ran out of progress entries for a whole week
 					// we will fill the rest with zeros.
 
-					crownsEarnedInWeek.unshift(0);
+					treeLevelProgressInWeek.unshift(0);
 				}
 
 
 				// Generate a graph for the data.
-				let graph = graphSVG(crownsEarnedInWeek);
+				let graph = graphSVG(treeLevelProgressInWeek);
 				graph.classList.add("crownsGraph");
 				graph.width = "100%";
 				graph.style["marginTop"] = "1em";
@@ -2495,18 +2495,9 @@ function displayCrownsBreakdown()
 			imgContainer.appendChild(crownImg);
 			imgContainer.appendChild(levelContainer);
 
-			if (options.crownsMaximum)
-			{
-				crownTotalContainer.appendChild(maximumCrownCountContainer);
-				if (options.crownsPercentage)
-				{
-					crownTotalContainer.parentNode.appendChild(crownCountPercentage);
-				}
-			}
-
 
 			breakdownContainer.appendChild(document.createElement("p"));
-			breakdownContainer.lastChild.style = "text-align: center; color: black;";
+			breakdownContainer.lastChild.style = "text-align: center; color: black; margin: 0 0 1em 0;";
 			breakdownContainer.lastChild.textContent = "Your tree is at Level\xA0";
 			breakdownContainer.lastChild.appendChild(treeLevelContainer);
 
@@ -2643,14 +2634,14 @@ function displayCrownsBreakdown()
 				}
 			}
 
-			// Crown Level prediction
-			if (treeLevel != 5 && options.crownsPrediction)
+			// Tree Level prediction
+			if (treeLevel != 5 && options.treeLevelPrediction)
 			{
-				const predictionData = (progress.length > 5) ? daysToNextCrownLevel() : daysToNextCrownLevelByCalendar();
+				const predictionData = (progress.length > 5) ? daysToNextTreeLevel() : daysToNextTreeLevelByCalendar();
 
 				if (predictionData.time != -1)
 				{
-					const prediction = createPredictionElement("crownLevel", predictionData);
+					const prediction = createPredictionElement("treeLevel", predictionData);
 					prediction.style =
 					`
 						margin: 1em 1em 0;
@@ -3056,7 +3047,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			container.style.width = `calc(100% - ${offset}px - 0.5em)`;
 		}
 		const skills = userData.language_data[languageCode].skills;
-		const treeLevel = crownTreeLevel();
+		const treeLevel = currentTreeLevel();
 		let skillsByCrowns = [[],[],[],[],[],[]];
 
 		for (let skill of skills)
@@ -3071,16 +3062,17 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			1: First
 			2: Last
 		*/
+		const numSkillsAtTreeLevel = skillsByCrowns[treeLevel].length;
 		switch (options.skillSuggestionMethod)
 		{
 			case "0":
-				randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*skillsByCrowns[treeLevel].length)];
+				randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*numSkillsAtTreeLevel)];
 				break;
 			case "1":
 				randomSuggestion = skillsByCrowns[treeLevel][0];
 				break;
 			case "2":
-				randomSuggestion = skillsByCrowns[treeLevel][skillsByCrowns[treeLevel].length-1];
+				randomSuggestion = skillsByCrowns[treeLevel][numSkillsAtTreeLevel-1];
 				break;
 		}
 

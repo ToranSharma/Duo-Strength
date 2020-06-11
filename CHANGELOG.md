@@ -11,6 +11,7 @@ Changelog
 ### Fixed
 - Error in tree level prediction using calendar.
 - Number of lessons shown in current rate tooltip.
+- Confusing references to crown level when tree level is meant.
 
 [v1.3.13] - 2020-06-11
 -----------------

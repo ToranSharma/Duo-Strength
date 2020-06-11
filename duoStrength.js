@@ -585,7 +585,7 @@ function currentLanguageHistory()
 	);
 }
 
-function daysToNextXPLevel(history, xpLeft /*, timezone*/)
+function daysToNextXPLevel(history, xpLeft)
 {
 	const currentDate = (new Date()).setHours(0,0,0,0);
 	const metGoal = hasMetGoal();
@@ -635,13 +635,15 @@ function daysToNextCrownLevel()
 	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
 	
 	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
+
+	const lessonsLeft = currentProgress();
 	
 	if (progressRate != 0)
 	{
 		return {
-			time: Math.ceil(currentProgress() / progressRate), // in days
+			time: Math.ceil(lessonsLeft / progressRate), // in days
 			rate: progressRate,
-			lessonsLeft: currentProgress()
+			lessonsLeft: lessonsLeft
 		}
 	}
 	else
@@ -713,8 +715,8 @@ function daysToNextCrownLevelByCalendar()
 	{
 		return {
 			time: Math.ceil(lessonsToNextCrownLevel/lessonRate), // in days
-			rate: progressRate,
-			lessonsLeft: numLessons
+			rate: lessonRate,
+			lessonsLeft: lessonsToNextCrownLevel
 		}
 	}
 }
@@ -725,13 +727,15 @@ function daysToNextCheckpoint()
 	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
 
 	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
+
+	const lessonsLeft = lessonsToNextCheckpoint();
 	
 	if (progressRate != 0)
 	{
 		return {
-			time: Math.ceil(lessonsToNextCheckpoint() / progressRate), // in days
+			time: Math.ceil(lessonsLeft / progressRate), // in days
 			rate: progressRate,
-			lessonsLeft: lessonsToNextCheckpoint()
+			lessonsLeft: lessonsLeft
 		}
 	}
 	else
@@ -762,15 +766,18 @@ function daysToNextCheckpointByCalendar()
 		// Not met the goal today so don't use data from today.
 		practiceTimes = practiceTimes.filter(lessonDay => lessonDay != currentDay);
 	}
-	
+
 	const numLessons = practiceTimes.length;
+
+	const lessonsLeft = lessonsToNextCheckpoint();
+
 
 	if (numLessons == 0) // possible if only calendar entries for this language are from today, and we have't met our goal
 	{
 		return {
 			time: 0,
 			rate: lessonRate,
-			lessonsLeft: numLessons
+			lessonsLeft: lessonsLeft
 		};
 	}
 
@@ -794,9 +801,9 @@ function daysToNextCheckpointByCalendar()
 	else
 	{
 		return {
-			time: Math.ceil(lessonsToNextCheckpoint() / lessonRate), // in days
+			time: Math.ceil(lessonsLeft / lessonRate), // in days
 			rate: lessonRate,
-			lessonsLeft: numLessons
+			lessonsLeft: lessonsLeft
 		}
 	}
 }

@@ -4566,12 +4566,8 @@ async function init()
 	}
 }
 
-window.onunload = function()
-{
-	chrome.runtime.sendMessage({type: "pageClosed"});
-}
 
-document.body.onload = function()
+function start()
 {
 	chrome.runtime.sendMessage({type: "showPageAction"});
 	chrome.runtime.onMessage.addListener(
@@ -4584,5 +4580,19 @@ document.body.onload = function()
 	);
 	init();
 }; // call function to start display sequence on first load
+
+window.onunload = function()
+{
+	chrome.runtime.sendMessage({type: "pageClosed"});
+}
+
+if (document.readyState === "complete" || document.readyState === "interactive")
+{
+	start()
+}
+else
+{
+	document.addEventListener("DOMContentLoaded", start);
+}
 
 //observer.disconnet(); can't disconnect as always needed while page is loaded.

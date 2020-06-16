@@ -5,6 +5,14 @@ Changelog
 ------------
 -
 
+[v1.3.15] - 2020-06-16
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.15)
+### Fixed
+- Firefox issue where the extension would not load due to the content script
+being injected after the body had loaded so the body.onload handler not
+being called.
+
 [v1.3.14] - 2020-06-11
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.14)
@@ -859,6 +867,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.15]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.14...v1.3.15
 [v1.3.14]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.13...v1.3.14
 [v1.3.13]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.12...v1.3.13
 [v1.3.12]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.11...v1.3.12

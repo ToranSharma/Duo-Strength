@@ -3866,7 +3866,6 @@ function childListMutationHandle(mutationsList, observer)
 	let bottomNavToggled = false;
 	let popupChanged = false;
 	let popupIcon;
-	let lessonLoaded = false;
 	let lessonQuestionChanged = false;
 	let lessonInputMethodChanged = false;
 	let skillRepaired = false;
@@ -3918,8 +3917,6 @@ function childListMutationHandle(mutationsList, observer)
 			popupChanged = true;
 			popupIcon = mutation.target;
 		}
-		else if (mutation.target.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
-			lessonLoaded = true;
 		else if (mutation.target.parentNode.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
 			lessonQuestionChanged = true;
 		else if (mutation.target.parentNode.parentNode.className.includes(QUESTION_CONTAINER))
@@ -4162,22 +4159,6 @@ function childListMutationHandle(mutationsList, observer)
 		}
 	}
 
-	if (lessonLoaded)
-	{
-		// Question section loaded.
-
-		// Run check for translation type question
-		hideTranslationText();
-
-		// Set up mutation observer for question change
-		childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0].firstChild, {childList:true});
-		
-		
-		// Set up mutation observer for question checked status change
-		const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
-		classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
-	}
-	
 	if (lessonQuestionChanged)
 	{
 		// Run check for translation type question
@@ -4496,7 +4477,23 @@ async function init()
 
 			// On first load there is loading animation as the mainBody,
 			// we are already observing for if this is replaced,
-			// so on first call nothing will happen, but init will be called again when the lesson sections are loaded
+			// so on first call nothing will happen, but init will be called again when the lesson sections are loaded.
+			//
+			// We still do need to add the observer to the lesson main section when it has loaded in order to detect question changes
+
+			const lessonMainSection = document.querySelector(`.${LESSON_MAIN_SECTION}`);
+
+			if (lessonMainSection !== null)
+			{
+				// We have a main section so let's observe its first child's children to watch for when the question changes.
+
+				childListObserver.observe(lessonMainSection.firstChild, {childList: true});
+
+				// Set up mutation observer for question checked status change.
+				const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
+				classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
+			}
+
 
 			await optionsLoaded;
 			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area

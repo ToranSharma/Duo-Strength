@@ -3880,8 +3880,8 @@ function childListMutationHandle(mutationsList, observer)
 	{
 		if (
 			mutation.target === rootElem
-			&& mutation.addedNodes.length === 0
-			&& mutation.childElementCount === 1
+			&& mutation.addedNodes.length === 1
+			&& mutation.target.childElementCount === 1
 		)
 		{
 			rootChildReplaced = true;

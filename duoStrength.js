@@ -3742,7 +3742,17 @@ function hideTranslationText(reveal = false, setupObserver = true)
 							( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
 						)
 						{
+							// Reveal hokey has been hit,
+							// show the question text
 							hideTranslationText(true, false);
+							// and show an hint popovers
+							document.querySelectorAll(`[data-test="hint-popover"]`).forEach(
+								(hintBox) =>
+								{
+									hintBox.style["filter"] = "unset";
+								}
+							);
+							
 						}
 					};
 				}
@@ -3864,10 +3874,15 @@ function childListMutationHandle(mutationsList, observer)
 	let skillPopout;
 	let checkpointPopoutAdded = false;
 	let checkpointPopout;
+	let hintPopoverAdded = false;
 	
 	for (let mutation of mutationsList)
 	{
-		if (mutation.target == rootElem)
+		if (
+			mutation.target === rootElem
+			&& mutation.addedNodes.length === 0
+			&& mutation.childElementCount === 1
+		)
 		{
 			rootChildReplaced = true;
 		}
@@ -3933,6 +3948,12 @@ function childListMutationHandle(mutationsList, observer)
 		{
 			checkpointPopoutAdded = true;
 			checkpointPopout = mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR);
+		}
+		else if (
+			Array.from(mutation.addedNodes).some((node) => node.getAttribute("data-test") === "hint-popover")
+		)
+		{
+			hintPopoverAdded = true;
 		}
 	}
 
@@ -4192,6 +4213,20 @@ function childListMutationHandle(mutationsList, observer)
 	if (checkpointPopoutAdded)
 	{
 		if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);
+	}
+
+	if (hintPopoverAdded)
+	{
+		if (document.querySelector(`[data-test="hint-sentence"][style^="filter: blur"]`) !== null)
+		{
+			// We are hiding a sentence, so hide the translations
+			document.querySelectorAll(`[data-test="hint-popover"]`).forEach(
+				(hintBox) =>
+				{
+					hintBox.style["filter"] = "blur(0.3em)";
+				}
+			);
+		}
 	}
 };
 

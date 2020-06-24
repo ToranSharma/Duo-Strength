@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v1.3.17] - 2020-06-24
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.17)
+### Fixed
+- Translation hint popup hiding when translation sentences are being hidden.
+
 [v1.3.16] - 2020-06-24
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.16)
@@ -874,6 +880,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.17]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.16...v1.3.17
 [v1.3.16]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.15...v1.3.16
 [v1.3.15]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.14...v1.3.15
 [v1.3.14]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.13...v1.3.14

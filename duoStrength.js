@@ -61,6 +61,7 @@ const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 const BOTTOM_NAV_SELECTOR = `._1hese`;
 const AD_SELECTOR = `._3OXAs`;
 const CROWN_TOTAL_SELECTOR = `.o5hnp`;
+const LESSON_LOADING_SELECTOR = `._2Itye.cPGSQ._3Xtwv._39TEz._3wo9p`;
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -3965,9 +3966,9 @@ function childListMutationHandle(mutationsList, observer)
 			else if (rootChild.childElementCount == 1)
 			{
 				// Entered a lesson in the normal way, through the skill tree.
-				// Need to set up observer on lessonMainSection for when the first question loads
-
-				childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0], {childList:true});
+				// Don't need to do anything here as when the lesson will be loading first.
+				// When it has finished loading the mainBody is replaced with the lesson sections.
+				// We are already observing for that change and will handle it.
 			}
 			else 
 			{
@@ -4458,12 +4459,9 @@ async function init()
 
 			onMainPage = false;
 
-			const lessonMainSection = document.getElementsByClassName(LESSON_MAIN_SECTION)[0];
-
-			// There is a loading animation inside lessonMainSection before the first question,
-			// so let's add a childList mutaion observer to lessonMainSection and run the checks then.
-
-			childListObserver.observe(lessonMainSection, {childList: true});
+			// On first load there is loading animation as the mainBody,
+			// we are already observing for if this is replaced,
+			// so on first call nothing will happen, but init will be called again when the lesson sections are loaded
 
 			await optionsLoaded;
 			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area

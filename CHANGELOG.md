@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v1.3.16] - 2020-06-24
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.16)
+### Fixed
+- Lesson loaded detection errors that prevented text hiding from working when
+the lesson first loads.
+
 [v1.3.15] - 2020-06-16
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.15)
@@ -867,6 +874,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.16]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.15...v1.3.16
 [v1.3.15]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.14...v1.3.15
 [v1.3.14]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.13...v1.3.14
 [v1.3.13]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.12...v1.3.13

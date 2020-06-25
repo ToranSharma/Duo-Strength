@@ -3,7 +3,9 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Added
+- Focus mode.
+  - Option to enable and disable focus mode.
 
 [v1.3.20] - 2020-06-25
 -----------------

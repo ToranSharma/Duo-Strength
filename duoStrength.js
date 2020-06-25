@@ -162,6 +162,7 @@ function retrieveOptions()
 						"showNewWords":								true,
 					"showToggleHidingTextButton":				true,
 					"showLeagues":								true,
+					"focusMode":								false,
 				};
 
 			if (Object.entries(data).length === 0)

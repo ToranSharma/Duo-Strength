@@ -135,6 +135,7 @@ function retrieveOptions()
 					"practiseButton":							true,
 					"practiceType":								"0",
 						"lessonThreshold":							"4",
+					"wordsButton":								true,
 					"checkpointButtons":						true,
 					"treeLevelBorder":							true,
 					"crownsInfo":								true,
@@ -161,7 +162,6 @@ function retrieveOptions()
 						"showNewWords":								true,
 					"showToggleHidingTextButton":				true,
 					"showLeagues":								true,
-					"wordsButton":								true,
 				};
 
 			if (Object.entries(data).length === 0)

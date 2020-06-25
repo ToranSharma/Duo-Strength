@@ -62,6 +62,7 @@ const BOTTOM_NAV_SELECTOR = `._1hese`;
 const AD_SELECTOR = `._3OXAs`;
 const CROWN_TOTAL_SELECTOR = `.o5hnp`;
 const LESSON_LOADING_SELECTOR = `._2Itye.cPGSQ._3Xtwv._39TEz._3wo9p`;
+const MAIN_SECTION_SELECTOR = `._1tEYo`;
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -2095,6 +2096,38 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 	popoutContent.scrollIntoView({block: "center"});
 }
 
+function applyFocusMode()
+{
+	document.querySelectorAll(`.${SIDEBAR}`).forEach(
+		(sidebar) =>
+		{
+			if (options.focusMode)
+			{
+				sidebar.style["display"] = "none";
+				sidebar.style["visibility"] = "hidden";
+			}
+			else
+			{
+				sidebar.style["display"] = "";
+				sidebar.style["visibility"] = "";
+			}
+		}
+	);
+	document.querySelectorAll(MAIN_SECTION_SELECTOR).forEach(
+		(mainSection) =>
+		{
+			if (options.focusMode)
+			{
+				mainSection.style["margin-right"] = "0";
+			}
+			else
+			{
+				mainSection.style["margin-right"] = "";
+			}
+		}
+	);
+}
+
 function getCrackedSkills()
 {
 	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY_SELECTOR));
@@ -4101,6 +4134,8 @@ function childListMutationHandle(mutationsList, observer)
 		// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
 		setUpObservers();
 
+		// Try to re apply focus mode option
+		applyFocusMode();
 
 		// Try and add the Crowns and XP info in case the popups are there.
 		if (options.XPInfo) displayXPBreakdown();
@@ -4575,6 +4610,7 @@ async function init()
 
 				await optionsLoaded;
 
+				// League hiding
 				if (document.getElementsByClassName(LEAGUE_TABLE).length != 0)
 				{
 					if (options.showLeagues)
@@ -4582,6 +4618,9 @@ async function init()
 					else
 						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
 				}
+
+				// Focus mode - sidebar hiding
+				applyFocusMode();
 
 				await openLastSkillPopout();
 

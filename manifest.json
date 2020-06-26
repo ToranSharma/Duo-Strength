@@ -36,6 +36,12 @@
 		}
 	],
 
+	"web_accessible_resources":
+	[
+		"images/focus.svg",
+		"images/defocus.svg"
+	],
+
 	"permissions"		:	["storage"],
 
 	"options_ui"		:	{

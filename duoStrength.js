@@ -63,6 +63,7 @@ const AD_SELECTOR = `._3OXAs`;
 const CROWN_TOTAL_SELECTOR = `.o5hnp`;
 const LESSON_LOADING_SELECTOR = `._2Itye.cPGSQ._3Xtwv._39TEz._3wo9p`;
 const MAIN_SECTION_SELECTOR = `._1tEYo`;
+const GLOBAL_PRACTISE_BUTTON_SELECTOR = `._1m9LW`;
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -164,6 +165,7 @@ function retrieveOptions()
 					"showToggleHidingTextButton":				true,
 					"showLeagues":								true,
 					"focusMode":								false,
+					"focusModeButton":							true,
 				};
 
 			if (Object.entries(data).length === 0)
@@ -410,6 +412,15 @@ function removeCheckpointButtons()
 	if (testOutButton != null)
 	{
 		testOutButton.remove();
+	}
+}
+
+function removeFocusModeButton()
+{
+	const focusModeButton = document.querySelector(`#focusModeButton`);
+	if (focusModeButton !== null)
+	{
+		focusModeButton.remove();
 	}
 }
 
@@ -2098,6 +2109,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 
 function applyFocusMode()
 {
+	// Hide the sidebar if in focus mode
 	document.querySelectorAll(`.${SIDEBAR}`).forEach(
 		(sidebar) =>
 		{
@@ -2113,6 +2125,8 @@ function applyFocusMode()
 			}
 		}
 	);
+
+	// Made the main section of the page full width if in focus mode
 	document.querySelectorAll(MAIN_SECTION_SELECTOR).forEach(
 		(mainSection) =>
 		{
@@ -2126,6 +2140,45 @@ function applyFocusMode()
 			}
 		}
 	);
+
+	removeFocusModeButton();
+
+	// Add button to toggle the focus mode, if is wanted
+	if (
+		options.focusModeButton
+		&& !inMobileLayout
+	)
+	{
+		const globalPractiseButtonContainer = document.querySelector(GLOBAL_PRACTISE_BUTTON_SELECTOR);
+
+		const focusModeButton = globalPractiseButtonContainer.cloneNode(true);
+		focusModeButton.id = "focusModeButton";
+		focusModeButton.style =
+		`
+			margin-left: auto;
+			margin-right: 0;
+		`;
+
+		focusModeButton.firstChild.setAttribute("data-test", "focusModeButton");
+		focusModeButton.firstChild.title = `${(options.focusMode) ? "Disable" : "Enable"} Focus Mode`;
+		focusModeButton.firstChild.removeAttribute("href");
+		focusModeButton.addEventListener("click",
+			(event) =>
+			{
+				event.preventDefault();
+				// Toggle mode
+				options.focusMode = !options.focusMode;
+				// Save changed Setting
+				chrome.storage.sync.set({"options": options});
+				// Re apply the focus mode
+				applyFocusMode();
+			}
+		);
+
+		focusModeButton.querySelector(`img`).src = (options.focusMode) ? chrome.runtime.getURL("images/defocus.svg") : chrome.runtime.getURL("images/focus.svg");
+
+		globalPractiseButtonContainer.parentNode.appendChild(focusModeButton);
+	}
 }
 
 function getCrackedSkills()

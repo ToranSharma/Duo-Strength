@@ -2143,13 +2143,14 @@ function applyFocusMode()
 
 	removeFocusModeButton();
 
+	const globalPractiseButtonContainer = document.querySelector(GLOBAL_PRACTISE_BUTTON_SELECTOR);
 	// Add button to toggle the focus mode, if is wanted
 	if (
 		options.focusModeButton
 		&& !inMobileLayout
+		&& globalPractiseButtonContainer !== null 
 	)
 	{
-		const globalPractiseButtonContainer = document.querySelector(GLOBAL_PRACTISE_BUTTON_SELECTOR);
 
 		const focusModeButton = globalPractiseButtonContainer.cloneNode(true);
 		focusModeButton.id = "focusModeButton";
@@ -3552,6 +3553,11 @@ function addFeatures()
 			removeFlagBorders();
 		}
 	}
+
+	// Focus Mode
+	{
+		applyFocusMode();
+	}
 }
 
 function httpGetAsync(url, responseHandler)
@@ -4356,8 +4362,11 @@ function classNameMutationHandle(mutationsList, observer)
 		if (window.location.pathname == "/learn")
 		{
 			// on main page
-			// check if language has been previously set as we only set it in init if we were on the main page
 			onMainPage = true;
+			
+			applyFocusMode();
+
+			// check if language has been previously set as we only set it in init if we were on the main page
 			if (language != "")
 			{
 				// language has previously been set so not first time on main page, let's just get some new data.

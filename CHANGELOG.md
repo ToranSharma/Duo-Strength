@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v1.3.22] - 2020-06-26
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.22)
+### Fixed
+- Handling of language changes with different base languages that took place on
+duolingo pages that Duo Strength does not run on, e.g. discussion or stories.
+
 [v1.3.21] - 2020-06-26
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.21)
@@ -906,6 +913,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.22]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.21...v1.3.22
 [v1.3.21]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.20...v1.3.21
 [v1.3.20]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.19...v1.3.20
 [v1.3.19]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.18...v1.3.19

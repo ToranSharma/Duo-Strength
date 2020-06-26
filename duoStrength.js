@@ -2026,7 +2026,6 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 	redoTestButton.style = 
 	`
 		font-size: 80%;
-		margin-top: 1em;
 		width: 100%;
 		color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
 		border: 0;
@@ -2048,6 +2047,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		redoTestButton.style.width = "75%";
 		redoTestButton.style.alignSelf = "center";
 		redoTestButton.style.boxShadow = `0 0.25em grey`;
+		redoTestButton.style.marginTop = "1em";
 
 		popoutContent.style.padding = "0 0 0.5em 0"
 	}

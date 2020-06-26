@@ -11,6 +11,7 @@ Changelog
 ### Fixed
 - Final checkpoint retry buttons not being added to the golden owl trophy
 message.
+- Checkpoint retry button spacing in normal checkpoint popouts.
 
 [v1.3.20] - 2020-06-25
 -----------------

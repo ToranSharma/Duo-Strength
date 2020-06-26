@@ -3565,24 +3565,31 @@ async function handleDataResponse(responseText)
 
 	username = newUserData.username;
 
-	if (language == '')
+	if (language === "" && !languageChanged)
 	{
-		// no lanuage set , then this must be the first load and we need to set the lanuage now.
+		// No lanuage set, then this must be the first load
+		// language hasn't changed so we can set the lanuage info now.
 		language = newDataLanguageString;
 		languageCode = newDataLanguageCode;
 		UICode = newDataUICode;
 	}
-	if (languageChangesPending > 1)
+
+	// Note if languageChanged on before the processing of the first data we won't set the language info.
+	if (languageChangesPending > 1 || language === "")
 	{
-		// Multiple language changes happened, we may have eneded up back where we started...
+		// Either multiple language changes or we changed before getting the first set of data.
+		//
+		// If multiple language changes happened, we may have eneded up back where we started...
 		// In this case, we set the language to unknown and request the data once more.
 		// This next set of data will be processed and added to the tree.
 		// There is a chance that this data still won't be up to date but the chances are low, hopefully...
+
 		language = 'unknown';
+		languageCode = 'unknown';
+		UICode = 'unknown';
 		requestData(); // async
 		languageChangesPending = 1;
 		return false;
-
 	}
 	if (languageChanged)
 	{
@@ -3599,7 +3606,7 @@ async function handleDataResponse(responseText)
 		}
 		else
 		{
-			// The string has updated so let's accept this as the data for the new language.
+			// The code pair has updated so let's accept this as the data for the new language.
 			userData = newUserData;
 
 			languageCode = newDataLanguageCode;
@@ -3620,8 +3627,8 @@ async function handleDataResponse(responseText)
 		// No language change
 		if (newDataLanguageCode + newDataUICode != languageCode + UICode)
 		{
-			// But the language srting data has changed, this may be a response from an older but slower request
-			if (requestsPending == 0)
+			// But the language string data has changed, this may be a response from an older but slower request
+			if (requestsPending === 0)
 				requestData(); // Something isn't quite right so let's get some more data and see
 
 			return false;
@@ -3656,7 +3663,7 @@ function requestData()
 			encodeURI(window.location.origin+"/api/1/users/show?id="+userId),
 			function (responseText, responseID)
 			{
-				if (languageChangesPending > 1 && responseID != requestID - 1)
+				if (responseID != requestID - 1)
 				{
 					// More than one changes took place before we could handle the data.
 					// Ordering of responses is not always the same as the ordering of the request,

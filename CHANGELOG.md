@@ -3,7 +3,12 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Added
+- Focus mode which hides the side bar and makes the main section of the page
+full width.
+  - Option to enable and disable focus mode.
+  - Button to bottom of the page to toggle the focus mode.
+  - Option to enable and disabled the focus mode button.
 
 [v1.3.21] - 2020-06-26
 -----------------

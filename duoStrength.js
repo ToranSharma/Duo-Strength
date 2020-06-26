@@ -62,6 +62,8 @@ const BOTTOM_NAV_SELECTOR = `._1hese`;
 const AD_SELECTOR = `._3OXAs`;
 const CROWN_TOTAL_SELECTOR = `.o5hnp`;
 const LESSON_LOADING_SELECTOR = `._2Itye.cPGSQ._3Xtwv._39TEz._3wo9p`;
+const MAIN_SECTION_SELECTOR = `._1tEYo`;
+const GLOBAL_PRACTISE_BUTTON_SELECTOR = `._1m9LW`;
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -162,6 +164,8 @@ function retrieveOptions()
 						"showNewWords":								true,
 					"showToggleHidingTextButton":				true,
 					"showLeagues":								true,
+					"focusMode":								false,
+					"focusModeButton":							true,
 				};
 
 			if (Object.entries(data).length === 0)
@@ -408,6 +412,15 @@ function removeCheckpointButtons()
 	if (testOutButton != null)
 	{
 		testOutButton.remove();
+	}
+}
+
+function removeFocusModeButton()
+{
+	const focusModeButton = document.querySelector(`#focusModeButton`);
+	if (focusModeButton !== null)
+	{
+		focusModeButton.remove();
 	}
 }
 
@@ -2094,6 +2107,81 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 	popoutContent.scrollIntoView({block: "center"});
 }
 
+function applyFocusMode()
+{
+	// Hide the sidebar if in focus mode
+	document.querySelectorAll(`.${SIDEBAR}`).forEach(
+		(sidebar) =>
+		{
+			if (options.focusMode)
+			{
+				sidebar.style["display"] = "none";
+				sidebar.style["visibility"] = "hidden";
+			}
+			else
+			{
+				sidebar.style["display"] = "";
+				sidebar.style["visibility"] = "";
+			}
+		}
+	);
+
+	// Made the main section of the page full width if in focus mode
+	document.querySelectorAll(MAIN_SECTION_SELECTOR).forEach(
+		(mainSection) =>
+		{
+			if (options.focusMode)
+			{
+				mainSection.style["margin-right"] = "0";
+			}
+			else
+			{
+				mainSection.style["margin-right"] = "";
+			}
+		}
+	);
+
+	removeFocusModeButton();
+
+	const globalPractiseButtonContainer = document.querySelector(GLOBAL_PRACTISE_BUTTON_SELECTOR);
+	// Add button to toggle the focus mode, if is wanted
+	if (
+		options.focusModeButton
+		&& !inMobileLayout
+		&& globalPractiseButtonContainer !== null 
+	)
+	{
+
+		const focusModeButton = globalPractiseButtonContainer.cloneNode(true);
+		focusModeButton.id = "focusModeButton";
+		focusModeButton.style =
+		`
+			margin-left: auto;
+			margin-right: 0;
+		`;
+
+		focusModeButton.firstChild.setAttribute("data-test", "focusModeButton");
+		focusModeButton.firstChild.title = `${(options.focusMode) ? "Disable" : "Enable"} Focus Mode`;
+		focusModeButton.firstChild.removeAttribute("href");
+		focusModeButton.addEventListener("click",
+			(event) =>
+			{
+				event.preventDefault();
+				// Toggle mode
+				options.focusMode = !options.focusMode;
+				// Save changed Setting
+				chrome.storage.sync.set({"options": options});
+				// Re apply the focus mode
+				applyFocusMode();
+			}
+		);
+
+		focusModeButton.querySelector(`img`).src = (options.focusMode) ? chrome.runtime.getURL("images/defocus.svg") : chrome.runtime.getURL("images/focus.svg");
+
+		globalPractiseButtonContainer.parentNode.appendChild(focusModeButton);
+	}
+}
+
 function getCrackedSkills()
 {
 	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY_SELECTOR));
@@ -3465,6 +3553,11 @@ function addFeatures()
 			removeFlagBorders();
 		}
 	}
+
+	// Focus Mode
+	{
+		applyFocusMode();
+	}
 }
 
 function httpGetAsync(url, responseHandler)
@@ -4095,6 +4188,8 @@ function childListMutationHandle(mutationsList, observer)
 		// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
 		setUpObservers();
 
+		// Try to re apply focus mode option
+		applyFocusMode();
 
 		// Try and add the Crowns and XP info in case the popups are there.
 		if (options.XPInfo) displayXPBreakdown();
@@ -4262,8 +4357,11 @@ function classNameMutationHandle(mutationsList, observer)
 		if (window.location.pathname == "/learn")
 		{
 			// on main page
-			// check if language has been previously set as we only set it in init if we were on the main page
 			onMainPage = true;
+			
+			applyFocusMode();
+
+			// check if language has been previously set as we only set it in init if we were on the main page
 			if (language != "")
 			{
 				// language has previously been set so not first time on main page, let's just get some new data.
@@ -4569,6 +4667,7 @@ async function init()
 
 				await optionsLoaded;
 
+				// League hiding
 				if (document.getElementsByClassName(LEAGUE_TABLE).length != 0)
 				{
 					if (options.showLeagues)
@@ -4576,6 +4675,9 @@ async function init()
 					else
 						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
 				}
+
+				// Focus mode - sidebar hiding
+				applyFocusMode();
 
 				await openLastSkillPopout();
 

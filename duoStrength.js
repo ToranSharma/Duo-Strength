@@ -2026,7 +2026,6 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 	redoTestButton.style = 
 	`
 		font-size: 80%;
-		margin-top: 1em;
 		width: 100%;
 		color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
 		border: 0;
@@ -2048,6 +2047,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		redoTestButton.style.width = "75%";
 		redoTestButton.style.alignSelf = "center";
 		redoTestButton.style.boxShadow = `0 0.25em grey`;
+		redoTestButton.style.marginTop = "1em";
 
 		popoutContent.style.padding = "0 0 0.5em 0"
 	}
@@ -3860,6 +3860,7 @@ function hideTranslationText(reveal = false, setupObserver = true)
 function childListMutationHandle(mutationsList, observer)
 {
 	let rootChildReplaced = false;
+	let goldenOwlMessageAdded = false;
 	let rootChildContentsReplaced = false;
 	let rootChildRemovedNodes = [];
 	let mainBodyReplaced = false
@@ -3884,6 +3885,13 @@ function childListMutationHandle(mutationsList, observer)
 		)
 		{
 			rootChildReplaced = true;
+		}
+		else if (
+			mutation.target === rootElem
+			&& mutation.target.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR) !== null
+		)
+		{
+			goldenOwlMessageAdded = true;
 		}
 		else if (mutation.target == rootChild)
 		{
@@ -3961,53 +3969,19 @@ function childListMutationHandle(mutationsList, observer)
 	}
 	else if (rootChildContentsReplaced)
 	{
-		if (
-			rootChildRemovedNodes.find(
-				(node) => {
-					return node.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR) != null;
-				}
-			) != null
-		)
+		// Check if there is both the topbar and the main page elem.
+		if (rootChild.childElementCount == 2)
 		{
-			// The trophy image was the descendant of one of the removed nodes.
-			// Don't need to do anything.
+			// not just changed into a lesson
+			languageChanged = false;
+			init();
 		}
-		else
+		else if (rootChild.childElementCount == 1)
 		{
-			// Check if there is both the topbar and the main page elem.
-			if (rootChild.childElementCount == 2)
-			{
-				// not just changed into a lesson
-				languageChanged = false;
-				init();
-			}
-			else if (rootChild.childElementCount == 1)
-			{
-				// Entered a lesson in the normal way, through the skill tree.
-				// Don't need to do anything here as when the lesson will be loading first.
-				// When it has finished loading the mainBody is replaced with the lesson sections.
-				// We are already observing for that change and will handle it.
-			}
-			else 
-			{
-				const trophy = rootChild.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR);
-				if (trophy != null)
-				{
-					// The golden owl has been clicked and the congratulation message is being displayed
-					const messageContainer = trophy.nextElementSibling;
-					// If the message is shown after coming out of a checkpoint redo
-					// then the languageCode may not be known yet.
-					if (languageCode != "")
-					{
-						// It is known so add the buttons.
-						addCheckpointButtons(messageContainer, true);
-					}
-					else
-					{
-						// It isn't known yet so we do nothing until it is loaded and the buttons will be added in addFeatures
-					}
-				}
-			}
+			// Entered a lesson in the normal way, through the skill tree.
+			// Don't need to do anything here as when the lesson will be loading first.
+			// When it has finished loading the mainBody is replaced with the lesson sections.
+			// We are already observing for that change and will handle it.
 		}
 	}
 	else if (mainBodyReplaced)
@@ -4022,6 +3996,27 @@ function childListMutationHandle(mutationsList, observer)
 			classNameMutationHandle(mutationsList, null);
 		else
 			init();
+	}
+
+	if (goldenOwlMessageAdded)
+	{
+		const trophy = rootElem.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR);
+		if (trophy != null)
+		{
+			// The golden owl has been clicked and the congratulation message is being displayed
+			const messageContainer = trophy.nextElementSibling;
+			// If the message is shown after coming out of a checkpoint redo
+			// then the languageCode may not be known yet.
+			if (languageCode != "")
+			{
+				// It is known so add the buttons.
+				addCheckpointButtons(messageContainer, true);
+			}
+			else
+			{
+				// It isn't known yet so we do nothing until it is loaded and the buttons will be added in addFeatures
+			}
+		}
 	}
 
 	if (bottomNavToggled)

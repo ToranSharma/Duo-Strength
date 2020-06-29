@@ -1984,13 +1984,20 @@ function addPractiseButton(skillPopout)
 
 function addCheckpointButtons(checkpointPopout, completedMessage = false)
 {
-	if (checkpointPopout == null)
+	// Check popout is still there
+	if (checkpointPopout === null)
+	{
 		return false;
+	}
 
-	if (!completedMessage && checkpointPopout.querySelector(`[data-test="checkpoint-start-button"]`) != null)
-		return false;
+	// Check that this popout is for a finished checkpoint
+	if (!completedMessage && checkpointPopout.parentNode.querySelector(`img[src$="unlocked.svg"]`) !== null) // ...unlocked.svg -> uncompleted, ...complete.svg -> completed
+	{
+		return false; // This is an uncompleted checkpoint, we won't add anything to this.
+	}
 
 	let checkpointNumber;
+	let popoutContent;
 	if (!completedMessage)
 	{
 		checkpointNumber = Array.from(document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR)).indexOf(checkpointPopout.parentNode);
@@ -2004,92 +2011,113 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		popoutContent = checkpointPopout;
 	}
 
-	oml = function ()
+	const oml = function ()
 	{
 		this.style.boxShadow = `0 0.25em ${(!completedMessage) ? "rgba(255, 255, 255, 0.5)" : "grey"}`;
 		this.style.transform = "none";
 	};
-	omd = function ()
+	const omd = function ()
 	{
 		this.style.boxShadow = "none";
 		this.style.transform = "translate(0, 0.3em)";
 	};
-	omu = function ()
+	const omu = function ()
 	{
 		this.style.boxShadow = `0 0.25em ${(!completedMessage) ? "rgba(255, 255, 255, 0.5)" : "grey"}`;
 		this.style.transform = "none";
 	};
-
-	const redoTestButton = document.createElement("BUTTON");
-	redoTestButton.setAttribute("data-test", "redo-test-button");
-	redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
-	redoTestButton.style = 
-	`
-		font-size: 80%;
-		width: 100%;
-		color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
-		border: 0;
-		border-radius: 1em;
-		padding: .8em;
-		font-weight: 700;
-		background-color: white;
-		box-shadow: 0 0.25em rgba(255, 255, 255, 0.5);
-		transition: filter 0.2s;
-		cursor: pointer;
-	`;
-
-
-	if (completedMessage)
+	const storeCheckpointSource = () =>
 	{
-		redoTestButton.style.border = `2px solid grey`;
-		redoTestButton.style.color = "grey";
-		redoTestButton.style.backgroundColor = GOLD;
-		redoTestButton.style.width = "75%";
-		redoTestButton.style.alignSelf = "center";
-		redoTestButton.style.boxShadow = `0 0.25em grey`;
-		redoTestButton.style.marginTop = "1em";
-
-		popoutContent.style.padding = "0 0 0.5em 0"
-	}
-	else if (checkpointPopout.querySelector(CHECKPOINT_BLURB_SELECTOR) == null)
-	{
-		popoutContent.style.width = "300px";
-	}
-
-	const storeCheckpointSource = () => {
-		const lastSkill = {
-			checkpointNumber: checkpointNumber
-		}
+		const lastSkill = {checkpointNumber: checkpointNumber}
 		chrome.storage.sync.set({lastSkill: lastSkill});
 	};
 
-	redoTestButton.addEventListener("mouseleave", oml);
-	redoTestButton.addEventListener("mousedown", omd);
-	redoTestButton.addEventListener("mouseup", omu);
-	redoTestButton.addEventListener("click",
-		(event) => {
-			storeCheckpointSource();
-			window.location = `/checkpoint/${languageCode}/${checkpointNumber}`;
+	const practiceCheckpointButton = checkpointPopout.querySelector(`[data-test="checkpoint-start-button"]`);
+	if (practiceCheckpointButton !== null)
+	{
+		// Practice button exists that we can copy for the bigtest button
+		const testOutButton = practiceCheckpointButton.cloneNode(true);
+		testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
+		testOutButton.setAttribute("data-test", "test-out-button");
+
+		popoutContent.appendChild(testOutButton);
+		testOutButton.addEventListener("click",
+			(event) =>
+			{
+				storeCheckpointSource();
+				window.location = `/checkpoint/${languageCode}/${checkpointNumber}/bigtest`
+			}
+		);
+	}
+	else
+	{
+		// No buttons so we have to made them both
+		const redoTestButton = document.createElement("BUTTON");
+		redoTestButton.setAttribute("data-test", "redo-test-button");
+		redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
+		redoTestButton.style = 
+		`
+			font-size: 80%;
+			width: 100%;
+			color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
+			border: 0;
+			border-radius: 1em;
+			padding: .8em;
+			font-weight: 700;
+			background-color: white;
+			box-shadow: 0 0.25em rgba(255, 255, 255, 0.5);
+			transition: filter 0.2s;
+			cursor: pointer;
+		`;
+
+
+		if (completedMessage)
+		{
+			redoTestButton.style.border = `2px solid grey`;
+			redoTestButton.style.color = "grey";
+			redoTestButton.style.backgroundColor = GOLD;
+			redoTestButton.style.width = "75%";
+			redoTestButton.style.alignSelf = "center";
+			redoTestButton.style.boxShadow = `0 0.25em grey`;
+			redoTestButton.style.marginTop = "1em";
+
+			popoutContent.style.padding = "0 0 0.5em 0"
 		}
-	);
-
-	testOutButton = redoTestButton.cloneNode(true);
-	testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
-	testOutButton.setAttribute("data-test", "test-out-button");
-
-	testOutButton.addEventListener("mouseleave", oml);
-	testOutButton.addEventListener("mousedown", omd);
-	testOutButton.addEventListener("mouseup", omu);
-	testOutButton.addEventListener("click",
-		(event) => {
-			storeCheckpointSource();
-			window.location = `/bigtest/${languageCode}/${checkpointNumber}`
+		else if (checkpointPopout.querySelector(CHECKPOINT_BLURB_SELECTOR) === null)
+		{
+			popoutContent.style.width = "300px";
 		}
-	);
-			
 
-	popoutContent.appendChild(redoTestButton);
-	popoutContent.appendChild(testOutButton);
+		redoTestButton.addEventListener("mouseleave", oml);
+		redoTestButton.addEventListener("mousedown", omd);
+		redoTestButton.addEventListener("mouseup", omu);
+		redoTestButton.addEventListener("click",
+			(event) =>
+			{
+				storeCheckpointSource();
+				window.location = `/checkpoint/${languageCode}/${checkpointNumber}/practice`;
+			}
+		);
+
+		const testOutButton = redoTestButton.cloneNode(true);
+		testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
+		testOutButton.setAttribute("data-test", "test-out-button");
+
+		testOutButton.addEventListener("mouseleave", oml);
+		testOutButton.addEventListener("mousedown", omd);
+		testOutButton.addEventListener("mouseup", omu);
+		testOutButton.addEventListener("click",
+			(event) =>
+			{
+				storeCheckpointSource();
+				window.location = `/checkpoint/${languageCode}/${checkpointNumber}/bigtest`
+			}
+		);
+				
+
+		popoutContent.appendChild(redoTestButton);
+		popoutContent.appendChild(testOutButton);
+	}
 
 	popoutContent.scrollIntoView({block: "center"});
 }

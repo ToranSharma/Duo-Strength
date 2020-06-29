@@ -10,6 +10,16 @@ full width.
   - Button to bottom of the page to toggle the focus mode.
   - Option to enable and disabled the focus mode button.
 
+[v1.3.23] - 2020-06-29
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.23)
+### Fixed
+- Retry Level 1 Test Out button.
+
+### Added
+- Handling for new "PRACTICE +10XP" checkpoint buttons that are being tested on
+some trees.
+
 [v1.3.22] - 2020-06-26
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.22)
@@ -918,6 +928,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.23]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.22...v1.3.23
 [v1.3.22]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.21...v1.3.22
 [v1.3.21]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.20...v1.3.21
 [v1.3.20]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.19...v1.3.20

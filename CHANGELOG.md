@@ -13,6 +13,10 @@ Changelog
 skills shown in lists consistent with the name of the skill in the tree.
 - Detection of cracked skills.
 
+### Changed
+- Updated README introduction to match the User Guide's introduction on the
+wiki.
+
 [v1.3.23] - 2020-06-29
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.23)

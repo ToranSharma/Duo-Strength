@@ -2129,7 +2129,7 @@ function getCrackedSkills()
 		(crackedSkill) => {
 			const skillIcon = crackedSkill.parentNode.parentNode;
 			const skillContainer = skillIcon.parentNode.parentNode.parentNode;
-			const skillName = skillContainer.lastChild.lastChild.textContent;
+			const skillName = skillContainer.lastChild.textContent;
 
 			return skillName;
 		}

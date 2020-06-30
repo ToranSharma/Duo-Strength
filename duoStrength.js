@@ -102,6 +102,7 @@ let mainBodyContainer;
 let topBarDiv;
 
 let onMainPage;
+let onLoginPage;
 let inMobileLayout;
 
 let lastSkill;
@@ -3915,8 +3916,14 @@ function childListMutationHandle(mutationsList, observer)
 	{
 		if (
 			mutation.target === rootElem
-			&& mutation.addedNodes.length === 1
-			&& mutation.target.childElementCount === 1
+			&&
+			(
+				(
+					mutation.addedNodes.length === 1
+					&& mutation.target.childElementCount === 1
+				)
+				|| onLoginPage
+			)
 		)
 		{
 			rootChildReplaced = true;
@@ -4491,11 +4498,14 @@ async function init()
 	{
 		// On login page so cannot continue to run rest of init process.
 		onMainPage = false;
+		onLoginPage = true;
 		return false;
 	}
 	else
 	{
 		// should be logged in
+		onLoginPage = false;
+
 		// now test to see if we are in a lesson or not
 
 		if (rootChild.firstChild.className == LESSON)

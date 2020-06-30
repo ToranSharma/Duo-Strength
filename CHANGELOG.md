@@ -12,6 +12,7 @@ Changelog
 - Skill names to use to short name instead of title. This makes the name of the
 skills shown in lists consistent with the name of the skill in the tree.
 - Detection of cracked skills.
+- Loading of extension after logging in.
 
 ### Changed
 - Updated README introduction to match the User Guide's introduction on the

@@ -41,7 +41,7 @@ const LESSON_MAIN_SECTION = "_14_MG";
 const LESSON_BOTTOM_SECTION = "_1obm2";
 const QUESTION_UNCHECKED = "zEs4P";
 const QUESTION_CHECKED = "_1NmT0";
-const CRACKED_SKILL_OVERLAY_SELECTOR = "._7WUMp";
+const CRACKED_SKILL_OVERLAY_SELECTOR = "._1x_0f";
 const NEW_WORD_SELECTOR = "._2o9QZ";
 const LEAGUE_TABLE = "_1NIUo";
 const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = ".vwODZ";
@@ -2127,7 +2127,7 @@ function getCrackedSkills()
 	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY_SELECTOR));
 	const crackedSkillNames = crackedSkillElements.map(
 		(crackedSkill) => {
-			const skillIcon = crackedSkill.parentNode;
+			const skillIcon = crackedSkill.parentNode.parentNode;
 			const skillContainer = skillIcon.parentNode.parentNode.parentNode;
 			const skillName = skillContainer.lastChild.lastChild.textContent;
 

@@ -11,6 +11,7 @@ Changelog
 ### Fixed
 - Skill names to use to short name instead of title. This makes the name of the
 skills shown in lists consistent with the name of the skill in the tree.
+- Detection of cracked skills.
 
 [v1.3.23] - 2020-06-29
 -----------------

@@ -1,5 +1,5 @@
 # Duo Strength
-Duo Strength is a browser extension for the [Duolingo language learning platform](https://www.duolingo.com/) that adds a visual indication hidden and removed details into your language tree and Duolingo interface itself. Inspired by the user profile pages on the [duome unofficial streak hall of fame website](https://duome.eu/), Duo Strength gives a way to view this information without needed to leave Duolingo or have two pages open.
+Duo Strength is a browser extension to improve the user interface [Duolingo language learning platform](https://www.duolingo.com/). At its core it adds a visual indication of hidden and removed details into your language tree and Duolingo interface itself, in particular the strength of each individual skill. Inspired by the user profile pages on the [duome unofficial streak hall of fame website](https://duome.eu/), Duo Strength gives a way to view much of this information and more without needed to leave Duolingo or have two pages open.
 
 ## Main features:
 - Strength bars added under each skill in the tree

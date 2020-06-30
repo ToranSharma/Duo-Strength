@@ -1459,7 +1459,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	*/
 	function sortSkillsAlphabetical(a, b)
 	{
-		return (a.title < b.title) ? -1 : 1;
+		return (a.short < b.short) ? -1 : 1;
 	}
 
 	function shuffle(array)
@@ -1637,7 +1637,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 							     options.practiceType == "1" ||
 							     (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
 							    ) ? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
@@ -1645,7 +1645,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[1][bonusSkillIndex];
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		}
 
 		strengthenBox.appendChild(skillLink);
@@ -1679,7 +1679,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[1][needsStrengthening[1].length -1];
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		} else
 		{
 			// last skill to be displayed is a normal skill
@@ -1690,7 +1690,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 								 options.practiceType == "1" ||
 								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
 							    )? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		}
 		
 		strengthenBox.appendChild(skillLink);
@@ -1711,7 +1711,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 							     options.practiceType == "1" ||
 								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
 							    )? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
@@ -1719,7 +1719,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[1][bonusSkillIndex];
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		}
 		strengthenBox.appendChild(skillLink);
 		strengthenBox.appendChild(document.createTextNode(", "));
@@ -3107,7 +3107,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 		let link = document.createElement("a");
 		link.href = "/skill/" + languageCode + "/" + randomSuggestion.url_title + ((treeLevel == 5) ? "/practice/" : "/");
-		link.textContent = randomSuggestion.title;
+		link.textContent = randomSuggestion.short;
 		link.style.color = 'blue';
 		link.addEventListener('focus',
 			function(event)
@@ -3178,7 +3178,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			{
 				// The next skil is unlocked so lets suggest it.
 				link.href = `/skill/${languageCode}/${nextSkill.url_title}/`;
-				link.textContent = nextSkill.title;
+				link.textContent = nextSkill.short;
 
 				suggestionMessage.textContent += "The next skill to learn is: ";
 			}

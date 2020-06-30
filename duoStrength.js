@@ -41,7 +41,7 @@ const LESSON_MAIN_SECTION = "_14_MG";
 const LESSON_BOTTOM_SECTION = "_1obm2";
 const QUESTION_UNCHECKED = "zEs4P";
 const QUESTION_CHECKED = "_1NmT0";
-const CRACKED_SKILL_OVERLAY_SELECTOR = "._7WUMp";
+const CRACKED_SKILL_OVERLAY_SELECTOR = "._1x_0f";
 const NEW_WORD_SELECTOR = "._2o9QZ";
 const LEAGUE_TABLE = "_1NIUo";
 const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = ".vwODZ";
@@ -104,6 +104,7 @@ let mainBodyContainer;
 let topBarDiv;
 
 let onMainPage;
+let onLoginPage;
 let inMobileLayout;
 
 let lastSkill;
@@ -1472,7 +1473,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	*/
 	function sortSkillsAlphabetical(a, b)
 	{
-		return (a.title < b.title) ? -1 : 1;
+		return (a.short < b.short) ? -1 : 1;
 	}
 
 	function shuffle(array)
@@ -1650,7 +1651,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 							     options.practiceType == "1" ||
 							     (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
 							    ) ? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
@@ -1658,7 +1659,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[1][bonusSkillIndex];
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		}
 
 		strengthenBox.appendChild(skillLink);
@@ -1692,7 +1693,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[1][needsStrengthening[1].length -1];
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		} else
 		{
 			// last skill to be displayed is a normal skill
@@ -1703,7 +1704,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 								 options.practiceType == "1" ||
 								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
 							    )? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		}
 		
 		strengthenBox.appendChild(skillLink);
@@ -1724,7 +1725,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 							     options.practiceType == "1" ||
 								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
 							    )? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
@@ -1732,7 +1733,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[1][bonusSkillIndex];
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		}
 		strengthenBox.appendChild(skillLink);
 		strengthenBox.appendChild(document.createTextNode(", "));
@@ -2215,9 +2216,9 @@ function getCrackedSkills()
 	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY_SELECTOR));
 	const crackedSkillNames = crackedSkillElements.map(
 		(crackedSkill) => {
-			const skillIcon = crackedSkill.parentNode;
+			const skillIcon = crackedSkill.parentNode.parentNode;
 			const skillContainer = skillIcon.parentNode.parentNode.parentNode;
-			const skillName = skillContainer.lastChild.lastChild.textContent;
+			const skillName = skillContainer.lastChild.textContent;
 
 			return skillName;
 		}
@@ -3195,7 +3196,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 		let link = document.createElement("a");
 		link.href = "/skill/" + languageCode + "/" + randomSuggestion.url_title + ((treeLevel == 5) ? "/practice/" : "/");
-		link.textContent = randomSuggestion.title;
+		link.textContent = randomSuggestion.short;
 		link.style.color = 'blue';
 		link.addEventListener('focus',
 			function(event)
@@ -3266,7 +3267,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			{
 				// The next skil is unlocked so lets suggest it.
 				link.href = `/skill/${languageCode}/${nextSkill.url_title}/`;
-				link.textContent = nextSkill.title;
+				link.textContent = nextSkill.short;
 
 				suggestionMessage.textContent += "The next skill to learn is: ";
 			}
@@ -4008,8 +4009,14 @@ function childListMutationHandle(mutationsList, observer)
 	{
 		if (
 			mutation.target === rootElem
-			&& mutation.addedNodes.length === 1
-			&& mutation.target.childElementCount === 1
+			&&
+			(
+				(
+					mutation.addedNodes.length === 1
+					&& mutation.target.childElementCount === 1
+				)
+				|| onLoginPage
+			)
 		)
 		{
 			rootChildReplaced = true;
@@ -4589,11 +4596,14 @@ async function init()
 	{
 		// On login page so cannot continue to run rest of init process.
 		onMainPage = false;
+		onLoginPage = true;
 		return false;
 	}
 	else
 	{
 		// should be logged in
+		onLoginPage = false;
+
 		// now test to see if we are in a lesson or not
 
 		if (rootChild.firstChild.className == LESSON)

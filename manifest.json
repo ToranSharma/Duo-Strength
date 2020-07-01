@@ -39,7 +39,8 @@
 	"web_accessible_resources":
 	[
 		"images/focus.svg",
-		"images/defocus.svg"
+		"images/defocus.svg",
+		"images/popout.svg"
 	],
 
 	"permissions"		:	["storage"],

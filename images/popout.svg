@@ -1,0 +1,22 @@
+<svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+	<path stroke="none" fill="#1CB0F6" d="M 6,0
+		l 1,1 l 3,0 a 2,2,90,0,1,2,2
+		l 0,7 a 2,2,90,0,1,-2,2
+		l -8,0 a 2,2,90,0,1,-2,-2
+		l 0,-7 a 2,2,90,0,1,2,-2
+		l 3,0 z" />
+	<line stroke="white" stroke-width="0.5" x1="2" y1="3.5" x2="6" y2="3.5" />
+	<line stroke="white" stroke-width="0.5" x1="2" y1="5" x2="6" y2="5" />
+	<path stroke="#00000050" fill="none" stroke-width="0.5" d="M 8,3
+		l 2,0
+		a 0.5,0.5,90,0,1,0.5,0.5 l 0,1 a 0.5,0.5,90,0,1,-0.5,0.5
+		l -2,0
+		a 0.5,0.5,90,0,1,-0.5,-0.5 l 0,-1 a 0.5,0.5,90,0,1,0.5,-0.5
+		" />
+	<path stroke="none" fill="white" d="M 6,7
+		l 4,0
+		a 1,1,90,0,1,1,1 l 0,1 a 1,1,90,0,1,-1,1
+		l -8,0
+		a 1,1,90,0,1,-1,-1 l 0,-1 a 1,1,90,0,1,1,-1
+		z" />
+</svg>

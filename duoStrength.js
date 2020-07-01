@@ -62,6 +62,7 @@ const BOTTOM_NAV_SELECTOR = `._1hese`;
 const AD_SELECTOR = `._3OXAs`;
 const CROWN_TOTAL_SELECTOR = `.o5hnp`;
 const LESSON_LOADING_SELECTOR = `._2Itye.cPGSQ._3Xtwv._39TEz._3wo9p`;
+const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".Q_tMJ";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -3903,6 +3904,7 @@ function childListMutationHandle(mutationsList, observer)
 	let bottomNavToggled = false;
 	let popupChanged = false;
 	let popupIcon;
+	let lessonMainSectionContentsReplaced = false;
 	let lessonQuestionChanged = false;
 	let lessonInputMethodChanged = false;
 	let skillRepaired = false;
@@ -3967,17 +3969,30 @@ function childListMutationHandle(mutationsList, observer)
 			popupChanged = true;
 			popupIcon = mutation.target;
 		}
+		else if (
+			mutation.target.className === LESSON_MAIN_SECTION
+			&& Array.from(mutation.removedNodes).some(node => `.${node.className}` === PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR)
+		)
+		{
+			lessonMainSectionContentsReplaced = true;
+		}
 		else if (mutation.target.parentNode.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
+		{
 			lessonQuestionChanged = true;
+		}
 		else if (mutation.target.parentNode.parentNode.className.includes(QUESTION_CONTAINER))
+		{
 			lessonInputMethodChanged = true;
+		}
 		else if (
 			mutation.target.attributes.hasOwnProperty("data-test") &&
 			mutation.target.attributes["data-test"].value == "skill-icon" &&
 			mutation.removedNodes.length == 1 &&
 			`.${mutation.removedNodes[0].className}` == CRACKED_SKILL_OVERLAY_SELECTOR
 		)
+		{
 			skillRepaired = true;
+		}
 		else if (
 			mutation.target.getAttribute("data-test") == "skill" &&
 			mutation.addedNodes.length != 0 &&
@@ -4194,6 +4209,13 @@ function childListMutationHandle(mutationsList, observer)
 			// Language list added, add the flag borders
 			addFlagBorders();
 		}
+	}
+
+	if (lessonMainSectionContentsReplaced)
+	{
+		// Practice type selection as been made, we should now be on the first question,
+		// let's run init again to get everything set up for future question.
+		init();
 	}
 
 	if (lessonQuestionChanged)
@@ -4525,13 +4547,28 @@ async function init()
 
 			if (lessonMainSection !== null)
 			{
-				// We have a main section so let's observe its first child's children to watch for when the question changes.
+				// We have a main section.
 
-				childListObserver.observe(lessonMainSection.firstChild, {childList: true});
+				// Now check if we are on the selection practice type selection screen
+				const practiceTypeSelectMessage = lessonMainSection.querySelector(PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR); // Would be first (and only) child if exists
 
-				// Set up mutation observer for question checked status change.
-				const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
-				classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
+				if (practiceTypeSelectMessage !== null)
+				{
+					// On timed/untimed practice selection screen.
+					// We need to observe lessonMainSection as its children get replaced when the practice type is selected.
+					
+					childListObserver.observe(lessonMainSection, {childList: true});
+				}
+				else
+				{
+					// We are into the questions so let's observe the lessonMainSection's first child's children to watch for when the question changes.
+
+					childListObserver.observe(lessonMainSection.firstChild, {childList: true});
+
+					// Set up mutation observer for question checked status change.
+					const lessonBottomSection = document.querySelector(`.${LESSON_BOTTOM_SECTION}`);
+					classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
+				}
 			}
 
 

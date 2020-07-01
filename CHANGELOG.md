@@ -10,6 +10,13 @@ full width.
   - Button to bottom of the page to toggle the focus mode.
   - Option to enable and disabled the focus mode button.
 
+[v1.3.25] - 2020-07-01
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.25)
+### Fixed
+- Translation text hiding for practices. Timed/untimed practice selection screen
+is now detected and handled.
+
 [v1.3.24] - 2020-06-30
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.24)
@@ -941,6 +948,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.25]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.24...v1.3.25
 [v1.3.24]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.23...v1.3.24
 [v1.3.23]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.22...v1.3.23
 [v1.3.22]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.21...v1.3.22

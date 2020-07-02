@@ -3185,9 +3185,11 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		z-index: 1;
 	`;
 
-	if (document.getElementById("fullStrengthMessageContainer") == null)
+	let container = document.getElementById("fullStrengthMessageContainer");
+
+	if (container === null)
 	{
-		let container = document.createElement("div");
+		container = document.createElement("div");
 		container.id = "fullStrengthMessageContainer";
 		if (inMobileLayout)
 			container.style = "margin: 0.5em 1em 0.5em 1em;";
@@ -3339,9 +3341,6 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 		container.appendChild(suggestionMessage);
 
-		topOfTree.appendChild(container);
-
-		if (options.focusFirstSkill) link.focus();
 	}
 	else
 	{
@@ -3352,13 +3351,21 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	// Skill Suggestion Popout Button
 	removeSuggestionPopoutButton(); // Remove if already exists.
 
-	const suggestionName = document.querySelector(`#fullStrengthMessageContainer a`).textContent;
+	const suggestionName = container.querySelector(`a`).textContent;
 
 	if (options.suggestionPopoutButton && Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).some(skillName => skillName.textContent === suggestionName))
 	{
 		// Add button that opens up the suggested skill's popout
 		const button = addSuggestionPopoutButton(suggestionName);
-		document.querySelector(`#fullStrengthMessageContainer p`).appendChild(button);
+		container.querySelector(`p`).appendChild(button);
+	}
+
+	// Add the message if it isn't already there
+	if (!document.body.contains(container))
+	{
+		topOfTree.appendChild(container);
+
+		if (options.focusFirstSkill) container.querySelector(`a`).focus();
 	}
 }
 

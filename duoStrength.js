@@ -3970,13 +3970,13 @@ function childListMutationHandle(mutationsList, observer)
 			popupIcon = mutation.target;
 		}
 		else if (
-			mutation.target.className === LESSON_MAIN_SECTION
+			mutation.target.className.includes(LESSON_MAIN_SECTION)
 			&& Array.from(mutation.removedNodes).some(node => `.${node.className}` === PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR)
 		)
 		{
 			lessonMainSectionContentsReplaced = true;
 		}
-		else if (mutation.target.parentNode.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
+		else if (mutation.target.parentNode.className.includes(LESSON_MAIN_SECTION) && mutation.addedNodes.length != 0)
 		{
 			lessonQuestionChanged = true;
 		}
@@ -4549,28 +4549,29 @@ async function init()
 			{
 				// We have a main section.
 
+				// We are into the questions so let's observe the lessonMainSection's first child's children to watch for when the question changes.
+
+				childListObserver.observe(lessonMainSection.firstChild, {childList: true});
+
+				// Set up mutation observer for question checked status change.
+				const lessonBottomSection = document.querySelector(`.${LESSON_BOTTOM_SECTION}`);
+				classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
+			}
+			else
+			{
+				// No main section, so not in the question yet, we will possibly need to set up another observer for when we enter the questions
+
 				// Now check if we are on the selection practice type selection screen
-				const practiceTypeSelectMessage = lessonMainSection.querySelector(PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR); // Would be first (and only) child if exists
+				const practiceTypeSelectMessage = document.querySelector(PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR); // Would be first (and only) child if exists
 
 				if (practiceTypeSelectMessage !== null)
 				{
 					// On timed/untimed practice selection screen.
 					// We need to observe lessonMainSection as its children get replaced when the practice type is selected.
 					
-					childListObserver.observe(lessonMainSection, {childList: true});
-				}
-				else
-				{
-					// We are into the questions so let's observe the lessonMainSection's first child's children to watch for when the question changes.
-
-					childListObserver.observe(lessonMainSection.firstChild, {childList: true});
-
-					// Set up mutation observer for question checked status change.
-					const lessonBottomSection = document.querySelector(`.${LESSON_BOTTOM_SECTION}`);
-					classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
+					childListObserver.observe(practiceTypeSelectMessage.parentNode, {childList: true});
 				}
 			}
-
 
 			await optionsLoaded;
 			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area

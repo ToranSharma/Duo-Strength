@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v1.3.27] - 2020-07-20
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.27)
+### Fixed
+- Detection of question changes and timed practice selection screen.
+
 [v1.3.26] - 2020-07-01
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.26)
@@ -950,6 +956,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.27]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.26...v1.3.27
 [v1.3.26]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.25...v1.3.26
 [v1.3.25]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.24...v1.3.25
 [v1.3.24]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.23...v1.3.24

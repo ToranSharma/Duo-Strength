@@ -10,6 +10,13 @@ full width.
   - Button to bottom of the page to toggle the focus mode.
   - Option to enable and disabled the focus mode button.
 
+[v1.3.28] - 2020-08-05
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.28)
+### Fixed
+- Detection of cracked skills to also match a new updated class name for the
+cracked overlay.
+
 [v1.3.27] - 2020-07-20
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.27)
@@ -961,6 +968,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.28]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.27...v1.3.28
 [v1.3.27]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.26...v1.3.27
 [v1.3.26]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.25...v1.3.26
 [v1.3.25]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.24...v1.3.25

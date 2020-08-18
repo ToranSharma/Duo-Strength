@@ -72,7 +72,7 @@ const flagYOffsets = {
 	1159: "gn",
 	// 1191: "ambassador", 1223: "duolingo",
 	// 1255: "troubleshooting", 1287: "teachers",
-	1320: "la", 1352: "gd",
+	1320: "la", 1352: "gd", 1384: "fi",
 };
 
 let languageCode = "";

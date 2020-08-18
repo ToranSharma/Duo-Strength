@@ -11,6 +11,9 @@ Changelog
 ### Fixed
 - Updated class names and selectors after Duolingo update.
 
+### Added
+- Finnish flag detection for flag borders feature.
+
 [v1.3.28] - 2020-08-05
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.28)

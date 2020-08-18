@@ -10,6 +10,8 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.29)
 ### Fixed
 - Updated class names and selectors after Duolingo update.
+- Flag borders are now only added if the username has been set, and the list is
+still there.
 
 ### Added
 - Finnish flag detection for flag borders feature.

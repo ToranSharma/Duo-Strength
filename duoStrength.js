@@ -1076,12 +1076,23 @@ function addFlagBorders()
 	languageProgressPromise.then(
 		(data) => {
 			// Go through each row in the language change list, if it is still there.
-			if (document.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+			if (document.querySelector(LANGUAGES_LIST_SELECTOR) !== null && username !== undefined)
 				Array.from(document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span`)).forEach(
 					(container) => {
 						// There are two flags for each language, the first is the target language, the second is the base language.
+						if (!document.contains(container))
+						{
+							// Have managed to move away from the languages list while we are adding the borders
+							return false;
+						}
 						const flag1 = container.firstChild;
 						const flag2 = flag1.nextElementSibling;
+
+						if (flag1.getAttribute("style") !== null)
+						{
+							// In the unlikely case where we have already added the borders and are trying to again
+							return false;
+						}
 						
 						// As the flags are all stored in one sprite sheet we determine which is displayed by the background positions.
 						const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");

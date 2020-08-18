@@ -12,6 +12,7 @@ Changelog
 - Updated class names and selectors after Duolingo update.
 - Flag borders are now only added if the username has been set, and the list is
 still there.
+- Overflowing text in test out checkpoint buttons.
 
 ### Added
 - Finnish flag detection for flag borders feature.

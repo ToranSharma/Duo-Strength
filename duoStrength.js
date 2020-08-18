@@ -2045,7 +2045,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 	{
 		// Practice button exists that we can copy for the bigtest button
 		const testOutButton = practiceCheckpointButton.cloneNode(true);
-		testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
+		testOutButton.textContent = "RETRY CROWN 1 TEST OUT";
 		testOutButton.setAttribute("data-test", "test-out-button");
 
 		popoutContent.appendChild(testOutButton);

@@ -11,60 +11,55 @@ const LIGHT_BLUE = "rgb(28, 176, 246)";
 const imgSrcBaseUrl = "//d35aaqx5ub95lt.cloudfront.net/images";
 
 // Duolingo class names:
-const BONUS_SKILL_DIVIDER_SELECTOR = "._23P6X";
-const TOP_OF_TREE_WITH_IN_BETA = "_1uUHs _3tYmC";
-const TOP_OF_TREE = "_3GFex";
-const MOBILE_TOP_OF_TREE = "_3Y5Xu";
-const SKILL_COLUMN = "QmbDT";
-const TRY_PLUS_BUTTON_SELECTOR = "._2x4yk._1rwed";
-const IN_BETA_LABEL = "_3yV19";
-const CROWNS_POPUP_CONTAINER = "_3hTDu";
-const CROWN_LOGO_CONTAINER = "_3W5VZ";
-const CROWN_DESCRIPTION_CONTAINER = "_13krJ";
-const CROWN_TOTAL_CONTAINER = "_1dP1I";
-const DAILY_GOAL_POPUP_CONTAINER = "_2ewG5"; // parent of streak flame and descript, and the 7 small flames
-const DAILY_GOAL_SIDEBAR_CONTAINER = "_2hhXN";
-const SIDEBAR = "_3Nl60";
-const WHITE_SIDEBAR_BOX_CONTAINER = "_2iVqi";
-const POPUP_ICON = "z0qDl _1rcDl _3xl-g";
-const GOLD_CROWN = "_3JJjF";
-const LIT_FLAME = "_2ES5X";
-const BLUE_FLAME = "_144wX";
-const GREY_FLAME = "_9Fm3O";
-const ACTIVE_TAB = "_2lkuX";
-const TOP_BAR = "_1frzL";
-const NAVIGATION_BUTTON = "_1hmv9";
-const QUESTION_CONTAINER = "_2NEKS";
-const LOGIN_PAGE = "_11AR-";
-const LESSON = "_7TCY- _160QG";
-const LESSON_MAIN_SECTION = "_14_MG";
-const LESSON_BOTTOM_SECTION = "_1obm2";
-const QUESTION_UNCHECKED = "zEs4P";
-const QUESTION_CHECKED = "_1NmT0";
-const CRACKED_SKILL_OVERLAY_SELECTOR = "._1SXlx, ._1x_0f, ._2ZUHw";
-const NEW_WORD_SELECTOR = "._2o9QZ";
-const LEAGUE_TABLE = "_1NIUo";
-const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = ".vwODZ";
-const SKILL_NAME_SELECTOR = "._2CXf4";
-const CHECKPOINT_CONTAINER_SELECTOR = "._3Lrsa";
-const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB";
-const CHECKPOINT_BLURB_SELECTOR = "._3-EWe";
-const LANGUAGES_LIST_SELECTOR = ".eanIR";
-const SMALL_BUTTONS_CONTAINER = "_2DR3u";
-const SMALL_BUTTON = "_32WtB _2i-mO _1LZ7U vy3TL _3iIWE _1Mkpg _1Dtxl _1sVAI sweRn _1BWZU _26exN QVrnU";
-const LOCKED_POPOUT = "_1PDfx";
-const GOLDEN_OWL_CHECKPOINT_SELECTOR = `._1FtA8`;
+const BONUS_SKILL_DIVIDER_SELECTOR = "._3Sis0";
+const TOP_OF_TREE_WITH_IN_BETA = "_1q00o _3_JLW";
+const TOP_OF_TREE = "_2joxc";
+const MOBILE_TOP_OF_TREE = "RviFd";
+const TRY_PLUS_BUTTON_SELECTOR = `[data-test="try-plus-badge"], ._-7YNG`;
+const IN_BETA_LABEL = "_2UV5Z"; // container of div with IN BETA textContent. Will be sibling of needsStrengtheningContainer etc.
+const CROWNS_POPUP_CONTAINER = "_28yft";
+const CROWN_LOGO_CONTAINER = "_1_vzW";
+const CROWN_DESCRIPTION_CONTAINER = "_1oPvo";
+const CROWN_TOTAL_CONTAINER = "_28jSG";
+const DAILY_GOAL_POPUP_CONTAINER = "_20sV-"; // parent of streak flame and description, and the 7 small flames
+const DAILY_GOAL_SIDEBAR_CONTAINER = "_2O43A";
+const SIDEBAR = "_1YfQ8";
+const WHITE_SIDEBAR_BOX_CONTAINER = "_3ZuGY";
+const POPUP_ICON = "_3C09M _1nIcg _3mAmz";
+const GOLD_CROWN = "_6c6Bw";
+const LIT_FLAME = "_1DS_0";
+const BLUE_FLAME = "_3Ecgs";
+const GREY_FLAME = "_1S8Vz";
+const TOP_BAR = "_3TwVI";
+const NAVIGATION_BUTTON = "azI4K";
+const QUESTION_CONTAINER = "_863KE";
+const LOGIN_PAGE = "_2F5q9";
+const LESSON = "iLgf- _1Xlh1";
+const LESSON_MAIN_SECTION = "_3yOsW";
+const LESSON_BOTTOM_SECTION = "_2Fc1K";
+const QUESTION_UNCHECKED = "_399cc";
+const QUESTION_CHECKED = "_3e9O1";
+const CRACKED_SKILL_OVERLAY_SELECTOR = "._1SXlx, ._1x_0f, ._2ZUHwm, ._1m7gz"; // oldest to latest, likely that only the last will match
+const NEW_WORD_SELECTOR = "._1bkpY";
+const LEAGUE_TABLE = "_1_p4S";
+const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = "._1m77f";
+const SKILL_NAME_SELECTOR = "._2OhdT._3PSt5";
+const CHECKPOINT_CONTAINER_SELECTOR = "._1lAog";
+const CHECKPOINT_POPOUT_SELECTOR = "._2pNYt._2WTbQ._2ppN7._3woYR";
+const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
+const LANGUAGES_LIST_SELECTOR = "._2iyQU";
+const SMALL_BUTTONS_CONTAINER = "_1cv-y";
+const SMALL_BUTTON = "_3nfx7 _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt";
+const GOLDEN_OWL_CHECKPOINT_SELECTOR = `.lIg1v`;
 
 const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
-const BOTTOM_NAV_SELECTOR = `._1hese`;
-const AD_SELECTOR = `._3OXAs`;
-const CROWN_TOTAL_SELECTOR = `.o5hnp`;
-const LESSON_LOADING_SELECTOR = `._2Itye.cPGSQ._3Xtwv._39TEz._3wo9p`;
-const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".Q_tMJ";
-const MAIN_SECTION_SELECTOR = `._1tEYo`;
-const GLOBAL_PRACTISE_BUTTON_SELECTOR = `._1m9LW`;
+const MAIN_SECTION_SELECTOR = `._33Mo9`;
+const GLOBAL_PRACTISE_BUTTON_SELECTOR = `._2TTO0`;
+const BOTTOM_NAV_SELECTOR = `._1tvS_`;
+const CROWN_TOTAL_SELECTOR = `._27yu9`;
+const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -79,7 +74,7 @@ const flagYOffsets = {
 	1159: "gn",
 	// 1191: "ambassador", 1223: "duolingo",
 	// 1255: "troubleshooting", 1287: "teachers",
-	1320: "la", 1352: "gd",
+	1320: "la", 1352: "gd", 1384: "fi",
 };
 
 let languageCode = "";
@@ -1094,12 +1089,23 @@ function addFlagBorders()
 	languageProgressPromise.then(
 		(data) => {
 			// Go through each row in the language change list, if it is still there.
-			if (document.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+			if (document.querySelector(LANGUAGES_LIST_SELECTOR) !== null && username !== undefined)
 				Array.from(document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span`)).forEach(
 					(container) => {
 						// There are two flags for each language, the first is the target language, the second is the base language.
+						if (!document.contains(container))
+						{
+							// Have managed to move away from the languages list while we are adding the borders
+							return false;
+						}
 						const flag1 = container.firstChild;
 						const flag2 = flag1.nextElementSibling;
+
+						if (flag1.getAttribute("style") !== null)
+						{
+							// In the unlikely case where we have already added the borders and are trying to again
+							return false;
+						}
 						
 						// As the flags are all stored in one sprite sheet we determine which is displayed by the background positions.
 						const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
@@ -2052,7 +2058,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 	{
 		// Practice button exists that we can copy for the bigtest button
 		const testOutButton = practiceCheckpointButton.cloneNode(true);
-		testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
+		testOutButton.textContent = "RETRY CROWN 1 TEST OUT";
 		testOutButton.setAttribute("data-test", "test-out-button");
 
 		popoutContent.appendChild(testOutButton);
@@ -2393,7 +2399,12 @@ function displayCrownsBreakdown()
 			flex-wrap: wrap;
 			justify-content: center;
 		`;
-		document.querySelector(`.${SIDEBAR}`).insertBefore(sidebarCrownsInfoContainer, document.querySelector(AD_SELECTOR));
+		let elementToInsertCrownsInfoBefore = document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`).nextElementSibling;
+		if (document.querySelector(`#languagesBox`) != null)
+		{
+			elementToInsertCrownsInfoBefore = document.querySelector(`#languagesBox`).nextElementSibling;
+		}
+		document.querySelector(`.${SIDEBAR}`).insertBefore(sidebarCrownsInfoContainer, elementToInsertCrownsInfoBefore);
 
 		placesToAdd.push(sidebarCrownsInfoContainer);
 
@@ -3999,7 +4010,6 @@ function childListMutationHandle(mutationsList, observer)
 	let popupIcon;
 	let lessonMainSectionContentsReplaced = false;
 	let lessonQuestionChanged = false;
-	let lessonInputMethodChanged = false;
 	let skillRepaired = false;
 	let skillPopoutAdded = false;
 	let skillPopout;
@@ -4072,10 +4082,6 @@ function childListMutationHandle(mutationsList, observer)
 		else if (mutation.target.parentNode.className.includes(LESSON_MAIN_SECTION) && mutation.addedNodes.length != 0)
 		{
 			lessonQuestionChanged = true;
-		}
-		else if (mutation.target.parentNode.parentNode.className.includes(QUESTION_CONTAINER))
-		{
-			lessonInputMethodChanged = true;
 		}
 		else if (
 			mutation.target.attributes.hasOwnProperty("data-test") &&
@@ -4316,15 +4322,7 @@ function childListMutationHandle(mutationsList, observer)
 	if (lessonQuestionChanged)
 	{
 		// Run check for translation type question
-
 		hideTranslationText();
-	}
-	
-	if (lessonInputMethodChanged)
-	{
-		// Need to re run question hiding as the question box has been replaced.
-
-		hideTranslationText(undefined, false);
 	}
 	
 	if (skillRepaired)

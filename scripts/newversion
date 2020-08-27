@@ -35,8 +35,8 @@ if [ "$OVERRIDE" -eq 0 ]; then
 		echo "Incrementing version number for hotfix"
 		VERNUM=$( echo $OLDVERNUM | awk -F "." '{print $1 "." $2 "." $NF+1}' )
 	else
-		echo "Incrementing version number for release"
-		VERNUM=$( echo $OLDVERNUM | awk -F "." '{print $1 "." $2+1 ".0"}' )
+		echo "Must specify a version number for the release branch"
+		exit 2
 	fi
 fi
 

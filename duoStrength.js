@@ -56,7 +56,7 @@ const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-te
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 const BOTTOM_NAV_SELECTOR = `._1tvS_`;
-const CROWN_TOTAL_SELECTOR = `._27yu9`;
+const CROWN_TOTAL_SELECTOR = `._2vMZo`;
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 
 const flagYOffsets = {

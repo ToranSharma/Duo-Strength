@@ -11,6 +11,10 @@ Changelog
 ### Fixed
 - Selector of crowns total element to also pick grey 0 crowns.
 
+### Added
+- Consistent styling of text colour and crown img for 0 crowns in sidebar crowns
+info.
+
 [v1.3.29] - 2020-08-18
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.29)

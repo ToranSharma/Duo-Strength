@@ -10,6 +10,16 @@ full width.
   - Button to bottom of the page to toggle the focus mode.
   - Option to enable and disabled the focus mode button.
 
+[v1.3.30] - 2020-08-27
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.30)
+### Fixed
+- Selector of crowns total element to also pick grey 0 crowns.
+
+### Added
+- Consistent styling of text colour and crown img for 0 crowns in sidebar crowns
+info.
+
 [v1.3.29] - 2020-08-18
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.29)
@@ -980,6 +990,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.30]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.29...v1.3.30
 [v1.3.29]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.28...v1.3.29
 [v1.3.28]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.27...v1.3.28
 [v1.3.27]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.26...v1.3.27

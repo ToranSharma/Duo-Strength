@@ -25,6 +25,7 @@ const DAILY_GOAL_POPUP_CONTAINER = "_20sV-"; // parent of streak flame and descr
 const DAILY_GOAL_SIDEBAR_CONTAINER = "_2O43A";
 const SIDEBAR = "_1YfQ8";
 const WHITE_SIDEBAR_BOX_CONTAINER = "_3ZuGY";
+const ZERO_CROWNS_CONTAINER = "QVM9M";
 const POPUP_ICON = "_3C09M _1nIcg _3mAmz";
 const GOLD_CROWN = "_6c6Bw";
 const LIT_FLAME = "_1DS_0";
@@ -58,7 +59,7 @@ const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 const MAIN_SECTION_SELECTOR = `._33Mo9`;
 const GLOBAL_PRACTISE_BUTTON_SELECTOR = `._2TTO0`;
 const BOTTOM_NAV_SELECTOR = `._1tvS_`;
-const CROWN_TOTAL_SELECTOR = `._27yu9`;
+const CROWN_TOTAL_SELECTOR = `._2vMZo`;
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 
 const flagYOffsets = {
@@ -2419,13 +2420,23 @@ function displayCrownsBreakdown()
 		sidebarCrownsInfoContainer.appendChild(crownLogoContainer);
 
 		const crownImg = document.createElement("img");
-		crownImg.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
+		const crownCount = document.querySelector(CROWN_TOTAL_SELECTOR).textContent;
+
+		if (crownCount === "0")
+		{
+			crownImg.src = `${imgSrcBaseUrl}/juicy-crown-empty.svg`;
+			sidebarCrownsInfoContainer.classList.add(ZERO_CROWNS_CONTAINER);
+		}
+		else
+		{
+			crownImg.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
+		}
 		crownImg.classList.add(GOLD_CROWN);
 		crownLogoContainer.appendChild(crownImg);
 
 		const crownTotalContainer = document.createElement("span");
 		crownTotalContainer.classList.add(CROWN_TOTAL_CONTAINER);
-		crownTotalContainer.textContent = document.querySelector(CROWN_TOTAL_SELECTOR).textContent;
+		crownTotalContainer.textContent = crownCount;
 		crownLogoContainer.appendChild(crownTotalContainer);
 
 		// Add Crowns Header and Text

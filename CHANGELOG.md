@@ -10,6 +10,21 @@ full width.
   - Button to bottom of the page to toggle the focus mode.
   - Option to enable and disabled the focus mode button.
 
+[v1.3.31] - 2020-08-28
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.31)
+### Fixed
+- Incorrect cracked skills lists due to ambiguity in selecting the skill object
+from the userData based on the displayed name under the skill icon. Multiple
+skills can be labelled with the same 'short' name but refer to different skills
+with different a 'title'.
+- Non-unique ids of strength bars due to the above ambiguity.
+- Checkpoint popout selector.
+
+### Changed
+- Comment outlining HTML structure the skill tree has been moved to the end of the
+script and updated to detail the whole of the learn page.
+
 [v1.3.30] - 2020-08-27
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.30)
@@ -990,6 +1005,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.31]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.30...v1.3.31
 [v1.3.30]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.29...v1.3.30
 [v1.3.29]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.28...v1.3.29
 [v1.3.28]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.27...v1.3.28

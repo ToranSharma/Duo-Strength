@@ -46,18 +46,18 @@ const LEAGUE_TABLE = "_1_p4S";
 const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = "._1m77f";
 const SKILL_NAME_SELECTOR = "._2OhdT._3PSt5";
 const CHECKPOINT_CONTAINER_SELECTOR = "._1lAog";
-const CHECKPOINT_POPOUT_SELECTOR = "._2pNYt._2WTbQ._2ppN7._3woYR";
+const CHECKPOINT_POPOUT_SELECTOR = "._2WTbQ._3woYR";
 const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
 const LANGUAGES_LIST_SELECTOR = "._2iyQU";
 const SMALL_BUTTONS_CONTAINER = "_1cv-y";
 const SMALL_BUTTON = "_3nfx7 _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt";
-const GOLDEN_OWL_CHECKPOINT_SELECTOR = `.lIg1v`;
-const LOCKED_TREE_SECTION_SELECTOR = `._3uC-w `;
+const GOLDEN_OWL_CHECKPOINT_SELECTOR = ".lIg1v";
+const LOCKED_TREE_SECTION_SELECTOR = "._3uC-w ";
 const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href], ${LOCKED_TREE_SECTION_SELECTOR} [data-test="skill"]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
-const BOTTOM_NAV_SELECTOR = `._1tvS_`;
-const CROWN_TOTAL_SELECTOR = `._2vMZo`;
+const BOTTOM_NAV_SELECTOR = "._1tvS_";
+const CROWN_TOTAL_SELECTOR = "._2vMZo";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 
 const flagYOffsets = {

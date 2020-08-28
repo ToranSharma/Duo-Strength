@@ -10,10 +10,11 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.31)
 ### Fixed
 - Incorrect cracked skills lists due to ambiguity in selecting the skill object
-from the userData based on the displayed name under the skill icon. Multiples
-skills can be labled with the same 'short' name but refer to different skills
+from the userData based on the displayed name under the skill icon. Multiple
+skills can be labelled with the same 'short' name but refer to different skills
 with different a 'title'.
 - Non-unique ids of strength bars due to the above ambiguity.
+- Checkpoint popout selector.
 
 ### Changed
 - Comment outlining HTML structure the skill tree has been moved to the end of the

@@ -46,18 +46,18 @@ const LEAGUE_TABLE = "_1_p4S";
 const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = "._1m77f";
 const SKILL_NAME_SELECTOR = "._2OhdT._3PSt5";
 const CHECKPOINT_CONTAINER_SELECTOR = "._1lAog";
-const CHECKPOINT_POPOUT_SELECTOR = "._2pNYt._2WTbQ._2ppN7._3woYR";
+const CHECKPOINT_POPOUT_SELECTOR = "._2WTbQ._3woYR";
 const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
 const LANGUAGES_LIST_SELECTOR = "._2iyQU";
 const SMALL_BUTTONS_CONTAINER = "_1cv-y";
 const SMALL_BUTTON = "_3nfx7 _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt";
-const GOLDEN_OWL_CHECKPOINT_SELECTOR = `.lIg1v`;
-
-const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href]`;
+const GOLDEN_OWL_CHECKPOINT_SELECTOR = ".lIg1v";
+const LOCKED_TREE_SECTION_SELECTOR = "._3uC-w ";
+const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href], ${LOCKED_TREE_SECTION_SELECTOR} [data-test="skill"]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
-const BOTTOM_NAV_SELECTOR = `._1tvS_`;
-const CROWN_TOTAL_SELECTOR = `._2vMZo`;
+const BOTTOM_NAV_SELECTOR = "._1tvS_";
+const CROWN_TOTAL_SELECTOR = "._2vMZo";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 
 const flagYOffsets = {
@@ -1185,44 +1185,8 @@ function addFlagBorders()
 function addStrengthBars(strengths)
 {
 	// Adds strength bars and percentages under each skill in the tree.
-	/*
-		The structure of skill tree is as follows:
-		<div class="_2GJb6"> 														<-- container for row of skills, has classes _1H-7I and _1--zr if bonus skill row
-			<a class="Af4up QmbDt" data-test="skill"> 								<-- container for individual skill
-				<div class="_1fneo" tab-index="0">									<-- new container as of 2019-09-03, unknown function
-					<div class="_2albn">
-						<div class="Fu0xk">											<-- new container as of 2020-02-18
-							<div class="_2969E">									<-- new container as of 2020-02-18
-								<div class="_39IKr">		     					<-- progress ring container
-									<div class="_3zkuO">							<-- progress ring container
-										<div class="_3o9cS">						<-- rotated progress ring container
-											<svg>...</svg>         					<-- progress ring svg
-										</div>
-									</div>
-								</div>
-								<div class="_3hKMGG" data-test="skill-icon">		<-- skill icon container
-									<div class="...">								<-- skill icon background
-										<svg>...</svg>								<--	skill icon
-									</div>
-								</div>
-								<div clas ="_26l3y">...</div>						<-- skill crowns logo and number
-							</div>
-							<div>													<-- another possibly new container as of 2019-03-01 holds skill name
-								####################################################<-- Strength Bar to be inserted here
-								<div class="_378Tf _1YG0X _3qO9M _33VdW">Skill Name</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				####### when skill clicked on new div below is appended ##########	<-- moved to direct child of Af4up container as of 2020-02-18
-				<div class="_2RblG _32ZXv _3czW4" data-test="skill-popout">			<-- popup box container
-					<div>...</div>													<-- popup box container
-				</div>
-			</a>
-		</div>
-	*/
 
-	let skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR)); // Af4up is class of skill containing element, may change.
+	let skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR));
 	
 	let skills = Array();
 	/*
@@ -1231,6 +1195,7 @@ function addStrengthBars(strengths)
 		1:	skill name element.
 		2:	skill strength between 0 and 1.0.
 		3:	display boolean - false if skill at crown 0, true otherwise.
+		4:	skill url_title - used to uniquely give an id to each strength bar
 	*/
 	let bonusElementsCount = 0;
 	
@@ -1329,9 +1294,9 @@ function addStrengthBars(strengths)
 	{
 		let iconElement = skills[i][0];
 		let nameElement = skills[i][1];
-		let name = nameElement.textContent;
 		let strength = skills[i][2]*1.0;
 		let display = (skills[i][3])? "" : "none";
+		let name = skills[i][4];
 		
 		if(document.getElementsByClassName("strengthBarHolder").length == numBarsAdded) // if we have only the number of bars added this time round, keep adding new ones.
 		{
@@ -2134,29 +2099,59 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 function getCrackedSkills()
 {
 	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY_SELECTOR));
-	const crackedSkillNames = crackedSkillElements.map(
-		(crackedSkill) => {
-			const skillIcon = crackedSkill.parentNode.parentNode;
-			const skillContainer = skillIcon.parentNode.parentNode.parentNode;
-			const skillName = skillContainer.lastChild.textContent;
+	const crackedSkills = Object.fromEntries(
+		crackedSkillElements.map(
+			(crackedSkill) => {
+				const skillIcon = crackedSkill.parentNode.parentNode;
+				const skillContainer = skillIcon.parentNode.parentNode.parentNode;
+				const skillNameElement = skillContainer.querySelector(SKILL_NAME_SELECTOR);
+				const skillName = skillNameElement.textContent;
 
-			return skillName;
-		}
+				// displayed name under skill is the short name
+				// for some trees there can be multiple skills with the same short name
+				// we need to look for how many instances of a skill with this name there are
+				// in order to select the correct skill from the userData skills
+
+				const skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR));
+				const sameNamedSkills = skillElements.filter(elem => elem.querySelector(SKILL_NAME_SELECTOR).textContent === skillName);
+
+				const instance = sameNamedSkills.findIndex(nameElement => nameElement.querySelector(SKILL_NAME_SELECTOR).isSameNode(skillNameElement));
+
+				return [skillName, instance];
+			}
+		)
 	);
 
-	const crackedSkills = [
-		userData.language_data[languageCode].skills.filter(skill => crackedSkillNames.includes(skill.short)),
-		userData.language_data[languageCode].bonus_skills.filter(skill => crackedSkillNames.includes(skill.short)),
-	];
+
+
+	let crackedSkillObjects = [[], []];
+
+	Object.keys(crackedSkills).forEach(
+		(skillName) =>
+		{
+			let userDataObjects = userData.language_data[languageCode].skills.filter(skill => skill.short === skillName);
+			if (userDataObjects.length !== 0)
+			{
+				// At least 1 normal skill matched the short name
+				crackedSkillObjects[0].push(userDataObjects[crackedSkills[skillName]]);
+			}
+			else
+			{
+				userDataObjects = userDataObjects.language_data[language_data].bonus_skills.filter(bonusSkill => bonusSkill.short === skillName);
+				crackedSkillObjects[1].push(userDataObjects[crackedSkills[skillName]]);
+			}
+			
+		}
+	);
 
 	crackedSkillElements.forEach(
 		(crackedSkillOverlay) => {
 			const parentElement = crackedSkillOverlay.parentNode;
 			childListObserver.observe(parentElement, {childList: true});
 		}
-	)
+	);
 
-	return crackedSkills;
+	return crackedSkillObjects;
 }
 
 function getLanguagesInfo()
@@ -3239,17 +3234,32 @@ function getStrengths()
 {
 	const strengths = [[],[]]; // first array holds strengths for normal skills, second for bonus skills
 	
+	// Each in each section in strengths will be array containing the following:
+	// [strength, display bool, skill's url_title]
+
 	const skills = userData.language_data[languageCode].skills;
 	const bonusSkills = userData.language_data[languageCode].bonus_skills;
 
 	for (const skill of skills)
 	{
-		strengths[0].push([skill.strength,Boolean(skill.skill_progress.level)]); // first element is strength, second is a bool of whether to add strength bar for that skill
+		strengths[0].push(
+			[
+				skill.strength,
+				Boolean(skill.skill_progress.level), // If level is 0 then we won't add a strength bar as it is meaningless.
+				skill.url_title
+			]
+		);
 	}
 
 	for (const bonusSkill of bonusSkills)
 	{
-		strengths[1].push([bonusSkill.strength,Boolean(bonusSkill.skill_progress.level)]);
+		strengths[1].push(
+			[
+				bonusSkill.strength,
+				Boolean(bonusSkill.skill_progress.level),
+				bonusSkill.url_title
+			]
+		);
 	}
 	
 	return strengths;
@@ -4713,3 +4723,169 @@ else
 }
 
 //observer.disconnet(); can't disconnect as always needed while page is loaded.
+
+/*
+The structure of page is as follows:
+<body>
+	...
+	<div id="root" onclick="">                                                                                                <-- rootElem
+		<div>                                                                                                                 <-- rootChild
+			<div>
+				<div class="_2ofx2" style="opacity: 0; width: 100%;"></div>
+				<div class="_14fD_" style="z-index: 210;"></div>
+				<div class="_3qbk_ _1K9ZC" style="z-index: 210;">
+					<div class="_3HW_7 _14fD_" style="z-index: 210101;"></div>
+					<div class="_3TwVI">...</div>                                                                            <-- topBarDiv
+				</div>
+			</div>
+			<div class="_3W86r _1Xlh1">                                                                                      <-- mainBodyContainer
+				<div>                                                                                                        <-- mainBody
+					<div class="_2Rpqh _36g-h _1VSis _1xa0a"></div>
+					<div class="_1YfQ8">...</div>                                                                            <-- sidebar
+					<div>                                                                                                    <-- main section
+						<div class="_33Mo9">
+							<div class="_2PVaI">
+								<div data-test="skill-tree" class="_3ZJK8">
+									<div class="_2joxc" style="height: auto; width: 100%; z-index: 1;">
+										################################                                                     <-- lists go here
+									</div>
+									<div class="_3YEom">                                                                     <-- Skill Tree
+										<div class="_3uC-w _2PUpL" data-test="tree-section">                                 <-- Tree Section
+											<div class="AjBUV">                                                              <-- Rows container
+												<div class="_3f9ou">                                                         <-- Skill row
+													<div class="_9O-0s _1888P" data-test="skill">                            <-- Skill container
+														<div class="_2eeKH" tabindex="0">
+															<div class="_3TK8W" style="width: 100%;">
+																<div class="_6lk-i">                                         <-- skill graphcis container
+																	<div class="_15U-t">
+																		<div class="_2rKNN">...</div>                        <-- Contains progress ring
+																		<div class="_3Sv-w" data-test="skill-icon">...</div> <-- Skill icon container
+																		<div class="_17NNA">.../div>                         <-- Skill crown count container
+																	</div>
+																</div>
+																#######################################                      <-- Strength Bar inserted here
+																<div class="Mr3if _2OhdT _1V15X _3PSt5">SKILL NAME</div>     <-- Skill name element
+															</div>
+														</div>
+													######## Only after clicking a skill ###################################################################
+													#	<div class="_33-99" data-test="skill-popout">                        <-- Popout container
+													#		<div class="_3tWnW _3_Gei _1W3aa _1kf1N">
+													#			<div class="_1b8Ja _1GJUD _3lagd SSzTP _1JPPG">
+													#				<div class="_1cv-y">                                     <-- Small buttons container
+													#					######################################               <-- Words list button goes here
+													#					<button>...</button>                                 <-- Test out button
+													#				</div>
+													#				<div class="_1cv-y"></div>
+													#				<div class="QowCP">
+													#					<div class="_1m77f">Level x/5</div>
+													#					<div class="_3L5UX">Lesson y / z</div>
+													#				</div>
+													#				<div class="_2I_Id">
+													#					<button class="_2aoiN _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt" data-test="tips-button">Tips</button>
+													#					<button class="twkSI _25Mqa whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN UCrz7 yTpGk" data-test="start-button">Start Lesson</button>
+													#				</div>
+													#				#####################################                    <-- Practise Button goes here
+													#			</div>
+													#			<div class="_37dAC">...</div>                                <-- Popout bubble arrow
+													#		</div>
+													#	</div>
+													########################################################################################################
+													</div>
+													<div class="_9O-0s _1888P" data-test="skill">...</div>                   <-- Skill container
+												</div>
+												<div class="_3f9ou">                                                         <-- Skill row
+												<div class="_3f9ou">                                                         <-- Skill row
+												<div class="_3Sis0">                                                         <-- Bonus Skill row seperator
+													<hr class="_3snoK">
+												</div>
+												<div class="_3f9ou">                                                         <-- Skill row
+												<div class="_3Sis0">                                                         <-- Bonus Skill row seperator
+													<hr class="_3snoK">
+												</div>
+												<div class="_3f9ou">                                                         <-- Skill row
+												<div class="_3f9ou">                                                         <-- Skill row
+												.
+												.
+												.
+											</div>
+											.
+											.
+											.
+										</div>
+										<div class="_2tZPV">                                                                 <-- Checkpoint row
+											<div class="_1dj9x">
+												<div class="_3lFil">                                                         <-- Checkpoint hr container
+													<hr class="_3snoK">
+												</div>
+												<div>
+													<div class="_1lAog">                                                     <-- Checkpoint container
+														<div class="_2eeKH _2siHl _17vI2 Dsx7N" tabindex="0">
+															<div class="_2dJxv _3suMX" data-test="checkpoint-badge">         <-- Checkpoint
+																<img ... />
+																<div class="qU_Uq">...</div>                                 <-- Checkpoint number container
+															</div>
+														</div>
+													########################## Only Added if checkpoint is clicked on #######################################
+													#	<div class="_2WTbQ _3woYR">                                          <-- Checkpoint popout container
+													#		<div class="_3tWnW _3_Gei _1W3aa _2ShHS">
+													#			<div class="_1b8Ja BnUip _3Gx6D">                            <-- Checkpoint popout content
+													#				<div class="_1peXy">Checkpoint Complete!</div>
+													#				<div class="_32Tdp">DESCRIPTION</div>                    <-- Checkpoint blurb
+													#				<button 
+													#					class="_1yruo _25Mqa whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN UCrz7 yTpGk"
+													#					data-test="checkpoint-start-button"
+													#				>
+													#					Practice +10 XP
+													#				</button>
+													#				############################################             <-- Retry Crown 1 Test Out Button added here
+													#			</div>
+													#			<div class="_37dAC">
+													#				<div class="_2j-Sn _3Gx6D"></div>
+													#			</div>
+													#		</div>
+													#	</div>
+													########################################################################################################
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="_3uC-w _2PUpL" data-test="tree-section">...</div>                        <-- Tree Section
+										<div class="_2tZPV">...</div>                                                        <-- Checkpoint row
+										<div class="_3uC-w _2PUpL" data-test="tree-section">...</div>                        <-- Tree Section
+										<div class="_2tZPV">...</div>                                                        <-- Checkpoint row
+										.
+										.
+										.
+										<div class="_3uC-w">                                                                 <-- Locked tree section
+											<div class="GVcJz _1jKFt"></div>
+											<div class="AjBUV _3M0r3">...</div>                                              <-- Grey rows container
+										</div>
+										<div class="_2tZPV">...</div>                                                        <-- Checkpoint row
+										<div class="_3uC-w">...</div>                                                        <-- Locked tree section
+										.
+										.
+										.
+										<div class="lIg1v _1TSHz _1G1lu _1MrEd"></div>                                       <-- Golden Owl Tophy would replace last checkpoint row
+									</div>
+									<div class="_1fnwn">                                                                     <-- Overlayed buttons container
+										<div class="_3yqw1 np6Tv">...</div>                                                  <-- Try Plus Button Container
+										<div class="_3NYLT"></div>
+										<div class="_2TTO0 np6Tv">...</div>                                                  <-- Global Practice Button Container
+									</div>
+								</div>
+							</div>
+							<div class="_3ky4c">...</div>                                                                    <-- Footer Container
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>...</script>
+	<script>...</script>
+	.
+	.
+	.
+	####################                                                                                                     <-- XHR scripts appended here
+</body>
+*/

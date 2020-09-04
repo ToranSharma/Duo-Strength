@@ -225,19 +225,27 @@ function storeProgressHistory()
 
 function updateProgress()
 {
-	let entry = [(new Date()).setHours(0,0,0,0),currentTreeLevel(),currentProgress()];
+	let entry = [(new Date()).setHours(0,0,0,0), currentTreeLevel(), currentProgress()];
 
 	if (progress.length == 0)
 	{
 		progress.push(entry);
 	}
-	else if (progress[progress.length-1][0] == entry[0])
+	else if (progress[progress.length-1][0] === entry[0])
 	{
 		// Already have an entry for today.
-		// If there is a entry before that, check if we went up a tree level then.
-		if (progress.length > 1 && progress[progress.length-1][1] != progress[progress.length-2][1])
+
+		// If there is a entry before that, check if we changed tree level or made 'negative' progress.
+
+		if (progress.length > 1 && progress[progress.length-1][1] !== progress[progress.length-2][1])
 		{
 			// The last stored entry was the first at the tree level, so let's not overwrite it
+			progress.push(entry);
+		}
+		else if (progress.length > 1 && progress[progress.length-1][2] > progress[progress.length-2][2])
+		{
+			// This last stored entry was the first after some negative progress on the same level.
+			// We don't want to overwrite this and loose more information.
 			progress.push(entry);
 		}
 		else
@@ -250,17 +258,17 @@ function updateProgress()
 	else
 	{
 		// First entry for today.
-		// Check if any progress has been made since we last stored a entry.
+		// Check if the progress has changed since we last stored a entry.
 
-		if (entry[1] != progress[progress.length-1][1] || entry[2] != progress[progress.length-1][2])
+		if (entry[1] !== progress[progress.length-1][1] || entry[2] !== progress[progress.length-1][2])
 		{
-			// This entry's progress or tree level data is different so some progress has been made,
-			// Let's save it.
+			// This entry's progress or tree level data is different,
+			// let's save it.
 			progress.push(entry);
 		} 
 		else
 		{
-			// No change since the laste entry so we will no save it.
+			// No change since the last entry so we will not save it.
 			return false;
 		}
 	}
@@ -538,23 +546,59 @@ function progressMadeBetweenPoints(startIndex, endIndex)
 
 	const points = progress.slice(startIndex, endIndex + 1);
 	points.forEach(
-		(point) => {
-			if (point[1] == level)
+		(point) =>
+		{
+			// There are a few cases of what can happen between points,
+			// each will need to be handled a bit differently.
+			// We will split the cases based on the difference in tree level between points.
+
+			if (point[1] === level)
 			{
-				// this point is from the same level as the last
-				// just add the difference in progresses
-				progressMade += lastProgress - point[2];
+				// The tree level has not changed between points.
+				
+				if (lastProgress > point[2])
+				{
+					// This is the typical case where some normal progress has been made.
+					progressMade += lastProgress - point[2];
+				}
+				else
+				{
+					// Progress has gone backwards between points.
+					// There were probably new skills added which now need to be done.
+					// It is more goal posts have been moved than backwards progress.
+					// In this case we just ignore this point and look at the progress made afterwards.
+				}
 			}
-			else
+			else if (point[1] > level)
 			{
-				// this point is from the next level
-				// add all the progress from the last point
-				// set level to the new level
+				// The user has reached the next tree level.
+				// In this case we will have saved a special entry as soon as we saw this happen.
+				// We just need to update the level and add all the progress that was left from the previous point,
+				// as it will all have had to have been made for the user to level up.
+
 				progressMade += lastProgress;
 				level = point[1];
+
+				// Note there is the case where the new level is not just an increment but a bigger jump.
+				// In that case we have missed some significant progress but there is nothing we can do.
+			}
+			else if (point[1] < level)
+			{
+				// Outlier case where the users level has decreased.
+				// This is probably from the tree being updated and new skills are added,
+				// which the user has no progress on.
+				// There is also the other case that the user has reset their progresson the tree.
+				// We don't need to treat that any differently as the past progress changes are still relevant.
+
+				// Here we will just update the level to the new (lower) value,
+				// ignoring the change in progress as it is getting reset here.
+
+				level = point[1];
+
+				// We are likely to miss some progress that has been made here but it is better than nothing.
 			}
 
-			lastProgress = point[2];
+			lastProgress = point[2]; // Last thing to do is update the lastProgress with this point.
 		}
 	);
 
@@ -2755,7 +2799,7 @@ function displayCrownsBreakdown()
 			{
 				const predictionData = (progress.length > 5) ? daysToNextCheckpoint() : daysToNextCheckpointByCalendar();
 
-				if (predictionData.time > 0)
+				if (predictionData.time >= 0)
 				{
 					const prediction = createPredictionElement("checkpoint", predictionData);
 					prediction.style =
@@ -2775,7 +2819,7 @@ function displayCrownsBreakdown()
 			{
 				const predictionData = (progress.length > 5) ? daysToNextTreeLevel() : daysToNextTreeLevelByCalendar();
 
-				if (predictionData.time != -1)
+				if (predictionData.time >= 0)
 				{
 					const prediction = createPredictionElement("treeLevel", predictionData);
 					prediction.style =

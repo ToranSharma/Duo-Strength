@@ -131,6 +131,7 @@ function retrieveOptions()
 						"skillSuggestionMethod":					"0",
 						"hideSuggestionNonStrengthened":			true,
 						"hideSuggestionWithCrackedSkills":			true,
+						"suggestionPopoutButton":					true,
 					"focusFirstSkill":							true,
 					"practiseButton":							true,
 					"practiceType":								"0",
@@ -427,6 +428,15 @@ function removeFocusModeButton()
 	if (focusModeButton !== null)
 	{
 		focusModeButton.remove();
+	}
+}
+
+function removeSuggestionPopoutButton()
+{
+	const suggestionPopoutButton = document.querySelector(`#suggestionPopoutButton`);
+	if (suggestionPopoutButton !== null)
+	{
+		suggestionPopoutButton.remove();
 	}
 }
 
@@ -2351,6 +2361,43 @@ function getLanguagesInfo()
 	return languagesInfo;
 }
 
+function addSuggestionPopoutButton(skillName)
+{
+	const skillElement = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}`)).find(
+		(skill) => 
+		{
+			return skill.querySelector(SKILL_NAME_SELECTOR).textContent === skillName;
+		}
+	);
+	
+	const button = document.createElement("button");
+	button.title = `Open popout for ${skillName}`;
+	button.id = "suggestionPopoutButton";
+	button.addEventListener("click",
+		(event) =>
+		{
+			event.stopPropagation();
+			skillElement.firstChild.click();
+		}
+	);
+	button.style =
+	`
+		background: none;
+		border: none;
+		line-height: 1em;
+		cursor: pointer;
+	`;
+	button.appendChild(document.createElement("img"));
+	button.lastChild.src = chrome.runtime.getURL("images/popout.svg");
+	button.lastChild.style =
+	`
+		width: 1em;
+		vertical-align: middle;
+	`;
+
+	return button;
+}
+
 function displayCrownsBreakdown()
 {
 	if (Object.entries(userData).length === 0)
@@ -3199,9 +3246,11 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		z-index: 1;
 	`;
 
-	if (document.getElementById("fullStrengthMessageContainer") == null)
+	let container = document.getElementById("fullStrengthMessageContainer");
+
+	if (container === null)
 	{
-		let container = document.createElement("div");
+		container = document.createElement("div");
 		container.id = "fullStrengthMessageContainer";
 		if (inMobileLayout)
 			container.style = "margin: 0.5em 1em 0.5em 1em;";
@@ -3256,7 +3305,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 				break;
 		}
 
-		let link = document.createElement("a");
+		const link = document.createElement("a");
 		link.href = "/skill/" + languageCode + "/" + randomSuggestion.url_title + ((treeLevel == 5) ? "/practice/" : "/");
 		link.textContent = randomSuggestion.short;
 		link.style.color = 'blue';
@@ -3276,7 +3325,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			}
 		);
 		
-		let suggestionMessage = document.createElement("p");
+		const suggestionMessage = document.createElement("p");
 		if (treeLevel == 5)
 		{
 			let messageText = `Your ${language} tree is `
@@ -3338,6 +3387,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		}
 		else
 		{
+			// Not level 5 or level 0 so we will use the suggestion based on the users options.
 			if (fullyStrengthened && noCrackedSkills)
 				suggestionMessage.textContent = `Your ${language} tree is fully strengthened, and there are no cracked cracked skills. `;
 			else if (fullyStrengthened)
@@ -3349,16 +3399,34 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			suggestionMessage.appendChild(link);
 		}
 
+
 		container.appendChild(suggestionMessage);
 
-		topOfTree.appendChild(container);
-
-		if (options.focusFirstSkill) link.focus();
 	}
 	else
 	{
 		// Already made the box.
 		// And we don't want to do anything otherwise the suggestion, if using the random option, will keep changing and might look a bit strange.
+	}
+
+	// Skill Suggestion Popout Button
+	removeSuggestionPopoutButton(); // Remove if already exists.
+
+	const suggestionName = container.querySelector(`a`).textContent;
+
+	if (options.suggestionPopoutButton && Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).some(skillName => skillName.textContent === suggestionName))
+	{
+		// Add button that opens up the suggested skill's popout
+		const button = addSuggestionPopoutButton(suggestionName);
+		container.querySelector(`p`).appendChild(button);
+	}
+
+	// Add the message if it isn't already there
+	if (!document.body.contains(container))
+	{
+		topOfTree.appendChild(container);
+
+		if (options.focusFirstSkill) container.querySelector(`a`).focus();
 	}
 }
 

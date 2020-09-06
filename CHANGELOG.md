@@ -9,6 +9,7 @@ full width.
   - Option to enable and disable focus mode.
   - Button to bottom of the page to toggle the focus mode.
   - Option to enable and disabled the focus mode button.
+- Button next to suggestion link, to open that skill's popout bubble.
 
 [v1.3.32] - 2020-09-04
 -----------------

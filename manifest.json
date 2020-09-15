@@ -40,7 +40,8 @@
 	[
 		"images/focus.svg",
 		"images/defocus.svg",
-		"images/popout.svg"
+		"images/popout.svg",
+		"styles/stylesheet.css"
 	],
 
 	"permissions"		:	["storage"],

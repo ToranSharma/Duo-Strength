@@ -4130,6 +4130,23 @@ function hideTranslationText(reveal = false, setupObserver = true)
 	return false;
 }
 
+function addStyleSheet()
+{
+	if (document.head.querySelector("#duoStrengthStylesheet") === null)
+	{
+		// We haven't previously added the stylesheet
+
+		const linkElem = document.createElement("link");
+		linkElem.type = "text/css";
+		linkElem.rel = "stylesheet";
+		linkElem.href = chrome.runtime.getURL("styles/stylesheet.css");
+
+		linkElem.id = "duoStrengthStylesheet";
+
+		document.head.append(linkElem);
+	}
+}
+
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
 function childListMutationHandle(mutationsList, observer)
 {
@@ -4701,7 +4718,11 @@ function setUpObservers()
 
 async function init()
 {
+	// Load options
 	let optionsLoaded = retrieveOptions();
+
+	// Add external stylesheet
+	addStyleSheet();
 
 	rootElem = document.getElementById("root"); // When logging in child list is changed.
 	childListObserver.observe(rootElem,{childList: true}); // Observing for changes to its children to detect logging in and out?

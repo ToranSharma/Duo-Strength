@@ -1342,98 +1342,66 @@ function addStrengthBars(strengths)
 	
 	let numBarsAdded = 0;
 
-	let strengthBarBackground = document.createElement("div");
+	const strengthBarBackground = document.createElement("div");
 	strengthBarBackground.className = "strengthBarBackground";
-	strengthBarBackground.style =
-	`
-		position: absolute;
-		display: inline-block;
-		width: 100%;
-		height: 1em;
-		left: 0;
-		background-color: #e5e5e5;
-		border-radius: 0.5em;
-		z-index: 1;
-	`;
-
 	
 	for (let i = 0; i< skills.length; i++)
 	{
-		let iconElement = skills[i][0];
-		let nameElement = skills[i][1];
-		let strength = skills[i][2]*1.0;
-		let display = (skills[i][3])? "" : "none";
-		let name = skills[i][4];
+		const iconElement = skills[i][0];
+		const nameElement = skills[i][1];
+		const strength = skills[i][2]*100;
+		const display = (skills[i][3]) ? "" : "none";
+		const name = skills[i][4];
 		
 		if(document.getElementsByClassName("strengthBarHolder").length == numBarsAdded) // if we have only the number of bars added this time round, keep adding new ones.
 		{
-			let strengthBarHolder = document.createElement("div");
-			strengthBarHolder.className = "strengthBarHolder";
-			strengthBarHolder.style = 
-			`
-				width: 100%;
-				position: relative;
-				display: ${display};
-				margin-top: 0.5em;
-				margin-bottom: -8px;
-			`;
-			
-			nameElement.parentNode.style.width = "100%";
+			const strengthBarHolder = document.createElement("div");
+			strengthBarHolder.classList.add("strengthBarHolder")
+			strengthBarHolder.setAttribute("display", display);
+
+			nameElement.parentNode.classList.add("fullWidth");
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
 
-			let strengthBar = document.createElement("div");
-			strengthBar.className = "strengthBar";
+			const strengthBar = document.createElement("div");
+			strengthBar.classList.add("strengthBar");
+			strengthBar.setAttribute("strength", strength);
 			strengthBar.id = name + "StrengthBar";
-			strengthBar.style = 
-			`
-				display: inline-block;
-				position: absolute;
-				left: 0;
-				width: ${strength*100}%;
-				height: 1em;
-				background-color: ${strength == 1.0 ? GOLD : RED};
-				border-radius: 0.5em;
-				z-index: 2;
-			`;
+
 			
-			let strengthValue = document.createElement("div");
+			const strengthValue = document.createElement("div");
 			strengthValue.className = "strengthValue";
 			strengthValue.id = name + "StrengthValue";
-			strengthValue.style = 
-			`
-				position: relative;
-				width: 97%;
-				text-align: right;
-				vertical-align: middle;
-				font-size: 75%;
-				z-index: 3;
-				margin: auto;
-			`;
-			strengthValue.textContent = strength*100 + "%";
+			strengthValue.textContent = strength + "%";
 			
-		if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground.cloneNode());
-		strengthBarHolder.appendChild(strengthBar);
-		strengthBarHolder.appendChild(strengthValue);
-		
-		numBarsAdded ++; // added a bar so increment counter.
-		
-	} else // we already have the elements made previously, just update their values.
-	{
-		let strengthBar = document.getElementById(name + "StrengthBar");
-		strengthBar.style.width = (strength*100)+"%";
-		strengthBar.style.backgroundColor = (strength == 1.0 ? GOLD : RED);
-		
-		let strengthValue = document.getElementById(name + "StrengthValue");
-		strengthValue.textContent = strength*100 + "%";
+			if (options.strengthBarBackgrounds)
+			{
+				strengthBarHolder.appendChild(strengthBarBackground.cloneNode());
+			}
 
-		strengthBar.parentNode.style.display = display;
-		
-		const background = strengthBar.parentNode.querySelector(`.strengthBarBackground`);
-		if (options.strengthBarBackgrounds && background == null)
-				strengthBar.parentNode.insertBefore(strengthBarBackground.cloneNode(),strengthBar);
-		else if (!options.strengthBarBackgrounds && background != null)
-			background.remove();
-				
+			strengthBarHolder.appendChild(strengthBar);
+			strengthBarHolder.appendChild(strengthValue);
+			
+			numBarsAdded++; // added a bar so increment counter.
+		}
+		else // we already have the elements made previously, just update their values.
+		{
+			const strengthBar = document.getElementById(name + "StrengthBar");
+			strengthBar.setAttribute("strength", strength);
+			
+			const strengthValue = document.getElementById(name + "StrengthValue");
+			strengthValue.textContent = strength + "%";
+
+			strengthBar.parentNode.setAttribute("display", display);
+			
+			const background = strengthBar.parentNode.querySelector(`.strengthBarBackground`);
+			if (options.strengthBarBackgrounds && background === null)
+			{
+				strengthBar.parentNode.insertBefore(strengthBarBackground.cloneNode(), strengthBar);
+			}
+			else if (!options.strengthBarBackgrounds && background !== null)
+			{
+				background.remove();
+			}
 		}
 	}
 }

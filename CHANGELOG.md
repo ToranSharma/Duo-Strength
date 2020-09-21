@@ -11,6 +11,13 @@ full width.
   - Option to enable and disabled the focus mode button.
 - Button next to suggestion link, to open that skill's popout bubble.
 
+[v1.3.33] - 2020-09-21
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.33)
+### Fixed
+- How the crowns progress graph handles apparent negative progress after a tree
+update adding new skills.
+
 [v1.3.32] - 2020-09-04
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.32)
@@ -1012,6 +1019,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.33]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.32...v1.3.33
 [v1.3.32]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.31...v1.3.32
 [v1.3.31]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.30...v1.3.31
 [v1.3.30]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.29...v1.3.30

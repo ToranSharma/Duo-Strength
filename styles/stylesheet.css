@@ -11,8 +11,8 @@
 	--light-blue: rgb(28, 176, 246);
 }
 
-/* Strength Bars*/
 
+/* Strength Bars */
 
 .strengthBarBackground
 {
@@ -85,3 +85,219 @@
 	z-index: 3;
 	margin: auto;
 }
+
+
+/* XP Info  */
+
+.XPBox
+{
+	margin-top: 1em;
+	color: black;
+}
+.XPBox p
+{
+	text-align: center;
+}
+
+.XPTotalAndLevel
+{
+	font-size: 175%;
+	font-weight: bold;
+	color: var(--orange);
+}
+.XPTotalAndLevel span
+{
+	color: black;
+	font-weight: normal;
+}
+
+.nextLevelProgress
+{
+	margin-bottom: 0;
+}
+
+.languageLevelProgressBarContainer
+{
+	height: 0.5em;
+	width: 100%;
+	background-color: var(--grey);
+	border-radius: 0.25em;
+}
+
+.languageLevelProgressBar
+{
+	height: 100%;
+	background-color: var(--orange);
+	border-radius: 0.25em;
+}
+
+.XPPrediction
+{
+	margin-bottom: 0;
+}
+
+.XPBoxOverflowContainer
+{
+	overflow-y: auto;
+	max-height: calc(100vh - 58px - 90px);
+}
+
+
+/* Predictions  */
+
+.prediction span
+{
+	font-weight: bold;
+}
+
+.checkpointPrediction,
+.treeLevelPrediction
+{
+	line-height: 120%;
+	margin: 1em 1em 0;
+	text-align: center;
+	color: black !important;
+}
+.checkpointPrediction span:first-of-type,
+.treeLevelPrediction span:first-of-type
+{
+	font-weight: inherit;
+	text-decoration: underline dashed #777;
+	text-underline-position: under;
+}
+
+
+/* Crowns Info  */
+
+.desktopLayout #crownsPopupContainer
+{
+	flex-wrap: wrap;
+	justify-content: center;
+	overflow-y: auto;
+	max-height: calc(100vh - 70px - 20px);
+}
+.mobileLayout #crownsPopupContainer
+{
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.mobileLayout #crownsPopupContainerParent
+{
+	overflow-y: auto;
+	max-height: calc(100vh - 58px - 90px);
+}
+
+#sidebarCrownsInfoContainer
+{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.crownDescriptionContainer
+{
+	width: 50%;
+}
+.crownDescriptionContainer h2
+{
+	margin: 0;
+}
+.crownDescriptionContainer p
+{
+	margin: 10px 0 0 0;
+	color: #777;
+}
+
+#crownsPopupContainer .crownCountImg,
+#sidebarCrownsInfoContainer .crownCountImg
+{
+	transform: scale(1.3);
+}
+
+.crownCountPercentage
+{
+	font-size: 0.8em;
+	position: absolute;
+	transform: translate(-50%, -50%);
+	left: 50%;
+	top: calc(50% + 1.3em);
+	color: #cd7900;
+}
+
+.crownsGraph
+{
+	width: 100%;
+	margin-top: 1em;
+	padding: 0 1em;
+}
+
+.crownLevelBreakdownContainer
+{
+	margin: 1em 1em 0 1em;
+	text-align: left;
+	flex-grow: 1;
+	color: black;
+}
+
+.treeLevelSentence
+{
+	text-align: center;
+	color: black !important;
+	margin: 0 0 1em 0 !important;
+}
+
+.treeLevel
+{
+	display: inline-block;
+}
+
+.breakdownList
+{
+	display: grid;
+	grid-auto-rows: 1.5em;
+	align-items: center;
+}
+
+.crownImgContainer
+{
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	justify-self:center;
+}
+.crownImgContainer img
+{
+	width: 100%;
+	padding: 0 0.2em;
+	z-index: 1;
+}
+.crownImgContainer div
+{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	z-index: 2;
+	color: #cd7900;
+}
+
+.crownLevelItem
+{
+	display: grid;
+	align-items: center;
+	justify-items: right;
+	grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
+}
+.skillsAtSpan
+{
+	justify-self: center;
+}
+
+.bonusSkillsBreakdownHeader
+{
+	margin: 0;
+	font-size: 100%;
+	justify-self: center;
+}
+

@@ -223,9 +223,9 @@ function updateProgress()
 {
 	let entry = [(new Date()).setHours(0,0,0,0), currentTreeLevel(), currentProgress()];
 
-	if (progress.length == 0)
+	if (progress.length === 0)
 	{
-		progress.push(entry);
+		progress.push(entry); // add as an inital marker for progress today;
 	}
 	else if (progress[progress.length-1][0] === entry[0])
 	{
@@ -233,12 +233,22 @@ function updateProgress()
 
 		// If there is a entry before that, check if we changed tree level or made 'negative' progress.
 
-		if (progress.length > 1 && progress[progress.length-1][1] !== progress[progress.length-2][1])
+		if (progress.length === 1)
+		{
+			// We have just today added the first every entry.
+			// If we have made any progress since then add that entry.
+			if (progress[0][1] !== entry[1] || progress[0][2] !== entry[2])
+			{
+				progress.push(entry);
+			}
+		}
+		// We have more than one previous entry.
+		else if (progress[progress.length-1][1] !== progress[progress.length-2][1])
 		{
 			// The last stored entry was the first at the tree level, so let's not overwrite it
 			progress.push(entry);
 		}
-		else if (progress.length > 1 && progress[progress.length-1][2] > progress[progress.length-2][2])
+		else if (progress[progress.length-1][2] > progress[progress.length-2][2])
 		{
 			// This last stored entry was the first after some negative progress on the same level.
 			// We don't want to overwrite this and loose more information.
@@ -254,7 +264,7 @@ function updateProgress()
 	else
 	{
 		// First entry for today.
-		// Check if the progress has changed since we last stored a entry.
+		// Check if the progress has changed since we last stored an entry.
 
 		if (entry[1] !== progress[progress.length-1][1] || entry[2] !== progress[progress.length-1][2])
 		{
@@ -2467,33 +2477,10 @@ function displayCrownsBreakdown()
 				let i = progress.length - 1; // used to index into progress
 				while (day > dateToday - 7*msInDay && i > 0)
 				{
-					// Loop through the last week backwards.
+					// day loops through the last week backwards.
 					// Also stop if we run out of progress entries to use.
 
-					if (progress[i][0] == day)
-					{
-						// If there is progress for the day we are testing
-						// prepend the array with the change in number of lessons left
-						// compared to the previous progress entry
-
-						treeLevelProgressInWeek.unshift(progress[i-1][2] - progress[i][2]);
-						i--;
-
-						if (progress[i][0] == day)
-						{
-							// If the previous progress entry is from the same day
-							// a level boundary was crossed.
-							// This progress entry then holds the number of lessons left
-							// at the time of getting to the next tree level.
-
-							// We then add the remaining number of lessons from the previous
-							// progress entry that must have been earned to level up
-							//
-							treeLevelProgressInWeek[0] = treeLevelProgressInWeek[0] + progress[i-1][2];
-							i--;
-						}
-					}
-					else
+					if (progress[i][0] !== day)
 					{
 						// The progress entry isn't for the day we are testing,
 						// so no tree level contributing lessons were earned on that day.
@@ -2503,7 +2490,98 @@ function displayCrownsBreakdown()
 						// Note we don't decrement i as we haven't used the info in this
 						// progress entry.
 					}
-					
+					else
+					{
+						// There is at least one prrogress entry for the day we are currently looking at.
+
+						let progressAddedFromCurrentDay = false;
+						while (progress[i][0] === day)
+						{
+							/*
+							This progress entry is from the the day we are looking at.
+							We are looping through progress entries that are on the current day as there may be multiple.
+							Multiple entries are added for the same day when either:
+							- The user has completed the current level
+							- The user resets their progress on the tree
+							- The tree was updated and it appears that negative progress was made
+							- It is the day that entires were stored
+
+							If there is progress for the day we are testing
+							prepend the array with the change in number of lessons left
+							compared to the previous progress entry.
+
+							We should only do this if the progress is positive though.
+							Negative progress happens if the tree was reset by the user or updated by duolingo,
+							or if the tree level has just increased.
+
+							*/
+
+								
+							if (i === 0)
+							{
+								// This is the first ever entry, so we can't do anything more.
+								break;
+							}
+							else if (progress[i][1] === progress[i-1][1])
+							{
+								// This entry has the same tree level as before.
+								
+								if (progress[i-1][2] > progress[i][2])
+								{
+									// Normal positive progress has been made.
+									const progressFromThisEntry = progress[i-1][2] - progress[i][2];
+
+									if (progressAddedFromCurrentDay)
+									{
+										// Already added some progress from this day,
+										// so lets just add the extra to the existing.
+										treeLevelProgressInWeek[0] = treeLevelProgressInWeek[0] + progressFromThisEntry;
+									}
+									else
+									{
+										treeLevelProgressInWeek.unshift(progressFromThisEntry);
+										progressAddedFromCurrentDay = true;
+									}
+								}
+								else
+								{
+									// There has been negative compared to the previous entry.
+									// Nothing to do here as this is just to mark the change and track relative changes afterwards.
+								}
+							}
+							else
+							{
+								// This entry has from a different tree level than the entry before it.
+								if (progress[i][1] > progress[i-1][1])
+								{
+									// The tree level has increased.
+									// This entry is the the first after this change,
+									// so we should add the remaining progress from the previous entry
+									// as this will have needed to have been done to level up.
+									if (progressAddedFromCurrentDay)
+									{
+										// Already added some progress from this day,
+										// so lets just add the extra to the existing.
+										treeLevelProgressInWeek[0] = treeLevelProgressInWeek[0] + progress[i-1][2];
+									}
+									else
+									{
+										// Not added anything from this current day yet so lets add this now
+
+										treeLevelProgressInWeek.unshift(progress[i-1][2]);
+										progressAddedFromCurrentDay = true;
+									}
+								}
+								else if (progress[i][1] < progress[i-1][1])
+								{
+									// Tree level has decreased, this is either a tree change or a tree reset,
+									// We don't need to do anything then.
+								}
+							}
+
+							--i;
+						}
+					}
 					// decrement the timestamp by a day
 					day = day - msInDay;
 				}

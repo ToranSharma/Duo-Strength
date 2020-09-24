@@ -301,3 +301,29 @@
 	justify-self: center;
 }
 
+
+/* Languages Box  */
+#languagesTable
+{
+	width: 100%;
+}
+#languagesTable tr
+{
+	display: grid;
+	grid-template-columns: 30% 20% 25% 25%;
+	align-items: center;
+}
+#languagesTable tr td
+{
+	padding: 0;
+}
+
+#languagesTable thead tr th
+{
+	padding: 0;
+}
+
+#languagesTable > tr:nth-of-type(even)
+{
+	background-color: #f0f0f0;
+}

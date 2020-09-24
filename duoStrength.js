@@ -2634,7 +2634,6 @@ function displayCrownsBreakdown()
 				const skillsAtSpan = document.createElement("span");
 				skillsAtSpan.classList.add("skillsAtSpan");
 				skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
-				skillsAtSpan.style.justifySelf = "center";
 				breakdownListItem.appendChild(skillsAtSpan);
 
 				breakdownListItem.appendChild(imgContainer.cloneNode(true));
@@ -2873,9 +2872,9 @@ function displayLanguagesInfo(languages)
 		return false;
 	}
 
-	let languagesBox = document.getElementById("languagesBox");
+	let languagesBox = document.querySelector("#languagesBox");
 
-	if (languagesBox != null)
+	if (languagesBox !== null)
 	{
 		// We already have a languagesBox.
 	
@@ -2920,13 +2919,11 @@ function displayLanguagesInfo(languages)
 				(languageInfo, index) => {
 					const tableRow = document.createElement("TR");
 					tableRow.id = `${languageInfo[0]}Row`;
-					tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
 					table.appendChild(tableRow);
 
 					languageInfo.forEach(
 						(data) => {
 							const tableData = document.createElement("TD");
-							tableData.style.padding = "0";
 							tableData.textContent = data;
 							tableRow.appendChild(tableData);
 						}
@@ -2958,39 +2955,31 @@ function displayLanguagesInfo(languages)
 		const tableHead = document.createElement("THEAD");
 		table.appendChild(tableHead);
 		const tableHeadRow = document.createElement("TR");
-		tableHeadRow.style.borderBottom = "1px solid black";
 		tableHead.appendChild(tableHeadRow);
 		
 		const tableHeading = document.createElement("TH");
-		tableHeading.style.padding = "0";
 
 		tableHeading.textContent = "Language";
-		tableHeading.style.width = "30%";
 		tableHeadRow.appendChild(tableHeading.cloneNode(true));
 		
 		tableHeading.textContent = "Level";
-		tableHeading.style.width = "20%";
 		tableHeadRow.appendChild(tableHeading.cloneNode(true));
 
 		tableHeading.textContent = "Total XP";
-		tableHeading.style.width = "25%";
 		tableHeadRow.appendChild(tableHeading.cloneNode(true));
 
 		tableHeading.textContent = "XP to Next Level";
-		tableHeading.style.width = "25%";
 		tableHeadRow.appendChild(tableHeading.cloneNode(true));
 
 		languages.forEach(
 			(languageInfo, index) => {
 				const tableRow = document.createElement("TR");
 				tableRow.id = `${languageInfo[0]}Row`;
-				tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
 				table.appendChild(tableRow);
 
 				languageInfo.forEach(
 					(data) => {
 						const tableData = document.createElement("TD");
-						tableData.style.padding = "0";
 						tableData.textContent = data;
 						tableRow.appendChild(tableData);
 					}

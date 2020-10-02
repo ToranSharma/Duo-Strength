@@ -3754,17 +3754,17 @@ function addFeatures()
 	{
 		if (options.checkpointButtons)
 		{
-			if (document.querySelector(`[data-test="redo-test-button"]`) == null)
+			if (document.querySelector(`[data-test="redo-test-button"]`) === null)
 			{
 				// Want checkpoint buttons and don't have any.
 				const checkpointPopout = document.querySelector(CHECKPOINT_POPOUT_SELECTOR);
 				const goldenOwlTrophy = document.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR);
-				if (checkpointPopout != null)
+				if (checkpointPopout !== null)
 				{
 					// There is a normal checkpoint popout displayed, let's add the buttons to it.
 					addCheckpointButtons(checkpointPopout);
 				}
-				else if (goldenOwlTrophy != null)
+				else if (goldenOwlTrophy !== null)
 				{
 					// The golden owl trophy congratulation message is displayed, let's add the buttons after the message.
 					const messageContainer = goldenOwlTrophy.nextElementSibling;
@@ -3773,12 +3773,15 @@ function addFeatures()
 			}
 
 			
-			// Add each checkpoint to childListObserver
+			// Add each checkpoint to childListObserver.
 			document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR).forEach(
 				(checkpoint) => {
 					childListObserver.observe(checkpoint, {childList: true});
 				}
 			);
+
+			// Add overlays to childListObserver to detect Golden Owl message.
+			childListObserver.observe(document.querySelector("#overlays"), {childList: true});
 		}
 		else
 		{
@@ -4245,7 +4248,7 @@ function childListMutationHandle(mutationsList, observer)
 			rootChildReplaced = true;
 		}
 		else if (
-			mutation.target === rootElem
+			mutation.target.id === "overlays"
 			&& mutation.target.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR) !== null
 		)
 		{
@@ -4367,7 +4370,8 @@ function childListMutationHandle(mutationsList, observer)
 
 	if (goldenOwlMessageAdded)
 	{
-		const trophy = rootElem.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR);
+		const overlays = document.querySelector("#overlays");
+		const trophy = overlays.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR);
 		if (trophy != null)
 		{
 			// The golden owl has been clicked and the congratulation message is being displayed

@@ -51,6 +51,7 @@ const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
 const LANGUAGES_LIST_SELECTOR = "._2iyQU";
 const SMALL_BUTTONS_CONTAINER = "_1cv-y";
 const SMALL_BUTTON = "_3nfx7 _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt";
+const TEST_OUT_ICON = "_20ZkV";
 const GOLDEN_OWL_CHECKPOINT_SELECTOR = ".lIg1v";
 const LOCKED_TREE_SECTION_SELECTOR = "._3uC-w ";
 const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href], ${LOCKED_TREE_SECTION_SELECTOR} [data-test="skill"]`;
@@ -137,6 +138,7 @@ function retrieveOptions()
 					"practiceType":								"0",
 						"lessonThreshold":							"4",
 					"wordsButton":								true,
+					"grammarSkillsTestButton":					true,
 					"checkpointButtons":						true,
 					"treeLevelBorder":							true,
 					"crownsInfo":								true,
@@ -1109,7 +1111,7 @@ function graphSVG(data, ratio=1.5)
 
 async function openLastSkillPopout()
 {
-	if (lastSkill == null)
+	if (lastSkill === undefined)
 		return false;
 
 	const skillName = lastSkill.skillName;
@@ -1852,11 +1854,78 @@ function getSkillFromPopout(skillPopout)
 	return allSkills.find(skill => skill.short == skillTitle);
 }
 
-function addWordsButton(skillPopout)
+function addSmallButtonsConatiner(skillPopout)
 {
-	if (skillPopout == null) return false;
+	const smallButtonsContainer = document.createElement("div");
+	smallButtonsContainer.classList.add(SMALL_BUTTONS_CONTAINER);
+
+	const mainPopoutContainer = skillPopout.firstChild.firstChild;
+	mainPopoutContainer.insertBefore(smallButtonsContainer, mainPopoutContainer.firstChild);
+
+	return smallButtonsContainer;
+}
+
+function addGrammarSkillTestOutButton(skillPopout)
+{
+	if (skillPopout === null) return false;
 
 	const skillData = getSkillFromPopout(skillPopout);
+
+	if (
+		skillData.category !== "grammar"
+		|| skillPopout.querySelector(`[data-test="test-out-button"]`) !== null
+	)
+	{
+		return false;
+	}
+
+	// Skill popout is a grammar skill and there isn't a test out button
+
+	if (skillData.skill_progress.level === skillData.num_levels) return false;
+
+	// Not at max level so can test out.
+
+	let smallButtonsContainer = skillPopout.querySelector(`.${SMALL_BUTTONS_CONTAINER}`);
+
+	if (smallButtonsContainer === null)
+	{
+		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
+	}
+	const testOutButton = document.createElement("div");
+	testOutButton.classList.add(...SMALL_BUTTON.split(" "));
+	testOutButton.setAttribute("data-test", "test-out-button");
+
+	const testOutIcon = document.createElement("img");
+	testOutIcon.src = `${imgSrcBaseUrl}/key.svg`;
+	testOutIcon.classList.add(TEST_OUT_ICON);
+	testOutButton.appendChild(testOutIcon);
+
+	testOutButton.addEventListener("click",
+		(event) =>
+		{
+			const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
+			const lastSkill = {
+				skillName: skillName,
+				urlTitle: skillData.url_title
+			};
+
+			chrome.storage.sync.set({lastSkill: lastSkill});
+
+			window.location = `/skill/${languageCode}/${skillData.url_title}/test`;
+		}
+	);
+
+	smallButtonsContainer.appendChild(testOutButton);
+}
+
+function addWordsButton(skillPopout)
+{
+	if (skillPopout === null) return false;
+
+	const skillData = getSkillFromPopout(skillPopout);
+
+	// Grammar skills words list are not currently helpful, so don't add the button.
+	if (skillData.category === "grammar") return false;
 	
 	const words = skillData.words;
 	const isLocked = skillData.locked;
@@ -1873,11 +1942,7 @@ function addWordsButton(skillPopout)
 	}
 	else
 	{
-		smallButtonsContainer = document.createElement("div");
-		smallButtonsContainer.classList.add(SMALL_BUTTONS_CONTAINER);
-		const mainPopoutContainer = skillPopout.firstChild.firstChild;
-		mainPopoutContainer.insertBefore(smallButtonsContainer, mainPopoutContainer.firstChild);
-
+		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
 		wordsButton = document.createElement("button");
 		wordsButton.classList.add(...SMALL_BUTTON.split(" "));
 		smallButtonsContainer.appendChild(wordsButton);
@@ -3594,7 +3659,17 @@ function processUserData()
 	const skills = userData.language_data[languageCode].skills; 
 	const bonusSkills = userData.language_data[languageCode].bonus_skills;
 
-	sortByTreePosition = (skill1,skill2) => {
+	// New grammar skills have incorrect y coordinate, making them seem like they are embedded in the row above.
+	const grammarSkills = skills.filter(skill => skill.category === "grammar");
+	grammarSkills.forEach(
+		(grammarSkill) =>
+		{
+			grammarSkill.coords_x = 999
+		}
+	);
+
+	const sortByTreePosition = (skill1,skill2) =>
+	{
 		if (skill1.coords_y < skill2.coords_y) // x above y give x
 		{
 			return -1;
@@ -3713,7 +3788,7 @@ function addFeatures()
 		{
 			if (skillPopout != null)
 			{
-				if (options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
+				if (options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"]`) === null)
 				{
 					// Want practise button and there isn't one.
 					const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
@@ -3724,10 +3799,16 @@ function addFeatures()
 					}
 				}
 
-				if (options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) == null)
+				if (options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) === null)
 				{
 					// Want words button and there isn't one
 					addWordsButton(skillPopout);
+				}
+
+				if (options.grammarSkillsTestButton && skillPopout.querySelector(`[data-test="test-out-button"]`) === null)
+				{
+					// No testout button, might be a grammar skill and we want to add one.
+					addGrammarSkillTestOutButton(skillPopout);
 				}
 			}
 
@@ -4556,6 +4637,8 @@ function childListMutationHandle(mutationsList, observer)
 		}
 
 		if (options.wordsButton) addWordsButton(skillPopout);
+
+		if (options.grammarSkillsTestButton) addGrammarSkillTestOutButton(skillPopout);
 	}
 	
 	if (checkpointPopoutAdded)
@@ -4894,8 +4977,11 @@ async function init()
 				const somethingIsStored = lastSkill != null;
 				if (somethingIsStored && lastSkill.urlTitle != null)
 				{
-					// Stored last skill was a practice session.
-					if (pageUrl.includes(`/${lastSkill.urlTitle}/practice`))
+					// Stored last skill was a practice session or a grammar test out.
+					if (
+						pageUrl.includes(`/${lastSkill.urlTitle}/practice`)
+						|| pageUrl.includes(`/${lastSkill.urlTitle}/test`)
+					)
 					{
 						// The current url matches up with the practice session stored.
 						currentUrlNotStored = false;

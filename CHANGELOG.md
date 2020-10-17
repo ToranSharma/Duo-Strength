@@ -5,6 +5,17 @@ Changelog
 ------------
 -
 
+[v1.3.35] - 2020-10-17
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.35)
+### Fixed
+- Strength bars on new grammar skills.
+- Displaying of words list button on new grammar skills. The words in the list
+are currently placeholders and not helpful, so they shouldn't be shown.
+
+### Added
+- Option to add missing Test Out button to new grammar skills.
+
 [v1.3.34] - 2020-10-02
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.34)
@@ -1020,6 +1031,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.35]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.34...v1.3.35
 [v1.3.34]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.33...v1.3.34
 [v1.3.33]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.32...v1.3.33
 [v1.3.32]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.31...v1.3.32

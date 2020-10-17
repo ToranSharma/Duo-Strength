@@ -13,6 +13,9 @@ Changelog
 - Displaying of words list button on new grammar skills. The words in the list
 are currently placeholders and not helpful, so they shouldn't be shown.
 
+### Added
+- Option to add missing Test Out button to new grammar skills.
+
 [v1.3.34] - 2020-10-02
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.34)

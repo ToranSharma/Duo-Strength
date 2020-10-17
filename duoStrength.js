@@ -3438,7 +3438,17 @@ function processUserData()
 	const skills = userData.language_data[languageCode].skills; 
 	const bonusSkills = userData.language_data[languageCode].bonus_skills;
 
-	sortByTreePosition = (skill1,skill2) => {
+	// New grammar skills have incorrect y coordinate, making them seem like they are embedded in the row above.
+	const grammarSkills = skills.filter(skill => skill.category === "grammar");
+	grammarSkills.forEach(
+		(grammarSkill) =>
+		{
+			grammarSkill.coords_x = 999
+		}
+	);
+
+	const sortByTreePosition = (skill1,skill2) =>
+	{
 		if (skill1.coords_y < skill2.coords_y) // x above y give x
 		{
 			return -1;

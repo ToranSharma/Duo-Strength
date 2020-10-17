@@ -10,6 +10,8 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.35)
 ### Fixed
 - Strength bars on new grammar skills.
+- Displaying of words list button on new grammar skills. The words in the list
+are currently placeholders and not helpful, so they shouldn't be shown.
 
 [v1.3.34] - 2020-10-02
 -----------------

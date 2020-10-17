@@ -1834,6 +1834,9 @@ function addWordsButton(skillPopout)
 	if (skillPopout == null) return false;
 
 	const skillData = getSkillFromPopout(skillPopout);
+
+	// Grammar skills words list are not currently helpful, so don't add the button.
+	if (skillData.category === "grammar") return false;
 	
 	const words = skillData.words;
 	const isLocked = skillData.locked;

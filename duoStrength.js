@@ -2368,8 +2368,9 @@ function displayCrownsBreakdown()
 	}
 
 
-	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	let bonusSkills = userData.language_data[languageCode].bonus_skills;
+	const skills = userData.language_data[languageCode].skills;
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+	const grammarSkills = skills.filter(skill => skill.category === "grammar");
 
 	let crownLevelCount = [Array(6).fill(0),Array(2).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
 
@@ -2383,9 +2384,9 @@ function displayCrownsBreakdown()
 		crownLevelCount[1][bonusSkill.skill_progress.level]++;
 	}
 
-	let maxCrownCount = skills.length*5 + bonusSkills.length;
+	const maxCrownCount = 5*(skills.length - grammarSkills.length) + 2*grammarSkills.length + bonusSkills.length;
 
-	let treeLevel = currentTreeLevel();
+	const treeLevel = currentTreeLevel();
 
 	const placesToAdd = [];
 

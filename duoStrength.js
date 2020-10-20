@@ -1685,11 +1685,13 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// index is in normal skill range
 			const skill = needsStrengthening[0][i];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
-			                 `${(skill.skill_progress.level == 5 ||
-							     options.practiceType == "1" ||
-							     (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-							    ) ? "/practice":""}`;
+			const toPractise =
+				skill.skill_progress.level === 5
+				|| options.practiceType === "1"
+				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+				|| (skill.category === "grammar" && skill.skill_progress.level === 2);
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
 		} else
 		{
@@ -1738,11 +1740,13 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// last skill to be displayed is a normal skill
 			const skill = needsStrengthening[0][needsStrengthening[0].length -1];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
-			                 `${(skill.skill_progress.level == 5 ||
-								 options.practiceType == "1" ||
-								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-							    )? "/practice":""}`;
+			const toPractise =
+				skill.skill_progress.level === 5
+				|| options.practiceType === "1"
+				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+				|| (skill.category === "grammar" && skill.skill_progress.level === 2);
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
 		}
 		
@@ -1759,11 +1763,13 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// index is in normal skill range
 			const skill = needsStrengthening[0][lastIndexToBeShown];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
-			                 `${(skill.skill_progress.level == 5 ||
-							     options.practiceType == "1" ||
-								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-							    )? "/practice":""}`;
+			const toPractise =
+				skill.skill_progress.level === 5
+				|| options.practiceType === "1"
+				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+				|| (skill.category === "grammar" && skill.skill_progress.level === 2);
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
 		} else
 		{
@@ -2497,8 +2503,9 @@ function displayCrownsBreakdown()
 	}
 
 
-	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	let bonusSkills = userData.language_data[languageCode].bonus_skills;
+	const skills = userData.language_data[languageCode].skills;
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+	const grammarSkills = skills.filter(skill => skill.category === "grammar");
 
 	let crownLevelCount = [Array(6).fill(0),Array(2).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
 
@@ -2512,9 +2519,9 @@ function displayCrownsBreakdown()
 		crownLevelCount[1][bonusSkill.skill_progress.level]++;
 	}
 
-	let maxCrownCount = skills.length*5 + bonusSkills.length;
+	const maxCrownCount = 5*(skills.length - grammarSkills.length) + 2*grammarSkills.length + bonusSkills.length;
 
-	let treeLevel = currentTreeLevel();
+	const treeLevel = currentTreeLevel();
 
 	const placesToAdd = [];
 
@@ -3449,11 +3456,14 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		}
 
 		const link = document.createElement("a");
-		link.href = "/skill/" + languageCode + "/" + randomSuggestion.url_title + ((treeLevel == 5) ? "/practice/" : "/");
+
+		const toPractise = treeLevel === 5 || (randomSuggestion.category === "grammar" && randomSuggestion.skill_progress.level === 2);
+
+		link.href = `/skill/${languageCode}/${randomSuggestion.url_title}${toPractise ? "/practice/" : "/"}`;
 		link.textContent = randomSuggestion.short;
 		link.style.color = 'blue';
 		link.addEventListener('focus',
-			function(event)
+			function (event)
 			{
 				event.target.style.fontWeight = 'bold';
 				event.target.style.textDecoration = 'underline';
@@ -3461,7 +3471,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		);
 
 		link.addEventListener('blur',
-			function(event)
+			function (event)
 			{
 				event.target.style.fontWeight = 'normal';
 				event.target.style.textDecoration = 'none';

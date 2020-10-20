@@ -5,6 +5,15 @@ Changelog
 ------------
 -
 
+[v1.3.36] - 2020-10-20
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.36)
+### Fixed
+- Practice links to new grammar skills in lists at the top of the tree.
+- Maximum crown count to account for grammar skills maximum possible crown
+level of 2.
+
+
 [v1.3.35] - 2020-10-17
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.35)
@@ -1031,6 +1040,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.36]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.35...v1.3.36
 [v1.3.35]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.34...v1.3.35
 [v1.3.34]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.33...v1.3.34
 [v1.3.33]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.32...v1.3.33

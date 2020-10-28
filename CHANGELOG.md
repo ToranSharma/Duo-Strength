@@ -10,6 +10,8 @@ full width.
   - Button to bottom of the page to toggle the focus mode.
   - Option to enable and disabled the focus mode button.
 - Button next to suggestion link, to open that skill's popout bubble.
+- Option to make sidebar fixed when scrolling down the page, and hidden content
+scrollable.
 
 [v1.3.37] - 2020-10-26
 -----------------

@@ -167,6 +167,7 @@ function retrieveOptions()
 					"showLeagues":								true,
 					"focusMode":								false,
 					"focusModeButton":							true,
+					"fixedSidebar":								false,
 				};
 
 			if (Object.entries(data).length === 0)
@@ -2317,6 +2318,32 @@ function applyFocusMode()
 
 		globalPractiseButtonContainer.parentNode.appendChild(focusModeButton);
 	}
+}
+
+function applyFixedSidebar()
+{
+	const sidebar = document.querySelector(`.${SIDEBAR}`);
+
+	if (sidebar === null)
+	{
+		return false;
+	}
+
+	if (options.fixedSidebar)
+	{
+		sidebar.style =
+		`
+			position: sticky;
+			top: 94px;
+			height: calc(100vh - 94px);
+			overflow-y: scroll;
+		`
+	}
+	else
+	{
+		sidebar.removeAttribute("style");
+	}
+
 }
 
 function getCrackedSkills()
@@ -4560,6 +4587,9 @@ function childListMutationHandle(mutationsList, observer)
 		// Try to re apply focus mode option
 		applyFocusMode();
 
+		// Try to re apply the fixed sidebar option
+		applyFixedSidebar();
+
 		// Try and add the Crowns and XP info in case the popups are there.
 		if (options.XPInfo) displayXPBreakdown();
 		if (options.crownsInfo) displayCrownsBreakdown();
@@ -5070,6 +5100,9 @@ async function init()
 
 				// Focus mode - sidebar hiding
 				applyFocusMode();
+
+				// Fixed sidebar
+				applyFixedSidebar();
 
 				await openLastSkillPopout();
 

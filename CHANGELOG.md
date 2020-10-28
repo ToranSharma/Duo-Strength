@@ -13,6 +13,14 @@ full width.
 - Option to make sidebar fixed when scrolling down the page, and hidden content
 scrollable.
 
+[v1.3.38] - 2020-10-28
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.38)
+### Fixed
+- The tree level calculation now ignores grammar skills. This had caused the
+tree level to be stuck at level 2, the maximum level that grammar skills can
+get to.
+
 [v1.3.37] - 2020-10-26
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.37)
@@ -1054,6 +1062,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.38]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.37...v1.3.38
 [v1.3.37]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.36...v1.3.37
 [v1.3.36]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.35...v1.3.36
 [v1.3.35]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.34...v1.3.35

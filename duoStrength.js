@@ -474,13 +474,11 @@ function hasMetGoal()
 
 function currentProgress()
 {
-	let skills = userData.language_data[languageCode].skills;
+	const skills = userData.language_data[languageCode].skills;
 	let treeLevel = currentTreeLevel();
 	let lessonsToNextTreeLevel = 0;
 	for (let skill of skills)
 	{
-		//if (skill.locked) continue;
-		
 		if (skill.skill_progress.level == treeLevel)
 		{
 			lessonsToNextTreeLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
@@ -630,9 +628,9 @@ function progressMadeBetweenPoints(startIndex, endIndex)
 
 function currentTreeLevel()
 {
-	let skills = userData.language_data[languageCode].skills;
+	const skills = userData.language_data[languageCode].skills.filter(skill => skill.category !== "grammar");
 
-	let skillsByCrowns = [[],[],[],[],[],[]];
+	const skillsByCrowns = [[],[],[],[],[],[]];
 
 	for (let skill of skills)
 	{
@@ -728,17 +726,7 @@ function daysToNextTreeLevel()
 
 function daysToNextTreeLevelByCalendar()
 {
-	let skills = userData.language_data[languageCode].skills;
-	let treeLevel = currentTreeLevel();
-	let lessonsToNextTreeLevel = 0;
-
-	for (let skill of skills)
-	{
-		if (skill.skill_progress.level == treeLevel)
-		{
-			lessonsToNextTreeLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
-		}
-	}
+	const lessonsToNextTreeLevel = currentProgress();
 
 	const calendar = currentLanguageHistory();
 

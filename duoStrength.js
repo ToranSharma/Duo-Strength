@@ -3919,6 +3919,11 @@ function addFeatures()
 	{
 		applyFocusMode();
 	}
+
+	// Fixed Sidebar
+	{
+		applyFixedSidebar();
+	}
 }
 
 function httpGetAsync(url, responseHandler)
@@ -4748,6 +4753,7 @@ function classNameMutationHandle(mutationsList, observer)
 			onMainPage = true;
 			
 			applyFocusMode();
+			applyFixedSidebar();
 
 			// check if language has been previously set as we only set it in init if we were on the main page
 			if (language != "")

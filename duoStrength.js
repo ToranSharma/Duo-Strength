@@ -1247,7 +1247,8 @@ function addStrengthBars(strengths)
 
 	for (let i=0; i<skillElements.length; i++)
 	{
-		const isBonusSkill = bonusSkillRow != null && bonusSkillRow.contains(skillElements[i]);
+		const isBonusSkill = strengths[1].length !== 0 && bonusSkillRow !== null && bonusSkillRow.contains(skillElements[i]);
+		// strengths[1].length !== 0 is a back up to make sure that a skillElement is not considered a bonus skill when it is impossible
 
 		let elementContents;
 

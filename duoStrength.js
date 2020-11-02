@@ -4141,6 +4141,32 @@ function requestData()
 	});
 }
 
+function revealNewWord()
+{
+	const newWord = document.querySelector(`.${QUESTION_CONTAINER} `+NEW_WORD_SELECTOR);
+	if (newWord !== null)
+	{
+		const muteScript = document.createElement("script");
+		muteScript.id = "muteScript";
+		muteScript.textContent =
+		`
+			const originalHowlPlay = window.Howl.prototype.play;
+			window.Howl.prototype.play =
+			function (id)
+			{
+				console.dir(this);
+				this._muted = true;
+				const ret = originalHowlPlay.call(this, id);
+				window.Howl.prototype.play = originalHowlPlay;
+				return ret;
+			}
+			document.querySelector("#muteScript").remove();
+		`;
+		document.body.appendChild(muteScript);
+		newWord.click();
+	}
+}
+
 function hideTranslationText(reveal = false, setupObserver = true)
 {
 	if (document.getElementsByClassName(QUESTION_CONTAINER).length == 0)
@@ -4653,7 +4679,7 @@ function childListMutationHandle(mutationsList, observer)
 	{
 		// Run check for translation type question
 		hideTranslationText();
-		document.getElementsByClassName(QUESTION_CONTAINER)[0].querySelectorAll(NEW_WORD_SELECTOR).forEach(newWord => newWord.click());
+		revealNewWord();
 	}
 	
 	if (skillRepaired)
@@ -5005,6 +5031,7 @@ async function init()
 
 			await optionsLoaded;
 			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
+			revealNewWord();
 
 			lastSkill = await retrieveLastSkill();
 			const pageUrl = window.location.href;

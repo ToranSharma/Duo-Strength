@@ -171,9 +171,14 @@ function getOptions(firstLoad=false)
 			saveOptions();
 			return false;
 		}
-		options = items;
+		options = {...items};
 		for (option in options)
 		{
+			if (document.querySelector(`#${option}`) === null)
+			{
+				// Option not found in page, might be an old option, let's remove it and save the options at the end
+				delete options[option];
+			}
 			if (option != "needsStrengtheningListSortOrder")
 			{
 				switch (typeof options[option])
@@ -233,8 +238,17 @@ function getOptions(firstLoad=false)
 				);
 			}
 		}
+
+		if (Object.entries(options).length !== Object.entries(items))
+		{
+			// Some options must have been removed, let's save that change
+			saveOptions();
+		}
+		
 		if (firstLoad)
+		{
 			init();
+		}
 	});
 }
 

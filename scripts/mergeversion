@@ -7,14 +7,25 @@ if [[ $CURRENTBRANCH == release-* ]] || [[ $CURRENTBRANCH == hotfix-* ]]
 then
 	git checkout master
 	git merge --no-ff $CURRENTBRANCH
-	git push
 
 	git checkout develop
 	git merge --no-ff $CURRENTBRANCH
-	git push
 
-	git push --delete origin $CURRENTBRANCH
-	git branch -d $CURRENTBRANCH
+	echo ""
+	read -p "Push new commits and delete remote and local branches (Y/n)" PUSH
+
+	if [ "$PUSH" != "n" ]
+	then
+		git push
+		git checkout master
+		git push
+		git push --delete origin $CURRENTBRANCH
+		git branch -d $CURRENTBRANCH
+	else
+		echo "Commits not pushed. Note upstream not set."
+		git checkout master
+	fi
+
 else
 	echo "Current branch is not a release or hotfix branch"
 	exit 1

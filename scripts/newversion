@@ -35,8 +35,8 @@ if [ "$OVERRIDE" -eq 0 ]; then
 		echo "Incrementing version number for hotfix"
 		VERNUM=$( echo $OLDVERNUM | awk -F "." '{print $1 "." $2 "." $NF+1}' )
 	else
-		echo "Incrementing version number for release"
-		VERNUM=$( echo $OLDVERNUM | awk -F "." '{print $1 "." $2+1 ".0"}' )
+		echo "Must specify a version number for the release branch"
+		exit 2
 	fi
 fi
 
@@ -47,8 +47,10 @@ git checkout $PARENTBRANCH
 git checkout -b "$BRANCHTYPE-$VERNUM"
 
 sed -i -b "/\"version\"/ s/$OLDVERNUM/$VERNUM/" manifest.json
+sed -i -b "/id=\"version\"/ s/$OLDVERNUM/$VERNUM/" options.html
 
 git add manifest.json
+git add options.html
 git commit -m "Increment version number to $VERNUM"
 
 DATE=$( date +"%F" )

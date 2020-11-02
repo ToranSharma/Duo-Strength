@@ -8,88 +8,75 @@ const GREY = "rgb(229, 229, 229)";
 const DARK_BLUE = "rgb(24, 153, 214)";
 const LIGHT_BLUE = "rgb(28, 176, 246)";
 
-const crownSrc = "//d35aaqx5ub95lt.cloudfront.net/images/juicy-crown.svg" // old crown img: "//d35aaqx5ub95lt.cloudfront.net/images/crown-small.svg";
+const imgSrcBaseUrl = "//d35aaqx5ub95lt.cloudfront.net/images";
 
 // Duolingo class names:
-const BONUS_SKILL_DIVIDER = "_23P6X";
-const TOP_OF_TREE_WITH_IN_BETA = "_1uUHs _3tYmC";
-const TOP_OF_TREE = "_3GFex";
-const MOBILE_TOP_OF_TREE = "_3Y5Xu";
-const SKILL_ROW = "_2GJb6";
-const SKILL_COLUMN = "QmbDT";
-const IN_BETA_LABEL = "_3yV19";
-const CROWN_POPUP_CONTAINER = "NugKJ";
-const CROWN_LOGO_CONTAINER = "_3uwBi";
-const CROWN_DESCRIPTION_CONTAINER = "_27NkX";
-const CROWN_TOTAL_CONTAINER = "_2boWj";
-const DAILY_GOAL_POPUP_CONTAINER = "yRM09";
-const DAILY_GOAL_SIDEBAR_CONATINER = "_2hhXN";
-const SIDEBAR = "_3Nl60";
-const WHITE_SIDEBAR_BOX_CONTAINER = "_2iVqi";
-const POPUP_ICON = "_3gtu3 _1-Eux iDKFi";
-const GOLD_CROWN = "WZkQ9";
-const GREY_CROWN = "_3FM63";
-const COLOURED_FLAME = "_2ctH6";
-const GREY_FLAME = "_27oya";
-const ACTIVE_TAB = "_2lkuX";
-const TOP_BAR = "_3F_8q";
-const NAVIGATION_BUTTON = "_3MT82";
-const QUESTION_CONTAINER = "_2NEKS";
-const LOGIN_PAGE = "_11AR-";
-const LESSON = "_7TCY- _160QG";
-const LESSON_MAIN_SECTION = "_14_MG";
-const LESSON_BOTTOM_SECTION = "_1obm2";
-const QUESTION_UNCHECKED = "zEs4P";
-const QUESTION_CHECKED = "_1NmT0";
-const CRACKED_SKILL_OVERLAY_SELECTOR = "._7WUMp";
-const NEW_WORD_SELECTOR = "._2tgi3";
-const LEAGUE_TABLE = "_1NIUo";
-const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = ".vwODZ";
-const SKILL_NAME_SELECTOR = "._1j18D._3DyOj._3scVN._2CXf4";
-const CHECKPOINT_CONTAINER_SELECTOR = "._3Lrsa";
-const CHECKPOINT_POPOUT_SELECTOR = "._15Wh7._6gtoB._2Uetf";
-const LANGUAGES_LIST_SELECTOR = "._2-Lx6";
+const BONUS_SKILL_DIVIDER_SELECTOR = "._3Sis0";
+const TOP_OF_TREE_WITH_IN_BETA = "_1q00o _3_JLW";
+const TOP_OF_TREE = "_2joxc";
+const MOBILE_TOP_OF_TREE = "RviFd";
+const TRY_PLUS_BUTTON_SELECTOR = `[data-test="try-plus-badge"], ._-7YNG`;
+const IN_BETA_LABEL = "_2UV5Z"; // container of div with IN BETA textContent. Will be sibling of needsStrengtheningContainer etc.
+const CROWNS_POPUP_CONTAINER = "_37JAM"; // parent of Crown logo container and cronw description container
+const CROWN_LOGO_CONTAINER = "_3KWyk";
+const CROWN_DESCRIPTION_CONTAINER = "_37Yk2";
+const CROWN_TOTAL_CONTAINER = "yrLrI";
+const DAILY_GOAL_POPUP_CONTAINER = "_20sV-"; // parent of streak flame and description, and the 7 small flames
+const DAILY_GOAL_SIDEBAR_CONTAINER = "_2O43A";
+const SIDEBAR = "_1YfQ8";
+const WHITE_SIDEBAR_BOX_CONTAINER = "_3ZuGY";
+const ZERO_CROWNS_CONTAINER = "bAsar"; // class applied to container of crown info that makes text inside the grey crown white
+const POPUP_ICON = "_1b3yx _1I4lY _2wC9B";
+const GOLD_CROWN = "_2QHSw";
+const LIT_FLAME = "_1DS_0";
+const BLUE_FLAME = "_3Ecgs";
+const GREY_FLAME = "_1S8Vz";
+const TOP_BAR = "eFS_r";
+const NAVIGATION_BUTTON = "tCGvL";
+const QUESTION_CONTAINER = "_863KE";
+const LOGIN_PAGE = "_2F5q9";
+const LESSON = "iLgf- _1Xlh1";
+const LESSON_MAIN_SECTION = "_3yOsW";
+const LESSON_BOTTOM_SECTION = "_2Fc1K";
+const QUESTION_UNCHECKED = "_399cc";
+const QUESTION_CHECKED = "_3e9O1";
+const CRACKED_SKILL_OVERLAY_SELECTOR = "._1SXlx, ._1x_0f, ._2ZUHwm, ._1m7gz"; // oldest to latest, likely that only the last will match
+const NEW_WORD_SELECTOR = "._1bkpY";
+const LEAGUE_TABLE = "_1_p4S";
+const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = "._1m77f";
+const SKILL_NAME_SELECTOR = "._2OhdT._3PSt5";
+const CHECKPOINT_CONTAINER_SELECTOR = "._1lAog";
+const CHECKPOINT_POPOUT_SELECTOR = "._2WTbQ._3woYR";
+const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
+const LANGUAGES_LIST_SELECTOR = "._2rd3I";
+const SMALL_BUTTONS_CONTAINER = "_1cv-y";
+const SMALL_BUTTON = "_3nfx7 _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt";
+const TEST_OUT_ICON = "_20ZkV";
+const GOLDEN_OWL_CHECKPOINT_SELECTOR = ".lIg1v";
+const LOCKED_TREE_SECTION_SELECTOR = "._3uC-w ";
+const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href], ${LOCKED_TREE_SECTION_SELECTOR} [data-test="skill"]`;
+const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
+const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
+const MAIN_SECTION_SELECTOR = "._33Mo9";
+const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0";
+const BOTTOM_NAV_SELECTOR = "._3oP45";
+const CROWN_TOTAL_SELECTOR = "._1HHlZ._3F5mM, ._12yJ8._3F5mM";
+const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 
 const flagYOffsets = {
-	0:	"en",
-	32: "es",
-	64: "fr",
-	96: "de",
-	128: "ja",
-	160: "it",
-	193: "ko",
-	225: "zh",
-	257: "ru",
-	289: "pt",
-	321: "tr",
-	354: "nl",
-	386: "sv",
-	418: "ga",
-	450: "el",
-	482: "he",
-	515: "pl",
-	547: "no",
-	579: "da",
-	611: "hv",
-	643: "vi",
-	676: "ro",
-	708: "sw",
-	740: "eo",
-	772: "hu",
-	804: "cy",
-	837: "uk",
-	869: "kl",
-	901: "cs",
-	933: "hi",
-	965: "id",
-	998: "ha",
-	1030: "nv",
-	1062: "ar",
-	1094: "ca",
-	1126: "th",
+	0:	"en", 32: "es", 64: "fr", 96: "de",
+	128: "ja", 160: "it", 193: "ko", 225: "zh",
+	257: "ru", 289: "pt", 321: "tr", 354: "nl",
+	386: "sv", 418: "ga", 450: "el", 482: "he",
+	515: "pl", 547: "no", 579: "da", 611: "hv",
+	643: "vi", 676: "ro", 708: "sw", 740: "eo",
+	772: "hu", 804: "cy", 837: "uk", 869: "kl",
+	901: "cs", 933: "hi", 965: "id", 998: "ha",
+	1030: "nv", 1062: "ar", 1094: "ca", 1126: "th",
 	1159: "gn",
-	1352: "ar",
-	1384: "gd",
+	// 1191: "ambassador", 1223: "duolingo",
+	// 1255: "troubleshooting", 1287: "teachers",
+	1320: "la", 1352: "gd", 1384: "fi",
 };
 
 let languageCode = "";
@@ -102,67 +89,85 @@ let languageLogo;
 let options = {};
 let progress = [];
 let username = "";
+let userId = "";
 let userData = {};
 let requestID = 0;
 let requestsPending = 0;
+let usingOldData;
 
 let rootElem;
 let rootChild;
 let mainBody;
 let mainBodyContainer;
 let topBarDiv;
-let mobileTopBarDiv;
 
 let onMainPage;
+let onLoginPage;
 let inMobileLayout;
+
+let lastSkill;
+
+const classNameObserver = new MutationObserver(classNameMutationHandle);
+const childListObserver = new MutationObserver(childListMutationHandle);
 
 function retrieveOptions()
 {
-	return new Promise(function (resolve, reject)
-	{
+	return new Promise(function (resolve, reject){
 		chrome.storage.sync.get("options", function (data)
 		{
 			// Set options to default settings
 			options =
 				{
-					"strengthBars":							true,
-						"strengthBarBackgrounds":				true, 
-					"needsStrengtheningList":				true,
-						"needsStrengtheningListLength":			"10",
-						"needsStrengtheningListSortOrder":		"0",
+					"strengthBars":								true,
+						"strengthBarBackgrounds":					true, 
+					"needsStrengtheningList":					true,
+						"needsStrengtheningListLength":				"10",
+						"needsStrengtheningListSortOrder":			"0",
 						"showBonusSkillsInNeedsStrengtheningList":	true,
-					"crackedSkillsList":					true,
-						"crackedSkillsListLength":				"10",
-						"crackedSkillsListSortOrder":			"0",
-						"showBonusSkillsInCrackedSkillsList":	true,
-					"skillSuggestion":						true,
-						"skillSuggestionMethod":				"0",
-						"hideSuggestionNonStrengthened":		true,
-						"hideSuggestionWithCrackedSkills":		true,
-					"focusFirstSkill":						true,
-					"practiseButton":						true,
-					"practiceType":							"0",
-						"lessonThreshold":						"4",
-					"checkpointButtons":					true,
-					"treeLevelBorder":						true,
-					"crownsInfo":							true,
-						"crownsMaximum":						true,
-							"crownsPercentage":						true,
-						"crownsGraph":							true,
-						"crownsBreakdown":						true,
-							"crownsBreakdownShowZerosRows":			true,
-							"bonusSkillsBreakdown":					true,
-						"crownsPrediction":						true,
-					"XPInfo":								true,
-						"XPBreakdown":							true,
-						"XPPrediction":							true,
-					"languagesInfo":						true,
-						"languagesInfoSortOrder":				"0",
-					"showTranslationText":					true,
-						"revealHotkey":							true,
-							"revealHotkeyCode":						"Ctrl+Alt+H",
-					"showToggleHidingTextButton":			true,
-					"showLeagues":							true,
+					"crackedSkillsList":						true,
+						"crackedSkillsListLength":					"10",
+						"crackedSkillsListSortOrder":				"0",
+						"showBonusSkillsInCrackedSkillsList":		true,
+					"skillSuggestion":							true,
+						"skillSuggestionMethod":					"0",
+						"hideSuggestionNonStrengthened":			true,
+						"hideSuggestionWithCrackedSkills":			true,
+						"suggestionPopoutButton":					true,
+					"focusFirstSkill":							true,
+					"practiseButton":							true,
+					"practiceType":								"0",
+						"lessonThreshold":							"4",
+					"wordsButton":								true,
+					"grammarSkillsTestButton":					true,
+					"checkpointButtons":						true,
+					"treeLevelBorder":							true,
+					"crownsInfo":								true,
+						"crownsInfoInSidebar":						false,
+						"crownsInfoInPopup":						true,
+						"crownsMaximum":							true,
+							"crownsPercentage":							true,
+						"crownsGraph":								true,
+						"crownsBreakdown":							true,
+							"crownsBreakdownShowZerosRows":				true,
+							"bonusSkillsBreakdown":						true,
+						"checkpointPrediction":						true,
+						"treeLevelPrediction":						true,
+					"XPInfo":									true,
+						"XPInfoInSidebar":							true,
+						"XPInfoInPopup":							false,
+						"XPBreakdown":								true,
+						"XPPrediction":								true,
+					"languagesInfo":							true,
+						"languagesInfoSortOrder":					"0",
+					"showTranslationText":						true,
+						"revealHotkey":								true,
+							"revealHotkeyCode":							"Ctrl+Alt+H",
+						"showNewWords":								true,
+					"showToggleHidingTextButton":				true,
+					"showLeagues":								true,
+					"focusMode":								false,
+					"focusModeButton":							true,
+					"fixedSidebar":								false,
 				};
 
 			if (Object.entries(data).length === 0)
@@ -224,19 +229,37 @@ function storeProgressHistory()
 
 function updateProgress()
 {
-	let entry = [(new Date()).setHours(0,0,0,0),crownTreeLevel(),currentProgress()];
+	let entry = [(new Date()).setHours(0,0,0,0), currentTreeLevel(), currentProgress()];
 
-	if (progress.length == 0)
+	if (progress.length === 0)
 	{
-		progress.push(entry);
+		progress.push(entry); // add as an inital marker for progress today;
 	}
-	else if (progress[progress.length-1][0] == entry[0])
+	else if (progress[progress.length-1][0] === entry[0])
 	{
 		// Already have an entry for today.
-		// If there is a entry before that, check if we went up a crown level then.
-		if (progress.length > 1 && progress[progress.length-1][1] != progress[progress.length-2][1])
+
+		// If there is a entry before that, check if we changed tree level or made 'negative' progress.
+
+		if (progress.length === 1)
 		{
-			// The last stored entry was the first at the crown level, so let's not overwrite it
+			// We have just today added the first every entry.
+			// If we have made any progress since then add that entry.
+			if (progress[0][1] !== entry[1] || progress[0][2] !== entry[2])
+			{
+				progress.push(entry);
+			}
+		}
+		// We have more than one previous entry.
+		else if (progress[progress.length-1][1] !== progress[progress.length-2][1])
+		{
+			// The last stored entry was the first at the tree level, so let's not overwrite it
+			progress.push(entry);
+		}
+		else if (progress[progress.length-1][2] > progress[progress.length-2][2])
+		{
+			// This last stored entry was the first after some negative progress on the same level.
+			// We don't want to overwrite this and loose more information.
 			progress.push(entry);
 		}
 		else
@@ -249,23 +272,42 @@ function updateProgress()
 	else
 	{
 		// First entry for today.
-		// Check if any progress has been made since we last stored a entry.
+		// Check if the progress has changed since we last stored an entry.
 
-		if (entry[1] != progress[progress.length-1][1] || entry[2] != progress[progress.length-1][2])
+		if (entry[1] !== progress[progress.length-1][1] || entry[2] !== progress[progress.length-1][2])
 		{
-			// This entry's progress or crown data is different so some progress has been made,
-			// Let's save it.
+			// This entry's progress or tree level data is different,
+			// let's save it.
 			progress.push(entry);
 		} 
 		else
 		{
-			// No change since the laste entry so we will no save it.
+			// No change since the last entry so we will not save it.
 			return false;
 		}
 	}
 
 	storeProgressHistory();
 	return true;
+}
+
+function retrieveLastSkill()
+{
+	return new Promise(
+		function (resolve, reject)
+		{
+			chrome.storage.sync.get("lastSkill", function (data)
+				{
+					resolve(data.lastSkill);
+				}
+			);
+		}
+	);
+}
+
+function resetLastSkillStorage()
+{
+	chrome.storage.sync.remove("lastSkill");
 }
 
 function resetLanguageFlags()
@@ -303,37 +345,40 @@ function removeCrackedSkillsList()
 	}
 }
 
-function removeCrownsBreakdown()
+function removeFlagBorders()
 {
-	const maxCrowns = document.getElementById("maxCrowns");
-	if (maxCrowns != null) // is null after some language changes.
-	{
-		maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
-		maxCrowns.parentNode.removeChild(maxCrowns);
-	}
-
-	const crownCountPercentage = document.getElementById("crownCountPercentage");
-	if (crownCountPercentage != null)
-		crownCountPercentage.remove();
-
-	const crownsGraph = document.getElementById("crownsGraph");
-	if (crownsGraph != null)
-		crownsGraph.remove();
-
-	const crownLevelBreakdownContainer = document.getElementById("crownLevelBreakdownContainer");
-	if (crownLevelBreakdownContainer != null) crownLevelBreakdownContainer.parentNode.removeChild(crownLevelBreakdownContainer);
-
-	const treeCrownLevelPrediction = document.getElementById("treeCrownLevelPrediction");
-	if (treeCrownLevelPrediction != null) treeCrownLevelPrediction.parentNode.removeChild(treeCrownLevelPrediction);
+	const flags = document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span>span:first-child`);
+	flags.forEach(
+		(flag) => {
+			flag.removeAttribute("style");
+			flag.querySelectorAll("img").forEach(img => img.remove());
+		}
+	);
 }
 
-function removeXPBox()
+function removeCrownsBreakdown()
 {
-	let xpBox = document.getElementById("XPBox");
-	if (xpBox != null)
-	{
-		xpBox.parentNode.removeChild(xpBox);	
-	}
+	document.querySelectorAll(".maxCrowns").forEach(
+		(maxCrowns) =>
+		{
+			maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
+			maxCrowns.remove();
+		}
+	);
+
+	document.querySelectorAll(".sidebarCrownsInfoContainer, .crownCountPercentage, .crownsGraph, .crownLevelBreakdownContainer, .checkpointPrediction, .treeLevelPrediction")
+		.forEach(element => element.remove());
+}
+
+function removeXPBoxes()
+{
+	document.querySelectorAll(".XPBox").forEach(
+		box =>
+		{
+			box.parentNode.removeAttribute("style");
+			box.remove();
+		}
+	);
 }
 
 function removeSuggestion()
@@ -352,34 +397,240 @@ function removeLanguagesInfo()
 		languagesInfoBox.parentNode.removeChild(languagesInfoBox);
 }
 
+function removePractiseButton()
+{
+	const practiseButton = document.querySelector(`[data-test="practise-button"]`);
+	if (practiseButton != null)
+	{
+		practiseButton.remove();
+	}
+}
+
+function removeWordsButton()
+{
+	const wordsButton = document.querySelector(`[data-test="words-button"]`);
+	if (wordsButton != null)
+	{
+		wordsButton.parentNode.removeAttribute("style");
+		wordsButton.remove();
+	}
+	const wordsListBubble = document.querySelector(`#wordsListBubble`);
+	if (wordsListBubble != null)
+		wordsListBubble.remove();
+}
+
+function removeCheckpointButtons()
+{
+	const redoTestButton = document.querySelector(`[data-test="redo-test-button"]`);
+	if (redoTestButton != null)
+	{
+		redoTestButton.parentNode.removeAttribute("style");
+		redoTestButton.remove();
+	}
+
+	const testOutButton = document.querySelector(`[data-test="test-out-button"]`);
+	if (testOutButton != null)
+	{
+		testOutButton.remove();
+	}
+}
+
+function removeFocusModeButton()
+{
+	const focusModeButton = document.querySelector(`#focusModeButton`);
+	if (focusModeButton !== null)
+	{
+		focusModeButton.remove();
+	}
+}
+
+function removeSuggestionPopoutButton()
+{
+	const suggestionPopoutButton = document.querySelector(`#suggestionPopoutButton`);
+	if (suggestionPopoutButton !== null)
+	{
+		suggestionPopoutButton.remove();
+	}
+}
+
 function hasMetGoal()
 {
-	return userData.streak_extended_today;
+	const goal = userData.daily_goal;
+	const currentDate = (new Date()).setHours(0,0,0,0);
+	const lessonsToday = userData.calendar.filter(
+		(entry) => {
+			const day = (new Date(entry.datetime)).setHours(0,0,0,0);
+			return day == currentDate;
+		}
+	);
+	
+	const XPToday = lessonsToday.reduce(
+		(total, lesson) => {
+			return total + lesson.improvement;
+		}, 0)
+
+	return XPToday >= goal;
 }
 
 function currentProgress()
 {
-	let skills = userData.language_data[languageCode].skills;
-	let treeLevel = crownTreeLevel();
-	let lessonsToNextCrownLevel = 0;
+	const skills = userData.language_data[languageCode].skills;
+	let treeLevel = currentTreeLevel();
+	let lessonsToNextTreeLevel = 0;
 	for (let skill of skills)
 	{
-		//if (skill.locked) continue;
-		
 		if (skill.skill_progress.level == treeLevel)
 		{
-			lessonsToNextCrownLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
+			lessonsToNextTreeLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
 		}
 	}
 
-	return lessonsToNextCrownLevel;
+	return lessonsToNextTreeLevel;
 }
 
-function crownTreeLevel()
+function nextCheckpointIndex()
 {
-	let skills = userData.language_data[languageCode].skills;
+	const checkpoints = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR));
+	const firstLockedIndexReducer = (value, element, index) => {
+		const locked = element.querySelectorAll(`[src$="locked.svg"]`).length != 0;
+		if (value == -1 && locked)
+			return index;
+		else
+			return value;
+	}
+	return checkpoints.reduce(firstLockedIndexReducer, -1);
+}
 
-	let skillsByCrowns = [[],[],[],[],[],[]];
+function lessonsToNextCheckpoint()
+{
+	let index = nextCheckpointIndex();
+	if (index == -1)
+		return -1;
+	const nextCheckpoint = document.querySelectorAll(CHECKPOINT_SELECTOR)[index];
+	const skillsAndCheckpoints = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}, ${CHECKPOINT_SELECTOR}`));
+	
+	const bonusSkillRow = document.querySelector(`${BONUS_SKILL_DIVIDER_SELECTOR} + div`);
+
+	index = skillsAndCheckpoints.indexOf(nextCheckpoint);
+	const skillsBeforeCheckpoint = skillsAndCheckpoints.filter(
+		(element, idx) => {
+			const type = element.getAttribute("data-test");
+			if (type != "checkpoint-badge")
+			{
+				// element is not a checkpoint
+				if (bonusSkillRow == null || !bonusSkillRow.contains(element))
+					return idx < index;
+			}
+		}
+	);
+	const level0SkillsBeforeCheckpoint = skillsBeforeCheckpoint.filter(
+		(element) => {
+			return element.querySelectorAll(`[data-test="level-crown"]`).length == 0;
+		}
+	);
+	return level0SkillsBeforeCheckpoint.reduce(
+		(total, element) => {
+			const skillTitle = element.querySelector(SKILL_NAME_SELECTOR).textContent;
+			const lessons = userData.language_data[languageCode].skills.find(skill => skill.short == skillTitle).missing_lessons;
+			return total + lessons;
+		}
+	, 0);
+}
+
+function progressEnds(numPointsToUse)
+{
+	let endIndex = progress.length - 1;
+	let lastDate = progress[endIndex][0];
+	const today = (new Date()).setHours(0,0,0,0);
+	
+	while (!hasMetGoal() && lastDate == today)
+	{
+		lastDate = progress[--endIndex][0];
+	}
+
+	const startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
+	
+	const numDays = (lastDate  - progress[startIndex][0]) / (1000*60*60*24) + 1; // inclusive of start and end
+	
+	return {
+		startIndex: startIndex,
+		endIndex: endIndex,
+		numDays: numDays
+	};
+}
+
+function progressMadeBetweenPoints(startIndex, endIndex)
+{
+	let level = progress[startIndex][1];
+	let lastProgress = progress[startIndex][2];
+	let progressMade = 0;
+
+	const points = progress.slice(startIndex, endIndex + 1);
+	points.forEach(
+		(point) =>
+		{
+			// There are a few cases of what can happen between points,
+			// each will need to be handled a bit differently.
+			// We will split the cases based on the difference in tree level between points.
+
+			if (point[1] === level)
+			{
+				// The tree level has not changed between points.
+				
+				if (lastProgress > point[2])
+				{
+					// This is the typical case where some normal progress has been made.
+					progressMade += lastProgress - point[2];
+				}
+				else
+				{
+					// Progress has gone backwards between points.
+					// There were probably new skills added which now need to be done.
+					// It is more goal posts have been moved than backwards progress.
+					// In this case we just ignore this point and look at the progress made afterwards.
+				}
+			}
+			else if (point[1] > level)
+			{
+				// The user has reached the next tree level.
+				// In this case we will have saved a special entry as soon as we saw this happen.
+				// We just need to update the level and add all the progress that was left from the previous point,
+				// as it will all have had to have been made for the user to level up.
+
+				progressMade += lastProgress;
+				level = point[1];
+
+				// Note there is the case where the new level is not just an increment but a bigger jump.
+				// In that case we have missed some significant progress but there is nothing we can do.
+			}
+			else if (point[1] < level)
+			{
+				// Outlier case where the users level has decreased.
+				// This is probably from the tree being updated and new skills are added,
+				// which the user has no progress on.
+				// There is also the other case that the user has reset their progresson the tree.
+				// We don't need to treat that any differently as the past progress changes are still relevant.
+
+				// Here we will just update the level to the new (lower) value,
+				// ignoring the change in progress as it is getting reset here.
+
+				level = point[1];
+
+				// We are likely to miss some progress that has been made here but it is better than nothing.
+			}
+
+			lastProgress = point[2]; // Last thing to do is update the lastProgress with this point.
+		}
+	);
+
+	return progressMade;
+}
+
+function currentTreeLevel()
+{
+	const skills = userData.language_data[languageCode].skills.filter(skill => skill.category !== "grammar");
+
+	const skillsByCrowns = [[],[],[],[],[],[]];
 
 	for (let skill of skills)
 	{
@@ -397,31 +648,51 @@ function crownTreeLevel()
 	return treeLevel;
 }
 
-function daysToNextXPLevel(history, xpLeft /*, timezone*/)
+function currentLanguageHistory()
 {
+	return calendar = userData.language_data[languageCode].calendar.filter(
+		(lesson) => {
+			return userData.language_data[languageCode].skills.find(skill => skill.id == lesson.skill_id) != null;
+		}
+	);
+}
+
+function daysToNextXPLevel(history, xpLeft)
+{
+	const currentDate = (new Date()).setHours(0,0,0,0);
+	const metGoal = hasMetGoal();
+
 	if (history.length == 0)
-	{
 		return -1;
-	}
+
 	let xpTotal = 0;
 	
-	let firstDate = (new Date(history[0].datetime)).setHours(0,0,0,0);
+	const firstDate = (new Date(history[0].datetime)).setHours(0,0,0,0);
+	if (firstDate == currentDate && !metGoal)
+	{
+		// The only data from this language is for today and the goal has yet to me met.
+		return -1;
+	}
+
 	let lastDate;
 
-	for (let lesson of history)
+	for (const lesson of history)
 	{
-		xpTotal += lesson.improvement;
-		let date = (new Date(lesson.datetime)).setHours(0,0,0,0);
-		lastDate = date;
+		const date = (new Date(lesson.datetime)).setHours(0,0,0,0);
+		if (date != currentDate || metGoal)
+		{
+			// Not from today
+			// or it is and the goal has been met
+			xpTotal += lesson.improvement;
+			lastDate = date;
+		}
+		else
+		{
+			// otherwise ignore
+		}
 	}
-
-	let currentDate = (new Date()).setHours(0,0,0,0);
-
-	if (lastDate != currentDate || !hasMetGoal())
-	{
-		// lastDate isn't today or it is and the goal hasn't been met, so we don't include today in the calculation, use yesterday
-		lastDate = currentDate - (24*60*60*1000);
-	}
+	// Note that lastDate cannot be undefined as that would mean all lessons in history were today and the goal had not been met.
+	// But we would have exited before as firstDate would have then been today, and the goal was not met.
 
 	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // number of days, inclusive of start and end.
 
@@ -430,103 +701,228 @@ function daysToNextXPLevel(history, xpLeft /*, timezone*/)
 	return Math.ceil(xpLeft/xpRate);
 }
 
-function daysToNextCrownLevel()
+function daysToNextTreeLevel()
 {
-	let endIndex = progress.length - 1;
-	let lastDate = progress[endIndex][0];
-	let today = (new Date()).setHours(0,0,0,0);
+	const numPointsToUse = 7;
+	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
 	
-	while (!hasMetGoal() && lastDate == today)
-	{
-		lastDate = progress[--endIndex][0];
-	}
+	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
 
-	let numPointsToUse = 7;
-	let startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
-	let firstDate = progress[startIndex][0];
+	const lessonsLeft = currentProgress();
 	
-	let level = progress[startIndex][1];
-	let lastProgress = progress[startIndex][2];
-	let progressMade = 0;
-
-	for (let point of progress.slice(startIndex + 1, endIndex + 1))
-	{
-		if (point[1] != level)
-		{
-			// this point is from another level
-			progressMade += lastProgress;
-			lastProgress = point[2];
-			level = point[1];
-		}
-		else
-		{
-			// point from the same level so look at the change in progress
-			progressMade += lastProgress - point[2];
-			lastProgress = point[2];
-		}
-	}
-
-	let timePeriod = lastDate-firstDate; // in milliseconds
-	timePeriod /= 1000*60*60*24; // in days
-	let progressRate = progressMade / timePeriod; // in lessons per day
-
 	if (progressRate != 0)
-		return Math.ceil(currentProgress() / progressRate); // in days
+	{
+		return {
+			time: Math.ceil(lessonsLeft / progressRate), // in days
+			rate: progressRate,
+			lessonsLeft: lessonsLeft
+		}
+	}
 	else
-		return -1;
+	{
+		return {time: -1};
+	}
 }
 
-function daysToNextCrownLevelByCalendar()
+function daysToNextTreeLevelByCalendar()
 {
-	let skills = userData.language_data[languageCode].skills;
-	let treeLevel = crownTreeLevel();
-	let lessonsToNextCrownLevel = 0;
+	const lessonsToNextTreeLevel = currentProgress();
 
-	for (let skill of skills)
-	{
-		if (skill.skill_progress.level == treeLevel)
-		{
-			lessonsToNextCrownLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
-		}
-	}
+	const calendar = currentLanguageHistory();
 
-	let calendar = userData.language_data[languageCode].calendar;
 	if (calendar.length == 0)
-		return -1;
-
-	let practiceTimes = Array();
-
-	let currentDate = (new Date()).setHours(0,0,0,0);	
-
-	for (let lesson of calendar)
-	{	
-		let date = (new Date(lesson.datetime)).setHours(0,0,0,0);
-		if (date == currentDate && !hasMetGoal)
-		{
-			// if the lesson is from today and the goal hasn't been met, then let's not include it
-			continue;
-		}
-		else
-		{
-			practiceTimes.push(date);
-		}
-	}
-
-	let numLessons = practiceTimes.length;
-	let firstDate = practiceTimes[0]; // assuming sorted acending.
-	let lastDate = practiceTimes[numLessons-1];
-
-	if (lastDate != currentDate)
 	{
-		// lastDate isn't today, it would only be today if we have met our goal for today
-		// we therefore set the lastDate to yesterday, in case that wasn't already it and no lessons were completed yesterday.
-		lastDate = currentDate - (24*60*60*1000);
+		return {time: -1};
 	}
 
-	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // in days
-	let lessonRate = numLessons/timePeriod; // in lessons per day
+	let currentDay = (new Date()).setHours(0,0,0,0);	
 
-	return Math.ceil(lessonsToNextCrownLevel/lessonRate);
+	let practiceTimes = calendar.map(
+		(lesson) => {
+			return (new Date(lesson.datetime)).setHours(0,0,0,0);
+		}
+	);
+	
+	if (!hasMetGoal())
+	{
+		// Not met the goal today so don't use data from today.
+		practiceTimes = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+	}
+
+	const numLessons = practiceTimes.length;
+	
+	if (numLessons == 0) // possible if only calendar entries for this language are from today, and we have't met our goal
+	{
+		return {time: -1};
+	}
+
+	const firstDay = practiceTimes[0]; // assuming sorted acending.
+	let lastDay = practiceTimes[numLessons - 1];
+
+	if (lastDay != currentDay)
+	{
+		// lastDay isn't today, it would only be today if we have met our goal for today
+		// we therefore set the lastDay to yesterday, in case that wasn't already it and no lessons were completed yesterday.
+		lastDay = currentDay - (24*60*60*1000);
+	}
+
+	const numDays = (lastDay - firstDay)/(1000*60*60*24) + 1; // in days
+	const lessonRate = numLessons/numDays; // in lessons per day
+
+	if (lessonRate <= 0)
+	{
+		return {time: -1};
+	}
+	else
+	{
+		return {
+			time: Math.ceil(lessonsToNextTreeLevel/lessonRate), // in days
+			rate: lessonRate,
+			lessonsLeft: lessonsToNextTreeLevel
+		}
+	}
+}
+
+function daysToNextCheckpoint()
+{
+	const numPointsToUse = 7;
+	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
+
+	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
+
+	const lessonsLeft = lessonsToNextCheckpoint();
+	
+	if (progressRate != 0)
+	{
+		return {
+			time: Math.ceil(lessonsLeft / progressRate), // in days
+			rate: progressRate,
+			lessonsLeft: lessonsLeft
+		}
+	}
+	else
+	{
+		return {time: -1};
+	}
+}
+
+function daysToNextCheckpointByCalendar()
+{
+	const calendar = currentLanguageHistory();
+	
+	if (calendar.length == 0)
+	{
+		return {time: -1};
+	}
+
+	const currentDay = (new Date()).setHours(0,0,0,0);
+
+	let practiceTimes = calendar.map(
+		(lesson) => {
+			return (new Date(lesson.datetime)).setHours(0,0,0,0);
+		}
+	);
+
+	if (!hasMetGoal())
+	{
+		// Not met the goal today so don't use data from today.
+		practiceTimes = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+	}
+
+	const numLessons = practiceTimes.length;
+
+	const lessonsLeft = lessonsToNextCheckpoint();
+
+
+	if (numLessons == 0) // possible if only calendar entries for this language are from today, and we have't met our goal
+	{
+		return {
+			time: 0,
+			rate: lessonRate,
+			lessonsLeft: lessonsLeft
+		};
+	}
+
+	const firstDay = practiceTimes[0];
+	let lastDay = practiceTimes[numLessons - 1];
+
+	if (lastDay != currentDay)
+	{
+		// if the last day isn't today, force it to yesterday
+		// this ensures we count potential days without lessons
+		lastDay = currentDay - (1000*60*60*24);
+	}
+
+	const numDays = (lastDay - firstDay) / (1000*60*60*24) + 1; // inclusive of start and end
+	const lessonRate = numLessons/numDays;
+
+	if (lessonRate <= 0)
+	{
+		return {time: -1};
+	}
+	else
+	{
+		return {
+			time: Math.ceil(lessonsLeft / lessonRate), // in days
+			rate: lessonRate,
+			lessonsLeft: lessonsLeft
+		}
+	}
+}
+
+function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
+{
+	let id = "";
+	let target = "";
+
+	const prediction = document.createElement("p");
+
+	switch (type)
+	{
+		case "XPLevel":
+			prediction.id = "XPPrediction";
+			target = `the next level, Level\xA0${userData.language_data[languageCode].level + 1}`;
+			break;
+		case "treeLevel":
+			prediction.classList.add("treeLevelPrediction");
+			target = `Level\xA0${currentTreeLevel() + 1}`;
+			break;
+		case "checkpoint":
+			prediction.classList.add("checkpointPrediction");
+			target = `the next checkpoint, Checkpoint\xA0${nextCheckpointIndex() + 1}`;
+			break;
+	}
+
+	prediction.appendChild(
+		document.createTextNode(`At your `)
+	);
+
+	prediction.appendChild(
+		document.createElement("span")
+	);
+	prediction.lastChild.textContent = "current rate";
+	if (type !== "XPLevel")
+	{
+		prediction.lastChild.title = `${Number(rate).toFixed(2)} lessons/day with ${lessonsLeft} lesson to go`;
+		prediction.lastChild.style["text-decoration"] = "underline dashed #777";
+		prediction.lastChild.style["text-underline-position"] = "under";
+		prediction.style["line-height"] = "120%";
+	}
+
+	prediction.appendChild(
+		document.createTextNode(` ${(type != "treeLevel") ? "you" : "your tree"} will reach ${target}, in about `)
+	);
+	prediction.appendChild(document.createElement("span"));
+	prediction.lastChild.textContent = numDays;
+	prediction.lastChild.style.fontWeight = "bold";
+	prediction.appendChild(
+		document.createTextNode(` days, on `)
+	);
+	prediction.appendChild(document.createElement("span"));
+	prediction.lastChild.textContent = new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
+	prediction.lastChild.style.fontWeight = "bold";
+
+	return prediction;
 }
 
 function graphSVG(data, ratio=1.5)
@@ -688,7 +1084,7 @@ function graphSVG(data, ratio=1.5)
 		point.setAttributeNS(null, "r", "1.25");
 		
 		let title = document.createElementNS(svgns, "title");
-		title.textContent = `${data[i]} crown level contributing lesson${data[i]!=1?"s":""}`;
+		title.textContent = `${data[i]} tree level contributing lesson${data[i]!=1?"s":""}`;
 
 		if (data[i] == 0)
 			point.setAttributeNS(null, "fill", "white");
@@ -702,47 +1098,163 @@ function graphSVG(data, ratio=1.5)
 	return graph;
 }
 
-function addStrengths(strengths)
+async function openLastSkillPopout()
+{
+	if (lastSkill === undefined)
+		return false;
+
+	const skillName = lastSkill.skillName;
+	const checkpointNumber = lastSkill.checkpointNumber;
+
+	if (skillName != null)
+	{
+		const skillNameElement = Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).find(elem => elem.textContent == skillName);
+		if (skillNameElement == null)
+			return false;
+
+		skillNameElement.click();
+	}
+	else if (checkpointNumber != null)
+	{
+		const checkpointElements = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR));
+		if (checkpointNumber < checkpointElements.length)
+		{
+			checkpointElements[checkpointNumber].click();
+		}
+		else
+		{
+			const goldenOwlCheckpoint = document.querySelector(GOLDEN_OWL_CHECKPOINT_SELECTOR);
+			if (goldenOwlCheckpoint == null)
+				return false;
+
+			goldenOwlCheckpoint.click();
+		}
+	}
+
+	resetLastSkillStorage();
+	lastSkill = undefined;
+
+	return true;
+}
+
+function addFlagBorders()
+{
+	// Get the progress saved for all languages and users, async
+	languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
+
+	languageProgressPromise.then(
+		(data) => {
+			// Go through each row in the language change list, if it is still there.
+			if (document.querySelector(LANGUAGES_LIST_SELECTOR) !== null && username !== undefined)
+				Array.from(document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span`)).forEach(
+					(container) => {
+						// There are two flags for each language, the first is the target language, the second is the base language.
+						if (!document.contains(container))
+						{
+							// Have managed to move away from the languages list while we are adding the borders
+							return false;
+						}
+						const flag1 = container.firstChild;
+						const flag2 = flag1.nextElementSibling;
+
+						if (flag1.getAttribute("style") !== null)
+						{
+							// In the unlikely case where we have already added the borders and are trying to again
+							return false;
+						}
+						
+						// As the flags are all stored in one sprite sheet we determine which is displayed by the background positions.
+						const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
+						const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
+						
+
+						// Bbckground offsets in px as strings
+						const x1 = backgroundPosition1[0];
+						const y1 = backgroundPosition1[1];
+
+						const y2 = backgroundPosition2[1];
+						
+						// trim off px and make positive
+						const yOffset1 = Math.abs(parseInt(y1.slice(0,-2), 10));
+						const yOffset2 = Math.abs(parseInt(y2.slice(0,-2), 10));
+
+						// find the language code associated with those offsets
+						const code1 = flagYOffsets[yOffset1];
+						const code2 = flagYOffsets[yOffset2];
+
+						// height and width will need to be adjusted to account for the border that is to be added, so we save the original values
+						const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
+						const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
+				
+						langProgress = data.progress[`${username}${code1}${code2}`];
+
+						let color;
+						let treeLevel;
+						
+						if (langProgress == null)
+							treeLevel = 0;
+						else
+							treeLevel = langProgress[langProgress.length-1][1];
+
+						switch (treeLevel)
+						{
+							case 0:
+								color = "white";
+								break;
+							case 1:
+								color = BLUE;
+								break;
+							case 2:
+								color = GREEN;
+								break;
+							case 3:
+								color = RED;
+								break;
+							case 4:
+								color = ORANGE;
+								break;
+							case 5:
+								color = GOLD;
+								break;
+						}
+
+
+						flag1.style = 
+						`
+							border-color: ${color};
+							border-width: 4px;
+							border-style: solid;
+							border-radius: 10px;
+							background-position: calc(${x1} - 2px) calc(${y1} - 2px);
+							height: ${+height1 + 4}px;
+							width: ${+width1 + 4}px;
+						`;
+						
+						if (treeLevel == 5)
+						{
+							const crown = document.createElement("IMG");
+							crown.src = imgSrcBaseUrl+"/juicy-crown.svg";
+							crown.style = `
+								position: 	absolute;
+								left: 0;
+								bottom: 0;
+								width: 75%;
+								transform: translate(-50%, 50%);
+							`;
+							flag1.appendChild(crown);
+						}
+					}
+				);
+		}
+	);
+
+}
+
+function addStrengthBars(strengths)
 {
 	// Adds strength bars and percentages under each skill in the tree.
-	/*
-		The structure of skill tree is as follows:
-		<div class="_2GJb6"> 														<-- container for row of skills, has classes _1H-7I and _1--zr if bonus skill row
-			<a class="Af4up QmbDt" data-test="skill"> 								<-- container for individual skill
-				<div class="_1fneo" tab-index="0">									<-- new container as of 2019-09-03, unknown function
-					<div class="_2albn">
-						<div class="Fu0xk">											<-- new container as of 2020-02-18
-							<div class="_2969E">									<-- new container as of 2020-02-18
-								<div class="_39IKr">		     					<-- progress ring container
-									<div class="_3zkuO">							<-- progress ring container
-										<div class="_3o9cS">						<-- rotated progress ring container
-											<svg>...</svg>         					<-- progress ring svg
-										</div>
-									</div>
-								</div>
-								<div class="_3hKMGG" data-test="skill-icon">		<-- skill icon container
-									<div class="...">								<-- skill icon background
-										<svg>...</svg>								<--	skill icon
-									</div>
-								</div>
-								<div clas ="_26l3y">...</div>						<-- skill crowns logo and number
-							</div>
-							<div>													<-- another possibly new container as of 2019-03-01 holds skill name
-								####################################################<-- Strength Bar to be inserted here
-								<div class="_378Tf _1YG0X _3qO9M _33VdW">Skill Name</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				####### when skill clicked on new div below is appended ##########	<-- moved to direct child of Af4up container as of 2020-02-18
-				<div class="_2RblG _32ZXv _3czW4" data-test="skill-popout">			<-- popup box container
-					<div>...</div>													<-- popup box container
-				</div>
-			</a>
-		</div>
-	*/
 
-	let skillElements = Array.from(document.querySelectorAll(`[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"]`)); // Af4up is class of skill containing element, may change.
+	let skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR));
 	
 	let skills = Array();
 	/*
@@ -751,23 +1263,37 @@ function addStrengths(strengths)
 		1:	skill name element.
 		2:	skill strength between 0 and 1.0.
 		3:	display boolean - false if skill at crown 0, true otherwise.
+		4:	skill url_title - used to uniquely give an id to each strength bar
 	*/
 	let bonusElementsCount = 0;
 	
-	const bonusSkillDividers = Array.from(document.querySelectorAll(`.${BONUS_SKILL_DIVIDER}`));
-	let bonusSkillRow;
-	if (bonusSkillDividers.length != 0)
-	{
-		bonusSkillRow = bonusSkillDividers[0].nextElementSibling;
-	}
+	const bonusSkillRow = document.querySelector(`${BONUS_SKILL_DIVIDER_SELECTOR} + div`);
 
 	for (let i=0; i<skillElements.length; i++)
 	{
-		let elementContents = [
-			skillElements[i].querySelector(`[data-test="skill-icon"]`),
-			skillElements[i].firstChild.firstChild.lastChild
-		 ];
+		const isBonusSkill = strengths[1].length !== 0 && bonusSkillRow !== null && bonusSkillRow.contains(skillElements[i]);
+		// strengths[1].length !== 0 is a back up to make sure that a skillElement is not considered a bonus skill when it is impossible
 
+		let elementContents;
+
+		if (
+			skillElements[i].getAttribute("data-test") == "skill" ||
+			skillElements[i].getAttribute("data-test") == "intro-lesson"
+		)
+		{
+			elementContents = [
+				skillElements[i].querySelector(`[data-test="skill-icon"]`),
+				skillElements[i].firstChild.firstChild.lastChild
+			];
+		}
+		else
+		{
+			// This is bonus skill that has not been purchased so is missing on of the inner containers.
+			elementContents = [
+				skillElements[i].querySelector(`[data-test="skill-icon"]`),
+				skillElements[i].firstChild.lastChild
+			];
+		}
 		/* old way of finding name element before new containers
 
 		// name is a span element, normally it is the last element but if the skill is clicked then a new div is created with the start lesson button etc below the name plate. So need to find the correct span element.
@@ -782,23 +1308,38 @@ function addStrengths(strengths)
 
 		// Check if this skill is in the bonus skill section.
 		// In the bonus skill section if the row is sandwiched between two divs with class _32Q0j, that contain an hr.
-		if (bonusSkillRow != null && bonusSkillRow.contains(skillElements[i]))
+		if (isBonusSkill)
 		{
 			// this skill is in the bonus skill section.
-			elementContents.push(strengths[1][bonusElementsCount][0]);
-			elementContents.push(strengths[1][bonusElementsCount][1]);
-			bonusElementsCount ++;
+			if (bonusSkillRow.childElementCount != strengths[1].length)
+			{
+				// One of the bonus skills is missing, this is a duolingo bug that is caused by the page being loaded on a tree that does not have bonus skills,
+				// then switching to a tree that has only one skill purchased.
+				// In this case the unpurchased skill that is normally greyed out and links to the shop to buy it, is not added for some reason.
+				// We then have to work out which skill this is that we are displaying and choose the appropriate strength value.
+				//
+				// Given we know that the missing skill has not been purchased, it is therefore going to be at L0, and therefore have strength 0.
+				// The skill that is displayed will be the other one then.
+				//
+				// Note this all assumes every tree that has bonus skills, has two.
+				
+				const bonusIndex = (strengths[1][0][0] == 0)? 1 : 0;
+				elementContents = elementContents.concat(strengths[1][bonusIndex]);
+				bonusElementsCount = 1;
+			}
+			else
+			{
+				elementContents = elementContents.concat(strengths[1][bonusElementsCount ++]);
+			}
 
-			skills.push(elementContents);
 		}
 		else
 		{
 			// Normal skill
-			elementContents.push(strengths[0][i - bonusElementsCount][0]);
-			elementContents.push(strengths[0][i - bonusElementsCount][1]);
-			
-			skills.push(elementContents);
+			elementContents = elementContents.concat(strengths[0][i - bonusElementsCount]);
 		}
+		
+		skills.push(elementContents);
 	}
 	
 	let numBarsAdded = 0;
@@ -822,9 +1363,9 @@ function addStrengths(strengths)
 	{
 		let iconElement = skills[i][0];
 		let nameElement = skills[i][1];
-		let name = nameElement.textContent;
 		let strength = skills[i][2]*1.0;
 		let display = (skills[i][3])? "" : "none";
+		let name = skills[i][4];
 		
 		if(document.getElementsByClassName("strengthBarHolder").length == numBarsAdded) // if we have only the number of bars added this time round, keep adding new ones.
 		{
@@ -915,7 +1456,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 		) // Has the tree loaded from a page change
 	{
-		topOfTree = document.querySelector(`[data-test="skill-tree"]`).firstChild;
+		topOfTree = document.querySelector(`[data-test="skill-tree"]>div`);
 	}
 	else
 	{
@@ -961,7 +1502,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	*/
 	function sortSkillsAlphabetical(a, b)
 	{
-		return (a.title < b.title) ? -1 : 1;
+		return (a.short < b.short) ? -1 : 1;
 	}
 
 	function shuffle(array)
@@ -1084,18 +1625,14 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			else
 				strengthenBox.style.marginTop = "0.5em";
 		}
-		else
+		else if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
 		{
 			// Not being pushed down by the IN BETA label,
-			if (inMobileLayout)
-			{
-				// In mobile layout so we don't need to make room for the try plus button.
-			}
-			else
-			{
-				// In desktop layout so let's make room for the TRY PLUS button to the right.
-				strengthenBox.style.width = "calc(100% - 119px)";	
-			}
+			// and there is a TRY PLUS button on the right which we have to make room for.
+			const boxRightEdge = topOfTree.getBoundingClientRect().right;
+			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
+			const offset = boxRightEdge - buttonLeftEdge;
+			strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
 		}
 	}
 
@@ -1138,12 +1675,14 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// index is in normal skill range
 			const skill = needsStrengthening[0][i];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
-			                 `${(skill.skill_progress.level == 5 ||
-							     options.practiceType == "1" ||
-							     (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-							    ) ? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			const toPractise =
+				skill.skill_progress.level === 5
+				|| options.practiceType === "1"
+				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+				|| (skill.category === "grammar" && skill.skill_progress.level === 2);
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
+			skillLink.textContent = skill.short;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
@@ -1151,7 +1690,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[1][bonusSkillIndex];
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		}
 
 		strengthenBox.appendChild(skillLink);
@@ -1185,18 +1724,20 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[1][needsStrengthening[1].length -1];
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		} else
 		{
 			// last skill to be displayed is a normal skill
 			const skill = needsStrengthening[0][needsStrengthening[0].length -1];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
-			                 `${(skill.skill_progress.level == 5 ||
-								 options.practiceType == "1" ||
-								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-							    )? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			const toPractise =
+				skill.skill_progress.level === 5
+				|| options.practiceType === "1"
+				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+				|| (skill.category === "grammar" && skill.skill_progress.level === 2);
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
+			skillLink.textContent = skill.short;
 		}
 		
 		strengthenBox.appendChild(skillLink);
@@ -1212,12 +1753,14 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// index is in normal skill range
 			const skill = needsStrengthening[0][lastIndexToBeShown];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}` +
-			                 `${(skill.skill_progress.level == 5 ||
-							     options.practiceType == "1" ||
-								 (options.practiceType == "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-							    )? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			const toPractise =
+				skill.skill_progress.level === 5
+				|| options.practiceType === "1"
+				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+				|| (skill.category === "grammar" && skill.skill_progress.level === 2);
+
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
+			skillLink.textContent = skill.short;
 		} else
 		{
 			// index has past normal skills so doing bonus skills now.
@@ -1225,7 +1768,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[1][bonusSkillIndex];
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 1)? "/practice":""}`;
-			skillLink.textContent = skill.title;
+			skillLink.textContent = skill.short;
 		}
 		strengthenBox.appendChild(skillLink);
 		strengthenBox.appendChild(document.createTextNode(", "));
@@ -1300,17 +1843,223 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	if (options.focusFirstSkill) firstSkillLink.focus();
 }
 
+function getSkillFromPopout(skillPopout)
+{
+	const skillTitle = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
+	const allSkills = [...userData.language_data[languageCode].skills, ...userData.language_data[languageCode].bonus_skills];
+	return allSkills.find(skill => skill.short == skillTitle);
+}
+
+function addSmallButtonsConatiner(skillPopout)
+{
+	const smallButtonsContainer = document.createElement("div");
+	smallButtonsContainer.classList.add(SMALL_BUTTONS_CONTAINER);
+
+	const mainPopoutContainer = skillPopout.firstChild.firstChild;
+	mainPopoutContainer.insertBefore(smallButtonsContainer, mainPopoutContainer.firstChild);
+
+	return smallButtonsContainer;
+}
+
+function addGrammarSkillTestOutButton(skillPopout)
+{
+	if (skillPopout === null) return false;
+
+	const skillData = getSkillFromPopout(skillPopout);
+
+	if (
+		skillData.category !== "grammar"
+		|| skillPopout.querySelector(`[data-test="test-out-button"]`) !== null
+	)
+	{
+		return false;
+	}
+
+	// Skill popout is a grammar skill and there isn't a test out button
+
+	if (skillData.skill_progress.level === skillData.num_levels) return false;
+
+	// Not at max level so can test out.
+
+	let smallButtonsContainer = skillPopout.querySelector(`.${SMALL_BUTTONS_CONTAINER}`);
+
+	if (smallButtonsContainer === null)
+	{
+		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
+	}
+	const testOutButton = document.createElement("div");
+	testOutButton.classList.add(...SMALL_BUTTON.split(" "));
+	testOutButton.setAttribute("data-test", "test-out-button");
+
+	const testOutIcon = document.createElement("img");
+	testOutIcon.src = `${imgSrcBaseUrl}/key.svg`;
+	testOutIcon.classList.add(TEST_OUT_ICON);
+	testOutButton.appendChild(testOutIcon);
+
+	testOutButton.addEventListener("click",
+		(event) =>
+		{
+			const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
+			const lastSkill = {
+				skillName: skillName,
+				urlTitle: skillData.url_title
+			};
+
+			chrome.storage.sync.set({lastSkill: lastSkill});
+
+			window.location = `/skill/${languageCode}/${skillData.url_title}/test`;
+		}
+	);
+
+	smallButtonsContainer.appendChild(testOutButton);
+}
+
+function addWordsButton(skillPopout)
+{
+	if (skillPopout === null) return false;
+
+	const skillData = getSkillFromPopout(skillPopout);
+
+	// Grammar skills words list are not currently helpful, so don't add the button.
+	if (skillData.category === "grammar") return false;
+	
+	const words = skillData.words;
+	const isLocked = skillData.locked;
+
+	let smallButtonsContainer;
+	let wordsButton;
+	const tipsButton = skillPopout.querySelector(`[data-test="test-out-button"]`);
+	
+	if (tipsButton != null)
+	{
+		smallButtonsContainer = tipsButton.parentNode;
+		wordsButton = tipsButton.cloneNode(false); // don't copy the contained test out icon
+		tipsButton.parentNode.insertBefore(wordsButton, tipsButton);
+	}
+	else
+	{
+		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
+		wordsButton = document.createElement("button");
+		wordsButton.classList.add(...SMALL_BUTTON.split(" "));
+		smallButtonsContainer.appendChild(wordsButton);
+	}
+
+	smallButtonsContainer.style = `
+		position: relative;
+		width: 50%;
+		display: flex;
+		justify-content: flex-end;
+	`;
+
+	smallButtonsContainer.parentNode.style = `
+		overflow: visible;
+	`;
+	
+	wordsButton.setAttribute("data-test", "words-button");
+	wordsButton.textContent = "Words";
+	wordsButton.style = `
+		text-transform: capitalize;
+		width: auto;
+		padding: 0em 0.3em !important;
+	`;
+
+	if (isLocked)
+	{
+		wordsButton.style.backgroundColor = "darkgrey";
+		smallButtonsContainer.nextElementSibling.style.textAlign = "start";
+	}
+
+	wordsButton.addEventListener("click",
+		(event) => {
+			const smallButtonsContainer = event.target.parentNode;
+			const wordsListBubble = smallButtonsContainer.querySelector("#wordsListBubble");
+			if (wordsListBubble == null)
+				smallButtonsContainer.appendChild(createWordsListBubble(words, smallButtonsContainer, isLocked));
+			else
+				wordsListBubble.remove();
+			event.stopPropagation();
+		}
+	);
+	skillPopout.firstChild.addEventListener("click",
+		(event) =>
+		{
+			const wordsListBubble = document.querySelector(`#wordsListBubble`);
+			if (wordsListBubble != null)
+				wordsListBubble.remove();
+		}
+	);
+}
+
+function createWordsListBubble(words, container, isLocked)
+{
+	const bubble = document.createElement("div");
+	bubble.id = "wordsListBubble";
+	const backgroundColor = isLocked ? "darkgrey" : "white";
+	const textColor = isLocked ? "white" : window.getComputedStyle(container.parentNode).backgroundColor;
+	bubble.style = `
+		background-color: ${backgroundColor};
+		color: ${textColor};
+		font-weight: bold;
+		position: absolute;
+		left: 0;
+		top: calc(100% + 0.5em);
+		z-index: 1;
+		border-radius: 1em;
+		box-shadow: 0.25em 0.25em rgba(0,0,0,0.2);
+		padding: 0.5em;
+		width: 200%;
+		transform: translate(-50%, 0);
+	`;
+
+	bubble.addEventListener("click", (event) => {event.stopPropagation();})
+
+	const arrow = document.createElement("div");
+	const arrowOffset = container.firstChild.offsetLeft + 0.5*container.firstChild.offsetWidth;
+	arrow.style = `
+		background-color: ${backgroundColor};
+		position: absolute;
+		width: 0.5em;
+		height: 0.5em;
+		top: -0.25em;
+		left: 50%;
+		transform: translate(calc(-50% + ${arrowOffset}px), 0) rotate(45deg);
+	`;
+	bubble.appendChild(arrow);
+
+
+	const list = document.createElement("ul");
+	list.style = `
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		white-space: pre;
+	`;
+	bubble.appendChild(list);
+
+	words.forEach(
+		(word, index, words) => {
+			const li = document.createElement("li");
+			li.textContent = word + ((index +1 != words.length)?" \u00b7 ":"");
+			list.appendChild(li);
+		}
+	);
+
+	return bubble;
+}
+
 function addPractiseButton(skillPopout)
 {
 	if (skillPopout == null)
 		return false;
 	
-	if (document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR) == null)
-		return false;
+	const levelContainer = document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR);
+	if (levelContainer == null)
+		return false; // Locked skill so don't do anything
 
-	const skillLevel = document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR).textContent.slice(-3,-2);
-	if (skillLevel == 5 || skillLevel == 0)
-		return false;
+	const skillLevel = levelContainer.textContent.slice(-3,-2);
+	const maxLevel = levelContainer.textContent.slice(-1);
+	if (skillLevel === maxLevel || skillLevel === "0")
+		return false; // Skill is at max level so only practising is possible
 
 	const startButton = document.querySelector(`[data-test="start-button"]`);
 	startButton.textContent = "START LESSON";
@@ -1327,9 +2076,16 @@ function addPractiseButton(skillPopout)
 	practiseButton.title = "Practising this skill will strengthen it, but will not contribute any progress towards earning the next crown.";
 	practiseButton.setAttribute("data-test", "practise-button");
 
-	skillTitle = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
-	urlTitle = userData.language_data[languageCode].skills.filter(skill => skill.short == skillTitle)[0].url_title;
+	const urlTitle = getSkillFromPopout(skillPopout).url_title;
 	practiseButton.addEventListener("click", (event) => {
+		const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
+		const lastSkill = {
+			skillName: skillName,
+			urlTitle: urlTitle
+		};
+
+		chrome.storage.sync.set({lastSkill: lastSkill});
+
 		window.location = `/skill/${languageCode}/${urlTitle}/practice`;
 	});
 
@@ -1338,103 +2094,315 @@ function addPractiseButton(skillPopout)
 	skillPopout.scrollIntoView({block: "center"});
 }
 
-function addCheckpointButtons(checkpointPopout)
+function addCheckpointButtons(checkpointPopout, completedMessage = false)
 {
-	if (checkpointPopout == null)
-		return false;
-
-	if (checkpointPopout.querySelector(`[data-test="checkpoint-start-button"]`) != null)
-		return false;
-
-	const checkpointNumber = Array.from(document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR)).indexOf(checkpointPopout.parentNode);
-	popoutContent = checkpointPopout.firstChild.firstChild;
-
-	oml = function ()
+	// Check popout is still there
+	if (checkpointPopout === null)
 	{
-		this.style.boxShadow = `0 0.25em rgba(255, 255, 255, 0.5)`;
+		return false;
+	}
+
+	// Check that this popout is for a finished checkpoint
+	if (!completedMessage && checkpointPopout.parentNode.querySelector(`img[src$="unlocked.svg"]`) !== null) // ...unlocked.svg -> uncompleted, ...complete.svg -> completed
+	{
+		return false; // This is an uncompleted checkpoint, we won't add anything to this.
+	}
+
+	let checkpointNumber;
+	let popoutContent;
+	if (!completedMessage)
+	{
+		checkpointNumber = Array.from(document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR)).indexOf(checkpointPopout.parentNode);
+		popoutContent = checkpointPopout.firstChild.firstChild;
+	}
+	else
+	{
+		// CHECKPOINT_CONTAINER_SELECTOR only selects completed checkpoint castles and not the golden owl
+		// so the last checkpoint in this case is one more than last checkpoint.
+		checkpointNumber = document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR).length;
+		popoutContent = checkpointPopout;
+	}
+
+	const oml = function ()
+	{
+		this.style.boxShadow = `0 0.25em ${(!completedMessage) ? "rgba(255, 255, 255, 0.5)" : "grey"}`;
 		this.style.transform = "none";
 	};
-	omd = function ()
+	const omd = function ()
 	{
 		this.style.boxShadow = "none";
 		this.style.transform = "translate(0, 0.3em)";
 	};
-	omu = function ()
+	const omu = function ()
 	{
-		this.style.boxShadow = `0 0.25em rgba(255, 255, 255, 0.5)`;
+		this.style.boxShadow = `0 0.25em ${(!completedMessage) ? "rgba(255, 255, 255, 0.5)" : "grey"}`;
 		this.style.transform = "none";
 	};
+	const storeCheckpointSource = () =>
+	{
+		const lastSkill = {checkpointNumber: checkpointNumber}
+		chrome.storage.sync.set({lastSkill: lastSkill});
+	};
 
-	const redoTestButton = document.createElement("BUTTON");
-	redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
-	redoTestButton.style = 
-	`
-		font-size: 80%;
-		margin-top: 1em;
-		width: 100%;
-		color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
-		border: 0;
-		border-radius: 1em;
-		padding: .8em;
-		font-weight: 700;
-		background-color: white;
-		box-shadow: 0 0.25em rgba(255, 255, 255, 0.5);
-		transition: filter 0.2s;
-	`;
+	const practiceCheckpointButton = checkpointPopout.querySelector(`[data-test="checkpoint-start-button"]`);
+	if (practiceCheckpointButton !== null)
+	{
+		// Practice button exists that we can copy for the bigtest button
+		const testOutButton = practiceCheckpointButton.cloneNode(true);
+		testOutButton.textContent = "RETRY CROWN 1 TEST OUT";
+		testOutButton.setAttribute("data-test", "test-out-button");
 
-	redoTestButton.addEventListener("mouseleave", oml);
-	redoTestButton.addEventListener("mousedown", omd);
-	redoTestButton.addEventListener("mouseup", omu);
-	redoTestButton.addEventListener("click", () => window.location = `/checkpoint/${languageCode}/${checkpointNumber}`);
+		popoutContent.appendChild(testOutButton);
+		testOutButton.addEventListener("click",
+			(event) =>
+			{
+				storeCheckpointSource();
+				window.location = `/checkpoint/${languageCode}/${checkpointNumber}/bigtest`
+			}
+		);
+	}
+	else
+	{
+		// No buttons so we have to made them both
+		const redoTestButton = document.createElement("BUTTON");
+		redoTestButton.setAttribute("data-test", "redo-test-button");
+		redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
+		redoTestButton.style = 
+		`
+			font-size: 80%;
+			width: 100%;
+			color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
+			border: 0;
+			border-radius: 1em;
+			padding: .8em;
+			font-weight: 700;
+			background-color: white;
+			box-shadow: 0 0.25em rgba(255, 255, 255, 0.5);
+			transition: filter 0.2s;
+			cursor: pointer;
+		`;
 
-	testOutButton = redoTestButton.cloneNode(true);
-	testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
 
-	testOutButton.addEventListener("mouseleave", oml);
-	testOutButton.addEventListener("mousedown", omd);
-	testOutButton.addEventListener("mouseup", omu);
-	testOutButton.addEventListener("click", () => window.location = `/bigtest/${languageCode}/${checkpointNumber}`);
-			
+		if (completedMessage)
+		{
+			redoTestButton.style.border = `2px solid grey`;
+			redoTestButton.style.color = "grey";
+			redoTestButton.style.backgroundColor = GOLD;
+			redoTestButton.style.width = "75%";
+			redoTestButton.style.alignSelf = "center";
+			redoTestButton.style.boxShadow = `0 0.25em grey`;
+			redoTestButton.style.marginTop = "1em";
 
-	popoutContent.appendChild(redoTestButton);
-	popoutContent.appendChild(testOutButton);
+			popoutContent.style.padding = "0 0 0.5em 0"
+		}
+		else if (checkpointPopout.querySelector(CHECKPOINT_BLURB_SELECTOR) === null)
+		{
+			popoutContent.style.width = "300px";
+		}
+
+		redoTestButton.addEventListener("mouseleave", oml);
+		redoTestButton.addEventListener("mousedown", omd);
+		redoTestButton.addEventListener("mouseup", omu);
+		redoTestButton.addEventListener("click",
+			(event) =>
+			{
+				storeCheckpointSource();
+				window.location = `/checkpoint/${languageCode}/${checkpointNumber}/practice`;
+			}
+		);
+
+		const testOutButton = redoTestButton.cloneNode(true);
+		testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
+		testOutButton.setAttribute("data-test", "test-out-button");
+
+		testOutButton.addEventListener("mouseleave", oml);
+		testOutButton.addEventListener("mousedown", omd);
+		testOutButton.addEventListener("mouseup", omu);
+		testOutButton.addEventListener("click",
+			(event) =>
+			{
+				storeCheckpointSource();
+				window.location = `/checkpoint/${languageCode}/${checkpointNumber}/bigtest`
+			}
+		);
+				
+
+		popoutContent.appendChild(redoTestButton);
+		popoutContent.appendChild(testOutButton);
+	}
 
 	popoutContent.scrollIntoView({block: "center"});
+}
+
+function applyFocusMode()
+{
+	// Hide the sidebar if in focus mode
+	document.querySelectorAll(`.${SIDEBAR}`).forEach(
+		(sidebar) =>
+		{
+			if (options.focusMode)
+			{
+				sidebar.style["display"] = "none";
+				sidebar.style["visibility"] = "hidden";
+			}
+			else
+			{
+				sidebar.style["display"] = "";
+				sidebar.style["visibility"] = "";
+			}
+		}
+	);
+
+	// Made the main section of the page full width if in focus mode
+	document.querySelectorAll(MAIN_SECTION_SELECTOR).forEach(
+		(mainSection) =>
+		{
+			if (options.focusMode)
+			{
+				mainSection.style["margin-right"] = "0";
+			}
+			else
+			{
+				mainSection.style["margin-right"] = "";
+			}
+		}
+	);
+
+	removeFocusModeButton();
+
+	const globalPractiseButtonContainer = document.querySelector(GLOBAL_PRACTISE_BUTTON_SELECTOR);
+	// Add button to toggle the focus mode, if is wanted
+	if (
+		options.focusModeButton
+		&& !inMobileLayout
+		&& globalPractiseButtonContainer !== null 
+	)
+	{
+
+		const focusModeButton = globalPractiseButtonContainer.cloneNode(true);
+		focusModeButton.id = "focusModeButton";
+		focusModeButton.style =
+		`
+			margin-left: auto;
+			margin-right: 0;
+		`;
+
+		focusModeButton.firstChild.setAttribute("data-test", "focusModeButton");
+		focusModeButton.firstChild.title = `${(options.focusMode) ? "Disable" : "Enable"} Focus Mode`;
+		focusModeButton.firstChild.removeAttribute("href");
+		focusModeButton.addEventListener("click",
+			(event) =>
+			{
+				event.preventDefault();
+				// Toggle mode
+				options.focusMode = !options.focusMode;
+				// Save changed Setting
+				chrome.storage.sync.set({"options": options});
+				// Re apply the focus mode
+				applyFocusMode();
+			}
+		);
+
+		focusModeButton.querySelector(`img`).src = (options.focusMode) ? chrome.runtime.getURL("images/defocus.svg") : chrome.runtime.getURL("images/focus.svg");
+
+		globalPractiseButtonContainer.parentNode.appendChild(focusModeButton);
+	}
+}
+
+function applyFixedSidebar()
+{
+	const sidebar = document.querySelector(`.${SIDEBAR}`);
+
+	if (sidebar === null)
+	{
+		return false;
+	}
+
+	if (options.fixedSidebar)
+	{
+		sidebar.style =
+		`
+			position: sticky;
+			top: 94px;
+			height: calc(100vh - 94px);
+			overflow-y: scroll;
+		`
+	}
+	else
+	{
+		sidebar.removeAttribute("style");
+	}
+
 }
 
 function getCrackedSkills()
 {
 	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY_SELECTOR));
-	const crackedSkillNames = crackedSkillElements.map(
-		(crackedSkill) => {
-			const skillIcon = crackedSkill.parentNode;
-			const skillContainer = skillIcon.parentNode.parentNode.parentNode;
-			const skillName = skillContainer.lastChild.lastChild.textContent;
+	const crackedSkills = Object.fromEntries(
+		crackedSkillElements.map(
+			(crackedSkill) => {
+				const skillIcon = crackedSkill.parentNode.parentNode;
+				const skillContainer = skillIcon.parentNode.parentNode.parentNode;
+				const skillNameElement = skillContainer.querySelector(SKILL_NAME_SELECTOR);
+				const skillName = skillNameElement.textContent;
 
-			return skillName;
-		}
+				// displayed name under skill is the short name
+				// for some trees there can be multiple skills with the same short name
+				// we need to look for how many instances of a skill with this name there are
+				// in order to select the correct skill from the userData skills
+
+				const skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR));
+				const sameNamedSkills = skillElements.filter(elem => elem.querySelector(SKILL_NAME_SELECTOR).textContent === skillName);
+
+				const instance = sameNamedSkills.findIndex(nameElement => nameElement.querySelector(SKILL_NAME_SELECTOR).isSameNode(skillNameElement));
+
+				return [skillName, instance];
+			}
+		)
 	);
 
-	const crackedSkills = [
-		userData.language_data[languageCode].skills.filter(skill => crackedSkillNames.includes(skill.short)),
-		userData.language_data[languageCode].bonus_skills.filter(skill => crackedSkillNames.includes(skill.short)),
-	];
+
+
+	let crackedSkillObjects = [[], []];
+
+	Object.keys(crackedSkills).forEach(
+		(skillName) =>
+		{
+			let userDataObjects = userData.language_data[languageCode].skills.filter(skill => skill.short === skillName);
+			if (userDataObjects.length !== 0)
+			{
+				// At least 1 normal skill matched the short name
+				crackedSkillObjects[0].push(userDataObjects[crackedSkills[skillName]]);
+			}
+			else
+			{
+				userDataObjects = userDataObjects.language_data[language_data].bonus_skills.filter(bonusSkill => bonusSkill.short === skillName);
+				crackedSkillObjects[1].push(userDataObjects[crackedSkills[skillName]]);
+			}
+			
+		}
+	);
 
 	crackedSkillElements.forEach(
 		(crackedSkillOverlay) => {
 			const parentElement = crackedSkillOverlay.parentNode;
 			childListObserver.observe(parentElement, {childList: true});
 		}
-	)
+	);
 
-	return crackedSkills;
+	return crackedSkillObjects;
 }
 
 function getLanguagesInfo()
 {
-	languages = userData.languages.filter(language => language.learning);
+	let languages = userData.languages;
+	if (languages === undefined)
+		return [];
 	
-	languagesInfo = languages.map(language => [
+	languages = languages.filter(language => language.learning) // Only select languages that are being learnt.
+		.filter(language => language.points != 0); // Remove languages that have 0 XP as they aren't really being learnt.
+	
+	const languagesInfo = languages.map(language => [
 		language.language_string,
 		language.level,
 		language.points,
@@ -1490,15 +2458,70 @@ function getLanguagesInfo()
 	return languagesInfo;
 }
 
+function addSuggestionPopoutButton(skillName)
+{
+	const skillElement = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}`)).find(
+		(skill) => 
+		{
+			return skill.querySelector(SKILL_NAME_SELECTOR).textContent === skillName;
+		}
+	);
+	
+	const button = document.createElement("button");
+	button.title = `Open popout for ${skillName}`;
+	button.id = "suggestionPopoutButton";
+	button.addEventListener("click",
+		(event) =>
+		{
+			event.stopPropagation();
+			skillElement.firstChild.click();
+		}
+	);
+	button.style =
+	`
+		background: none;
+		border: none;
+		line-height: 1em;
+		cursor: pointer;
+	`;
+	button.appendChild(document.createElement("img"));
+	button.lastChild.src = chrome.runtime.getURL("images/popout.svg");
+	button.lastChild.style =
+	`
+		width: 1em;
+		vertical-align: middle;
+	`;
+
+	return button;
+}
+
 function displayCrownsBreakdown()
 {
-	if (Object.entries(userData).length == 0 || document.getElementsByClassName(CROWN_POPUP_CONTAINER).length === 0)
+	if (Object.entries(userData).length === 0)
+	{
 		return false;
+	}
 
 	removeCrownsBreakdown(); // Remove if there is anything, in case it is still visible when we call
+	
+	const isSidebar = document.querySelector(`.${SIDEBAR}`) !== null;
+	const isPopupContainer = document.querySelector(`.${CROWNS_POPUP_CONTAINER}`) !== null;
 
-	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	let bonusSkills = userData.language_data[languageCode].bonus_skills;
+	const somethingToDo = (
+		(options.crownsInfoInSidebar && isSidebar)
+		||
+		((inMobileLayout || options.crownsInfoInPopup) && isPopupContainer)
+	);
+	
+	if (!somethingToDo)
+	{
+		return false;
+	}
+
+
+	const skills = userData.language_data[languageCode].skills;
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+	const grammarSkills = skills.filter(skill => skill.category === "grammar");
 
 	let crownLevelCount = [Array(6).fill(0),Array(2).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
 
@@ -1512,300 +2535,375 @@ function displayCrownsBreakdown()
 		crownLevelCount[1][bonusSkill.skill_progress.level]++;
 	}
 
-	let maxCrownCount = skills.length*5 + bonusSkills.length;
+	const maxCrownCount = 5*(skills.length - grammarSkills.length) + 2*grammarSkills.length + bonusSkills.length;
 
-	let treeLevel = crownTreeLevel();
+	const treeLevel = currentTreeLevel();
 
-	let crownLevelContainer;
-	if (inMobileLayout)
-		crownLevelContainer = document.getElementsByClassName(CROWN_POPUP_CONTAINER)[1];
-	else
-		crownLevelContainer = document.getElementsByClassName(CROWN_POPUP_CONTAINER)[0];
+	const placesToAdd = [];
 
-	if (!inMobileLayout)
+	if ((inMobileLayout || options.crownsInfoInPopup) && isPopupContainer)
 	{
-		crownLevelContainer.style =
-		`
-			flex-wrap: wrap;
-			justify-content: center;
-			overflow-y: auto;
-			max-height: calc(100vh - ${(70+20)}px);
-		`;
-	}
-	else
-	{
-		crownLevelContainer.style =
-		`
-			flex-wrap: wrap;
-			justify-content: center;
-		`;
-
-		crownLevelContainer.parentNode.style =
-		`
-			overflow-y: auto;
-			max-height: calc(100vh - ${(58+90)}px);
-		`;
-	}
-	let crownLogoContainer = document.getElementsByClassName(CROWN_LOGO_CONTAINER)[inMobileLayout? 1 : 0];
-	const emptyCrown = crownLogoContainer.querySelector(`img[src$="juicy-crown-empty.svg"]`);
-	if (emptyCrown != null)
-		emptyCrown.style["transform"] = "scale(1.3)";
-
-	let crownDescriptionContainer = document.getElementsByClassName(CROWN_DESCRIPTION_CONTAINER)[inMobileLayout ? 1 : 0];
-
-	crownDescriptionContainer.style.width = '50%';
-
-	let crownTotalContainer;
-	crownTotalContainer = crownLevelContainer.getElementsByClassName(CROWN_TOTAL_CONTAINER)[0];
-
-
-	let maximumCrownCountContainer;
-	let crownCountPercentage;
-	if (options.crownsMaximum)
-	{
-		maximumCrownCountContainer = document.createElement("span");
-		maximumCrownCountContainer.id = "maxCrowns";
-		maximumCrownCountContainer.textContent = "/" + maxCrownCount;
+		const crownsPopupContainer = document.querySelector(`.${CROWNS_POPUP_CONTAINER}`);
+		placesToAdd.push(crownsPopupContainer);
 		
-		if (options.crownsPercentage)
+		// Style the popup container appropriately
+		if (!inMobileLayout)
 		{
-			crownCountPercentage = document.createElement("span");
-			crownCountPercentage.id = "crownCountPercentage";
-			crownCountPercentage.textContent = `(${(100*crownTotalContainer.textContent/maxCrownCount).toFixed(1)}%)`;
-			crownCountPercentage.style = `
-				font-size: 0.8em;
-				position: absolute;
-				transform: translate(-50%, -50%);
-				left: 50%;
-				top: calc(50% + 1.3em);
-				color: #cd7900;
+			crownsPopupContainer.style =
+			`
+				flex-wrap: wrap;
+				justify-content: center;
+				overflow-y: auto;
+				max-height: calc(100vh - ${(70+20)}px);
+			`;
+		}
+		else
+		{
+			crownsPopupContainer.style =
+			`
+				flex-wrap: wrap;
+				justify-content: center;
+			`;
+
+			crownsPopupContainer.parentNode.style =
+			`
+				overflow-y: auto;
+				max-height: calc(100vh - ${(58+90)}px);
 			`;
 		}
 	}
 
-	// Add crowns progress graph
-	if (options.crownsGraph && crownTreeLevel() != 5)
+	if (options.crownsInfoInSidebar && isSidebar)
 	{
-		let crownsEarnedInWeek = [];
-		// will hold number of crowns earned each day for seven days
-		// crownsEarnedInWeek[0] : week ago;
-		// crownsEarnedInWeek[6] : today;
-
-		let dateToday = (new Date()).setHours(0,0,0,0);
-		let msInDay = 24*60*60*1000;
-		
-		let day = dateToday;
-		let i = progress.length - 1; // used to index into progress
-		while (day > dateToday - 7*msInDay && i > 0)
+		const sidebarCrownsInfoContainer = document.createElement("div");
+		sidebarCrownsInfoContainer.classList.add(WHITE_SIDEBAR_BOX_CONTAINER);
+		sidebarCrownsInfoContainer.classList.add("sidebarCrownsInfoContainer");
+		sidebarCrownsInfoContainer.style =
+		`
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+		`;
+		let elementToInsertCrownsInfoBefore = document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`).nextElementSibling;
+		if (document.querySelector(`#languagesBox`) != null)
 		{
-			// Loop through the last week backwards.
-			// Also stop if we run out of progress entries to use.
+			elementToInsertCrownsInfoBefore = document.querySelector(`#languagesBox`).nextElementSibling;
+		}
+		document.querySelector(`.${SIDEBAR}`).insertBefore(sidebarCrownsInfoContainer, elementToInsertCrownsInfoBefore);
 
-			if (progress[i][0] == day)
+		placesToAdd.push(sidebarCrownsInfoContainer);
+
+		// Add crowns icon and count
+		const crownLogoContainer = document.createElement("div");
+		crownLogoContainer.classList.add(CROWN_LOGO_CONTAINER);
+		crownLogoContainer.style =
+		`
+			width: max-content;
+			height: max-content;
+		`;
+		sidebarCrownsInfoContainer.appendChild(crownLogoContainer);
+
+		const crownImg = document.createElement("img");
+		const crownCount = document.querySelector(CROWN_TOTAL_SELECTOR).textContent;
+
+		if (crownCount === "0")
+		{
+			crownImg.src = `${imgSrcBaseUrl}/juicy-crown-empty.svg`;
+			sidebarCrownsInfoContainer.classList.add(ZERO_CROWNS_CONTAINER);
+		}
+		else
+		{
+			crownImg.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
+		}
+		crownImg.classList.add(GOLD_CROWN);
+		crownLogoContainer.appendChild(crownImg);
+
+		const crownTotalContainer = document.createElement("span");
+		crownTotalContainer.classList.add(CROWN_TOTAL_CONTAINER);
+		crownTotalContainer.textContent = crownCount;
+		crownLogoContainer.appendChild(crownTotalContainer);
+
+		// Add Crowns Header and Text
+		sidebarCrownsInfoContainer.appendChild(document.createElement("div"));
+		sidebarCrownsInfoContainer.lastChild.style["width"] = "50%";
+		sidebarCrownsInfoContainer.lastChild.classList.add(CROWN_DESCRIPTION_CONTAINER);
+		sidebarCrownsInfoContainer.lastChild.appendChild(document.createElement("h2"));
+		sidebarCrownsInfoContainer.lastChild.lastChild.textContent = "Crowns";
+		sidebarCrownsInfoContainer.lastChild.lastChild.style["margin"] = "0";
+		sidebarCrownsInfoContainer.lastChild.appendChild(document.createElement("p"));
+		sidebarCrownsInfoContainer.lastChild.lastChild.textContent = "Level up your skills to earn crowns!";
+		sidebarCrownsInfoContainer.lastChild.lastChild.style =
+		`
+			margin: 10px 0 0 0;
+			color: #777;
+		`;
+	}
+
+	placesToAdd.forEach(
+		(place) => 
+		{
+			crownsInfoContainer = place;
+
+			const crownLogoContainer = crownsInfoContainer.querySelector(`.${CROWN_LOGO_CONTAINER}`);
+			const crownCountImg = crownLogoContainer.querySelector(`:scope > img`);
+			crownCountImg.style["transform"] = "scale(1.3)";
+
+			const crownDescriptionContainer = document.querySelector(`.${CROWN_DESCRIPTION_CONTAINER}`); // Only exists in popup container
+			if (crownDescriptionContainer !== null)
 			{
-				// If there is progress for the day we are testing
-				// prepend the array with the change in number of crowns left
-				// compared to the previous progress entry
+				crownDescriptionContainer.style.width = '50%';
+			}
 
-				crownsEarnedInWeek.unshift(progress[i-1][2] - progress[i][2]);
-				i--;
+			// Add max crowns and crowns precentage
+			const crownTotalContainer = crownsInfoContainer.querySelector(`.${CROWN_TOTAL_CONTAINER}`);
 
-				if (progress[i][0] == day)
+			let maximumCrownCountContainer;
+			let crownCountPercentage;
+			if (options.crownsMaximum)
+			{
+				maximumCrownCountContainer = document.createElement("span");
+				maximumCrownCountContainer.classList.add("maxCrowns");
+				maximumCrownCountContainer.textContent = "/" + maxCrownCount;
+				
+				crownTotalContainer.appendChild(maximumCrownCountContainer);
+
+				if (options.crownsPercentage)
 				{
-					// If the previous progress entry is from the same day
-					// a level boundary was crossed.
-					// This progress entry then holds the number of crowns left
-					// at the time of getting to the next crown level.
+					crownCountPercentage = document.createElement("span");
+					crownCountPercentage.classList.add("crownCountPercentage");
+					crownCountPercentage.textContent = `(${(100*document.querySelector(CROWN_TOTAL_SELECTOR).textContent/maxCrownCount).toFixed(1)}%)`;
+					crownCountPercentage.style = `
+						font-size: 0.8em;
+						position: absolute;
+						transform: translate(-50%, -50%);
+						left: 50%;
+						top: calc(50% + 1.3em);
+						color: #cd7900;
+					`;
 
-					// We then add the remaining number of crowns from the previous
-					// progress entry that must have been earned to level up
-					//
-					crownsEarnedInWeek[0] = crownsEarnedInWeek[0] + progress[i-1][2];
-					i--;
+					crownTotalContainer.parentNode.appendChild(crownCountPercentage);
 				}
 			}
-			else
+
+			// Add crowns progress graph
+			if (options.crownsGraph && currentTreeLevel() != 5)
 			{
-				// The progress entry isn't for the day we are testing,
-				// so no crowns were earned on that day.
+				let treeLevelProgressInWeek = [];
+				// will hold number of tree level progressing lessons done each day for seven days
+				// treeLevelProgressInWeek[0] : week ago;
+				// treeLevelProgressInWeek[6] : today;
 
-				crownsEarnedInWeek.unshift(0);
+				let dateToday = (new Date()).setHours(0,0,0,0);
+				let msInDay = 24*60*60*1000;
+				
+				let day = dateToday;
+				let i = progress.length - 1; // used to index into progress
+				while (day > dateToday - 7*msInDay && i > 0)
+				{
+					// day loops through the last week backwards.
+					// Also stop if we run out of progress entries to use.
 
-				// Note we don't decrement i as we haven't used the info in this
-				// progress entry.
+					if (progress[i][0] !== day)
+					{
+						// The progress entry isn't for the day we are testing,
+						// so no tree level contributing lessons were earned on that day.
+
+						treeLevelProgressInWeek.unshift(0);
+
+						// Note we don't decrement i as we haven't used the info in this
+						// progress entry.
+					}
+					else
+					{
+						// There is at least one prrogress entry for the day we are currently looking at.
+
+						let progressAddedFromCurrentDay = false;
+						while (progress[i][0] === day)
+						{
+							/*
+							This progress entry is from the the day we are looking at.
+							We are looping through progress entries that are on the current day as there may be multiple.
+							Multiple entries are added for the same day when either:
+							- The user has completed the current level
+							- The user resets their progress on the tree
+							- The tree was updated and it appears that negative progress was made
+							- It is the day that entires were stored
+
+							If there is progress for the day we are testing
+							prepend the array with the change in number of lessons left
+							compared to the previous progress entry.
+
+							We should only do this if the progress is positive though.
+							Negative progress happens if the tree was reset by the user or updated by duolingo,
+							or if the tree level has just increased.
+
+							*/
+
+								
+							if (i === 0)
+							{
+								// This is the first ever entry, so we can't do anything more.
+								break;
+							}
+							else if (progress[i][1] === progress[i-1][1])
+							{
+								// This entry has the same tree level as before.
+								
+								if (progress[i-1][2] > progress[i][2])
+								{
+									// Normal positive progress has been made.
+									const progressFromThisEntry = progress[i-1][2] - progress[i][2];
+
+									if (progressAddedFromCurrentDay)
+									{
+										// Already added some progress from this day,
+										// so lets just add the extra to the existing.
+										treeLevelProgressInWeek[0] = treeLevelProgressInWeek[0] + progressFromThisEntry;
+									}
+									else
+									{
+										treeLevelProgressInWeek.unshift(progressFromThisEntry);
+										progressAddedFromCurrentDay = true;
+									}
+								}
+								else
+								{
+									// There has been negative compared to the previous entry.
+									// Nothing to do here as this is just to mark the change and track relative changes afterwards.
+								}
+							}
+							else
+							{
+								// This entry has from a different tree level than the entry before it.
+								if (progress[i][1] > progress[i-1][1])
+								{
+									// The tree level has increased.
+									// This entry is the the first after this change,
+									// so we should add the remaining progress from the previous entry
+									// as this will have needed to have been done to level up.
+									if (progressAddedFromCurrentDay)
+									{
+										// Already added some progress from this day,
+										// so lets just add the extra to the existing.
+										treeLevelProgressInWeek[0] = treeLevelProgressInWeek[0] + progress[i-1][2];
+									}
+									else
+									{
+										// Not added anything from this current day yet so lets add this now
+
+										treeLevelProgressInWeek.unshift(progress[i-1][2]);
+										progressAddedFromCurrentDay = true;
+									}
+								}
+								else if (progress[i][1] < progress[i-1][1])
+								{
+									// Tree level has decreased, this is either a tree change or a tree reset,
+									// We don't need to do anything then.
+								}
+							}
+
+							--i;
+						}
+					}
+					// decrement the timestamp by a day
+					day = day - msInDay;
+				}
+
+				while (treeLevelProgressInWeek.length != 7)
+				{
+					// If we ran out of progress entries for a whole week
+					// we will fill the rest with zeros.
+
+					treeLevelProgressInWeek.unshift(0);
+				}
+
+
+				// Generate a graph for the data.
+				let graph = graphSVG(treeLevelProgressInWeek);
+				graph.classList.add("crownsGraph");
+				graph.width = "100%";
+				graph.style["marginTop"] = "1em";
+				graph.style["padding"] = "0 1em";
+
+				crownsInfoContainer.appendChild(graph);
 			}
-			
-			// decrement the timestamp by a day
-			day = day - msInDay;
-		}
 
-		while (crownsEarnedInWeek.length != 7)
-		{
-			// If we ran out of progress entries for a whole week
-			// we will fill the rest with zeros.
+			// Add breakdown table
 
-			crownsEarnedInWeek.unshift(0);
-		}
+			let breakdownContainer = document.createElement("div");
+			breakdownContainer.classList.add("crownLevelBreakdownContainer");
+			breakdownContainer.style =
+			`
+				margin: 1em 1em 0 1em;
+				text-align: left;
+				flex-grow: 1;
+				color: black;
+			`;
 
+			let treeLevelContainer = document.createElement("div");
+			treeLevelContainer.classList.add("treeLevel");
+			treeLevelContainer.style = "display: inline-block";
+			treeLevelContainer.textContent = treeLevel;
 
-		// Generate a graph for the data.
-		let graph = graphSVG(crownsEarnedInWeek);
-		graph.id = "crownsGraph";
-		graph.width = "100%";
-		graph.style.margin = "1em 1em 0 1em";
-
-		crownLevelContainer.appendChild(graph);
-	}
-
-	// Add breakdown table
-
-	let breakdownContainer = document.createElement("div");
-	breakdownContainer.id = "crownLevelBreakdownContainer";
-	breakdownContainer.style =
-	`
-		margin: 1em 1em 0 1em;
-		text-align: left;
-		flex-grow: 1;
-		color: black;
-	`;
-
-	let treeLevelContainer = document.createElement("div");
-	treeLevelContainer.id = "treeLevel";
-	treeLevelContainer.style = "display: inline-block";
-	treeLevelContainer.textContent = treeLevel;
-
-	let breakdownList = document.createElement("ul");
-	breakdownList.id = "breakdownList";
-	breakdownList.style =
-	`
-		display: grid;
-		grid-auto-rows: 1.5em;
-		align-items: center;
-	`;
-	
-	let imgContainer = document.createElement("div");
-	imgContainer.style =
-	`
-		position: relative;
-		display: inline-block;
-		width: 100%;
-		justify-self:center;
-	`;
-	
-	let levelContainer = document.createElement("div");
-	levelContainer.style =
-	`
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
-		z-index: 2;
-		color: #cd7900;
-	`;
-
-	let crownImg = document.createElement("img");
-	crownImg.alt = "crown";
-	// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
-	crownImg.style =
-	`
-		width: 100%;
-		padding: 0 0.2em ;
-		z-index: 1;
-	`;
-	crownImg.src = crownSrc;
-
-	imgContainer.appendChild(crownImg);
-	imgContainer.appendChild(levelContainer);
-
-	if (document.getElementsByClassName("crownLevelItem").length == 0) // We haven't added the breakdown data yet, so let's add it.
-	{
-		if (options.crownsMaximum)
-		{
-			crownTotalContainer.appendChild(maximumCrownCountContainer);
-			if (options.crownsPercentage)
-			{
-				crownTotalContainer.parentNode.appendChild(crownCountPercentage);
-			}
-		}
-
-
-		breakdownContainer.appendChild(document.createElement("p"));
-		breakdownContainer.lastChild.style = "text-align: center; color: black;";
-		breakdownContainer.lastChild.textContent = "Your tree is at Level\xA0";
-		breakdownContainer.lastChild.appendChild(treeLevelContainer);
-
-		for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; ++crownLevel)
-		{
-			let skillCount = crownLevelCount[0][crownLevel];
-
-			if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
-				continue;
-
-			let crownCount = skillCount * crownLevel;
-		
-			imgContainer.lastChild.id = "crownLevel" + crownLevel + "Count";
-			imgContainer.lastChild.textContent = crownLevel;
-
-			let breakdownListItem = document.createElement("li");
-			breakdownListItem.className = "crownLevelItem";
-			breakdownListItem.style =
+			let breakdownList = document.createElement("ul");
+			breakdownList.classList.add("breakdownList");
+			breakdownList.style =
 			`
 				display: grid;
+				grid-auto-rows: 1.5em;
 				align-items: center;
-				justify-items: right;
-				grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 			`;
-
-			const skillCountSpan = document.createElement("span");
-			skillCountSpan.textContent = skillCount;
-			breakdownListItem.appendChild(skillCountSpan);
-
-			const skillsAtSpan = document.createElement("span");
-			skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
-			skillsAtSpan.style.justifySelf = "center";
-			breakdownListItem.appendChild(skillsAtSpan);
-
-			breakdownListItem.appendChild(imgContainer);
-			imgContainer = imgContainer.cloneNode(true);
-
-			breakdownListItem.appendChild(document.createTextNode("="));
 			
-			const crownCountSpan = document.createElement("span");
-			crownCountSpan.textContent = crownCount;
-			breakdownListItem.appendChild(crownCountSpan);
-
-			const crownsSpan = document.createElement("span");
-			crownsSpan.textContent = `crown${(crownCount == 1 )?"":"s"}`;
-			breakdownListItem.appendChild(crownsSpan);
-
-			breakdownList.appendChild(breakdownListItem);
-		}
-
-
-		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0 && options.bonusSkillsBreakdown)
-		{
-			// The tree has some bonus skills so let's display a breakdown of their crown levels.
-			let bonusSkillsBreakdownHeader = document.createElement("h3");
-			bonusSkillsBreakdownHeader.textContent = "Bonus Skills";
-			bonusSkillsBreakdownHeader.style =
+			let imgContainer = document.createElement("div");
+			imgContainer.style =
 			`
-				margin: 0;
-				font-size: 100%;
-				justify-self: center
+				position: relative;
+				display: inline-block;
+				width: 100%;
+				justify-self:center;
+			`;
+			
+			let levelContainer = document.createElement("div");
+			levelContainer.style =
+			`
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translateX(-50%) translateY(-50%);
+				z-index: 2;
+				color: #cd7900;
 			`;
 
-			breakdownList.appendChild(bonusSkillsBreakdownHeader);
+			let crownImg = document.createElement("img");
+			crownImg.alt = "crown";
+			// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
+			crownImg.style =
+			`
+				width: 100%;
+				padding: 0 0.2em ;
+				z-index: 1;
+			`;
+			crownImg.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
 
-			for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+			imgContainer.appendChild(crownImg);
+			imgContainer.appendChild(levelContainer);
+
+
+			breakdownContainer.appendChild(document.createElement("p"));
+			breakdownContainer.lastChild.style = "text-align: center; color: black; margin: 0 0 1em 0;";
+			breakdownContainer.lastChild.textContent = "Your tree is at Level\xA0";
+			breakdownContainer.lastChild.appendChild(treeLevelContainer);
+
+			for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; ++crownLevel)
 			{
-				let skillCount = crownLevelCount[1][crownLevel];
+				let skillCount = crownLevelCount[0][crownLevel];
 
 				if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
-				continue;
+					continue;
 
 				let crownCount = skillCount * crownLevel;
 			
-				imgContainer.lastChild.id = "bonusSkillCrownLevel" + crownLevel + "Count";
+				imgContainer.lastChild.classList.add("crownLevel" + crownLevel + "Count");
 				imgContainer.lastChild.textContent = crownLevel;
 
 				let breakdownListItem = document.createElement("li");
@@ -1817,7 +2915,7 @@ function displayCrownsBreakdown()
 					justify-items: right;
 					grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 				`;
-				
+
 				const skillCountSpan = document.createElement("span");
 				skillCountSpan.textContent = skillCount;
 				breakdownListItem.appendChild(skillCountSpan);
@@ -1842,79 +2940,147 @@ function displayCrownsBreakdown()
 
 				breakdownList.appendChild(breakdownListItem);
 			}
-		}
-		
-		breakdownContainer.appendChild(breakdownList);
-		if (options.crownsBreakdown) crownLevelContainer.appendChild(breakdownContainer);
 
-		if (treeLevel != 5)
-		{
-			let prediction = document.createElement("p");
-			let numDays;
-			if (progress.length > 5)
-				numDays = daysToNextCrownLevel();
-			else
-				numDays = daysToNextCrownLevelByCalendar();
 
-			if (numDays == -1)
+			if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0 && options.bonusSkillsBreakdown)
 			{
-				crownLevelContainer.style.marginBottom = "1em";
-				return false;
+				// The tree has some bonus skills so let's display a breakdown of their crown levels.
+				let bonusSkillsBreakdownHeader = document.createElement("h3");
+				bonusSkillsBreakdownHeader.textContent = "Bonus Skills";
+				bonusSkillsBreakdownHeader.style =
+				`
+					margin: 0;
+					font-size: 100%;
+					justify-self: center
+				`;
+
+				breakdownList.appendChild(bonusSkillsBreakdownHeader);
+
+				for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+				{
+					let skillCount = crownLevelCount[1][crownLevel];
+
+					if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
+					continue;
+
+					let crownCount = skillCount * crownLevel;
+				
+					imgContainer.lastChild.classList.add("bonusSkillCrownLevel" + crownLevel + "Count");
+					imgContainer.lastChild.textContent = crownLevel;
+
+					let breakdownListItem = document.createElement("li");
+					breakdownListItem.className = "crownLevelItem";
+					breakdownListItem.style =
+					`
+						display: grid;
+						align-items: center;
+						justify-items: right;
+						grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
+					`;
+					
+					const skillCountSpan = document.createElement("span");
+					skillCountSpan.textContent = skillCount;
+					breakdownListItem.appendChild(skillCountSpan);
+
+					const skillsAtSpan = document.createElement("span");
+					skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
+					skillsAtSpan.style.justifySelf = "center";
+					breakdownListItem.appendChild(skillsAtSpan);
+
+					breakdownListItem.appendChild(imgContainer);
+					imgContainer = imgContainer.cloneNode(true);
+
+					breakdownListItem.appendChild(document.createTextNode("="));
+					
+					const crownCountSpan = document.createElement("span");
+					crownCountSpan.textContent = crownCount;
+					breakdownListItem.appendChild(crownCountSpan);
+
+					const crownsSpan = document.createElement("span");
+					crownsSpan.textContent = `crown${(crownCount == 1 )?"":"s"}`;
+					breakdownListItem.appendChild(crownsSpan);
+
+					breakdownList.appendChild(breakdownListItem);
+				}
+			}
+			
+			breakdownContainer.appendChild(breakdownList);
+			if (options.crownsBreakdown) crownsInfoContainer.appendChild(breakdownContainer);
+
+			// Checkpoint Prediction
+			if (treeLevel == 0 && options.checkpointPrediction)
+			{
+				const predictionData = (progress.length > 5) ? daysToNextCheckpoint() : daysToNextCheckpointByCalendar();
+
+				if (predictionData.time >= 0)
+				{
+					const prediction = createPredictionElement("checkpoint", predictionData);
+					prediction.style =
+					`
+						margin: 1em 1em 0;
+						text-align: center;
+						color: black;
+					`;
+
+					crownsInfoContainer.appendChild(prediction);
+
+				}
 			}
 
-			prediction.id = "treeCrownLevelPrediction";
-			prediction.appendChild(
-				document.createTextNode(`At your current rate your tree will reach Level\xA0${treeLevel + 1} in `)
-			);
-			prediction.appendChild(document.createElement("span"));
-			prediction.lastChild.textContent = numDays;
-			prediction.lastChild.style.fontWeight = "bold";
-			prediction.appendChild(
-				document.createTextNode(` days, on `)
-			);
-			prediction.appendChild(document.createElement("span"));
-			prediction.lastChild.textContent = new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
-			prediction.lastChild.style.fontWeight = "bold";
-
-			prediction.style =
-			`
-				margin: 1em;
-				text-align: center;
-				color: black;
-			`;
-
-			if (options.crownsPrediction) crownLevelContainer.appendChild(prediction);
-		}
-	}
-	else
-	{
-		// We have already added the breakdown data, just update it.
-
-		for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; crownLevel++)
-		{
-			let levelContainerElement = document.getElementById("crownLevel" + crownLevel + "Count");
-			levelContainerElement.textContent = crownLevel;
-		}
-		if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0)
-		{
-			for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+			// Tree Level prediction
+			if (treeLevel != 5 && options.treeLevelPrediction)
 			{
-				let levelContainerElement = document.getElementById("bonusSkillCrownLevel" + crownLevel + "Count");
-				levelContainerElement.textContent = crownLevel;
+				const predictionData = (progress.length > 5) ? daysToNextTreeLevel() : daysToNextTreeLevelByCalendar();
+
+				if (predictionData.time >= 0)
+				{
+					const prediction = createPredictionElement("treeLevel", predictionData);
+					prediction.style =
+					`
+						margin: 1em 1em 0;
+						text-align: center;
+						color: black;
+					`;
+
+					crownsInfoContainer.appendChild(prediction);
+				}
+			}
+			
+			if (treeLevel === 5)
+			{
+				const maxLevelMessage = document.createElement("p");
+				maxLevelMessage.style.color = "black";
+				maxLevelMessage.textContent = "You have reached the maximum tree level!";
+				crownsInfoContainer.appendChild(maxLevelMessage);
 			}
 		}
-
-		document.getElementById("maxCrowns").textContent = "/" + maxCrownCount;
-		document.getElementById("treeLevel").textContent = treeLevel;
-	}
+	);
 }
 
 function displayXPBreakdown()
 {
-	if (Object.entries(userData).length == 0
-		|| (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length === 0 && document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER).length === 0))
+	if (Object.entries(userData).length === 0)
+	{
 		return false;
+	}
+
+	// First remove any existing XP Boxes
+	removeXPBoxes();
+
+	const isSidebarContainer = document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`) !== null;
+	const isPopupContainer = document.querySelector(`.${DAILY_GOAL_POPUP_CONTAINER}`) !== null;
+
+	const somethingToDo = (
+		(options.XPInfoInSidebar && isSidebarContainer)
+		||
+		((inMobileLayout || options.XPInfoInPopup) && isPopupContainer)
+	);
 	
+	if (!somethingToDo)
+	{
+		return false;
+	}
+
 	let data =
 		{
 			'language_string':	userData.language_data[languageCode].language_string,
@@ -1922,263 +3088,140 @@ function displayXPBreakdown()
 			'level':			userData.language_data[languageCode].level,
 			'level_points':		userData.language_data[languageCode].level_points,
 			'points':			userData.language_data[languageCode].points,
-			'history':			userData.language_data[languageCode].calendar,
+			'history':			currentLanguageHistory(),
 			//'timezone':			userData.timezone_offset seems to not be available for every users, maybe depends on platform use.
 		};
 
 	let levelProgressPercentage = (data.level_progress*100)/(data.level_points);
 
-	const currentXPBox = document.getElementById("XPBox");
-	let removeCurrentBox = false;
+	let container = document.createElement("div");
+	container.classList.add("XPBox");
+	container.style = 
+	`
+		margin-top: 1em;
+		color: black;
+	`;
 
-	if (currentXPBox != null)
+	let languageLevelContainer = document.createElement("div");
+	languageLevelContainer.classList.add("XPBreakdown");
+
+	let XPHeader = document.createElement("h2");
+	XPHeader.textContent = data.language_string+ " XP";
+
+	languageLevelContainer.appendChild(XPHeader);
+
+	let languageLevelElement = document.createElement("p");
+	languageLevelElement.classList.add("xpTotalAndLevel");
+	languageLevelElement.textContent = "Level " + data.level;
+	languageLevelElement.style =
+	`
+		font-size: 175%;
+		font-weight: bold;
+		text-align: center;
+		color: ${ORANGE};
+	`;
+
+	let languageXPElement = document.createElement("span");
+	languageXPElement.textContent = data.points + " XP - ";
+	languageXPElement.style =
+	`
+		color: black;
+		font-weight: normal;
+	`;
+	
+	languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
+	languageLevelContainer.appendChild(languageLevelElement);
+	if (options.XPBreakdown) container.appendChild(languageLevelContainer);
+	
+	if (data.level != 25)
 	{
-		// truth table
-		// boxExists wantBox startOver
-		//		1		1		0
-		// 		1	 	0		1
-		// 		-----------------
-		// 		0		1		1
-		// 		0		0		0
-		//
-		//	Want XOR, or can split into two cases as shown
-		//	if the feature exists, then the output should be NOT the option
-		//	else it should be the same as the option
-		//
-		if ( (currentXPBox.querySelector(`#XPBreakdown`) != null) ? !options.XPBreakdown : options.XPBreakdown)
-			removeCurrentBox = true;
-		if ( (currentXPBox.querySelector(`#XPPrediction`) != null) ? !options.XPPrediction : options.XPPrediction)
-			removeCurrentBox = true
-	}
-
-	if (removeCurrentBox)
-		currentXPBox.remove();
-
-	if (document.getElementById("XPBox") == null)
-	{
-		// We haven't made the XP Box yet
-
-		let container = document.createElement("div");
-		container.id = "XPBox";
-		container.style = 
+		let nextLevelProgressElement = document.createElement("p");
+		nextLevelProgressElement.style =
 		`
-			margin-top: 1em;
-			color: black;
-		`;
-
-		let languageLevelContainer = document.createElement("div");
-		languageLevelContainer.id = "XPBreakdown";
-
-		let XPHeader = document.createElement("h2");
-		XPHeader.textContent = data.language_string+ " XP";
-
-		languageLevelContainer.appendChild(XPHeader);
-
-		let languageLevelElement = document.createElement("p");
-		languageLevelElement.id = "xpTotalAndLevel";
-		languageLevelElement.textContent = "Level " + data.level;
-		languageLevelElement.style =
-		`
-			font-size: 175%;
-			font-weight: bold;
 			text-align: center;
-			color: ${ORANGE};
+			margin-bottom: 0;
 		`;
+		nextLevelProgressElement.textContent = `${data.level_points - data.level_progress} XP till Level ${data.level+1}`;
 
-		let languageXPElement = document.createElement("span");
-		languageXPElement.textContent = data.points + " XP - ";
-		languageXPElement.style =
+		let languageLevelProgressBarContainer = document.createElement("div");
+		languageLevelProgressBarContainer.className = "languageLevelProgressBar";
+		languageLevelProgressBarContainer.style =
 		`
-			color: black;
-			font-weight: normal;
+			height: 0.5em;
+			width: 100%;
+			background-color: ${GREY};
+			border-radius: 0.25em;
 		`;
+
+		let languageLevelProgressBar = document.createElement("div");
+		languageLevelProgressBar.className = "languageLevelProgressBar";
+		languageLevelProgressBar.style =
+		`
+			height: 100%;
+			width: ${levelProgressPercentage}%;
+			background-color: ${ORANGE};
+			border-radius: 0.25em;
+		`;
+
+		languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
+
+		let currentLevelProgressElement = document.createElement("p");
+		currentLevelProgressElement.style = "text-align: center;";
+		currentLevelProgressElement.textContent = `(${data.level_progress}/${data.level_points} XP - ${Number(levelProgressPercentage).toFixed(1)}%)`;
+
+		languageLevelContainer.appendChild(nextLevelProgressElement);
+		languageLevelContainer.appendChild(languageLevelProgressBarContainer);
+		languageLevelContainer.appendChild(currentLevelProgressElement);
+
+
+		const numDays = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
 		
-		languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
-		languageLevelContainer.appendChild(languageLevelElement);
-		if (options.XPBreakdown) container.appendChild(languageLevelContainer);
-		
-		if (data.level != 25)
+		if (numDays != -1 && options.XPPrediction)
 		{
-			let nextLevelProgressElement = document.createElement("p");
-			nextLevelProgressElement.style =
-			`
-				text-align: center;
-				margin-bottom: 0;
-			`;
-			nextLevelProgressElement.textContent = `${data.level_points - data.level_progress} XP till Level ${data.level+1}`;
-
-			let languageLevelProgressBarContainer = document.createElement("div");
-			languageLevelProgressBarContainer.className = "languageLevelProgressBar";
-			languageLevelProgressBarContainer.style =
-			`
-				height: 0.5em;
-				width: 100%;
-				background-color: ${GREY};
-				border-radius: 0.25em;
-			`;
-
-			let languageLevelProgressBar = document.createElement("div");
-			languageLevelProgressBar.className = "languageLevelProgressBar";
-			languageLevelProgressBar.style =
-			`
-				height: 100%;
-				width: ${levelProgressPercentage}%;
-				background-color: ${ORANGE};
-				border-radius: 0.25em;
-			`;
-
-			languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
-
-			let currentLevelProgressElement = document.createElement("p");
-			currentLevelProgressElement.style = "text-align: center;";
-			currentLevelProgressElement.textContent = `(${data.level_progress}/${data.level_points} XP - ${Number(levelProgressPercentage).toFixed(1)}%)`;
-
-			languageLevelContainer.appendChild(nextLevelProgressElement);
-			languageLevelContainer.appendChild(languageLevelProgressBarContainer);
-			languageLevelContainer.appendChild(currentLevelProgressElement);
-
-
-			let daysLeft = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
-			let projectedNextLevelCompletion = document.createElement("p");
-			projectedNextLevelCompletion.id = "XPPrediction";
-			projectedNextLevelCompletion.style =
+			const prediction = createPredictionElement("XPLevel", {time: numDays});
+			prediction.style =
 			`
 				margin-bottom: 0;
 				text-align: center;
 			`;
-			projectedNextLevelCompletion.appendChild(
-				document.createTextNode(
-					`At your current rate you will reach the next level, Level\xA0${data.level+1}, in about `
-				)
-			);
-			projectedNextLevelCompletion.appendChild(document.createElement("span"));
-			projectedNextLevelCompletion.lastChild.id = "XPPrediction";
-			projectedNextLevelCompletion.lastChild.style.fontWeight = "bold";
-			projectedNextLevelCompletion.lastChild.textContent = daysLeft;
 
-			projectedNextLevelCompletion.appendChild(
-				document.createTextNode(
-					` days, on `
-				)
-			);
-			
-			projectedNextLevelCompletion.appendChild(document.createElement("span"));
-			projectedNextLevelCompletion.lastChild.id = "XPPredictionDate";
-			projectedNextLevelCompletion.lastChild.textContent = (new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000)).toLocaleDateString();
-			
-			if (daysLeft != -1 && options.XPPrediction)
-			{
-				container.appendChild(projectedNextLevelCompletion);
-			}
-		}
-		else
-		{
-			// Reached max level
-			let maxLevelMessage = document.createElement("p");
-			maxLevelMessage.textContent = "You have reached the maximum level!";
-			languageLevelContainer.appendChild(maxLevelMessage);
-		}
-		
-		if (document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER).length != 0)
-		{
-			// If there is a Daily Goal box in the sidebar put the breakdown in that.
-			document.getElementsByClassName(DAILY_GOAL_SIDEBAR_CONATINER)[0].appendChild(container);
-		}
-		else if (document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER).length != 0)
-		{
-			// Otherwise if there is a Daily Goal box pop-up box, put the breakdown in that.
-			if (inMobileLayout)
-				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[1].appendChild(container);
-			else
-				document.getElementsByClassName(DAILY_GOAL_POPUP_CONTAINER)[0].appendChild(container);
-			
-			if(!inMobileLayout)
-			{
-				container.parentNode.style =
-				`
-					overflow-y: auto;
-					max-height: calc(100vh - ${(58+90)}px);
-				`;
-			}
-			else
-			{
-				container.parentNode.parentNode.style =
-				`
-					overflow-y: auto;
-					max-height: calc(100vh - ${(58+90)}px);
-				`;
-			}
-		}
-		else
-		{
-			// Neither is about so we just don't do anything. Shouldn't get to this point as we should have exited the function at the start.
+			container.appendChild(prediction);
 		}
 	}
 	else
 	{
-		// We already have the XP Box, let's just update the values, if we want a breakdown.
-		if (options.XPBreakdown)
+		// Reached max level
+		let maxLevelMessage = document.createElement("p");
+		maxLevelMessage.textContent = "You have reached the maximum level!";
+		languageLevelContainer.appendChild(maxLevelMessage);
+	}
+	
+	// Add the XPBoxes in the chosen places
+
+	if (options.XPInfoInSidebar && isSidebarContainer)
+	{
+		document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`).appendChild(container.cloneNode(true));
+	}
+
+	if ((inMobileLayout || options.XPInfoInPopup) && isPopupContainer)
+	{
+		document.querySelector(`.${DAILY_GOAL_POPUP_CONTAINER}`).appendChild(container);
+		
+		if(!inMobileLayout)
 		{
-			let languageLevelElement = document.getElementById("xpTotalAndLevel");
-			let languageXPElement = languageLevelElement.childNodes[0];
-			languageXPElement.textContent = data.points + " XP - ";
-			languageLevelElement.textContent = "Level " + data.level;
-			languageLevelElement.insertBefore(languageXPElement,languageLevelElement.childNodes[0]);
-			
-			if (languageLevelElement.nextSibling != null)
-			{
-				// Wasn't level 25 ...
-				if (data.level != 25)
-				{
-					// ... and still aren't
-					let languageLevelProgressBarContainer = document.getElementsByClassName("languageLevelProgressBar")[0];
-					languageLevelProgressBarContainer.style =
-					`
-						height: 0.5em;
-						width: 100%;
-						background-color: ${GREY};
-						border-radius: 0.25em;
-					`;
-
-					let languageLevelProgressBar = document.getElementsByClassName("languageLevelProgressBar")[1];
-					languageLevelProgressBar.style =
-					`
-						height: 100%;
-						width: ${levelProgressPercentage}%;
-						background-color: ${ORANGE};
-						border-radius: 0.25em;
-					`;
-
-					let nextLevelProgressElement = languageLevelProgressBarContainer.previousSibling;
-					nextLevelProgressElement.textContent = `${data.level_points - data.level_progress} XP till Level ${data.level+1}`;
-
-					let currentLevelProgressElement = languageLevelProgressBarContainer.nextSibling;
-					currentLevelProgressElement.textContent =
-					`
-						(${data.level_progress}/${data.level_points} XP - ${Number(levelProgressPercentage).toFixed(1)}%)
-					`;
-
-				}
-				else
-				{
-					// ... but is now, so let's remove all the irrelevant info
-					while (languageLevelElement.nextSibling != null)
-					{
-						languageLevelElement.parentNode.removeChild(languageLevelElement.nextSibling);
-					}
-
-					let maxLevelMessage = document.createElement("p");
-					maxLevelMessage.style = "margin-bottom: 0";
-					maxLevelMessage.textContent = "You have reached the maximum level!";
-					languageLevelElement.parentNode.appendChild(maxLevelMessage);
-				}
-			}
+			container.parentNode.style =
+			`
+				overflow-y: auto;
+				max-height: calc(100vh - ${(58+90)}px);
+			`;
 		}
-		if (options.XPPrediction && document.getElementById("XPPredicition")!= null)
+		else
 		{
-			let daysLeft = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
-			document.getElementById("XPPrediction").textContent = daysLeft;
-			document.getElementById("XPPredictionDate").textContent = (new Date((new Date()).setHours(0,0,0,0) + daysLeft*24*60*60*1000)).toLocaleDateString();
+			container.parentNode.parentNode.style =
+			`
+				overflow-y: auto;
+				max-height: calc(100vh - ${(58+90)}px);
+			`;
 		}
 	}
 }
@@ -2188,6 +3231,12 @@ function displayLanguagesInfo(languages)
 	const sidebar = document.querySelector(`.${SIDEBAR}`);
 	if (sidebar == null)
 		return false;
+
+	if (languages.length == 0)
+	{
+		removeLanguagesInfo();
+		return false;
+	}
 
 	let languagesBox = document.getElementById("languagesBox");
 
@@ -2201,7 +3250,7 @@ function displayLanguagesInfo(languages)
 			displayedLanguages.length != languages.length ||
 			!displayedLanguages.every(
 				(language, index) => {
-					language == languages[index]
+					return language == languages[index][0];
 				}
 			)
 		);
@@ -2225,11 +3274,11 @@ function displayLanguagesInfo(languages)
 		else
 		{
 			// Number of languages or the order of them has changed, need to repopulate table.
-			const table = document.getElementById("languagesTable");
-			tableRowElements = languagesTable.querySelectorAll("table > tr");
+			const table = languagesBox.querySelector("#languagesTable");
+			const tableRowElements = table.querySelectorAll("table>tr");
 
 			// Clear current table
-			tableRowElements.forEach(row => table.removeChild(row));
+			tableRowElements.forEach(row => row.remove());
 
 			// Add new rows
 			languages.forEach(
@@ -2260,8 +3309,12 @@ function displayLanguagesInfo(languages)
 		languagesBox.className = WHITE_SIDEBAR_BOX_CONTAINER;
 		
 		const heading = document.createElement("H2");
-		heading.textContent = "Languages Info";
+		heading.textContent = `Languages Info`;
 		languagesBox.appendChild(heading);
+
+		const subHeading = document.createElement("H3");
+		subHeading.textContent = `From ${UICode[0].toUpperCase() + UICode[1]}`;
+		languagesBox.appendChild(subHeading);
 
 		const table = document.createElement("TABLE");
 		table.id = "languagesTable";
@@ -2311,7 +3364,7 @@ function displayLanguagesInfo(languages)
 		);
 
 		// Add the new side bar box to the page
-		const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONATINER}`);
+		const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`);
 		if (dailyGoalBox == null)
 			return false;
 
@@ -2319,8 +3372,11 @@ function displayLanguagesInfo(languages)
 	}
 }
 
-function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
+function displaySuggestion(fullyStrengthened, noCrackedSkills)
 {
+	if (usingOldData)
+		return false; // If we haven't just got some new data the suggestion might be invalid so we won't
+
 	let topOfTree;
 	if (
 			document.querySelector(`[data-test="skill-tree"]`) != null &&
@@ -2333,14 +3389,14 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 
 		) // Has the tree loaded from a page change
 	{
-		topOfTree = document.querySelector(`[data-test="skill-tree"]`).firstChild;
+		topOfTree = document.querySelector(`[data-test="skill-tree"]>div`);
 	}
 	else
 	{
 		// body hasn't loaded yet so element not there, let's try again after a small wait, but only if we are still on the main page.
-		if(onMainPage)
+		if(onMainPage && document.querySelector(`[data-test="intro-lesson"]`) == null)
 		{
-			setTimeout(function(){displaySuggestion(skills, fullyStrengthened, noCrackedSkills);}, 50);
+			setTimeout(function(){displaySuggestion(fullyStrengthened, noCrackedSkills);}, 50);
 		}
 		else
 		{
@@ -2356,9 +3412,11 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 		z-index: 1;
 	`;
 
-	if (document.getElementById("fullStrengthMessageContainer") == null)
+	let container = document.getElementById("fullStrengthMessageContainer");
+
+	if (container === null)
 	{
-		let container = document.createElement("div");
+		container = document.createElement("div");
 		container.id = "fullStrengthMessageContainer";
 		if (inMobileLayout)
 			container.style = "margin: 0.5em 1em 0.5em 1em;";
@@ -2374,20 +3432,17 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 			else
 				container.style.marginTop = "0.5em";
 		}
-		else
+		else if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
 		{
-			// Not being pushed down by the IN BETA label.
-			if (inMobileLayout)
-			{
-				// In mobile layout so we don't need to make room for the try plus button.
-			}
-			else
-			{
-				// In desktop layout so let's make room for the TRY PLUS button to the right.
-				container.style.width = "calc(100% - 119px)";
-			}
+			// Not being pushed down by the IN BETA label,
+			// and there is a TRY PLUS button on the right which we have to make room for.
+			const boxRightEdge = topOfTree.getBoundingClientRect().right;
+			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
+			const offset = boxRightEdge - buttonLeftEdge;
+			container.style.width = `calc(100% - ${offset}px - 0.5em)`;
 		}
-		let treeLevel = crownTreeLevel();
+		const skills = userData.language_data[languageCode].skills;
+		const treeLevel = currentTreeLevel();
 		let skillsByCrowns = [[],[],[],[],[],[]];
 
 		for (let skill of skills)
@@ -2402,25 +3457,29 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 			1: First
 			2: Last
 		*/
+		const numSkillsAtTreeLevel = skillsByCrowns[treeLevel].length;
 		switch (options.skillSuggestionMethod)
 		{
 			case "0":
-				randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*skillsByCrowns[treeLevel].length)];
+				randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*numSkillsAtTreeLevel)];
 				break;
 			case "1":
 				randomSuggestion = skillsByCrowns[treeLevel][0];
 				break;
 			case "2":
-				randomSuggestion = skillsByCrowns[treeLevel][skillsByCrowns[treeLevel].length-1];
+				randomSuggestion = skillsByCrowns[treeLevel][numSkillsAtTreeLevel-1];
 				break;
 		}
 
-		let link = document.createElement("a");
-		link.href = "/skill/" + languageCode + "/" + randomSuggestion.url_title + ((treeLevel == 5) ? "/practice/" : "/");
-		link.textContent = randomSuggestion.title;
+		const link = document.createElement("a");
+
+		const toPractise = treeLevel === 5 || (randomSuggestion.category === "grammar" && randomSuggestion.skill_progress.level === 2);
+
+		link.href = `/skill/${languageCode}/${randomSuggestion.url_title}${toPractise ? "/practice/" : "/"}`;
+		link.textContent = randomSuggestion.short;
 		link.style.color = 'blue';
 		link.addEventListener('focus',
-			function(event)
+			function (event)
 			{
 				event.target.style.fontWeight = 'bold';
 				event.target.style.textDecoration = 'underline';
@@ -2428,14 +3487,14 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 		);
 
 		link.addEventListener('blur',
-			function(event)
+			function (event)
 			{
 				event.target.style.fontWeight = 'normal';
 				event.target.style.textDecoration = 'none';
 			}
 		);
 		
-		let suggestionMessage = document.createElement("p");
+		const suggestionMessage = document.createElement("p");
 		if (treeLevel == 5)
 		{
 			let messageText = `Your ${language} tree is `
@@ -2472,7 +3531,7 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 			{
 				// The next skill is locked, so a checkpoint test is needed.
 				let checkpointNumber;
-				const checkpoints = document.querySelectorAll(`[data-test="checkpoint-badge"]`);
+				const checkpoints = document.querySelectorAll(CHECKPOINT_SELECTOR);
 				checkpoints.forEach(
 					(checkpoint, index) => {
 						if (checkpointNumber == null && checkpoint.querySelector(`img`).src.includes(`unlocked`))
@@ -2488,7 +3547,7 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 			{
 				// The next skil is unlocked so lets suggest it.
 				link.href = `/skill/${languageCode}/${nextSkill.url_title}/`;
-				link.textContent = nextSkill.title;
+				link.textContent = nextSkill.short;
 
 				suggestionMessage.textContent += "The next skill to learn is: ";
 			}
@@ -2497,6 +3556,7 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 		}
 		else
 		{
+			// Not level 5 or level 0 so we will use the suggestion based on the users options.
 			if (fullyStrengthened && noCrackedSkills)
 				suggestionMessage.textContent = `Your ${language} tree is fully strengthened, and there are no cracked cracked skills. `;
 			else if (fullyStrengthened)
@@ -2508,21 +3568,103 @@ function displaySuggestion(skills, fullyStrengthened, noCrackedSkills)
 			suggestionMessage.appendChild(link);
 		}
 
+
 		container.appendChild(suggestionMessage);
 
-		topOfTree.appendChild(container);
-
-		if (options.focusFirstSkill) link.focus();
 	}
 	else
 	{
-		// Already made the box
+		// Already made the box.
+		// And we don't want to do anything otherwise the suggestion, if using the random option, will keep changing and might look a bit strange.
+	}
+
+	// Skill Suggestion Popout Button
+	removeSuggestionPopoutButton(); // Remove if already exists.
+
+	const suggestionName = container.querySelector(`a`).textContent;
+
+	if (options.suggestionPopoutButton && Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).some(skillName => skillName.textContent === suggestionName))
+	{
+		// Add button that opens up the suggested skill's popout
+		const button = addSuggestionPopoutButton(suggestionName);
+		container.querySelector(`p`).appendChild(button);
+	}
+
+	// Add the message if it isn't already there
+	if (!document.body.contains(container))
+	{
+		topOfTree.appendChild(container);
+
+		if (options.focusFirstSkill) container.querySelector(`a`).focus();
 	}
 }
 
 function getStrengths()
 {
-	// parses the data from duolingo.com/users/USERNAME and extracts strengths and skills that need strengthening
+	const strengths = [[],[]]; // first array holds strengths for normal skills, second for bonus skills
+	
+	// Each in each section in strengths will be array containing the following:
+	// [strength, display bool, skill's url_title]
+
+	const skills = userData.language_data[languageCode].skills;
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+
+	for (const skill of skills)
+	{
+		strengths[0].push(
+			[
+				skill.strength,
+				Boolean(skill.skill_progress.level), // If level is 0 then we won't add a strength bar as it is meaningless.
+				skill.url_title
+			]
+		);
+	}
+
+	for (const bonusSkill of bonusSkills)
+	{
+		strengths[1].push(
+			[
+				bonusSkill.strength,
+				Boolean(bonusSkill.skill_progress.level),
+				bonusSkill.url_title
+			]
+		);
+	}
+	
+	return strengths;
+}
+
+function getNeedsStrengthening()
+{
+	const needsStrengthening = [[],[]]; // first array holds skills that need strengthening, second holds bonus skills that need strengthening
+
+	const skills = userData.language_data[languageCode].skills;
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+
+	for (const skill of skills)
+	{
+		if (skill.strength != 1 && skill.strength != 0 && skill.skill_progress.level != 0)
+		{
+			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
+			needsStrengthening[0].push(skill);
+		}
+	}
+
+	for (const bonusSkill of bonusSkills)
+	{
+		if (bonusSkill.strength != 1 && bonusSkill.strength != 0 && bonusSkill.skill_progress.level != 0)
+		{
+			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
+			needsStrengthening[1].push(bonusSkill);
+		}
+	}
+
+	return needsStrengthening;
+}
+
+function processUserData()
+{
+	// Process the information from duolingo.com/users/USERNAME, stored in userData, before use
 	/*
 		Data comes formatted as such:
 		{
@@ -2537,14 +3679,22 @@ function getStrengths()
 		}
 		each skill in either skills or bonus_skills has a number of properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
-	
-	let strengths = [[],[]];	// will hold array of the strength values for each skill in tree in order top to bottom, left to right and array of strengths of bonus skills. values between 0 and 1.0 in 0.25 steps.
-	let needsStrengthening = [[],[]]; // will hold the objects for the skills that have strength < 1.0 and the bonus skills that have strength < 1.0.
-	
-	let skills = userData.language_data[languageCode].skills; // skills appear to be inconsistantly ordered so need sorting for ease of use.
-	let bonusSkills = userData.language_data[languageCode].bonus_skills;
 
-	function sortSkills(skill1,skill2)
+	// Skills appear to be inconsistantly ordered so need sorting for ease of use.
+
+	const skills = userData.language_data[languageCode].skills; 
+	const bonusSkills = userData.language_data[languageCode].bonus_skills;
+
+	// New grammar skills have incorrect y coordinate, making them seem like they are embedded in the row above.
+	const grammarSkills = skills.filter(skill => skill.category === "grammar");
+	grammarSkills.forEach(
+		(grammarSkill) =>
+		{
+			grammarSkill.coords_x = 999
+		}
+	);
+
+	const sortByTreePosition = (skill1,skill2) =>
 	{
 		if (skill1.coords_y < skill2.coords_y) // x above y give x
 		{
@@ -2562,123 +3712,218 @@ function getStrengths()
 				return 1;
 			}
 		}
-	}
+	};
 
-	skills.sort(sortSkills);
-	bonusSkills.sort(sortSkills);
+	skills.sort(sortByTreePosition);
+	bonusSkills.sort(sortByTreePosition);
+}
 
-	for (let skill of skills)
-	{
-		strengths[0].push([skill.strength,Boolean(skill.skill_progress.level)]);
-		if(skill.strength != 1 && skill.strength != 0 && skill.skill_progress.level != 0)
-		{
-			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
-			needsStrengthening[0].push(skill);
-		}
-	}
-
-	for (let bonusSkill of bonusSkills)
-	{
-		strengths[1].push([bonusSkill.strength,Boolean(bonusSkill.skill_progress.level)]);
-		if(bonusSkill.strength != 1 && bonusSkill.strength != 0 && bonusSkill.skill_progress.level != 0)
-		{
-			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
-			needsStrengthening[1].push(bonusSkill);
-		}
-	}
-
-	const crackedSkills = getCrackedSkills();
-
-	if (options.strengthBars)
-		addStrengths(strengths); // call function to add these strengths under the skills
-	else
-		removeStrengthBars();
+function addFeatures()
+{
+	// Main function that calls all the subfunctions responsible for adding features to the page.
 	
-	if (options.XPInfo)
-		displayXPBreakdown();
-	else
-		removeXPBox();
+	// First we need to prepare the retrieved userData for use.
+	processUserData();
 
-	if (options.crownsInfo)
-		displayCrownsBreakdown();
-	else
-		removeCrownsBreakdown();
-
-	if (options.languagesInfo)
-		displayLanguagesInfo(getLanguagesInfo());
-	else
-		removeLanguagesInfo();
-
-	const fullyStrengthened = (
-		needsStrengthening[0].length +
-		((options.showBonusSkillsInNeedsStrengtheningList) ? needsStrengthening[1].length : 0)
-	) == 0;
-
-	const noCrackedSkills = (
-		crackedSkills[0].length +
-		((options.showBonusSkillsInCrackedSkillsList) ? crackedSkills[1].length : 0)
-	) == 0;
-
-	if (options.needsStrengtheningList && !fullyStrengthened)
-		displayNeedsStrengthening(needsStrengthening); // Not fully strengthened and the list is enabled.
-	else
-		removeNeedsStrengtheningBox(); // Remove if there happens to be one.
-
-	if (options.crackedSkillsList && !noCrackedSkills)
-		displayNeedsStrengthening(crackedSkills, true); // There are cracked skills and the list is enabled.
-	else
-		removeCrackedSkillsList(); // Remove if there happens to be one.
-
-	if (
-		(fullyStrengthened && noCrackedSkills) ||
-		(!fullyStrengthened && !options.hideSuggestionNonStrengthened) ||
-		(!noCrackedSkills && !options.hideSuggestionWithCrackedSkills)
-	)
+	// Strength Bars
 	{
-		// Either a fully strengthened tree, or
-		// Not fully strengthened but still show suggestion, or
-		// There are cracked skills but still show suggestion
-		
-		if (options.skillSuggestion)
-			displaySuggestion(skills, fullyStrengthened, noCrackedSkills);
+		const strengths = getStrengths();
+
+		if (options.strengthBars)
+			addStrengthBars(strengths);
 		else
-			removeSuggestion(); // if there happens to be one
-	}
-	else
-	{
-		// Should not be displaying a suggestion.
-		removeSuggestion() // if there happens to be one
+			removeStrengthBars();
 	}
 
-	const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
-
-	if (options.practiseButton)
+	// XP Info
 	{
-		if (skillPopout != null && skillPopout.querySelector(`[data-test="practise-button"]`) == null)
-			addPractiseButton(skillPopout);
-		// Add each skill to childListObserver
-		document.querySelectorAll(`[data-test="skill"]`).forEach(
-			(skill) => {
-				childListObserver.observe(skill, {childList: true});
+		if (options.XPInfo)
+			displayXPBreakdown();
+		else
+			removeXPBoxes();
+	}
+
+	// Crowns Info
+	{
+		if (options.crownsInfo)
+			displayCrownsBreakdown();
+		else
+			removeCrownsBreakdown();
+	}
+
+	// Languages Info
+	{
+		if (options.languagesInfo)
+			displayLanguagesInfo(getLanguagesInfo());
+		else
+			removeLanguagesInfo();
+	}
+
+	// Lists of skills that need attention next
+	{
+		const needsStrengthening = getNeedsStrengthening();
+		const crackedSkills = getCrackedSkills();
+
+		const fullyStrengthened = (
+			needsStrengthening[0].length +
+			((options.showBonusSkillsInNeedsStrengtheningList) ? needsStrengthening[1].length : 0)
+		) == 0;
+
+		const noCrackedSkills = (
+			crackedSkills[0].length +
+			((options.showBonusSkillsInCrackedSkillsList) ? crackedSkills[1].length : 0)
+		) == 0;
+
+		if (options.needsStrengtheningList && !fullyStrengthened)
+			displayNeedsStrengthening(needsStrengthening); // Not fully strengthened and the list is enabled.
+		else
+			removeNeedsStrengtheningBox(); // Remove if there happens to be one.
+
+		if (options.crackedSkillsList && !noCrackedSkills)
+			displayNeedsStrengthening(crackedSkills, true); // There are cracked skills and the list is enabled.
+		else
+			removeCrackedSkillsList(); // Remove if there happens to be one.
+
+		if (
+			(fullyStrengthened && noCrackedSkills) ||
+			(!fullyStrengthened && !options.hideSuggestionNonStrengthened) ||
+			(!noCrackedSkills && !options.hideSuggestionWithCrackedSkills)
+		)
+		{
+			// Either a fully strengthened tree, or
+			// Not fully strengthened but still show suggestion, or
+			// There are cracked skills but still show suggestion
+			
+			if (options.skillSuggestion)
+				displaySuggestion(fullyStrengthened, noCrackedSkills);
+			else
+				removeSuggestion(); // if there happens to be one
+		}
+		else
+		{
+			// Should not be displaying a suggestion.
+			removeSuggestion() // if there happens to be one
+		}
+	}
+
+	// Practise and Words Button in skill popouts
+	{
+		const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
+
+		if (options.practiseButton || options.wordsButton)
+		{
+			if (skillPopout != null)
+			{
+				if (options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"]`) === null)
+				{
+					// Want practise button and there isn't one.
+					const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
+					if (introLesson == null || !introLesson.contains(skillPopout))
+					{
+						// No introduction lesson, or if there is this skillPopout isn't from that skill
+						addPractiseButton(skillPopout);
+					}
+				}
+
+				if (options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) === null)
+				{
+					// Want words button and there isn't one
+					addWordsButton(skillPopout);
+				}
+
+				if (options.grammarSkillsTestButton && skillPopout.querySelector(`[data-test="test-out-button"]`) === null)
+				{
+					// No testout button, might be a grammar skill and we want to add one.
+					addGrammarSkillTestOutButton(skillPopout);
+				}
 			}
-		);
+
+			// Add each skill to childListObserver
+			document.querySelectorAll(SKILL_SELECTOR).forEach(
+				(skill) => {
+					childListObserver.observe(skill, {childList: true});
+				}
+			);
+		}
+		if (!options.practiseButton)
+		{
+			// Don't want practise button, let's remove it if there is one there.
+			removePractiseButton();
+		}
+		if (!options.wordsButton)
+		{
+			// Don't want words button, let's remove it if there is one there.
+			removeWordsButton();
+		}
 	}
 
-	if (skillPopout != null)
-		skillPopout.scrollIntoView({block: "center"});
-
-	if (options.checkpointButtons)
+	// Redo checkpoint buttons on checkpoint popouts
 	{
-		const checkpointPopout = document.querySelector(CHECKPOINT_POPOUT_SELECTOR);
-		if (checkpointPopout != null)
-			addCheckpointButtons(checkpointPopout);
-		
-		// Add each checkpoint to childListObserver
-		document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR).forEach(
-			(checkpoint) => {
-				childListObserver.observe(checkpoint, {childList: true});
+		if (options.checkpointButtons)
+		{
+			if (document.querySelector(`[data-test="redo-test-button"]`) === null)
+			{
+				// Want checkpoint buttons and don't have any.
+				const checkpointPopout = document.querySelector(CHECKPOINT_POPOUT_SELECTOR);
+				const goldenOwlTrophy = document.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR);
+				if (checkpointPopout !== null)
+				{
+					// There is a normal checkpoint popout displayed, let's add the buttons to it.
+					addCheckpointButtons(checkpointPopout);
+				}
+				else if (goldenOwlTrophy !== null)
+				{
+					// The golden owl trophy congratulation message is displayed, let's add the buttons after the message.
+					const messageContainer = goldenOwlTrophy.nextElementSibling;
+					addCheckpointButtons(messageContainer, true);
+				}
 			}
-		);
+
+			
+			// Add each checkpoint to childListObserver.
+			document.querySelectorAll(CHECKPOINT_CONTAINER_SELECTOR).forEach(
+				(checkpoint) => {
+					childListObserver.observe(checkpoint, {childList: true});
+				}
+			);
+
+			// Add overlays to childListObserver to detect Golden Owl message.
+			childListObserver.observe(document.querySelector("#overlays"), {childList: true});
+		}
+		else
+		{
+			// Don't want the checkpoint point buttons, let's remove any that might exists
+			removeCheckpointButtons();
+		}
+	}
+
+	// Centre the view on any skill or checkpoint popout
+	{
+		const popout = document.querySelector(`[data-test="skill-popout"], ${CHECKPOINT_POPOUT_SELECTOR}`);
+		if (popout != null)
+			popout.scrollIntoView({block: "center"});
+	}
+
+	// Flag Borders in Language List
+	{
+		if (options.treeLevelBorder && document.querySelector(LANGUAGES_LIST_SELECTOR) != null)
+		{
+			addFlagBorders();
+		}
+		else
+		{
+			removeFlagBorders();
+		}
+	}
+
+	// Focus Mode
+	{
+		applyFocusMode();
+	}
+
+	// Fixed Sidebar
+	{
+		applyFixedSidebar();
 	}
 }
 
@@ -2721,7 +3966,7 @@ function httpGetAsync(url, responseHandler)
 					}
 				}
 			};
-			xmlHttp.open('GET', '${url+'?id='+requestID}', true);
+			xmlHttp.open('GET', '${url+'&DuoStrengthRequestId='+requestID}', true);
 			xmlHttp.send(null);
 		})()`;
 
@@ -2778,24 +4023,33 @@ async function handleDataResponse(responseText)
 	const newDataUICode = newUserData.ui_language;
 	const newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
 
-	if (language == '')
+	username = newUserData.username;
+
+	if (language === "" && !languageChanged)
 	{
-		// no lanuage set , then this must be the first load and we need to set the lanuage now.
+		// No lanuage set, then this must be the first load
+		// language hasn't changed so we can set the lanuage info now.
 		language = newDataLanguageString;
 		languageCode = newDataLanguageCode;
 		UICode = newDataUICode;
 	}
-	if (languageChangesPending > 1)
+
+	// Note if languageChanged on before the processing of the first data we won't set the language info.
+	if (languageChangesPending > 1 || language === "")
 	{
-		// Multiple language changes happened, we may have eneded up back where we started...
+		// Either multiple language changes or we changed before getting the first set of data.
+		//
+		// If multiple language changes happened, we may have eneded up back where we started...
 		// In this case, we set the language to unknown and request the data once more.
 		// This next set of data will be processed and added to the tree.
 		// There is a chance that this data still won't be up to date but the chances are low, hopefully...
+
 		language = 'unknown';
+		languageCode = 'unknown';
+		UICode = 'unknown';
 		requestData(); // async
 		languageChangesPending = 1;
 		return false;
-
 	}
 	if (languageChanged)
 	{
@@ -2812,7 +4066,7 @@ async function handleDataResponse(responseText)
 		}
 		else
 		{
-			// The string has updated so let's accept this as the data for the new language.
+			// The code pair has updated so let's accept this as the data for the new language.
 			userData = newUserData;
 
 			languageCode = newDataLanguageCode;
@@ -2821,9 +4075,11 @@ async function handleDataResponse(responseText)
 
 			resetLanguageFlags();
 
-			retrieveProgressHistory().then(updateProgress);
+			await retrieveProgressHistory();
+			updateProgress();
 
-			getStrengths();	// actual processing of the data.
+			usingOldData = false;
+			addFeatures(); // actual processing of the data.
 		}
 	}
 	else
@@ -2831,8 +4087,8 @@ async function handleDataResponse(responseText)
 		// No language change
 		if (newDataLanguageCode + newDataUICode != languageCode + UICode)
 		{
-			// But the language srting data has changed, this may be a response from an older but slower request
-			if (requestsPending == 0)
+			// But the language string data has changed, this may be a response from an older but slower request
+			if (requestsPending === 0)
 				requestData(); // Something isn't quite right so let's get some more data and see
 
 			return false;
@@ -2842,8 +4098,11 @@ async function handleDataResponse(responseText)
 			// Not a language change and the data is for the current language, just process it.
 			userData = newUserData;
 
-			retrieveProgressHistory().then(updateProgress);
-			getStrengths();
+			await retrieveProgressHistory()
+			updateProgress();
+
+			usingOldData = false;
+			addFeatures();
 		}
 	}
 }
@@ -2856,14 +4115,15 @@ function requestData()
 		if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
 		{
 			// If there is already userData and not changing language, display current data while requesting new data.
+			usingOldData = true;
 			getStrengths(userData);
 		}
 
 		httpGetAsync( // asks for data and async calls handle function when ready.
-			encodeURI(window.location.origin+"/users/"+username),
+			encodeURI(window.location.origin+"/api/1/users/show?id="+userId),
 			function (responseText, responseID)
 			{
-				if (languageChangesPending > 1 && responseID != requestID - 1)
+				if (responseID != requestID - 1)
 				{
 					// More than one changes took place before we could handle the data.
 					// Ordering of responses is not always the same as the ordering of the request,
@@ -2880,18 +4140,6 @@ function requestData()
 		);
 	});
 }
-
-/*
-Currently there is only one UI versions known to be in use.
-
-2019-08-01 the Daily goal box has been moved for some users to the side bar.
-This is just handled in the displayXPBreadown function.
-
-function checkUIVersion()
-{
-
-}
-*/
 
 function hideTranslationText(reveal = false, setupObserver = true)
 {
@@ -2919,8 +4167,24 @@ function hideTranslationText(reveal = false, setupObserver = true)
 			const hintSentence = challengeTranslatePrompt.querySelector('[data-test="hint-sentence"]');
 			
 
-			if (hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length != 0)
-				return false; // There is a new word, so we don't want to be hiding this sentence.
+			if (options.showNewWords && hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length != 0)
+			{
+				// There is a new word, so we don't want to be hiding this sentence.
+				hintSentence.style.filter = "none";
+				hintSentence.title = "";
+				const enableDisableButton = questionContainer.querySelector(`.hideTextEnableDisable`);
+				if (enableDisableButton !== null)
+				{
+					// Remove the enable disable button
+					const headerContainer = questionContainer.querySelector(`.hideTextEnableDisable`).parentNode;
+					const header = headerContainer.firstChild;
+					header.removeAttribute("style");
+					headerContainer.parentNode.insertBefore(header, headerContainer); // Move the header back to where it should be;
+					headerContainer.remove();
+				}
+
+				return false;
+			}
 
 			if (options.showTranslationText == false && reveal == false)
 			{
@@ -2945,7 +4209,17 @@ function hideTranslationText(reveal = false, setupObserver = true)
 							( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
 						)
 						{
+							// Reveal hokey has been hit,
+							// show the question text
 							hideTranslationText(true, false);
+							// and show an hint popovers
+							document.querySelectorAll(`[data-test="hint-popover"]`).forEach(
+								(hintBox) =>
+								{
+									hintBox.style["filter"] = "unset";
+								}
+							);
+							
 						}
 					};
 				}
@@ -2956,12 +4230,13 @@ function hideTranslationText(reveal = false, setupObserver = true)
 				hintSentence.title = "";
 			}
 
-			if (options.showToggleHidingTextButton)
+			let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
+
+			if (enableDisableButton.length == 0)
 			{
-				let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
-				if (enableDisableButton.length == 0)
+				// No enableDisableButton so make one and add it next to the question header if the option is enabled.
+				if (options.showToggleHidingTextButton)
 				{
-					// No enableDisableButton so make one and add it next to the question header
 					const headerContainer = document.createElement("div");
 					headerContainer.style =
 					`
@@ -2973,7 +4248,7 @@ function hideTranslationText(reveal = false, setupObserver = true)
 					`;
 
 					const questionHeader = questionContainer.querySelector(`[data-test="challenge-header"]`);
-					questionHeader.style.width = `fit-content`;
+					questionHeader.style.width = `max-content`;
 					questionHeader.parentNode.insertBefore(headerContainer, questionHeader);
 					headerContainer.appendChild(questionHeader);
 
@@ -3012,32 +4287,31 @@ function hideTranslationText(reveal = false, setupObserver = true)
 						hideTranslationText();
 					};
 
-					/*
-					if (questionArea.querySelectorAll(`[dir="ltr"]`).length > 0)
-					{
-						// LTR language, button goes to the right
-						enableDisableButton.style.float = "right";
-						enableDisableButton.style.marginLeft = "1em";
-					}
-					else if (questionArea.querySelectorAll(`[dir="rtl"]`).length > 0)
-					{
-						// RTL language, button goes to the left
-						enableDisableButton.style.float = "left";
-						enableDisableButton.style.marginRight = "1em";
-					}
-					
-					hintSentence.parentNode.insertBefore(enableDisableButton, hintSentence.nextSibling);
-					*/
-
 					headerContainer.appendChild(enableDisableButton);
 				}
-				else
+			}
+			else
+			{
+				// There is already an enableDisableButton.
+				if (options.showToggleHidingTextButton)
 				{
-					// There is already an enableDisableButton just update the text and function
+					// And it should be there, so just update the text and function
 
 					enableDisableButton = enableDisableButton[0];
 					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
 				}
+				else
+				{
+					// But we don't want it anymore
+					
+					const headerContainer = questionContainer.querySelector(`.hideTextEnableDisable`).parentNode;
+					const header = headerContainer.firstChild;
+					header.removeAttribute("style");
+					headerContainer.parentNode.insertBefore(header, headerContainer); // Move the header back to where it should be;
+					headerContainer.remove();
+
+				}
+				
 			}
 			return true;
 		}
@@ -3050,33 +4324,72 @@ function hideTranslationText(reveal = false, setupObserver = true)
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
-let childListMutationHandle = function(mutationsList, observer)
+function childListMutationHandle(mutationsList, observer)
 {
 	let rootChildReplaced = false;
+	let goldenOwlMessageAdded = false;
 	let rootChildContentsReplaced = false;
+	let rootChildRemovedNodes = [];
 	let mainBodyReplaced = false
-	let mainBodyContentsChanged = false ;
+	let bottomNavToggled = false;
 	let popupChanged = false;
 	let popupIcon;
-	let lessonLoaded = false;
+	let lessonMainSectionContentsReplaced = false;
 	let lessonQuestionChanged = false;
-	let lessonInputMethodChanged = false;
 	let skillRepaired = false;
 	let skillPopoutAdded = false;
 	let skillPopout;
 	let checkpointPopoutAdded = false;
 	let checkpointPopout;
+	let hintPopoverAdded = false;
 	
 	for (let mutation of mutationsList)
 	{
-		if (mutation.target == rootElem)
+		if (
+			mutation.target === rootElem
+			&&
+			(
+				(
+					mutation.addedNodes.length === 1
+					&& mutation.target.childElementCount === 1
+				)
+				|| onLoginPage
+			)
+		)
+		{
 			rootChildReplaced = true;
+		}
+		else if (
+			mutation.target.id === "overlays"
+			&& mutation.target.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR) !== null
+		)
+		{
+			goldenOwlMessageAdded = true;
+		}
 		else if (mutation.target == rootChild)
+		{
 			rootChildContentsReplaced = true;
+			rootChildRemovedNodes = rootChildRemovedNodes.concat(Array.from(mutation.removedNodes));
+		}
 		else if (mutation.target == mainBodyContainer)
+		{
 			mainBodyReplaced = true;
-		else if (mutation.target == mainBody)
-			mainBodyContentsChanged = true;
+		}
+		else if (
+			mutation.target.parentNode === rootChild
+			&&
+			(
+				[
+					...Array.from(mutation.addedNodes),
+					...Array.from(mutation.removedNodes)
+				].some(
+					(addedNode) => addedNode.className.includes(BOTTOM_NAV_SELECTOR.substring(1))
+				) // The bottom nav was added or removed
+			)
+		)
+		{
+			bottomNavToggled = true;
+		}
 		else if (
 			mutation.target.className == POPUP_ICON &&
 			mutation.addedNodes.length != 0
@@ -3085,19 +4398,26 @@ let childListMutationHandle = function(mutationsList, observer)
 			popupChanged = true;
 			popupIcon = mutation.target;
 		}
-		else if (mutation.target.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
-			lessonLoaded = true;
-		else if (mutation.target.parentNode.className == LESSON_MAIN_SECTION && mutation.addedNodes.length != 0)
+		else if (
+			mutation.target.className.includes(LESSON_MAIN_SECTION)
+			&& Array.from(mutation.removedNodes).some(node => `.${node.className}` === PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR)
+		)
+		{
+			lessonMainSectionContentsReplaced = true;
+		}
+		else if (mutation.target.parentNode.className.includes(LESSON_MAIN_SECTION) && mutation.addedNodes.length != 0)
+		{
 			lessonQuestionChanged = true;
-		else if (mutation.target.parentNode.parentNode.className.includes(QUESTION_CONTAINER))
-			lessonInputMethodChanged = true;
+		}
 		else if (
 			mutation.target.attributes.hasOwnProperty("data-test") &&
 			mutation.target.attributes["data-test"].value == "skill-icon" &&
 			mutation.removedNodes.length == 1 &&
 			`.${mutation.removedNodes[0].className}` == CRACKED_SKILL_OVERLAY_SELECTOR
 		)
+		{
 			skillRepaired = true;
+		}
 		else if (
 			mutation.target.getAttribute("data-test") == "skill" &&
 			mutation.addedNodes.length != 0 &&
@@ -3116,6 +4436,12 @@ let childListMutationHandle = function(mutationsList, observer)
 			checkpointPopoutAdded = true;
 			checkpointPopout = mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR);
 		}
+		else if (
+			Array.from(mutation.addedNodes).some((node) => node.getAttribute("data-test") === "hint-popover")
+		)
+		{
+			hintPopoverAdded = true;
+		}
 	}
 
 	if (rootChildReplaced)
@@ -3132,12 +4458,12 @@ let childListMutationHandle = function(mutationsList, observer)
 			languageChanged = false;
 			init();
 		}
-		else
+		else if (rootChild.childElementCount == 1)
 		{
 			// Entered a lesson in the normal way, through the skill tree.
-			// Need to set up observer on lessonMainSection for when the first question loads
-
-			childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0], {childList:true});
+			// Don't need to do anything here as when the lesson will be loading first.
+			// When it has finished loading the mainBody is replaced with the lesson sections.
+			// We are already observing for that change and will handle it.
 		}
 	}
 	else if (mainBodyReplaced)
@@ -3147,14 +4473,36 @@ let childListMutationHandle = function(mutationsList, observer)
 
 
 		// This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks.
-		// But also make sure that this page hasn't removed to top bar, if it has just stop.
+		// But also make sure that this page hasn't removed to top bar, if it has let's run init again to see what is going on.
 		if (document.body.contains(topBarDiv))
 			classNameMutationHandle(mutationsList, null);
 		else
-			return false;
+			init();
 	}
 
-	if (mainBodyContentsChanged)
+	if (goldenOwlMessageAdded)
+	{
+		const overlays = document.querySelector("#overlays");
+		const trophy = overlays.querySelector(GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR);
+		if (trophy != null)
+		{
+			// The golden owl has been clicked and the congratulation message is being displayed
+			const messageContainer = trophy.nextElementSibling;
+			// If the message is shown after coming out of a checkpoint redo
+			// then the languageCode may not be known yet.
+			if (languageCode != "")
+			{
+				// It is known so add the buttons.
+				addCheckpointButtons(messageContainer, true);
+			}
+			else
+			{
+				// It isn't known yet so we do nothing until it is loaded and the buttons will be added in addFeatures
+			}
+		}
+	}
+
+	if (bottomNavToggled)
 	{
 		// Switched between mobile and desktop layouts.
 
@@ -3163,7 +4511,14 @@ let childListMutationHandle = function(mutationsList, observer)
 		let desktopMargin = "0 0 2em 0";
 
 		let mobileWidth = "auto";
-		let desktopWidth = "calc(100% - 119px)";
+		let desktopWidth;
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+		{
+			const boxRightEdge = document.querySelector(`[data-test="skill-tree"]>div`).getBoundingClientRect().right;
+			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
+			const offset = boxRightEdge - buttonLeftEdge;
+			desktopWidth = `calc(100% - ${offset}px - 0.5em)`;
+		}
 
 		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
 		{
@@ -3173,9 +4528,9 @@ let childListMutationHandle = function(mutationsList, observer)
 			desktopWidth = "auto";
 		}
 
-		if (document.getElementsByClassName(SIDEBAR).length == 0)
+		if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
 		{
-			// No sidebar so we are in mobile layout.
+			// There is the bottom navigation bar so we are in the mobile layout.
 			inMobileLayout = true;
 
 			if (document.getElementById("strengthenBox") != null)
@@ -3194,11 +4549,10 @@ let childListMutationHandle = function(mutationsList, observer)
 				document.getElementById("fullStrengthMessageContainer").style.margin = mobileMargin;
 				document.getElementById("fullStrengthMessageContainer").style.width = mobileWidth;
 			}
-			
 		}
 		else
 		{
-			// There is a sidebar so we are in normal desktop layout.
+			// There is not a bottom navigation bar so we are in normal desktop layout.
 			inMobileLayout = false;
 
 			if (document.getElementById("strengthenBox") != null)
@@ -3219,11 +4573,23 @@ let childListMutationHandle = function(mutationsList, observer)
 				document.getElementById("fullStrengthMessageContainer").style.width = desktopWidth;
 			}
 			
-
-			// Try and add the XP box again as the sidebar has come back
-			if (options.XPInfo) displayXPBreakdown();
-			if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 		}
+
+		// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
+		setUpObservers();
+
+		// Try to re apply focus mode option
+		applyFocusMode();
+
+		// Try to re apply the fixed sidebar option
+		applyFixedSidebar();
+
+		// Try and add the Crowns and XP info in case the popups are there.
+		if (options.XPInfo) displayXPBreakdown();
+		if (options.crownsInfo) displayCrownsBreakdown();
+
+		// Try to add the languages info incase the sidebar has been added back.
+		if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());
 	}
 
 	if (popupChanged)
@@ -3236,7 +4602,7 @@ let childListMutationHandle = function(mutationsList, observer)
 			return false;
 		}
 
-		if (popupIcon.getElementsByClassName(GOLD_CROWN).length + popupIcon.getElementsByClassName(GREY_CROWN).length != 0) // WZkQ9 for gold crown logo, _3FM63 for grey when at 0 crowns.
+		if (popupIcon.getElementsByClassName(GOLD_CROWN).length != 0) // Grey crown doesn't seem to have its own class now, it has the same as gold.
 		{
 			// Crowns has had the change.
 			if (options.crownsInfo && popupIcon.lastChild.nodeName == 'DIV')
@@ -3250,7 +4616,12 @@ let childListMutationHandle = function(mutationsList, observer)
 			}
 		}
 
-		if (popupIcon.getElementsByClassName(COLOURED_FLAME).length +  popupIcon.getElementsByClassName(GREY_FLAME).length != 0) // _2ctH6 for coloured flame logo, _27oya for grey when not met day's XP goal.
+		if (
+			popupIcon.getElementsByClassName(LIT_FLAME).length
+			+ popupIcon.getElementsByClassName(GREY_FLAME).length
+			+ popupIcon.getElementsByClassName(BLUE_FLAME).length
+			!= 0
+		) // Lit flame for streak extended today, grey for not, blue possibly for frozen with duolingo plus?
 		{
 			// Streak/XP has had the change.
 			if (options.XPInfo && popupIcon.lastChild.nodeName == 'DIV')
@@ -3266,156 +4637,66 @@ let childListMutationHandle = function(mutationsList, observer)
 
 		if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null && options.treeLevelBorder)
 		{
-			// Get the progress saved for all languages and users, async
-			languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
-
-			languageProgressPromise.then(
-				(data) => {
-					// Go through each row in the language change list, if it is still there.
-					if (popupIcon.querySelector(LANGUAGES_LIST_SELECTOR) != null)
-						Array.from(popupIcon.querySelector(LANGUAGES_LIST_SELECTOR).querySelectorAll("._1vd9-")).forEach(
-							(container) => {
-								// There are two flags for each language, the first is the target language, the second is the base language.
-								const flag1 = container.firstChild;
-								const flag2 = flag1.nextElementSibling;
-								
-								// As the flags are all stored in one sprite sheet we determine which is displayed by the background positions.
-								const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
-								const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
-								
-
-								// Bbckground offsets in px as strings
-								const x1 = backgroundPosition1[0];
-								const y1 = backgroundPosition1[1];
-
-								const y2 = backgroundPosition2[1];
-								
-								// trim off px and make positive
-								const yOffset1 = Math.abs(parseInt(y1.slice(0,-2), 10));
-								const yOffset2 = Math.abs(parseInt(y2.slice(0,-2), 10));
-
-								// find the language code associated with those offsets
-								const code1 = flagYOffsets[yOffset1];
-								const code2 = flagYOffsets[yOffset2];
-
-								// height and width will need to be adjusted to account for the border that is to be added, so we save the original values
-								const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
-								const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
-						
-								langProgress = data.progress[`${username}${code1}${code2}`];
-
-								let color;
-								let treeLevel;
-								
-								if (langProgress == null)
-									treeLevel = 0;
-								else
-									treeLevel = langProgress[langProgress.length-1][1];
-
-								switch (treeLevel)
-								{
-									case 0:
-										color = "white";
-										break;
-									case 1:
-										color = BLUE;
-										break;
-									case 2:
-										color = GREEN;
-										break;
-									case 3:
-										color = RED;
-										break;
-									case 4:
-										color = ORANGE;
-										break;
-									case 5:
-										color = GOLD;
-										break;
-								}
-
-
-								flag1.style = 
-								`
-									border-color: ${color};
-									border-width: 4px;
-									border-style: solid;
-									border-radius: 10px;
-									background-position: calc(${x1} - 2px) calc(${y1} - 2px);
-									height: ${+height1 + 4}px;
-									width: ${+width1 + 4}px;
-								`;
-								
-								if (treeLevel == 5)
-								{
-									const crown = document.createElement("IMG");
-									crown.src = crownSrc;
-									crown.style = `
-										position: 	absolute;
-										left: 0;
-										bottom: 0;
-										width: 75%;
-										transform: translate(-50%, 50%);
-									`;
-									flag1.appendChild(crown);
-								}
-							}
-						);
-				}
-			);
+			// Language list added, add the flag borders
+			addFlagBorders();
 		}
 	}
 
-	if (lessonLoaded)
+	if (lessonMainSectionContentsReplaced)
 	{
-		// Question section loaded.
-
-		// Run check for translation type question
-		hideTranslationText();
-
-		document.getElementsByClassName(QUESTION_CONTAINER)[0].querySelectorAll(NEW_WORD_SELECTOR).forEach(newWord => newWord.click());
-
-		// Set up mutation observer for question change
-		childListObserver.observe(document.getElementsByClassName(LESSON_MAIN_SECTION)[0].firstChild, {childList:true});
-		
-		
-		// Set up mutation observer for question checked status change
-		const lessonBottomSection = document.getElementsByClassName(LESSON_BOTTOM_SECTION)[0];
-		classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
+		// Practice type selection as been made, we should now be on the first question,
+		// let's run init again to get everything set up for future question.
+		init();
 	}
-	
+
 	if (lessonQuestionChanged)
 	{
 		// Run check for translation type question
-
 		hideTranslationText();
 		document.getElementsByClassName(QUESTION_CONTAINER)[0].querySelectorAll(NEW_WORD_SELECTOR).forEach(newWord => newWord.click());
-	}
-	
-	if (lessonInputMethodChanged)
-	{
-		// Need to re run question hiding as the question box has been replaced.
-
-		hideTranslationText(undefined, false);
 	}
 	
 	if (skillRepaired)
 	{
-		getStrengths();
+		removeCrackedSkillsList();
+		requestData();
 	}
 	
 	if (skillPopoutAdded)
 	{
-		if (options.practiseButton) addPractiseButton(skillPopout);
+		const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
+		if (introLesson == null || !introLesson.contains(skillPopout))
+		{
+			// No introduction lesson, or if there is this skillPopout isn't from that skill
+			if (options.practiseButton) addPractiseButton(skillPopout);
+		}
+
+		if (options.wordsButton) addWordsButton(skillPopout);
+
+		if (options.grammarSkillsTestButton) addGrammarSkillTestOutButton(skillPopout);
 	}
 	
 	if (checkpointPopoutAdded)
 	{
 		if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);
 	}
+
+	if (hintPopoverAdded)
+	{
+		if (document.querySelector(`[data-test="hint-sentence"][style^="filter: blur"]`) !== null)
+		{
+			// We are hiding a sentence, so hide the translations
+			document.querySelectorAll(`[data-test="hint-popover"]`).forEach(
+				(hintBox) =>
+				{
+					hintBox.style["filter"] = "blur(0.3em)";
+				}
+			);
+		}
+	}
 };
 
-let classNameMutationHandle = function(mutationsList, observer)
+function classNameMutationHandle(mutationsList, observer)
 {
 	/*
 		First we go through all the mutations to check if any of them are a language change.
@@ -3455,7 +4736,7 @@ let classNameMutationHandle = function(mutationsList, observer)
 		removeNeedsStrengtheningBox();
 		removeCrackedSkillsList();
 		removeCrownsBreakdown();
-		removeXPBox();
+		removeXPBoxes();
 		removeSuggestion();
 		progress = [];
 		// now get the new data
@@ -3465,18 +4746,27 @@ let classNameMutationHandle = function(mutationsList, observer)
 	if (pageChanged)
 	{
 		// There has been a page change, either to or from the main page.
-		// Just in case there is also a language change still going on we won't set languageChanged to false.
+
 
 		// check if we are now on the main page
-		if (topBarDiv.childNodes[0].className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
+		if (window.location.pathname == "/learn")
 		{
 			// on main page
-			// check if language has been previously set as we only set it in init if we were on the main page
 			onMainPage = true;
+			
+			applyFocusMode();
+			applyFixedSidebar();
+
+			// check if language has been previously set as we only set it in init if we were on the main page
 			if (language != "")
 			{
 				// language has previously been set so not first time on main page, let's just get some new data.
 				requestData();
+
+				if (inMobileLayout)
+				{
+					setUpObservers(); // topBarDiv gets replaced when changing to the shop in mobile layout;
+				}
 			}
 			else
 			{
@@ -3513,8 +4803,102 @@ let classNameMutationHandle = function(mutationsList, observer)
 	}
 };
 
-let classNameObserver = new MutationObserver(classNameMutationHandle);
-let childListObserver = new MutationObserver(childListMutationHandle);
+function setUpObservers()
+{
+
+	// topBar Div is the direct container holding the navigation butons
+	// Safer to use class name, which may also change...
+	topBarDiv = rootChild.querySelector(`.${TOP_BAR}`);
+	const bottomNav = rootChild.querySelector(BOTTOM_NAV_SELECTOR);
+
+	// Declare nav buttons that we will need to observe
+
+	let homeNav;
+	let storiesNav;
+	// let discussionNav;
+	let shopNav;
+	// languageLogo declared globally for use outside init;
+	let crownNav;
+	let streakNav;
+
+	if (!inMobileLayout)
+	{
+		// In normal layout, with everything in the top bar.
+
+		let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
+		// if numNavButtons = 4 then there is no stories button.
+		// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+
+		homeNav = topBarDiv.childNodes[0];
+
+		if (numNavButtons == 5)
+		{
+			storiesNav = topBarDiv.childNodes[2];
+			/* unused/unusable
+			discussionNav = topBarDiv.childNodes[4];
+			*/
+			shopNav = topBarDiv.childNodes[6];
+			languageLogo = topBarDiv.childNodes[10];
+			crownNav = topBarDiv.childNodes[11];
+			streakNav = topBarDiv.childNodes[12];
+		}
+		else
+		{
+			/* unused/unusable
+			discussionNav = topBarDiv.childNodes[2];
+			*/
+			shopNav = topBarDiv.childNodes[4];
+			languageLogo = topBarDiv.childNodes[8];
+			crownNav = topBarDiv.childNodes[9];
+			streakNav = topBarDiv.childNodes[10];
+		}
+
+		// set up observers for page changes
+		classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
+		/* unused/unusable
+		classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
+		*/
+		classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
+	}
+	else
+	{
+		// In mobile layout with the bottom nav bar.
+		// topBarDiv contains langageLogo, crownNav, streakNav
+		// bottomNav contains homeNav, storiesNav, discussionNav, shopNav, profileNav,
+
+		homeNav = bottomNav.childNodes[1];
+		storiesNav = bottomNav.childNodes[2]; // Always a stories button in mobile layout.
+		/* unused/unusable
+		discussionNav = bottomNav.childNodes[3];
+		*/
+		shopNav = bottomNav.childNodes[4];
+
+		languageLogo = topBarDiv.childNodes[0];
+		crownNav = topBarDiv.childNodes[1];
+		streakNav = topBarDiv.childNodes[2];
+		
+		const homeImg = homeNav.querySelector(`img`);
+		const shopImg = shopNav.querySelector(`img`);
+		
+		classNameObserver.observe(homeImg, {attributes: true});
+		classNameObserver.observe(shopImg, {attributes: true});
+	}
+	
+
+	// set up observer for language logo popup
+	childListObserver.observe(languageLogo.lastChild, {childList: true});
+
+	// set up observers for crown and streak nav hovers
+	childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
+	childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
+
+	// need to set up Observer on language logo for language change detection
+	// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
+	classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+
+	// set up the observer to check for layout changes where the bottomNav might be added or removed
+	childListObserver.observe(topBarDiv.parentNode.parentNode, {childList: true});
+}
 
 async function init()
 {
@@ -3529,9 +4913,26 @@ async function init()
 	rootChild = rootElem.childNodes[0];
 	childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
 	
-	mainBodyContainer = rootChild.lastChild;
-	if (mainBodyContainer == null)
-		return false;
+	if (rootChild.querySelector(`:scope > [data-focus-guard]`) != null)
+	{
+		// The golden owl message is being displayed.
+		// This means that the mainBodyCointainer is just before these new elements as the second child of rootChild
+		mainBodyCointainer = rootChild.querySelector(`:scope > [data-focus-guard]`).previousElementSibling;
+	}
+	else if((/^\/courses/).test(window.location.pathname))
+	{
+		// On the courses page, here the main body container is the first child of rootChild for some reason.
+		mainBodyContainer = rootChild.firstChild;
+		if (mainBodyContainer == null)
+			return false;
+	}
+	else
+	{
+		mainBodyContainer = rootChild.lastChild;
+		if (mainBodyContainer == null)
+			return false;
+
+	}
 
 	childListObserver.observe(mainBodyContainer, {childList:true}); // Observing for changes to its children to detect if the mainBody element has been replaced.
 
@@ -3540,9 +4941,7 @@ async function init()
 	if (mainBody == null)
 		return false;
 	
-	childListObserver.observe(mainBody,{childList:true}); // Observing for changes to its children to detect moving between mobile and desktop layout.
-	
-	if (mainBody.getElementsByClassName(SIDEBAR).length == 0)
+	if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
 		inMobileLayout = true;
 	else
 		inMobileLayout = false;
@@ -3551,26 +4950,100 @@ async function init()
 	{
 		// On login page so cannot continue to run rest of init process.
 		onMainPage = false;
+		onLoginPage = true;
 		return false;
 	}
 	else
 	{
 		// should be logged in
+		onLoginPage = false;
+
 		// now test to see if we are in a lesson or not
 
 		if (rootChild.firstChild.className == LESSON)
 		{
 			// in a lesson
-			// we probably got here from a link in the needs strengthenin list
+			// we probably got here from a link in the needs strengthening list or from a practiseButton
 
 			onMainPage = false;
 
-			const lessonMainSection = document.getElementsByClassName(LESSON_MAIN_SECTION)[0];
+			// On first load there is loading animation as the mainBody,
+			// we are already observing for if this is replaced,
+			// so on first call nothing will happen, but init will be called again when the lesson sections are loaded.
+			//
+			// We still do need to add the observer to the lesson main section when it has loaded in order to detect question changes
 
-			// There is a loading animation inside lessonMainSection before the first question,
-			// so let's add a childList mutaion observer to lessonMainSection and run the checks then.
+			const lessonMainSection = document.querySelector(`.${LESSON_MAIN_SECTION}`);
 
-			childListObserver.observe(lessonMainSection, {childList: true});
+			if (lessonMainSection !== null)
+			{
+				// We have a main section.
+
+				// We are into the questions so let's observe the lessonMainSection's first child's children to watch for when the question changes.
+
+				childListObserver.observe(lessonMainSection.firstChild, {childList: true});
+
+				// Set up mutation observer for question checked status change.
+				const lessonBottomSection = document.querySelector(`.${LESSON_BOTTOM_SECTION}`);
+				classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
+			}
+			else
+			{
+				// No main section, so not in the question yet, we will possibly need to set up another observer for when we enter the questions
+
+				// Now check if we are on the selection practice type selection screen
+				const practiceTypeSelectMessage = document.querySelector(PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR); // Would be first (and only) child if exists
+
+				if (practiceTypeSelectMessage !== null)
+				{
+					// On timed/untimed practice selection screen.
+					// We need to observe lessonMainSection as its children get replaced when the practice type is selected.
+					
+					childListObserver.observe(practiceTypeSelectMessage.parentNode, {childList: true});
+				}
+			}
+
+			await optionsLoaded;
+			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
+
+			lastSkill = await retrieveLastSkill();
+			const pageUrl = window.location.href;
+			let currentUrlNotStored = true;
+			{
+				const somethingIsStored = lastSkill != null;
+				if (somethingIsStored && lastSkill.urlTitle != null)
+				{
+					// Stored last skill was a practice session or a grammar test out.
+					if (
+						pageUrl.includes(`/${lastSkill.urlTitle}/practice`)
+						|| pageUrl.includes(`/${lastSkill.urlTitle}/test`)
+					)
+					{
+						// The current url matches up with the practice session stored.
+						currentUrlNotStored = false;
+					}
+				}
+
+				if (somethingIsStored && lastSkill.checkpointNumber != null)
+				{
+					// Stored last skill was a checkpoint
+					if (pageUrl.includes(`/${lastSkill.checkpointNumber}`))
+					{
+						// The current url matched up with the checkpoint stored.
+						currentUrlNotStored = false;
+					}
+				}
+			}
+
+			if (currentUrlNotStored)
+			{
+				// The lesson we have just entered does not match the lastSkill that was stored.
+				// We must have closed duolingo before it could be cleared properly after the lesson
+				// Let's clear this up now.
+				chrome.storage.sync.remove("lastSkill");
+				lastSkill = undefined;
+			}
+
 		}
 		else
 		{
@@ -3582,7 +5055,7 @@ async function init()
 				So it is enough to just test for the number of children of rootChild to check for a topBarDiv.
 			*/
 
-			if (rootChild.childElementCount == 1)
+			if (rootChild.childElementCount === 1)
 			{
 				// no topBarDiv so nothing left to do
 				onMainPage = false;
@@ -3592,92 +5065,27 @@ async function init()
 			{
 				// there is a topBarDiv so we can continue to process the page to workout what to do
 
-				// set username via the href of a link to the profile
-				let profileTabHrefParts = document.querySelector("[data-test = \"profile-tab\"]").href.split("/");
-				username = profileTabHrefParts[profileTabHrefParts.length - 1];
 
-				// topBar Div is the direct container holding the navigation butons, has class _3F_8q
-				// old method topBarDiv = dataReactRoot.childNodes[2].childNodes[1].childNodes[2].childNodes[0];
-				// Above works as of 2019-06-11 but any new elements will cause childNodes indices to be wrong.
-				// Safer to use class name, which may also change...
-				// Note there are two elements with class name _3F_8q, the first is the right one, but let's do a check in case of any changes.
-				topBarDiv = rootChild.getElementsByClassName(TOP_BAR)[0];
-				mobileTopBarDiv = rootChild.getElementsByClassName(TOP_BAR)[1];
-				
-				// active tab has class _2lkuX. Buttons seem to have _3MT82 as defining class.
-				let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
-				// if numNavButtons = 4 then there is no stories button.
-				// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+				// Get user id from the pages cookies, it is stored under the key logged_out_uuid
+				userId = document.cookie.split("; ")
+										.find(cookie => cookie.startsWith("logged_out_uuid"))
+										.split("=")[1];
 
-				let homeNav = topBarDiv.childNodes[0];
+				setUpObservers();
 
-				let storiesNav;
-				// let discussionNav;
-				let shopNav;
-				let crownNav;
-				let streakNav;
-
-				if (numNavButtons == 5)
-				{
-					storiesNav = topBarDiv.childNodes[2];
-					/* unused/unusable
-					discussionNav = topBarDiv.childNodes[4];
-					*/
-					shopNav = topBarDiv.childNodes[6];
-					languageLogo = topBarDiv.childNodes[10];
-					crownNav = topBarDiv.childNodes[11];
-					streakNav = topBarDiv.childNodes[12];
-				}
-				else
-				{
-					/* unused/unusable
-					discussionNav = topBarDiv.childNodes[2];
-					*/
-					shopNav = topBarDiv.childNodes[4];
-					languageLogo = topBarDiv.childNodes[8];
-					crownNav = topBarDiv.childNodes[9];
-					streakNav = topBarDiv.childNodes[10];
-				}
-				
-				// set up observers for page changes
-				classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
-				/* unused/unusable
-				classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
-				*/
-				classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
-
-				// set up observer for language logo popup
-				childListObserver.observe(languageLogo.lastChild, {childList: true});
-
-				// set up observers for crown and streak nav hovers
-				childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
-				childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
-
-				if (homeNav.className.includes(ACTIVE_TAB) || window.location.pathname == "/learn")
-				{
-					// Seems as though the main page is now at /learn and the tab is not active, but we leave the check in case
-					// on home page
-					onMainPage = true;
-				}
-				else
-					onMainPage = false;
-
-				// need to set up Observer on language logo for language change detection
-				// The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
-				classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+				onMainPage = window.location.pathname === "/learn"
 
 				/*
-				language = document.head.getElementsByTagName("title")[0].textContent.split(" ")[3]; // not sure how well this will work if not using english as the UI language. Needs more work.
-				
-				language seems to be quite difficult to set on first load, on the white topbar UI, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
-				We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
-				
+					language seems to be quite difficult to set on first load, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
+					We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
+					
 
-				Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
+					Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
 				*/
 
 				await optionsLoaded;
 
+				// League hiding
 				if (document.getElementsByClassName(LEAGUE_TABLE).length != 0)
 				{
 					if (options.showLeagues)
@@ -3686,10 +5094,18 @@ async function init()
 						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
 				}
 
-				const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
+				// Focus mode - sidebar hiding
+				applyFocusMode();
 
-				if (skillPopout != null)
-					skillPopout.scrollIntoView({block: "center"});
+				// Fixed sidebar
+				applyFixedSidebar();
+
+				await openLastSkillPopout();
+
+				const popout = document.querySelector(`[data-test="skill-popout"], ${CHECKPOINT_POPOUT_SELECTOR}`);
+
+				if (popout != null)
+					popout.scrollIntoView({block: "center"});
 
 				// Done all the prep we need, let's get some data to process
 				requestData();
@@ -3698,12 +5114,8 @@ async function init()
 	}
 }
 
-window.onunload = function()
-{
-	chrome.runtime.sendMessage({type: "pageClosed"});
-}
 
-document.body.onload = function()
+function start()
 {
 	chrome.runtime.sendMessage({type: "showPageAction"});
 	chrome.runtime.onMessage.addListener(
@@ -3717,4 +5129,184 @@ document.body.onload = function()
 	init();
 }; // call function to start display sequence on first load
 
+window.onunload = function()
+{
+	chrome.runtime.sendMessage({type: "pageClosed"});
+}
+
+if (document.readyState === "complete" || document.readyState === "interactive")
+{
+	start()
+}
+else
+{
+	document.addEventListener("DOMContentLoaded", start);
+}
+
 //observer.disconnet(); can't disconnect as always needed while page is loaded.
+
+/*
+The structure of page is as follows:
+<body>
+	...
+	<div id="root" onclick="">                                                                                                <-- rootElem
+		<div>                                                                                                                 <-- rootChild
+			<div>
+				<div class="_2ofx2" style="opacity: 0; width: 100%;"></div>
+				<div class="_14fD_" style="z-index: 210;"></div>
+				<div class="_3qbk_ _1K9ZC" style="z-index: 210;">
+					<div class="_3HW_7 _14fD_" style="z-index: 210101;"></div>
+					<div class="_3TwVI">...</div>                                                                            <-- topBarDiv
+				</div>
+			</div>
+			<div class="_3W86r _1Xlh1">                                                                                      <-- mainBodyContainer
+				<div>                                                                                                        <-- mainBody
+					<div class="_2Rpqh _36g-h _1VSis _1xa0a"></div>
+					<div class="_1YfQ8">...</div>                                                                            <-- sidebar
+					<div>                                                                                                    <-- main section
+						<div class="_33Mo9">
+							<div class="_2PVaI">
+								<div data-test="skill-tree" class="_3ZJK8">
+									<div class="_2joxc" style="height: auto; width: 100%; z-index: 1;">
+										################################                                                     <-- lists go here
+									</div>
+									<div class="_3YEom">                                                                     <-- Skill Tree
+										<div class="_3uC-w _2PUpL" data-test="tree-section">                                 <-- Tree Section
+											<div class="AjBUV">                                                              <-- Rows container
+												<div class="_3f9ou">                                                         <-- Skill row
+													<div class="_9O-0s _1888P" data-test="skill">                            <-- Skill container
+														<div class="_2eeKH" tabindex="0">
+															<div class="_3TK8W" style="width: 100%;">
+																<div class="_6lk-i">                                         <-- skill graphcis container
+																	<div class="_15U-t">
+																		<div class="_2rKNN">...</div>                        <-- Contains progress ring
+																		<div class="_3Sv-w" data-test="skill-icon">...</div> <-- Skill icon container
+																		<div class="_17NNA">.../div>                         <-- Skill crown count container
+																	</div>
+																</div>
+																#######################################                      <-- Strength Bar inserted here
+																<div class="Mr3if _2OhdT _1V15X _3PSt5">SKILL NAME</div>     <-- Skill name element
+															</div>
+														</div>
+													######## Only after clicking a skill ###################################################################
+													#	<div class="_33-99" data-test="skill-popout">                        <-- Popout container
+													#		<div class="_3tWnW _3_Gei _1W3aa _1kf1N">
+													#			<div class="_1b8Ja _1GJUD _3lagd SSzTP _1JPPG">
+													#				<div class="_1cv-y">                                     <-- Small buttons container
+													#					######################################               <-- Words list button goes here
+													#					<button>...</button>                                 <-- Test out button
+													#				</div>
+													#				<div class="_1cv-y"></div>
+													#				<div class="QowCP">
+													#					<div class="_1m77f">Level x/5</div>
+													#					<div class="_3L5UX">Lesson y / z</div>
+													#				</div>
+													#				<div class="_2I_Id">
+													#					<button class="_2aoiN _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt" data-test="tips-button">Tips</button>
+													#					<button class="twkSI _25Mqa whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN UCrz7 yTpGk" data-test="start-button">Start Lesson</button>
+													#				</div>
+													#				#####################################                    <-- Practise Button goes here
+													#			</div>
+													#			<div class="_37dAC">...</div>                                <-- Popout bubble arrow
+													#		</div>
+													#	</div>
+													########################################################################################################
+													</div>
+													<div class="_9O-0s _1888P" data-test="skill">...</div>                   <-- Skill container
+												</div>
+												<div class="_3f9ou">                                                         <-- Skill row
+												<div class="_3f9ou">                                                         <-- Skill row
+												<div class="_3Sis0">                                                         <-- Bonus Skill row seperator
+													<hr class="_3snoK">
+												</div>
+												<div class="_3f9ou">                                                         <-- Skill row
+												<div class="_3Sis0">                                                         <-- Bonus Skill row seperator
+													<hr class="_3snoK">
+												</div>
+												<div class="_3f9ou">                                                         <-- Skill row
+												<div class="_3f9ou">                                                         <-- Skill row
+												.
+												.
+												.
+											</div>
+											.
+											.
+											.
+										</div>
+										<div class="_2tZPV">                                                                 <-- Checkpoint row
+											<div class="_1dj9x">
+												<div class="_3lFil">                                                         <-- Checkpoint hr container
+													<hr class="_3snoK">
+												</div>
+												<div>
+													<div class="_1lAog">                                                     <-- Checkpoint container
+														<div class="_2eeKH _2siHl _17vI2 Dsx7N" tabindex="0">
+															<div class="_2dJxv _3suMX" data-test="checkpoint-badge">         <-- Checkpoint
+																<img ... />
+																<div class="qU_Uq">...</div>                                 <-- Checkpoint number container
+															</div>
+														</div>
+													########################## Only Added if checkpoint is clicked on #######################################
+													#	<div class="_2WTbQ _3woYR">                                          <-- Checkpoint popout container
+													#		<div class="_3tWnW _3_Gei _1W3aa _2ShHS">
+													#			<div class="_1b8Ja BnUip _3Gx6D">                            <-- Checkpoint popout content
+													#				<div class="_1peXy">Checkpoint Complete!</div>
+													#				<div class="_32Tdp">DESCRIPTION</div>                    <-- Checkpoint blurb
+													#				<button 
+													#					class="_1yruo _25Mqa whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN UCrz7 yTpGk"
+													#					data-test="checkpoint-start-button"
+													#				>
+													#					Practice +10 XP
+													#				</button>
+													#				############################################             <-- Retry Crown 1 Test Out Button added here
+													#			</div>
+													#			<div class="_37dAC">
+													#				<div class="_2j-Sn _3Gx6D"></div>
+													#			</div>
+													#		</div>
+													#	</div>
+													########################################################################################################
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="_3uC-w _2PUpL" data-test="tree-section">...</div>                        <-- Tree Section
+										<div class="_2tZPV">...</div>                                                        <-- Checkpoint row
+										<div class="_3uC-w _2PUpL" data-test="tree-section">...</div>                        <-- Tree Section
+										<div class="_2tZPV">...</div>                                                        <-- Checkpoint row
+										.
+										.
+										.
+										<div class="_3uC-w">                                                                 <-- Locked tree section
+											<div class="GVcJz _1jKFt"></div>
+											<div class="AjBUV _3M0r3">...</div>                                              <-- Grey rows container
+										</div>
+										<div class="_2tZPV">...</div>                                                        <-- Checkpoint row
+										<div class="_3uC-w">...</div>                                                        <-- Locked tree section
+										.
+										.
+										.
+										<div class="lIg1v _1TSHz _1G1lu _1MrEd"></div>                                       <-- Golden Owl Tophy would replace last checkpoint row
+									</div>
+									<div class="_1fnwn">                                                                     <-- Overlayed buttons container
+										<div class="_3yqw1 np6Tv">...</div>                                                  <-- Try Plus Button Container
+										<div class="_3NYLT"></div>
+										<div class="_2TTO0 np6Tv">...</div>                                                  <-- Global Practice Button Container
+									</div>
+								</div>
+							</div>
+							<div class="_3ky4c">...</div>                                                                    <-- Footer Container
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>...</script>
+	<script>...</script>
+	.
+	.
+	.
+	####################                                                                                                     <-- XHR scripts appended here
+</body>
+*/

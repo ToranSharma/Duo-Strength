@@ -4150,17 +4150,31 @@ function revealNewWord()
 		muteScript.id = "muteScript";
 		muteScript.textContent =
 		`
-			const originalHowlPlay = window.Howl.prototype.play;
-			window.Howl.prototype.play =
-			function (id)
 			{
-				console.dir(this);
-				this._muted = true;
-				const ret = originalHowlPlay.call(this, id);
-				window.Howl.prototype.play = originalHowlPlay;
-				return ret;
+				const originalHowlPlay = window.Howl.prototype.play;
+				const howlCalls = [];
+				window.Howl.prototype.play =
+				function (id)
+				{
+					howlCalls.push([this,id]);
+					if (howlCalls.length === 2)
+					{
+						let sentence = howlCalls[0];
+						if (howlCalls[1][0]._duration > sentence[0]._duration)
+						{
+							sentence = howlCalls[1];
+						}
+						const ret = originalHowlPlay.call(...sentence);
+						window.Howl.prototype.play = originalHowlPlay;
+						document.querySelector("#muteScript").remove();
+						return ret;
+					}
+					else
+					{
+						return null;
+					}
+				}
 			}
-			document.querySelector("#muteScript").remove();
 		`;
 		document.body.appendChild(muteScript);
 		newWord.click();

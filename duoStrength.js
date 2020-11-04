@@ -164,6 +164,7 @@ function retrieveOptions()
 							"revealHotkeyCode":							"Ctrl+Alt+H",
 						"showNewWords":								true,
 					"showToggleHidingTextButton":				true,
+					"revealNewWordTranslation":					true,
 					"showLeagues":								true,
 					"focusMode":								false,
 					"focusModeButton":							true,
@@ -4144,7 +4145,7 @@ function requestData()
 function revealNewWord()
 {
 	const newWord = document.querySelector(`.${QUESTION_CONTAINER} `+NEW_WORD_SELECTOR);
-	if (newWord !== null)
+	if (options.revealNewWordTranslation && newWord !== null)
 	{
 		const muteScript = document.createElement("script");
 		muteScript.id = "muteScript";

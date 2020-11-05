@@ -64,6 +64,7 @@ const BOTTOM_NAV_SELECTOR = "._3oP45";
 const CROWN_TOTAL_SELECTOR = "._1HHlZ._3F5mM, ._12yJ8._3F5mM";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 const SKILL_ROW_SELECTOR = "._3f9ou";
+const SKILL_TREE_SELECTOR = "._3YEom";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -3611,7 +3612,135 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		if (options.focusFirstSkill) container.querySelector(`a`).focus();
 	}
 }
+function showOnlyNeededSkills()
+{
+	// First make sure all skills are visible.
+	document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}`).forEach(
+		(element) =>
+		{
+			element.removeAttribute("style");
+		}
+	);
+	// Remove existing reveal button
+	document.querySelectorAll(`#revealHiddenSkillsButton`).forEach(button => button.remove());
 
+	if (options.showOnlyNeededSkills)
+	{
+		const needsStrengthening = getNeedsStrengthening();
+		const crackedSkills = getCrackedSkills();
+
+		const needsAttention = needsStrengthening[0].concat(crackedSkills[0],needsStrengthening[1],crackedSkills[1]);
+
+		const skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR));
+		const allSkills = userData.language_data[languageCode].skills.concat(userData.language_data[languageCode].bonus_skills);
+		const needsAttentionElements = [];
+
+		needsAttention.forEach(
+			(skill) =>
+			{
+				const sameNamedSkills = skillElements.filter(element => element.querySelector(SKILL_NAME_SELECTOR).textContent === skill.short);
+				let index = 0;
+				if (sameNamedSkills.length !== 1)
+				{
+					index = allSkills.filter(skillObject => skillObject.short === skill.short).findIndex(skillObject => skillObject.url_title === skill.url_title);
+				}
+
+				needsAttentionElements.push(sameNamedSkills[index]);
+			}
+		);
+
+		const hiddenStyle =
+		`
+			display: none;
+			visibility: hidden;
+		`;
+
+		let numHiddenSkills = 0;
+
+		skillElements.forEach(
+			(element) =>
+			{
+				if (!needsAttentionElements.includes(element))
+				{
+					element.style = hiddenStyle;
+					++numHiddenSkills;
+				}
+				else
+				{
+					element.removeAttribute("style");
+				}
+			}
+		);
+
+		document.querySelectorAll(`${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}`).forEach(
+			(container) =>
+			{
+				const skillsInContainer = container.querySelectorAll(SKILL_SELECTOR);
+				if (!Array.from(skillsInContainer).some(skillElement=>skillElement.getAttribute("style") === null))
+				{
+					container.style = hiddenStyle;
+
+					if (container.previousElementSibling !== null
+						&& container.previousElementSibling.className.includes(BONUS_SKILL_DIVIDER_SELECTOR.slice(1)))
+					{
+						container.previousElementSibling.style = hiddenStyle;
+						container.nextElementSibling.style = hiddenStyle;
+					}
+				}
+			}
+		);
+
+		document.querySelectorAll(CHECKPOINT_SECTION_SELECTOR).forEach(
+			(element) =>
+			{
+				element.style = hiddenStyle;
+			}
+		);
+
+
+		// Add button to reveal hidden skills
+		const revealButton = document.createElement("button");
+		revealButton.addEventListener("click",
+			(event) =>
+			{
+				options.showOnlyNeededSkills = false;
+				showOnlyNeededSkills();
+			}
+		);
+		revealButton.id = "revealHiddenSkillsButton";
+		revealButton.style =
+		`
+			background-color: ${LIGHT_BLUE};
+			color: white;
+			border-radius: 8px;
+			padding: 6px 8px;
+			border: 0;
+			border-bottom: 4px solid ${DARK_BLUE};
+
+			font-size: 15px;
+			line-height: 20px;
+			font-weight: 700;
+			letter-spacing: 0.8px;
+			text-transform: uppercase;
+		`;
+		const md = (event) =>
+		{
+			event.target.style["marginTop"] = "4px";
+			event.target.style["borderBottom"] = "0";
+		}
+		const ml = (event) =>
+		{
+			event.target.style["marginTop"] = "0";
+			event.target.style["borderBottom"] = `4px solid ${DARK_BLUE}`;
+		}
+
+		revealButton.addEventListener("mousedown", md);
+		revealButton.addEventListener("mouseleave", ml);
+		revealButton.textContent = `Reveal ${numHiddenSkills} Hidden Skill${numHiddenSkills === 1 ? "" : "s"}`;
+
+		document.querySelector(SKILL_TREE_SELECTOR).appendChild(revealButton);
+	}
+}
 function getStrengths()
 {
 	const strengths = [[],[]]; // first array holds strengths for normal skills, second for bonus skills
@@ -3821,83 +3950,7 @@ function addFeatures()
 
 	// Show only skills that need attention in the tree
 	{
-		// First make sure all skills are visible.
-		document.querySelectorAll(SKILL_SELECTOR).forEach(
-			(element) =>
-			{
-				element.removeAttribute("style");
-			}
-		);
-
-		if (options.showOnlyNeededSkills)
-		{
-			const needsStrengthening = getNeedsStrengthening();
-			const crackedSkills = getCrackedSkills();
-
-			const needsAttention = needsStrengthening[0].concat(crackedSkills[0],needsStrengthening[1],crackedSkills[1]);
-
-			const skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR));
-			const allSkills = userData.language_data[languageCode].skills.concat(userData.language_data[languageCode].bonus_skills);
-			const needsAttentionElements = [];
-
-			needsAttention.forEach(
-				(skill) =>
-				{
-					const sameNamedSkills = skillElements.filter(element => element.querySelector(SKILL_NAME_SELECTOR).textContent === skill.short);
-					let index = 0;
-					if (sameNamedSkills.length !== 1)
-					{
-						index = allSkills.filter(skillObject => skillObject.short === skill.short).findIndex(skillObject => skillObject.url_title === skill.url_title);
-					}
-
-					needsAttentionElements.push(sameNamedSkills[index]);
-				}
-			);
-
-			const hiddenStyle =
-			`
-				display: none;
-				visibility: hidden;
-			`;
-			skillElements.forEach(
-				(element) =>
-				{
-					if (!needsAttentionElements.includes(element))
-					{
-						element.style = hiddenStyle;
-					}
-					else
-					{
-						element.removeAttribute("style");
-					}
-				}
-			);
-
-			document.querySelectorAll(`${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}`).forEach(
-				(container) =>
-				{
-					const skillsInContainer = container.querySelectorAll(SKILL_SELECTOR);
-					if (!Array.from(skillsInContainer).some(skillElement=>skillElement.getAttribute("style") === null))
-					{
-						container.style = hiddenStyle;
-
-						if (container.previousElementSibling !== null
-							&& container.previousElementSibling.className.includes(BONUS_SKILL_DIVIDER_SELECTOR.slice(1)))
-						{
-							container.previousElementSibling.style = hiddenStyle;
-							container.nextElementSibling.style = hiddenStyle;
-						}
-					}
-				}
-			);
-
-			document.querySelectorAll(CHECKPOINT_SECTION_SELECTOR).forEach(
-				(element) =>
-				{
-					element.style = hiddenStyle;
-				}
-			);
-		}
+		showOnlyNeededSkills();
 	}
 
 	// Practise and Words Button in skill popouts

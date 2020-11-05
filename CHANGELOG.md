@@ -12,6 +12,9 @@ full width.
 - Button next to suggestion link, to open that skill's popout bubble.
 - Option to make sidebar fixed when scrolling down the page, and hidden content
 scrollable.
+- Option to only show skills in the tree that need to be addressed. This means
+cracked skills, skills that need stengthening, or a suggested skill to practise
+next.
 
 [v1.3.37] - 2020-10-26
 -----------------

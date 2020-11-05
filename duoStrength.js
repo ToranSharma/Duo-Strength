@@ -3817,6 +3817,64 @@ function addFeatures()
 		}
 	}
 
+	// Show only skills that need attention in the tree
+	{
+		if (options.showOnlyNeededSkills)
+		{
+			const needsStrengthening = getNeedsStrengthening();
+			const crackedSkills = getCrackedSkills();
+
+			const needsAttention = needsStrengthening[0].concat(crackedSkills[0],needsStrengthening[1],crackedSkills[1]);
+
+			const skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR));
+			const allSkills = userData.language_data[languageCode].skills.concat(userData.language_data[languageCode].bonus_skills);
+			const needsAttentionElements = [];
+
+			needsAttention.forEach(
+				(skill) =>
+				{
+					const sameNamedSkills = skillElements.filter(element => element.querySelector(SKILL_NAME_SELECTOR).textContent === skill.short);
+					let index = 0;
+					if (sameNamedSkills.length !== 1)
+					{
+						index = allSkills.filter(skillObject => skillObject.short === skill.short).findIndex(skillObject => skillObject.url_title === skill.url_title);
+					}
+
+					needsAttentionElements.push(sameNamedSkills[index]);
+				}
+			);
+
+			skillElements.forEach(
+				(element) =>
+				{
+					if (!needsAttentionElements.includes(element))
+					{
+						element.style =
+						`
+							display: none;
+							visibility: hidden;
+						`;
+					}
+					else
+					{
+						element.removeAttribute("style");
+					}
+				}
+			);
+		}
+		else
+		{
+			// Make sure all skills are visible.
+			document.querySelectorAll(SKILL_SELECTOR).forEach(
+				(element) =>
+				{
+					element.removeAttribute("style");
+				}
+			);
+		}
+
+	}
+
 	// Practise and Words Button in skill popouts
 	{
 		const skillPopout = document.querySelector(`[data-test="skill-popout"]`);

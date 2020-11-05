@@ -107,6 +107,8 @@ let inMobileLayout;
 
 let lastSkill;
 
+let questionNumber = 1;
+
 const classNameObserver = new MutationObserver(classNameMutationHandle);
 const childListObserver = new MutationObserver(childListMutationHandle);
 
@@ -164,6 +166,7 @@ function retrieveOptions()
 							"revealHotkeyCode":							"Ctrl+Alt+H",
 						"showNewWords":								true,
 					"showToggleHidingTextButton":				true,
+					"revealNewWordTranslation":					true,
 					"showLeagues":								true,
 					"focusMode":								false,
 					"focusModeButton":							true,
@@ -4141,6 +4144,102 @@ function requestData()
 	});
 }
 
+function revealNewWord()
+{
+	const questionContainer = document.querySelector(`.${QUESTION_CONTAINER}`);
+	// There are two question containers when chaning question, the first is the new one, which is selected above.
+	if (questionContainer === null)
+	{
+		return false;
+	}
+
+	const newWord = questionContainer.querySelector(NEW_WORD_SELECTOR);
+	if (options.revealNewWordTranslation && newWord !== null)
+	{
+		const muteScript = document.createElement("script");
+		muteScript.id = "muteScript";
+		muteScript.textContent =
+		`
+			{
+				const numCallsExpected = ${(questionNumber === 1) ? 2 : 1};
+				let howlCallCount = 0;
+				const originalHowlPlay = window.Howl.prototype.play;
+				const howlCalls = [];
+				let newWordAudioSrc;
+				let newWordPopover = null;
+
+				const reset = () =>
+				{
+					window.Howl.prototype.play = originalHowlPlay;
+					document.querySelector("#muteScript").remove();
+				};
+
+				const overlaysObserver = new MutationObserver(
+					(mutationList, observer) =>
+					{
+						for (let mutationRecord of mutationList)
+						{
+							if (Array.from(mutationRecord.removedNodes).includes(newWordPopover))
+							{
+								reset();
+							}
+						}
+					}
+				);
+
+				window.Howl.prototype.play =
+				function (id)
+				{
+					howlCalls.push([this,id]);
+					if (newWordAudioSrc === undefined)
+					{
+						if (howlCalls.length === numCallsExpected)
+						{
+							newWordAudioSrc = howlCalls[0][0]._src;
+							let ret = false;
+
+							if (numCallsExpected === 2)
+							{
+								const longestDurationIndex = (howlCalls[0][0]._duration > howlCalls[1][0]._duration)? 0 : 1;
+
+								let sentence = howlCalls[longestDurationIndex];
+								newWordaudioSrc = howlCalls[longestDurationIndex ^ 1][0]._src;
+
+								ret = originalHowlPlay.call(...sentence);
+							}
+
+							newWordPopover = document.querySelector("[data-test='hint-popover']");
+							overlaysObserver.observe(newWordPopover.parentNode, {childList: true});
+
+							howlCalls.length = 0;
+
+							return ret;
+						}
+					}
+					else if (newWordAudioSrc !== undefined)
+					{
+						howlCalls.length = 0;
+						if (this._src === newWordAudioSrc)
+						{
+							return false;
+						}
+						else
+						{
+							return originalHowlPlay.call(this, id);
+						}
+					}
+					else
+					{
+						return null;
+					}
+				};
+			}
+		`;
+		document.body.appendChild(muteScript);
+		newWord.click();
+	}
+}
+
 function hideTranslationText(reveal = false, setupObserver = true)
 {
 	if (document.getElementsByClassName(QUESTION_CONTAINER).length == 0)
@@ -4652,7 +4751,9 @@ function childListMutationHandle(mutationsList, observer)
 	if (lessonQuestionChanged)
 	{
 		// Run check for translation type question
+		++questionNumber;
 		hideTranslationText();
+		revealNewWord();
 	}
 	
 	if (skillRepaired)
@@ -5004,6 +5105,7 @@ async function init()
 
 			await optionsLoaded;
 			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
+			revealNewWord();
 
 			lastSkill = await retrieveLastSkill();
 			const pageUrl = window.location.href;
@@ -5054,6 +5156,7 @@ async function init()
 				So it is enough to just test for the number of children of rootChild to check for a topBarDiv.
 			*/
 
+			questionNumber = 1;
 			if (rootChild.childElementCount === 1)
 			{
 				// no topBarDiv so nothing left to do

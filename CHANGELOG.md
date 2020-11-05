@@ -12,6 +12,8 @@ full width.
 - Button next to suggestion link, to open that skill's popout bubble.
 - Option to make sidebar fixed when scrolling down the page, and hidden content
 scrollable.
+- Automatic clicking of new words in lessons to reveal their translations.
+  - Option to enable and disable this behaviour;
 
 [v1.3.39] - 2020-10-31
 -----------------

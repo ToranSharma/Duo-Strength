@@ -48,13 +48,14 @@ const SKILL_NAME_SELECTOR = "._2OhdT._3PSt5";
 const CHECKPOINT_CONTAINER_SELECTOR = "._1lAog";
 const CHECKPOINT_POPOUT_SELECTOR = "._2WTbQ._3woYR";
 const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
+const CHECKPOINT_SECTION_SELECTOR = "._2tZPV";
 const LANGUAGES_LIST_SELECTOR = "._2rd3I";
 const SMALL_BUTTONS_CONTAINER = "_1cv-y";
 const SMALL_BUTTON = "_3nfx7 _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt";
 const TEST_OUT_ICON = "_20ZkV";
 const GOLDEN_OWL_CHECKPOINT_SELECTOR = ".lIg1v";
-const LOCKED_TREE_SECTION_SELECTOR = "._3uC-w ";
-const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href], ${LOCKED_TREE_SECTION_SELECTOR} [data-test="skill"]`;
+const TREE_SECTION_SELECTOR = "._3uC-w ";
+const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href], ${TREE_SECTION_SELECTOR} [data-test="skill"]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 const MAIN_SECTION_SELECTOR = "._33Mo9";
@@ -62,6 +63,7 @@ const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0";
 const BOTTOM_NAV_SELECTOR = "._3oP45";
 const CROWN_TOTAL_SELECTOR = "._1HHlZ._3F5mM, ._12yJ8._3F5mM";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
+const SKILL_ROW_SELECTOR = "._3f9ou";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -3819,6 +3821,14 @@ function addFeatures()
 
 	// Show only skills that need attention in the tree
 	{
+		// First make sure all skills are visible.
+		document.querySelectorAll(SKILL_SELECTOR).forEach(
+			(element) =>
+			{
+				element.removeAttribute("style");
+			}
+		);
+
 		if (options.showOnlyNeededSkills)
 		{
 			const needsStrengthening = getNeedsStrengthening();
@@ -3844,16 +3854,17 @@ function addFeatures()
 				}
 			);
 
+			const hiddenStyle =
+			`
+				display: none;
+				visibility: hidden;
+			`;
 			skillElements.forEach(
 				(element) =>
 				{
 					if (!needsAttentionElements.includes(element))
 					{
-						element.style =
-						`
-							display: none;
-							visibility: hidden;
-						`;
+						element.style = hiddenStyle;
 					}
 					else
 					{
@@ -3861,18 +3872,32 @@ function addFeatures()
 					}
 				}
 			);
-		}
-		else
-		{
-			// Make sure all skills are visible.
-			document.querySelectorAll(SKILL_SELECTOR).forEach(
+
+			document.querySelectorAll(`${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}`).forEach(
+				(container) =>
+				{
+					const skillsInContainer = container.querySelectorAll(SKILL_SELECTOR);
+					if (!Array.from(skillsInContainer).some(skillElement=>skillElement.getAttribute("style") === null))
+					{
+						container.style = hiddenStyle;
+
+						if (container.previousElementSibling !== null
+							&& container.previousElementSibling.className.includes(BONUS_SKILL_DIVIDER_SELECTOR.slice(1)))
+						{
+							container.previousElementSibling.style = hiddenStyle;
+							container.nextElementSibling.style = hiddenStyle;
+						}
+					}
+				}
+			);
+
+			document.querySelectorAll(CHECKPOINT_SECTION_SELECTOR).forEach(
 				(element) =>
 				{
-					element.removeAttribute("style");
+					element.style = hiddenStyle;
 				}
 			);
 		}
-
 	}
 
 	// Practise and Words Button in skill popouts

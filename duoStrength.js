@@ -3687,6 +3687,13 @@ function showOnlyNeededSkills()
 						container.nextElementSibling.style = hiddenStyle;
 					}
 				}
+				else if(container.className.includes(TREE_SECTION_SELECTOR.slice(1)))
+				{
+					container.style =
+					`
+						margin: 0;
+					`;
+				}
 			}
 		);
 

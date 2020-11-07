@@ -3605,7 +3605,7 @@ function showOnlyNeededSkills()
 	const needsStrengthening = getNeedsStrengthening();
 	const crackedSkills = getCrackedSkills();
 
-	const needsAttention = needsStrengthening[0].concat(crackedSkills[0],needsStrengthening[1],crackedSkills[1]);
+	const needsAttention = [...needsStrengthening.flat(), ...crackedSkills.flat()];
 
 	const showSuggestion =
 		needsAttention.length === 0
@@ -3658,6 +3658,7 @@ function showOnlyNeededSkills()
 		}
 	}
 
+	let numHiddenSkills = skillElements.length;
 	needsAttention.forEach(
 		(skill) =>
 		{
@@ -3676,6 +3677,11 @@ function showOnlyNeededSkills()
 					return container.contains(skillToShow);
 				}
 			);
+
+			if (!elementsToShow.includes(skillToShow))
+			{
+				--numHiddenSkills;
+			}
 
 			elementsToShow.push(skillToShow, ...containers);
 
@@ -3757,8 +3763,6 @@ function showOnlyNeededSkills()
 
 	revealButton.addEventListener("mousedown", md);
 	revealButton.addEventListener("mouseleave", ml);
-
-	const numHiddenSkills = skillElements.length - needsAttention.length;
 
 	revealButton.textContent = `Reveal ${numHiddenSkills} Hidden Skill${numHiddenSkills === 1 ? "" : "s"}`;
 	if (numHiddenSkills === 0)
@@ -4956,8 +4960,8 @@ function classNameMutationHandle(mutationsList, observer)
 		removeXPBoxes();
 		removeSuggestion();
 		progress = [];
-		// now get the new data
 
+		// now get the new data
 		requestData();
 	}
 	if (pageChanged)

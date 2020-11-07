@@ -3712,6 +3712,7 @@ function showOnlyNeededSkills()
 			{
 				options.showOnlyNeededSkills = false;
 				showOnlyNeededSkills();
+				options.showOnlyNeededSkills = true;
 			}
 		);
 		revealButton.id = "revealHiddenSkillsButton";
@@ -3744,6 +3745,10 @@ function showOnlyNeededSkills()
 		revealButton.addEventListener("mousedown", md);
 		revealButton.addEventListener("mouseleave", ml);
 		revealButton.textContent = `Reveal ${numHiddenSkills} Hidden Skill${numHiddenSkills === 1 ? "" : "s"}`;
+		if (numHiddenSkills === 0)
+		{
+			revealButton.textContent = "Reveal Hidden Checkpoints";
+		}
 
 		document.querySelector(SKILL_TREE_SELECTOR).appendChild(revealButton);
 	}

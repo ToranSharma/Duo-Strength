@@ -2379,7 +2379,7 @@ function getCrackedSkills()
 			}
 			else
 			{
-				userDataObjects = userDataObjects.language_data[language_data].bonus_skills.filter(bonusSkill => bonusSkill.short === skillName);
+				userDataObjects = userDataObjects.language_data[languageCode].bonus_skills.filter(bonusSkill => bonusSkill.short === skillName);
 				crackedSkillObjects[1].push(userDataObjects[crackedSkills[skillName]]);
 			}
 			

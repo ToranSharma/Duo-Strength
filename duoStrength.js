@@ -3594,7 +3594,7 @@ function showOnlyNeededSkills()
 	if (!options.showOnlyNeededSkills)
 	{
 		// Make sure all the skills are displayed;
-		document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}`).forEach(
+		document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}`).forEach(
 			(element) =>
 			{
 				element.removeAttribute("style");
@@ -3697,9 +3697,13 @@ function showOnlyNeededSkills()
 	);
 
 	// Now we hide everything.
-	const hiddenStyle = `
-		display: none;
-		visibility: hidden;
+	const hiddenStyle =
+	`
+		position: relative;
+		height: 0;
+		margin: 0;
+		padding: 0;
+		left: -4000px;
 	`;
 
 	document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}`).forEach(
@@ -3708,12 +3712,23 @@ function showOnlyNeededSkills()
 			element.style = hiddenStyle;
 		}
 	);
+	document.querySelectorAll(SKILL_SELECTOR).forEach(
+		(element) =>
+		{
+			element.style =
+			`
+				position: absolute;
+				top: -50000px;
+			`;
+		}
+	);
 
 	// Now we unhide the things we want to show.
 	elementsToShow.forEach(
 		(element) =>
 		{
 			element.removeAttribute("style");
+
 			if (element.className.includes(TREE_SECTION_SELECTOR.slice(1)))
 			{
 				element.style =

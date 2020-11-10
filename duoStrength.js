@@ -136,6 +136,7 @@ function retrieveOptions()
 						"hideSuggestionNonStrengthened":			true,
 						"hideSuggestionWithCrackedSkills":			true,
 						"suggestionPopoutButton":					true,
+					"showOnlyNeededSkills":						false,
 					"focusFirstSkill":							true,
 					"practiseButton":							true,
 					"practiceType":								"0",

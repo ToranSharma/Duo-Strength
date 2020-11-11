@@ -3625,8 +3625,20 @@ function showOnlyNeededSkills()
 		let suggestedSkill = document.querySelector(`#skillSuggestionMessageContainer a`);
 		if (suggestedSkill !== null && suggestedSkill.getAttribute("href") !== "/practice")
 		{
-			const suggestionUrlTitle = suggestedSkill.getAttribute("href").split("/")[3];
-			suggestedSkill = allSkills.find(skill => skill.url_title === suggestionUrlTitle);
+			if (suggestedSkill.getAttribute("href").includes("checkpoint"))
+			{
+				// Checkpoint is being suggested
+				const suggestedCheckpointNumber = parseInt(suggestedSkill.getAttribute("href").split("/")[3]);
+				const suggestedCheckpoint = document.querySelectorAll(CHECKPOINT_SECTION_SELECTOR)[suggestedCheckpointNumber];
+				elementsToShow.push(suggestedCheckpoint);
+				suggestedSkill = null;
+			}
+			else
+			{
+				// Suggested Skill is a normal skill
+				const suggestionUrlTitle = suggestedSkill.getAttribute("href").split("/")[3];
+				suggestedSkill = allSkills.find(skill => skill.url_title === suggestionUrlTitle);
+			}
 		}
 		else
 		{
@@ -3641,6 +3653,7 @@ function showOnlyNeededSkills()
 		}
 		else if (suggestedSkill.locked)
 		{
+			// This happens if there is no existing suggestion message, so we are using the raw getSuggestion response.
 			// Next skill is locked so we need to do the checkpoint before it.
 			// We will keep the needsAttention empty, but manually add the checkpoint element and section to elementsToShow.
 			const nextCheckpoint = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR)).find(
@@ -3734,6 +3747,13 @@ function showOnlyNeededSkills()
 				element.style =
 				`
 					margin: 0;
+				`;
+			}
+			else if (element.className.includes(CHECKPOINT_SECTION_SELECTOR.slice(1)))
+			{
+				element.style =
+				`
+					padding: 1em 0;
 				`;
 			}
 		}

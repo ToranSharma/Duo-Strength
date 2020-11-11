@@ -14,6 +14,9 @@ full width.
 scrollable.
 - Automatic clicking of new words in lessons to reveal their translations.
   - Option to enable and disable this behaviour.
+- Option to only show skills in the tree that need to be addressed. This means
+cracked skills, skills that need strengthening, or a suggested skill to practise
+next.
 
 [v1.3.39] - 2020-10-31
 -----------------

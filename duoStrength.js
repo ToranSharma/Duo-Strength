@@ -48,13 +48,14 @@ const SKILL_NAME_SELECTOR = "._2OhdT._3PSt5";
 const CHECKPOINT_CONTAINER_SELECTOR = "._1lAog";
 const CHECKPOINT_POPOUT_SELECTOR = "._2WTbQ._3woYR";
 const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
+const CHECKPOINT_SECTION_SELECTOR = "._2tZPV";
 const LANGUAGES_LIST_SELECTOR = "._2rd3I";
 const SMALL_BUTTONS_CONTAINER = "_1cv-y";
 const SMALL_BUTTON = "_3nfx7 _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt";
 const TEST_OUT_ICON = "_20ZkV";
 const GOLDEN_OWL_CHECKPOINT_SELECTOR = ".lIg1v";
-const LOCKED_TREE_SECTION_SELECTOR = "._3uC-w ";
-const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href], ${LOCKED_TREE_SECTION_SELECTOR} [data-test="skill"]`;
+const TREE_SECTION_SELECTOR = "._3uC-w ";
+const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href], ${TREE_SECTION_SELECTOR} [data-test="skill"]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 const MAIN_SECTION_SELECTOR = "._33Mo9";
@@ -62,6 +63,8 @@ const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0";
 const BOTTOM_NAV_SELECTOR = "._3oP45";
 const CROWN_TOTAL_SELECTOR = "._1HHlZ._3F5mM, ._12yJ8._3F5mM";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
+const SKILL_ROW_SELECTOR = "._3f9ou";
+const SKILL_TREE_SELECTOR = "._3YEom";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -135,6 +138,7 @@ function retrieveOptions()
 						"hideSuggestionNonStrengthened":			true,
 						"hideSuggestionWithCrackedSkills":			true,
 						"suggestionPopoutButton":					true,
+					"showOnlyNeededSkills":						false,
 					"focusFirstSkill":							true,
 					"practiseButton":							true,
 					"practiceType":								"0",
@@ -386,7 +390,7 @@ function removeXPBoxes()
 
 function removeSuggestion()
 {
-	let suggestionContainer = document.getElementById("fullStrengthMessageContainer");
+	let suggestionContainer = document.getElementById("skillSuggestionMessageContainer");
 	if (suggestionContainer != null)
 	{
 		suggestionContainer.parentNode.removeChild(suggestionContainer);
@@ -3415,12 +3419,12 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		z-index: 1;
 	`;
 
-	let container = document.getElementById("fullStrengthMessageContainer");
+	let container = document.getElementById("skillSuggestionMessageContainer");
 
 	if (container === null)
 	{
 		container = document.createElement("div");
-		container.id = "fullStrengthMessageContainer";
+		container.id = "skillSuggestionMessageContainer";
 		if (inMobileLayout)
 			container.style = "margin: 0.5em 1em 0.5em 1em;";
 		else
@@ -3444,42 +3448,20 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			const offset = boxRightEdge - buttonLeftEdge;
 			container.style.width = `calc(100% - ${offset}px - 0.5em)`;
 		}
-		const skills = userData.language_data[languageCode].skills;
-		const treeLevel = currentTreeLevel();
-		let skillsByCrowns = [[],[],[],[],[],[]];
 
-		for (let skill of skills)
-		{
-			skillsByCrowns[skill.skill_progress.level].push(skill);
-		}
-		
-		let randomSuggestion;
-		/*
-
-			0: Random
-			1: First
-			2: Last
-		*/
-		const numSkillsAtTreeLevel = skillsByCrowns[treeLevel].length;
-		switch (options.skillSuggestionMethod)
-		{
-			case "0":
-				randomSuggestion = skillsByCrowns[treeLevel][Math.floor(Math.random()*numSkillsAtTreeLevel)];
-				break;
-			case "1":
-				randomSuggestion = skillsByCrowns[treeLevel][0];
-				break;
-			case "2":
-				randomSuggestion = skillsByCrowns[treeLevel][numSkillsAtTreeLevel-1];
-				break;
-		}
+		const suggestedSkill = getSuggestion();
 
 		const link = document.createElement("a");
 
-		const toPractise = treeLevel === 5 || (randomSuggestion.category === "grammar" && randomSuggestion.skill_progress.level === 2);
+		const treeLevel = currentTreeLevel();
 
-		link.href = `/skill/${languageCode}/${randomSuggestion.url_title}${toPractise ? "/practice/" : "/"}`;
-		link.textContent = randomSuggestion.short;
+		if (suggestedSkill !== null)
+		{
+			const toPractise = treeLevel === 5 || (suggestedSkill.category === "grammar" && suggestedSkill.skill_progress.level === 2);
+
+			link.href = `/skill/${languageCode}/${suggestedSkill.url_title}${toPractise ? "/practice/" : "/"}`;
+			link.textContent = suggestedSkill.short;
+		}
 		link.style.color = 'blue';
 		link.addEventListener('focus',
 			function (event)
@@ -3498,7 +3480,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		);
 		
 		const suggestionMessage = document.createElement("p");
-		if (treeLevel == 5)
+		if (treeLevel === 5)
 		{
 			let messageText = `Your ${language} tree is `
 			if (fullyStrengthened)
@@ -3520,8 +3502,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		}
 		else if (treeLevel == 0)
 		{
-			// Tree not finished, so suggest the next skill that is not yet been completed.
-			let nextSkill = skillsByCrowns[0][0];
+			// Tree not finished, so the suggestion is the next skill that is not yet been completed.
 			
 			if (fullyStrengthened && noCrackedSkills)
 				suggestionMessage.textContent = `All the skills that you have learnt so far are fully strengthened, and none are cracked. `;
@@ -3530,7 +3511,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			else if (noCrackedSkills)
 				suggestionMessage.textContent = `None of the skills that you have learnt so far are cracked. `
 
-			if (nextSkill.locked)
+			if (suggestedSkill.locked)
 			{
 				// The next skill is locked, so a checkpoint test is needed.
 				let checkpointNumber;
@@ -3548,13 +3529,10 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			}
 			else
 			{
-				// The next skil is unlocked so lets suggest it.
-				link.href = `/skill/${languageCode}/${nextSkill.url_title}/`;
-				link.textContent = nextSkill.short;
-
+				// The next skil is unlocked so let's just suggest it.
 				suggestionMessage.textContent += "The next skill to learn is: ";
 			}
-			
+
 			suggestionMessage.appendChild(link);
 		}
 		else
@@ -3573,7 +3551,6 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 
 		container.appendChild(suggestionMessage);
-
 	}
 	else
 	{
@@ -3600,6 +3577,228 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 		if (options.focusFirstSkill) container.querySelector(`a`).focus();
 	}
+}
+function showOnlyNeededSkills()
+{
+	// Remove existing reveal button
+	document.querySelectorAll(`#revealHiddenSkillsButton`).forEach(button => button.remove());
+
+	if (!options.showOnlyNeededSkills)
+	{
+		// Make sure all the skills are displayed;
+		document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}`).forEach(
+			(element) =>
+			{
+				element.removeAttribute("style");
+			}
+		);
+
+		return false;
+	}
+	const needsStrengthening = getNeedsStrengthening();
+	const crackedSkills = getCrackedSkills();
+
+	const needsAttention = [...needsStrengthening.flat(), ...crackedSkills.flat()];
+
+	const showSuggestion =
+		needsAttention.length === 0
+		|| (needsStrengthening.flat().length !== 0 && options.hideSuggestionNonStrengthened === false)
+		|| (crackedSkills.flat().length !== 0 && options.hideSuggestionWithCrackedSkills === false);
+
+	const elementsToShow = [];
+
+	const skillElements = Array.from(document.querySelectorAll(SKILL_SELECTOR));
+	const allSkills = userData.language_data[languageCode].skills.concat(userData.language_data[languageCode].bonus_skills);
+
+
+	if (showSuggestion)
+	{
+		// Nothing needs strengthening or is cracked, so a suggest something to give attention to.
+		let suggestedSkill = document.querySelector(`#skillSuggestionMessageContainer a`);
+		if (suggestedSkill !== null && suggestedSkill.getAttribute("href") !== "/practice")
+		{
+			if (suggestedSkill.getAttribute("href").includes("checkpoint"))
+			{
+				// Checkpoint is being suggested
+				const suggestedCheckpointNumber = parseInt(suggestedSkill.getAttribute("href").split("/")[3]);
+				const suggestedCheckpoint = document.querySelectorAll(CHECKPOINT_SECTION_SELECTOR)[suggestedCheckpointNumber];
+				elementsToShow.push(suggestedCheckpoint);
+				suggestedSkill = null;
+			}
+			else
+			{
+				// Suggested Skill is a normal skill
+				const suggestionUrlTitle = suggestedSkill.getAttribute("href").split("/")[3];
+				suggestedSkill = allSkills.find(skill => skill.url_title === suggestionUrlTitle);
+			}
+		}
+		else
+		{
+			suggestedSkill = getSuggestion();
+		}
+
+		if (suggestedSkill === null)
+		{
+			// All skills at max level, nothing to suggest but a general practice.
+			// We won't add anything to needsAttention or elementsToShow,
+			// so everything other than that which otherwise needsAttention and the golden owl trophy will be hidden.
+		}
+		else if (suggestedSkill.locked)
+		{
+			// This happens if there is no existing suggestion message, so we are using the raw getSuggestion response.
+			// Next skill is locked so we need to do the checkpoint before it.
+			// We will keep the needsAttention empty, but manually add the checkpoint element and section to elementsToShow.
+			const nextCheckpoint = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR)).find(
+				(checkpoint) => 
+				{
+					return checkpoint.querySelector(`img`).src.includes(`unlocked`);
+				}
+			);
+			const nextCheckpointSection = Array.from(document.querySelectorAll(CHECKPOINT_SECTION_SELECTOR)).find(section => section.contains(nextCheckpoint));
+			elementsToShow.push(nextCheckpoint);
+		}
+		else
+		{
+			// Normal suggestion
+			needsAttention.push(suggestedSkill);
+		}
+	}
+
+	let numHiddenSkills = skillElements.length;
+	needsAttention.forEach(
+		(skill) =>
+		{
+			const sameNamedSkills = skillElements.filter(element => element.querySelector(SKILL_NAME_SELECTOR).textContent === skill.short);
+			let index = 0;
+			if (sameNamedSkills.length !== 1)
+			{
+				index = allSkills.filter(skillObject => skillObject.short === skill.short).findIndex(skillObject => skillObject.url_title === skill.url_title);
+			}
+
+			const skillToShow = sameNamedSkills[index];
+
+			const containers = Array.from(document.querySelectorAll(`${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}`)).filter(
+				(container) =>
+				{
+					return container.contains(skillToShow);
+				}
+			);
+
+			if (!elementsToShow.includes(skillToShow))
+			{
+				--numHiddenSkills;
+			}
+
+			elementsToShow.push(skillToShow, ...containers);
+
+			if (skill.isBonusSkill)
+			{
+				// Show the bonus skill divding borders.
+				// Note that if both bonus skills need to be addressed then we will add these twice but it doesn't matter.
+				const borderRows = document.querySelectorAll(BONUS_SKILL_DIVIDER_SELECTOR);
+				elementsToShow.push(...borderRows);
+			}
+		}
+	);
+
+	// Now we hide everything.
+	const hiddenStyle =
+	`
+		position: relative;
+		height: 0;
+		margin: 0;
+		padding: 0;
+		left: -4000px;
+	`;
+
+	document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}`).forEach(
+		(element) =>
+		{
+			element.style = hiddenStyle;
+		}
+	);
+	document.querySelectorAll(SKILL_SELECTOR).forEach(
+		(element) =>
+		{
+			element.style =
+			`
+				position: absolute;
+				top: -50000px;
+			`;
+		}
+	);
+
+	// Now we unhide the things we want to show.
+	elementsToShow.forEach(
+		(element) =>
+		{
+			element.removeAttribute("style");
+
+			if (element.className.includes(TREE_SECTION_SELECTOR.slice(1)))
+			{
+				element.style =
+				`
+					margin: 0;
+				`;
+			}
+			else if (element.className.includes(CHECKPOINT_SECTION_SELECTOR.slice(1)))
+			{
+				element.style =
+				`
+					padding: 1em 0;
+				`;
+			}
+		}
+	);
+
+
+	// Add button to reveal hidden skills
+	const revealButton = document.createElement("button");
+	revealButton.addEventListener("click",
+		(event) =>
+		{
+			options.showOnlyNeededSkills = false;
+			showOnlyNeededSkills();
+			options.showOnlyNeededSkills = true;
+		}
+	);
+	revealButton.id = "revealHiddenSkillsButton";
+	revealButton.style =
+	`
+		background-color: ${LIGHT_BLUE};
+		color: white;
+		border-radius: 8px;
+		padding: 6px 8px;
+		border: 0;
+		border-bottom: 4px solid ${DARK_BLUE};
+
+		font-size: 15px;
+		line-height: 20px;
+		font-weight: 700;
+		letter-spacing: 0.8px;
+		text-transform: uppercase;
+	`;
+	const md = (event) =>
+	{
+		event.target.style["marginTop"] = "4px";
+		event.target.style["borderBottom"] = "0";
+	}
+	const ml = (event) =>
+	{
+		event.target.style["marginTop"] = "0";
+		event.target.style["borderBottom"] = `4px solid ${DARK_BLUE}`;
+	}
+
+	revealButton.addEventListener("mousedown", md);
+	revealButton.addEventListener("mouseleave", ml);
+
+	revealButton.textContent = `Reveal ${numHiddenSkills} Hidden Skill${numHiddenSkills === 1 ? "" : "s"}`;
+	if (numHiddenSkills === 0)
+	{
+		revealButton.textContent = "Reveal Hidden Checkpoints";
+	}
+
+	document.querySelector(SKILL_TREE_SELECTOR).appendChild(revealButton);
 }
 
 function getStrengths()
@@ -3663,6 +3862,54 @@ function getNeedsStrengthening()
 	}
 
 	return needsStrengthening;
+}
+
+function getSuggestion()
+{
+	let suggestedSkill;
+
+	const skills = userData.language_data[languageCode].skills;
+	const treeLevel = currentTreeLevel();
+	let skillsByCrowns = [[],[],[],[],[],[]];
+
+	for (let skill of skills)
+	{
+		skillsByCrowns[skill.skill_progress.level].push(skill);
+	}
+
+	/*
+		0: Random
+		1: First
+		2: Last
+	*/
+
+	if (treeLevel === 0)
+	{
+		// Tree isn't finished, so we will just suggest the first skill
+		suggestedSkill = skillsByCrowns[0][0];
+	}
+	else if (treeLevel === 5)
+	{
+		suggestedSkill = null;
+	}
+	else
+	{
+		const numSkillsAtTreeLevel = skillsByCrowns[treeLevel].length;
+		switch (options.skillSuggestionMethod)
+		{
+			case "0":
+				suggestedSkill = skillsByCrowns[treeLevel][Math.floor(Math.random()*numSkillsAtTreeLevel)];
+				break;
+			case "1":
+				suggestedSkill = skillsByCrowns[treeLevel][0];
+				break;
+			case "2":
+				suggestedSkill = skillsByCrowns[treeLevel][numSkillsAtTreeLevel-1];
+				break;
+		}
+	}
+
+	return suggestedSkill;
 }
 
 function processUserData()
@@ -3807,6 +4054,11 @@ function addFeatures()
 			// Should not be displaying a suggestion.
 			removeSuggestion() // if there happens to be one
 		}
+	}
+
+	// Show only skills that need attention in the tree
+	{
+		showOnlyNeededSkills();
 	}
 
 	// Practise and Words Button in skill popouts
@@ -4643,10 +4895,10 @@ function childListMutationHandle(mutationsList, observer)
 				document.getElementById("crackedBox").style.width = mobileWidth;
 
 			}
-			if (document.getElementById("fullStrengthMessageContainer") != null)
+			if (document.getElementById("skillSuggestionMessageContainer") != null)
 			{
-				document.getElementById("fullStrengthMessageContainer").style.margin = mobileMargin;
-				document.getElementById("fullStrengthMessageContainer").style.width = mobileWidth;
+				document.getElementById("skillSuggestionMessageContainer").style.margin = mobileMargin;
+				document.getElementById("skillSuggestionMessageContainer").style.width = mobileWidth;
 			}
 		}
 		else
@@ -4666,10 +4918,10 @@ function childListMutationHandle(mutationsList, observer)
 				document.getElementById("crackedBox").style.width = desktopWidth;
 				
 			}
-			if (document.getElementById("fullStrengthMessageContainer") != null)
+			if (document.getElementById("skillSuggestionMessageContainer") != null)
 			{
-				document.getElementById("fullStrengthMessageContainer").style.margin = desktopMargin;
-				document.getElementById("fullStrengthMessageContainer").style.width = desktopWidth;
+				document.getElementById("skillSuggestionMessageContainer").style.margin = desktopMargin;
+				document.getElementById("skillSuggestionMessageContainer").style.width = desktopWidth;
 			}
 			
 		}
@@ -4839,8 +5091,8 @@ function classNameMutationHandle(mutationsList, observer)
 		removeXPBoxes();
 		removeSuggestion();
 		progress = [];
-		// now get the new data
 
+		// now get the new data
 		requestData();
 	}
 	if (pageChanged)

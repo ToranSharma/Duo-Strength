@@ -2292,9 +2292,14 @@ function applyFocusMode()
 		`
 			margin-left: auto;
 			margin-right: 0;
+			height: 0;
 		`;
 
 		focusModeButton.firstChild.setAttribute("data-test", "focusModeButton");
+		focusModeButton.firstChild.style =
+		`
+			transform: translateY(-100%);
+		`;
 		focusModeButton.firstChild.title = `${(options.focusMode) ? "Disable" : "Enable"} Focus Mode`;
 		focusModeButton.firstChild.removeAttribute("href");
 		focusModeButton.addEventListener("click",

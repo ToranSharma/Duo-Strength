@@ -3899,6 +3899,12 @@ function getSuggestion()
 	}
 	else
 	{
+		if (treeLevel === 2)
+		{
+			// Remove crown 2 grammar skills as these are at max level,
+			// so practising them will not contribute to getting to tree level 3.
+			skillsByCrowns[treeLevel].filter(skill => skill.category !== "grammar");
+		}
 		const numSkillsAtTreeLevel = skillsByCrowns[treeLevel].length;
 		switch (options.skillSuggestionMethod)
 		{

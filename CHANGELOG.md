@@ -18,6 +18,10 @@ scrollable.
 cracked skills, skills that need strengthening, or a suggested skill to practise
 next.
 
+### Fixed
+- Suggested skill on for tree level 2 trees not to suggest grammar skills as
+they will not contribute towards getting to tree level 3.
+
 [v1.3.39] - 2020-10-31
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.39)

@@ -2123,7 +2123,20 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 	const practiceCheckpointButton = checkpointPopout.querySelector(`[data-test="checkpoint-start-button"]`);
 	if (practiceCheckpointButton !== null)
 	{
-		// Practice button exists that we can copy for the bigtest button
+		// Practice button exists that we can copy for the buttons
+		const redoTestButton = practiceCheckpointButton.cloneNode(true);
+		redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
+		redoTestButton.setAttribute("data-test", "redo-test-button");
+
+		popoutContent.appendChild(redoTestButton);
+		redoTestButton.addEventListener("click",
+			(event) =>
+			{
+				storeCheckpointSource();
+				window.location = `/checkpoint/${languageCode}/${checkpointNumber}/`;
+			}
+		);
+
 		const testOutButton = practiceCheckpointButton.cloneNode(true);
 		testOutButton.textContent = "RETRY CROWN 1 TEST OUT";
 		testOutButton.setAttribute("data-test", "test-out-button");
@@ -2145,7 +2158,8 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
 		redoTestButton.style = 
 		`
-			font-size: 80%;
+			font-size: 15px;
+			line-height: 20px;
 			width: 100%;
 			color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
 			border: 0;

@@ -22,6 +22,13 @@ next.
 - Suggested skill on for tree level 2 trees not to suggest grammar skills as
 they will not contribute towards getting to tree level 3.
 
+[v1.3.40] - 2020-11-23
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.40)
+### Changed
+- Added back retry checkpoint challenge button to checkpoint popout even if
+there is a practice button.
+
 [v1.3.39] - 2020-10-31
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.39)
@@ -1079,6 +1086,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.40]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.39...v1.3.40
 [v1.3.39]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.38...v1.3.39
 [v1.3.38]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.37...v1.3.38
 [v1.3.37]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.36...v1.3.37

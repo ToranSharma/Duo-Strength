@@ -3598,6 +3598,11 @@ function showOnlyNeededSkills()
 			}
 		);
 
+		if (inMobileLayout)
+		{
+			document.querySelector(`.${MOBILE_TOP_OF_TREE}`).style["marginBottom"] = "";
+		}
+
 		return false;
 	}
 	const needsStrengthening = getNeedsStrengthening();
@@ -3713,7 +3718,7 @@ function showOnlyNeededSkills()
 		height: 0;
 		margin: 0;
 		padding: 0;
-		left: -4000px;
+		left: -50000px;
 	`;
 
 	document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}`).forEach(
@@ -3739,7 +3744,7 @@ function showOnlyNeededSkills()
 		{
 			element.removeAttribute("style");
 
-			if (element.className.includes(TREE_SECTION_SELECTOR.slice(1)))
+			if (element.className.includes(TREE_SECTION_SELECTOR.slice(1)) && element !== document.querySelector(TREE_SECTION_SELECTOR))
 			{
 				element.style =
 				`
@@ -3756,6 +3761,11 @@ function showOnlyNeededSkills()
 		}
 	);
 
+	// If in mobile layout get rid of negative bottom margin of topOfTree
+	if (inMobileLayout)
+	{
+		document.querySelector(`.${MOBILE_TOP_OF_TREE}`).style["marginBottom"] = "0";
+	}
 
 	// Add button to reveal hidden skills
 	const revealButton = document.createElement("button");
@@ -3804,6 +3814,25 @@ function showOnlyNeededSkills()
 	}
 
 	document.querySelector(SKILL_TREE_SELECTOR).appendChild(revealButton);
+}
+
+function fixPopoutAlignment(skillPopout)
+{
+	// In mobile layout showing only skills that need attention.
+	// The horizontal alignment of a skill's popout can be wrong if the other skills on its row are hidden.
+	const skill = skillPopout.parentNode;
+	const skillRow = skill.parentNode;
+	const displayedSkillsInRow = Array.from(skillRow.children).filter(skill => skill.getAttribute("style") === null || skill.getAttribute("style") === "");
+	const skillIndex = displayedSkillsInRow.findIndex(element => element === skill);
+
+	// For every skill that is displayed to the left of the skill with the popout we need to shift the popout right by 140px.
+	// For every skill displayed to the right we do the opposite.
+
+	const numDisplayedSkillsBefore = displayedSkillsInRow.slice(0,skillIndex).length;
+	const numDisplayedSkillsAfter = displayedSkillsInRow.slice(skillIndex+1).length;
+
+	skillPopout.firstChild.style["transform"] = `translateX(-50%) translateX(${(numDisplayedSkillsAfter - numDisplayedSkillsBefore) * (58 - 12)}px)`;
+	skillPopout.firstChild.lastChild.style["left"] = `calc(50% + ${(numDisplayedSkillsAfter - numDisplayedSkillsBefore) * -(58 - 12)}px - 15px)`;
 }
 
 function getStrengths()
@@ -4120,6 +4149,11 @@ function addFeatures()
 		{
 			// Don't want words button, let's remove it if there is one there.
 			removeWordsButton();
+		}
+
+		if (inMobileLayout && skillPopout !== null && document.querySelector("#revealHiddenSkillsButton") !== null)
+		{
+			fixPopoutAlignment(skillPopout);
 		}
 	}
 
@@ -4783,7 +4817,7 @@ function childListMutationHandle(mutationsList, observer)
 		else if (
 			mutation.target.getAttribute("data-test") == "skill" &&
 			mutation.addedNodes.length != 0 &&
-			mutation.target.querySelectorAll(`[data-test="skill-popout"]`).length != 0
+			mutation.target.querySelectorAll(`[data-test="skill-popout"]`).length !== 0
 		)
 		{
 			skillPopoutAdded = true;
@@ -4911,6 +4945,11 @@ function childListMutationHandle(mutationsList, observer)
 				document.getElementById("skillSuggestionMessageContainer").style.margin = mobileMargin;
 				document.getElementById("skillSuggestionMessageContainer").style.width = mobileWidth;
 			}
+
+			if (document.querySelector("#revealHiddenSkillsButton") !== null)
+			{
+				document.querySelector(`.${MOBILE_TOP_OF_TREE}`).style["marginBottom"] = "0";
+			}
 		}
 		else
 		{
@@ -5037,6 +5076,8 @@ function childListMutationHandle(mutationsList, observer)
 		if (options.wordsButton) addWordsButton(skillPopout);
 
 		if (options.grammarSkillsTestButton) addGrammarSkillTestOutButton(skillPopout);
+
+		if (inMobileLayout && document.querySelector("#revealHiddenSkillsButton") !== null) fixPopoutAlignment(skillPopout);
 	}
 	
 	if (checkpointPopoutAdded)

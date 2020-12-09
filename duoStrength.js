@@ -277,9 +277,31 @@ function updateProgress()
 		else
 		{
 			// No change since the last entry so we will not save it.
-			return false;
 		}
 	}
+
+	// Trim down progress to only keep 7 most recent improvements
+	let numImprovements = 0;
+	let index = progress.length - 1;
+	let treeLevel = progress[index][1];
+	let lastProgress = progress[index--][2];
+	while (numImprovements < 7 && index >= 0)
+	{
+		if (progress[index][2] > lastProgress)
+		{
+			++numImprovements;
+		}
+		else if (progress[index][1] < treeLevel)
+		{
+			++numImprovements;
+		}
+
+		lastProgress = progress[index][2];
+		treeLevel = progress[index][1];
+		--index;
+	}
+
+	progress = progress.slice(++index);
 
 	storeProgressHistory();
 	return true;
@@ -513,7 +535,7 @@ function lessonsToNextCheckpoint()
 	, 0);
 }
 
-function progressEnds(numPointsToUse)
+function progressEnds()
 {
 	let endIndex = progress.length - 1;
 	let lastDate = progress[endIndex][0];
@@ -524,12 +546,10 @@ function progressEnds(numPointsToUse)
 		lastDate = progress[--endIndex][0];
 	}
 
-	const startIndex = Math.max(endIndex - numPointsToUse + 1, 0);
-	
-	const numDays = (lastDate  - progress[startIndex][0]) / (1000*60*60*24) + 1; // inclusive of start and end
+	const numDays = (lastDate  - progress[0][0]) / (1000*60*60*24) + 1; // inclusive of start and end
 	
 	return {
-		startIndex: startIndex,
+		startIndex: 0,
 		endIndex: endIndex,
 		numDays: numDays
 	};
@@ -679,8 +699,7 @@ function daysToNextXPLevel(history, xpLeft)
 
 function daysToNextTreeLevel()
 {
-	const numPointsToUse = 7;
-	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
+	const {startIndex, endIndex, numDays} = progressEnds();
 	
 	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
 
@@ -761,8 +780,7 @@ function daysToNextTreeLevelByCalendar()
 
 function daysToNextCheckpoint()
 {
-	const numPointsToUse = 7;
-	const {startIndex, endIndex, numDays} = progressEnds(numPointsToUse);
+	const {startIndex, endIndex, numDays} = progressEnds();
 
 	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
 

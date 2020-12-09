@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v1.3.41] - 2020-12-09
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.41)
+### Fixed
+- Progress history to only store 7 most recent improvements. This stops the
+storage from filling up with old data that will not be used.
+
 [v1.3.40] - 2020-11-23
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.40)
@@ -1069,6 +1076,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.41]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.40...v1.3.41
 [v1.3.40]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.39...v1.3.40
 [v1.3.39]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.38...v1.3.39
 [v1.3.38]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.37...v1.3.38

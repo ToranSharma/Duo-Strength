@@ -1657,15 +1657,12 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		{
 			// If there is the IN BETA label, make it relative, not aboslute.
 			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style.position = 'relative';
-			if (inMobileLayout)
-				strengthenBox.style.marginTop = "1.5em";
-			else
-				strengthenBox.style.marginTop = "0.5em";
+			strengthenBox.style.marginTop = "0.5em";
 		}
-		else if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) !== null)
 		{
-			// Not being pushed down by the IN BETA label,
-			// and there is a TRY PLUS button on the right which we have to make room for.
+			// There is a TRY PLUS button on the right which we have to make room for.
 			const boxRightEdge = topOfTree.getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
 			const offset = boxRightEdge - buttonLeftEdge;
@@ -3338,19 +3335,23 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		{
 			// If there is the IN BETA label, make it relative, not absolute.
 			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style.position = 'relative';
-			if (inMobileLayout)
-				container.style.marginTop = "1.5em";
-			else
-				container.style.marginTop = "0.5em";
+			container.style.marginTop = "0.5em";
 		}
-		else if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
 		{
-			// Not being pushed down by the IN BETA label,
-			// and there is a TRY PLUS button on the right which we have to make room for.
+			// There is a TRY PLUS button on the right which we have to make room for.
 			const boxRightEdge = topOfTree.getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
 			const offset = boxRightEdge - buttonLeftEdge;
-			container.style.width = `calc(100% - ${offset}px - 0.5em)`;
+			if (inMobileLayout)
+			{
+				container.style.width = `calc(100% - ${offset}px - 1.5em)`;
+			}
+			else
+			{
+				container.style.width = `calc(100% - ${offset}px - 0.5em)`;
+			}
 		}
 		const skills = userData.language_data[languageCode].skills;
 		const treeLevel = currentTreeLevel();
@@ -4400,14 +4401,14 @@ function childListMutationHandle(mutationsList, observer)
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
 			const offset = boxRightEdge - buttonLeftEdge;
 			desktopWidth = `calc(100% - ${offset}px - 0.5em)`;
+			mobileWidth = `calc(100% - ${offset}px - 1.5em)`;
 		}
 
 		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
 		{
 			// There is an IN BETA label
-			mobileMargin = "1.5em 1em 0.5em 1em";
-			desktopMargin = "0.5em 1em 2em 1em";
-			desktopWidth = "auto";
+			mobileMargin = "0.5em 1em 0.5em 1em";
+			desktopMargin = "0.5em 0 2em 0";
 		}
 
 		if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)

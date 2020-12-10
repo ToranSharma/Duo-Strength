@@ -8,6 +8,10 @@ Changelog
 [v1.3.42] - 2020-12-10
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.42)
+### Fixed
+- Styling of messages at the top of the tree to make more room for the new try
+plus icon.
+
 ### Changed
 - Any user+tree combinations for which the most recent progress history entry
 is more than 3 months ago is removed to save space as the tree is most likely
@@ -19,7 +23,7 @@ will be transferred to the new format then removed if the user uses that tree.
 
 ### Depreciated
 - Old username based key format for saving the progress history. After 3 months
-the transferring of old format data will be stopped. Tthis data will have
+the transferring of old format data will be stopped. This data will have
 either been transferred or deleted for being old.
 
 [v1.3.41] - 2020-12-09

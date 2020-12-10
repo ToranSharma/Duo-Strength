@@ -187,19 +187,34 @@ function retrieveOptions()
 
 function retrieveProgressHistory()
 {
-	return new Promise(function (resolve,reject)
+	return new Promise(function (resolve, reject)
 	{
 		chrome.storage.sync.get("progress", function (data)
 		{
-			if (Object.entries(data).length === 0 || !data.progress.hasOwnProperty(username + languageCode + UICode))
+			const key = `${userId}:${UICode}->${languageCode}`;
+			const oldFormatKey = username + languageCode + UICode;
+			if (Object.entries(data).length === 0)
 			{
-				// No progress data or none for this user+lang combination
+				// No progress data
 				updateProgress();
+			}
+			else if (data.progress.hasOwnProperty(key))
+			{
+				// There is some data for the current user+tree combination
+				progress = data.progress[key];
+			}
+			else if (data.progress.hasOwnProperty(oldFormatKey))
+			{
+				// There is data in the old format, we will use this data but remove the old format
+				progress = [...data.progress[oldFormatKey]]; // Copy the data as we are going to delete it
+				data.progress[key] = progress;
+				delete data.progress[oldFormatKey];
+				chrome.storage.sync.set({"progress": data.progress});
 			}
 			else
 			{
-				// We have some progress data saved.
-				progress = data.progress[username + languageCode + UICode];
+				// No data for the current user+tree combination
+				updateProgress();
 			}
 			resolve();
 		});
@@ -214,7 +229,30 @@ function storeProgressHistory()
 		{
 			if (Object.entries(data).length === 0)
 				data.progress = {};
-			data.progress[username + languageCode + UICode] = progress;
+			// Cull inactive trees
+			const trees = Object.entries(data.progress);
+
+			const inactiveTrees = trees.filter(
+				([key, progressHistory]) =>
+				{
+					const numEntries = progressHistory.length;
+					const lastEntryTime = progressHistory[numEntries -1][0];
+					const today = (new Date()).setHours(0,0,0,0);
+
+					// A tree is inative if the last entry is from more than 3 months ago.
+					return today - lastEntryTime > (3*30*24*60*60*1000);
+				}
+			);
+
+			inactiveTrees.forEach(
+				([key, progressHistory]) =>
+				{
+					delete data.progress[key];
+				}
+			);
+
+			data.progress[`${userId}:${UICode}->${languageCode}`] = progress;
+
 			chrome.storage.sync.set({"progress": data.progress});
 			resolve();
 		});
@@ -1139,7 +1177,7 @@ function addFlagBorders()
 	languageProgressPromise.then(
 		(data) => {
 			// Go through each row in the language change list, if it is still there.
-			if (document.querySelector(LANGUAGES_LIST_SELECTOR) !== null && username !== undefined)
+			if (document.querySelector(LANGUAGES_LIST_SELECTOR) !== null && userId !== undefined)
 				Array.from(document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span`)).forEach(
 					(container) => {
 						// There are two flags for each language, the first is the target language, the second is the base language.
@@ -1180,12 +1218,17 @@ function addFlagBorders()
 						const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
 						const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
 				
-						langProgress = data.progress[`${username}${code1}${code2}`];
+						let langProgress = data.progress[`${userId}:${code2}->${code1}`];
+						if (langProgress === undefined)
+						{
+							// Try old format
+							langProgress = data.progress[`${username}${code1}${code2}`];
+						}
 
 						let color;
 						let treeLevel;
 						
-						if (langProgress == null)
+						if (langProgress === undefined)
 							treeLevel = 0;
 						else
 							treeLevel = langProgress[langProgress.length-1][1];
@@ -1614,15 +1657,12 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		{
 			// If there is the IN BETA label, make it relative, not aboslute.
 			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style.position = 'relative';
-			if (inMobileLayout)
-				strengthenBox.style.marginTop = "1.5em";
-			else
-				strengthenBox.style.marginTop = "0.5em";
+			strengthenBox.style.marginTop = "0.5em";
 		}
-		else if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) !== null)
 		{
-			// Not being pushed down by the IN BETA label,
-			// and there is a TRY PLUS button on the right which we have to make room for.
+			// There is a TRY PLUS button on the right which we have to make room for.
 			const boxRightEdge = topOfTree.getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
 			const offset = boxRightEdge - buttonLeftEdge;
@@ -3295,19 +3335,23 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		{
 			// If there is the IN BETA label, make it relative, not absolute.
 			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style.position = 'relative';
-			if (inMobileLayout)
-				container.style.marginTop = "1.5em";
-			else
-				container.style.marginTop = "0.5em";
+			container.style.marginTop = "0.5em";
 		}
-		else if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
 		{
-			// Not being pushed down by the IN BETA label,
-			// and there is a TRY PLUS button on the right which we have to make room for.
+			// There is a TRY PLUS button on the right which we have to make room for.
 			const boxRightEdge = topOfTree.getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
 			const offset = boxRightEdge - buttonLeftEdge;
-			container.style.width = `calc(100% - ${offset}px - 0.5em)`;
+			if (inMobileLayout)
+			{
+				container.style.width = `calc(100% - ${offset}px - 1.5em)`;
+			}
+			else
+			{
+				container.style.width = `calc(100% - ${offset}px - 0.5em)`;
+			}
 		}
 		const skills = userData.language_data[languageCode].skills;
 		const treeLevel = currentTreeLevel();
@@ -4357,14 +4401,14 @@ function childListMutationHandle(mutationsList, observer)
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
 			const offset = boxRightEdge - buttonLeftEdge;
 			desktopWidth = `calc(100% - ${offset}px - 0.5em)`;
+			mobileWidth = `calc(100% - ${offset}px - 1.5em)`;
 		}
 
 		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
 		{
 			// There is an IN BETA label
-			mobileMargin = "1.5em 1em 0.5em 1em";
-			desktopMargin = "0.5em 1em 2em 1em";
-			desktopWidth = "auto";
+			mobileMargin = "0.5em 1em 0.5em 1em";
+			desktopMargin = "0.5em 0 2em 0";
 		}
 
 		if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)

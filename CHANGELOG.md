@@ -5,6 +5,23 @@ Changelog
 ------------
 -
 
+[v1.3.42] - 2020-12-10
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.42)
+### Changed
+- Any user+tree combinations for which the most recent progress history entry
+is more than 3 months ago is removed to save space as the tree is most likely
+inactive.
+- Format of the key under which the progress history of a user tree is saved to
+use the user's ID rather than the username. This is to stop new entries being
+created if the user changes username. Any existing entries under the old format
+will be transferred to the new format then removed if the user uses that tree.
+
+### Depreciated
+- Old username based key format for saving the progress history. After 3 months
+the transferring of old format data will be stopped. Tthis data will have
+either been transferred or deleted for being old.
+
 [v1.3.41] - 2020-12-09
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.41)
@@ -1076,6 +1093,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.42]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.41...v1.3.42
 [v1.3.41]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.40...v1.3.41
 [v1.3.40]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.39...v1.3.40
 [v1.3.39]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.38...v1.3.39

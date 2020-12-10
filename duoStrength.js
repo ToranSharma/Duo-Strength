@@ -187,19 +187,34 @@ function retrieveOptions()
 
 function retrieveProgressHistory()
 {
-	return new Promise(function (resolve,reject)
+	return new Promise(function (resolve, reject)
 	{
 		chrome.storage.sync.get("progress", function (data)
 		{
-			if (Object.entries(data).length === 0 || !data.progress.hasOwnProperty(username + languageCode + UICode))
+			const key = `${userId}:${UICode}->${languageCode}`;
+			const oldFormatKey = username + languageCode + UICode;
+			if (Object.entries(data).length === 0)
 			{
-				// No progress data or none for this user+lang combination
+				// No progress data
 				updateProgress();
+			}
+			else if (data.progress.hasOwnProperty(key))
+			{
+				// There is some data for the current user+tree combination
+				progress = data.progress[key];
+			}
+			else if (data.progress.hasOwnProperty(oldFormatKey))
+			{
+				// There is data in the old format, we will use this data but remove the old format
+				progress = [...data.progress[oldFormatKey]]; // Copy the data as we are going to delete it
+				data.progress[key] = progress;
+				delete data.progress[oldFormatKey];
+				chrome.storage.sync.set({"progress": data.progress});
 			}
 			else
 			{
-				// We have some progress data saved.
-				progress = data.progress[username + languageCode + UICode];
+				// No data for the current user+tree combination
+				updateProgress();
 			}
 			resolve();
 		});
@@ -214,7 +229,30 @@ function storeProgressHistory()
 		{
 			if (Object.entries(data).length === 0)
 				data.progress = {};
-			data.progress[username + languageCode + UICode] = progress;
+			// Cull inactive trees
+			const trees = Object.entries(data.progress);
+
+			const inactiveTrees = trees.filter(
+				([key, progressHistory]) =>
+				{
+					const numEntries = progressHistory.length;
+					const lastEntryTime = progressHistory[numEntries -1][0];
+					const today = (new Date()).setHours(0,0,0,0);
+
+					// A tree is inative if the last entry is from more than 3 months ago.
+					return today - lastEntryTime > (3*30*24*60*60*1000);
+				}
+			);
+
+			inactiveTrees.forEach(
+				([key, progressHistory]) =>
+				{
+					delete data.progress[key];
+				}
+			);
+
+			data.progress[`${userId}:${UICode}->${languageCode}`] = progress;
+
 			chrome.storage.sync.set({"progress": data.progress});
 			resolve();
 		});
@@ -1139,7 +1177,7 @@ function addFlagBorders()
 	languageProgressPromise.then(
 		(data) => {
 			// Go through each row in the language change list, if it is still there.
-			if (document.querySelector(LANGUAGES_LIST_SELECTOR) !== null && username !== undefined)
+			if (document.querySelector(LANGUAGES_LIST_SELECTOR) !== null && userId !== undefined)
 				Array.from(document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span`)).forEach(
 					(container) => {
 						// There are two flags for each language, the first is the target language, the second is the base language.
@@ -1180,12 +1218,17 @@ function addFlagBorders()
 						const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
 						const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
 				
-						langProgress = data.progress[`${username}${code1}${code2}`];
+						let langProgress = data.progress[`${userId}:${code2}->${code1}`];
+						if (langProgress === undefined)
+						{
+							// Try old format
+							langProgress = data.progress[`${username}${code1}${code2}`];
+						}
 
 						let color;
 						let treeLevel;
 						
-						if (langProgress == null)
+						if (langProgress === undefined)
 							treeLevel = 0;
 						else
 							treeLevel = langProgress[langProgress.length-1][1];

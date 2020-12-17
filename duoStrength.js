@@ -2255,7 +2255,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 			(event) =>
 			{
 				storeCheckpointSource();
-				window.location = `/checkpoint/${languageCode}/${checkpointNumber}/practice`;
+				window.location = `/checkpoint/${languageCode}/${checkpointNumber}/`;
 			}
 		);
 
@@ -2274,6 +2274,29 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 			}
 		);
 				
+		if (completedMessage)
+		{
+			// Adding buttons to the golden owl message.
+			// Duolingo does't add their PRACTICE +10 XP button,
+			// so we will.
+			// We will use their spelling to be consistent with the other checkpoints.
+			const practiseButton = redoTestButton.cloneNode(true);
+			practiseButton.textContent = "PRACTICE +10 XP";
+			practiseButton.setAttribute("data-test", "practise-button");
+
+			practiseButton.addEventListener("mouseleave", oml);
+			practiseButton.addEventListener("mousedown", omd);
+			practiseButton.addEventListener("mouseup", omu);
+			practiseButton.addEventListener("click",
+				(event) =>
+				{
+					storeCheckpointSource();
+					window.location = `/checkpoint/${languageCode}/${checkpointNumber}/practice`
+				}
+			);
+			popoutContent.appendChild(practiseButton);
+
+		}
 
 		popoutContent.appendChild(redoTestButton);
 		popoutContent.appendChild(testOutButton);
@@ -3573,7 +3596,7 @@ function processUserData()
 		each skill in either skills or bonus_skills has a number of properties including 'strength', 'title', 'url_title', 'coords_x', 'coords_y'.
 	*/
 
-	// Skills appear to be inconsistantly ordered so need sorting for ease of use.
+	// Skills appear to be inconsistently ordered so need sorting for ease of use.
 
 	const skills = userData.language_data[languageCode].skills; 
 	const bonusSkills = userData.language_data[languageCode].bonus_skills;

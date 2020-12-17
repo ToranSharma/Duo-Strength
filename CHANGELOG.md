@@ -5,6 +5,14 @@ Changelog
 ------------
 -
 
+[v1.3.44] - 2020-12-17
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.44)
+### Fixed
+- Checkpoint popout selector to not select skill popouts on first load. This
+was causing the checkpoint retry buttons to be added to skill popouts that were
+open when the script adds its features.
+
 [v1.3.43] - 2020-12-17
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.43)
@@ -1109,6 +1117,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.44]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.43...v1.3.44
 [v1.3.43]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.42...v1.3.43
 [v1.3.42]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.41...v1.3.42
 [v1.3.41]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.40...v1.3.41

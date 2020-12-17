@@ -5,6 +5,18 @@ Changelog
 ------------
 -
 
+[v1.3.43] - 2020-12-17
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.43)
+### Fixed
+- Updated checkpoint popout selector to new class names.
+- Retry Test Out Challenge button on golden owl checkpoint  message to point to
+ the challenge not the practice.
+
+### Added
+- PRACTICE +10 XP button to the golden owl checkpoint message that acts the
+same way as the duolingo added ones for the other checkpoints.
+
 [v1.3.42] - 2020-12-10
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.42)
@@ -1097,6 +1109,7 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.43]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.42...v1.3.43
 [v1.3.42]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.41...v1.3.42
 [v1.3.41]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.40...v1.3.41
 [v1.3.40]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.39...v1.3.40

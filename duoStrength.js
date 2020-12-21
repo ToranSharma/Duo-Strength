@@ -1735,11 +1735,25 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 	strengthenBox.appendChild(document.createElement("br"));
 
+	const focus = (event) =>
+	{
+		event.target.style.fontWeight = "bold";
+		event.target.style.textDecoration = "underline";
+	};
+	const blur = (event) =>
+	{
+		event.target.style.fontWeight = "normal";
+		event.target.style.textDecoration = "none";
+	};
+
 	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, (!cracked)?options.needsStrengtheningListLength:options.crackedSkillsListLength);
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
 		let skillLink = document.createElement("a");
 		skillLink.style.color = "blue";
+		skillLink.addEventListener("focus", focus);
+		skillLink.addEventListener("blur", blur);
+
 		if (i < needsStrengthening[0].length)
 		{
 			// index is in normal skill range
@@ -1782,6 +1796,9 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	{
 		const skillLink = document.createElement("a");
 		skillLink.style.color = "blue";
+		skillLink.addEventListener("focus", focus);
+		skillLink.addEventListener("blur", blur);
+
 		// we are showing every skill that needs to be stregnthened.
 		if (needsStrengthening[1].length > 0 && 
 			(
@@ -1817,6 +1834,9 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		// some skills that need to be strengthened are not being shown, so the last one we are showing is just the next one in the order we have
 		const skillLink = document.createElement("a");
 		skillLink.color = "blue";
+		skillLink.addEventListener("focus", focus);
+		skillLink.addEventListener("blur", blur);
+
 		let lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
 		if (lastIndexToBeShown < needsStrengthening[0].length)
 		{
@@ -1863,6 +1883,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			showMore.style.color = "blue";
 			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "";
+			showMore.addEventListener("focus", focus);
+			showMore.addEventListener("blur", blur);
 
 			if (!cracked)
 			{
@@ -1888,29 +1910,18 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		});
 	}
 
-	const firstSkillLink = strengthenBox.getElementsByTagName("A")[0];
-	firstSkillLink.addEventListener('focus',
-		function(event)
-		{
-			event.target.style.fontWeight = 'bold';
-			event.target.style.textDecoration = 'underline';
-		}
-	);
-
-	firstSkillLink.addEventListener('blur',
-		function(event)
-		{
-			event.target.style.fontWeight = 'normal';
-			event.target.style.textDecoration = 'none';
-		}
-	);
 	
 	if(needToAddBox)
 	{
 		topOfTree.appendChild(strengthenBox);
 	}
 
-	if (options.focusFirstSkill) firstSkillLink.focus();
+	const firstSkillLink = strengthenBox.querySelector("a");
+
+	if (options.focusFirstSkill)
+	{
+		firstSkillLink.focus();
+	}
 }
 
 function getSkillFromPopout(skillPopout)
@@ -3576,21 +3587,21 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			link.textContent = suggestedSkill.short;
 		}
 		link.style.color = 'blue';
-		link.addEventListener('focus',
-			function (event)
-			{
-				event.target.style.fontWeight = 'bold';
-				event.target.style.textDecoration = 'underline';
-			}
-		);
 
-		link.addEventListener('blur',
-			function (event)
-			{
-				event.target.style.fontWeight = 'normal';
-				event.target.style.textDecoration = 'none';
-			}
-		);
+		const focus = (event) =>
+		{
+			event.target.style.fontWeight = 'bold';
+			event.target.style.textDecoration = 'underline';
+		}
+
+		const blur = (event) =>
+		{
+			event.target.style.fontWeight = 'normal';
+			event.target.style.textDecoration = 'none';
+		}
+
+		link.addEventListener('focus', focus);
+		link.addEventListener('blur', blur);
 		
 		const suggestionMessage = document.createElement("p");
 		if (treeLevel === 5)
@@ -3612,6 +3623,8 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			suggestionMessage.lastChild.href = "/practice";
 			suggestionMessage.lastChild.style.color = "blue";
 			suggestionMessage.lastChild.textContent = "general practice";
+			suggestionMessage.lastChild.addEventListener("focus", focus);
+			suggestionMessage.lastChild.addEventListener("blur", blur);
 		}
 		else if (treeLevel == 0)
 		{

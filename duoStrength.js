@@ -39,7 +39,7 @@ const LESSON = "iLgf- _1Xlh1";
 const LESSON_MAIN_SECTION = "_3yOsW";
 const LESSON_BOTTOM_SECTION = "_2Fc1K";
 const QUESTION_UNCHECKED = "_399cc";
-const QUESTION_CHECKED = "_3e9O1";
+const QUESTION_CHECKED = "YQ0lZ";
 const CRACKED_SKILL_OVERLAY_SELECTOR = "._1SXlx, ._1x_0f, ._2ZUHwm, ._1m7gz"; // oldest to latest, likely that only the last will match
 const NEW_WORD_SELECTOR = "._1bkpY";
 const LEAGUE_TABLE = "_1_p4S";
@@ -1696,8 +1696,13 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// There is a TRY PLUS button on the right which we have to make room for.
 			const boxRightEdge = topOfTree.getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
-			const offset = boxRightEdge - buttonLeftEdge;
-			strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
+			if (buttonLeftEdge !== 0)
+			{
+				// Is zero if element has been hidden e.g by an adblocker
+				const offset = boxRightEdge - buttonLeftEdge;
+				strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
+			}
+
 		}
 	}
 
@@ -3543,13 +3548,17 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			const boxRightEdge = topOfTree.getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
 			const offset = boxRightEdge - buttonLeftEdge;
-			if (inMobileLayout)
+			if (buttonLeftEdge !== 0)
 			{
-				container.style.width = `calc(100% - ${offset}px - 1.5em)`;
-			}
-			else
-			{
-				container.style.width = `calc(100% - ${offset}px - 0.5em)`;
+				// Is zero if element has been hidden e.g by an adblocker
+				if (inMobileLayout)
+				{
+					container.style.width = `calc(100% - ${offset}px - 1.5em)`;
+				}
+				else
+				{
+					container.style.width = `calc(100% - ${offset}px - 0.5em)`;
+				}
 			}
 		}
 
@@ -5011,9 +5020,13 @@ function childListMutationHandle(mutationsList, observer)
 		{
 			const boxRightEdge = document.querySelector(`[data-test="skill-tree"]>div`).getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
-			const offset = boxRightEdge - buttonLeftEdge;
-			desktopWidth = `calc(100% - ${offset}px - 0.5em)`;
-			mobileWidth = `calc(100% - ${offset}px - 1.5em)`;
+			if (buttonLeftEdge !== 0)
+			{
+				// Is zero if element has been hidden e.g by an adblocker
+				const offset = boxRightEdge - buttonLeftEdge;
+				desktopWidth = `calc(100% - ${offset}px - 0.5em)`;
+				mobileWidth = `calc(100% - ${offset}px - 1.5em)`;
+			}
 		}
 
 		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)

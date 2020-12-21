@@ -1665,8 +1665,13 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// There is a TRY PLUS button on the right which we have to make room for.
 			const boxRightEdge = topOfTree.getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
-			const offset = boxRightEdge - buttonLeftEdge;
-			strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
+			if (buttonLeftEdge !== 0)
+			{
+				// Is zero if element has been hidden e.g by an adblocker
+				const offset = boxRightEdge - buttonLeftEdge;
+				strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
+			}
+
 		}
 	}
 
@@ -3367,13 +3372,17 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			const boxRightEdge = topOfTree.getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
 			const offset = boxRightEdge - buttonLeftEdge;
-			if (inMobileLayout)
+			if (buttonLeftEdge !== 0)
 			{
-				container.style.width = `calc(100% - ${offset}px - 1.5em)`;
-			}
-			else
-			{
-				container.style.width = `calc(100% - ${offset}px - 0.5em)`;
+				// Is zero if element has been hidden e.g by an adblocker
+				if (inMobileLayout)
+				{
+					container.style.width = `calc(100% - ${offset}px - 1.5em)`;
+				}
+				else
+				{
+					container.style.width = `calc(100% - ${offset}px - 0.5em)`;
+				}
 			}
 		}
 		const skills = userData.language_data[languageCode].skills;
@@ -4422,9 +4431,13 @@ function childListMutationHandle(mutationsList, observer)
 		{
 			const boxRightEdge = document.querySelector(`[data-test="skill-tree"]>div`).getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
-			const offset = boxRightEdge - buttonLeftEdge;
-			desktopWidth = `calc(100% - ${offset}px - 0.5em)`;
-			mobileWidth = `calc(100% - ${offset}px - 1.5em)`;
+			if (buttonLeftEdge !== 0)
+			{
+				// Is zero if element has been hidden e.g by an adblocker
+				const offset = boxRightEdge - buttonLeftEdge;
+				desktopWidth = `calc(100% - ${offset}px - 0.5em)`;
+				mobileWidth = `calc(100% - ${offset}px - 1.5em)`;
+			}
 		}
 
 		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)

@@ -10,6 +10,7 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.45)
 ### Fixed
 - Sentence text revealing after an incorrect response.
+- Styling issue if user has an adblocker hiding the try plus button.
 
 [v1.3.44] - 2020-12-17
 -----------------

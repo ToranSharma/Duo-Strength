@@ -18,6 +18,10 @@ scrollable.
 cracked skills, skills that need strengthening, or a suggested skill to practise
 next.
 
+### Changed
+- Grammar skills are now separated in the crowns info breakdown. There are
+options to disable this or hide the grammar skills breakdown.
+
 ### Fixed
 - Suggested skill on for tree level 2 trees not to suggest grammar skills as
 they will not contribute towards getting to tree level 3.

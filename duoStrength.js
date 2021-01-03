@@ -17,7 +17,7 @@ const TOP_OF_TREE = "_2joxc";
 const MOBILE_TOP_OF_TREE = "RviFd";
 const TRY_PLUS_BUTTON_SELECTOR = `[data-test="try-plus-badge"], ._-7YNG`;
 const IN_BETA_LABEL = "_2UV5Z"; // container of div with IN BETA textContent. Will be sibling of needsStrengtheningContainer etc.
-const CROWNS_POPUP_CONTAINER = "_37JAM"; // parent of Crown logo container and cronw description container
+const CROWNS_POPUP_CONTAINER_SELECTOR = "._37JAM.j1W0k"; // parent of Crown logo container and crown description container, shares one class with the lingots popout container
 const CROWN_LOGO_CONTAINER = "_3KWyk";
 const CROWN_DESCRIPTION_CONTAINER = "_37Yk2";
 const CROWN_TOTAL_CONTAINER = "yrLrI";
@@ -2683,7 +2683,7 @@ function displayCrownsBreakdown()
 	removeCrownsBreakdown(); // Remove if there is anything, in case it is still visible when we call
 	
 	const isSidebar = document.querySelector(`.${SIDEBAR}`) !== null;
-	const isPopupContainer = document.querySelector(`.${CROWNS_POPUP_CONTAINER}`) !== null;
+	const isPopupContainer = document.querySelector(CROWNS_POPUP_CONTAINER_SELECTOR) !== null;
 
 	const somethingToDo = (
 		(options.crownsInfoInSidebar && isSidebar)
@@ -2730,7 +2730,7 @@ function displayCrownsBreakdown()
 
 	if ((inMobileLayout || options.crownsInfoInPopup) && isPopupContainer)
 	{
-		const crownsPopupContainer = document.querySelector(`.${CROWNS_POPUP_CONTAINER}`);
+		const crownsPopupContainer = document.querySelector(CROWNS_POPUP_CONTAINER_SELECTOR);
 		placesToAdd.push(crownsPopupContainer);
 		
 		// Style the popup container appropriately

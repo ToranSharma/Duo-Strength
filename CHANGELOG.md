@@ -29,6 +29,7 @@ the progress history saved data.
 ### Fixed
 - Suggested skill on for tree level 2 trees not to suggest grammar skills as
 they will not contribute towards getting to tree level 3.
+- Selector for crowns popup container to not select lingots popup.
 
 [v1.3.45] - 2020-12-21
 -----------------

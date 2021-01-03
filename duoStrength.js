@@ -274,6 +274,65 @@ function storeProgressHistory()
 	});
 }
 
+function storeTreeLevel()
+{
+	return new Promise(
+		(resolve, reject) =>
+		{
+			chrome.storage.sync.get("treeLevels",
+				async (data)=>
+				{
+					if (Object.entries(data).length === 0)
+					{
+						data.treeLevels = {};
+
+						// Temporarily set the tree levels based on the stored progress history
+						const progressData = await new Promise(
+							(resolve2, reject2) =>
+							{
+								chrome.storage.sync.get("progress",
+									(data) =>
+									{
+										if (Object.entries(data).length !== 0)
+										{
+											resolve(
+												Object.keys(data.progress).filter(
+													(key) =>
+													{
+														return /^[0-9]+:[a-z]{2}->[a-z]{2}/.test(key);
+													}
+												).reduce(
+													(res, key) =>
+													{
+														res[key] = data.progress[key];
+														return res;
+													}, {}
+												)
+											);
+										}
+										resolve();
+									}
+								);
+							}
+						);
+						Object.entries(progressData).forEach(
+							([key, value]) =>
+							{
+								data.treeLevels[key] = value[value.length - 1][1];
+							}
+						);
+					}
+
+					data.treeLevels[`${userId}:${UICode}->${languageCode}`] = currentTreeLevel();
+
+					chrome.storage.sync.set({"treeLevels": data.treeLevels});
+					resolve();
+				}
+			);
+		}
+	);
+}
+
 function updateProgress()
 {
 	let entry = [(new Date()).setHours(0,0,0,0), currentTreeLevel(), currentProgress()];
@@ -357,6 +416,7 @@ function updateProgress()
 	progress = progress.slice(++index);
 
 	storeProgressHistory();
+	storeTreeLevel();
 	return true;
 }
 
@@ -1204,13 +1264,12 @@ async function openLastSkillPopout()
 
 function addFlagBorders()
 {
-	// Get the progress saved for all languages and users, async
-	languageProgressPromise = new Promise( (resolve, reject) => {chrome.storage.sync.get("progress", (data) => resolve(data))} );
-
-	languageProgressPromise.then(
+	// Get the tree levels of all the users trees
+	chrome.storage.sync.get("treeLevels",
 		(data) => {
 			// Go through each row in the language change list, if it is still there.
 			if (document.querySelector(LANGUAGES_LIST_SELECTOR) !== null && userId !== undefined)
+			{
 				Array.from(document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span`)).forEach(
 					(container) => {
 						// There are two flags for each language, the first is the target language, the second is the base language.
@@ -1251,20 +1310,14 @@ function addFlagBorders()
 						const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
 						const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
 				
-						let langProgress = data.progress[`${userId}:${code2}->${code1}`];
-						if (langProgress === undefined)
+						let treeLevel = (data.treeLevels !== undefined) ? data.treeLevels[`${userId}:${code2}->${code1}`]: undefined;
+
+						if (treeLevel === undefined)
 						{
-							// Try old format
-							langProgress = data.progress[`${username}${code1}${code2}`];
+							treeLevel = 0;
 						}
 
 						let color;
-						let treeLevel;
-						
-						if (langProgress === undefined)
-							treeLevel = 0;
-						else
-							treeLevel = langProgress[langProgress.length-1][1];
 
 						switch (treeLevel)
 						{
@@ -1315,9 +1368,9 @@ function addFlagBorders()
 						}
 					}
 				);
+			}
 		}
 	);
-
 }
 
 function addStrengthBars(strengths)

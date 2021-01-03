@@ -21,6 +21,10 @@ next.
 ### Changed
 - Grammar skills are now separated in the crowns info breakdown. There are
 options to disable this or hide the grammar skills breakdown.
+- Tree levels are saved in the storage API, in a similar way to the progress
+history. These are now used in adding the border colour for the different trees
+show in the change language drop down. This is temporarily initialised by using
+the progress history saved data.
 
 ### Fixed
 - Suggested skill on for tree level 2 trees not to suggest grammar skills as

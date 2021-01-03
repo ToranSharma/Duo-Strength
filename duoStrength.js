@@ -156,6 +156,8 @@ function retrieveOptions()
 						"crownsBreakdown":							true,
 							"crownsBreakdownShowZerosRows":				true,
 							"bonusSkillsBreakdown":						true,
+							"separateGrammarSkillsInBreakdown":			true,
+								"grammarSkillsBreakdown":					true,
 						"checkpointPrediction":						true,
 						"treeLevelPrediction":						true,
 					"XPInfo":									true,
@@ -2642,23 +2644,32 @@ function displayCrownsBreakdown()
 	}
 
 
-	const skills = userData.language_data[languageCode].skills;
+	let skills = userData.language_data[languageCode].skills;
+	skills = skills.filter(skill => skill.category !== "grammar");
 	const bonusSkills = userData.language_data[languageCode].bonus_skills;
-	const grammarSkills = skills.filter(skill => skill.category === "grammar");
+	const grammarSkills = userData.language_data[languageCode].skills.filter(skill => skill.category === "grammar");
 
-	let crownLevelCount = [Array(6).fill(0),Array(2).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
+	let crownLevelCount = [Array(6).fill(0),Array(2).fill(0),Array(3).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
+	// crownLevelCount[0] normal skills
+	// crownLevelCount[1] bonus skills
+	// crownLevelCount[2] grammar skills
 
-	for (let skill of skills)
+	for (const skill of skills)
 	{
 		crownLevelCount[0][skill.skill_progress.level]++;
 	}
 
-	for (let bonusSkill of bonusSkills)
+	for (const bonusSkill of bonusSkills)
 	{
 		crownLevelCount[1][bonusSkill.skill_progress.level]++;
 	}
 
-	const maxCrownCount = 5*(skills.length - grammarSkills.length) + 2*grammarSkills.length + bonusSkills.length;
+	for (const grammarSkill of grammarSkills)
+	{
+		crownLevelCount[2][grammarSkill.skill_progress.level]++;
+	}
+
+	const maxCrownCount = 5*skills.length + 2*grammarSkills.length + bonusSkills.length;
 
 	const treeLevel = currentTreeLevel();
 
@@ -3017,78 +3028,60 @@ function displayCrownsBreakdown()
 			breakdownContainer.lastChild.textContent = "Your tree is at Level\xA0";
 			breakdownContainer.lastChild.appendChild(treeLevelContainer);
 
-			for (let crownLevel = 0; crownLevel < crownLevelCount[0].length; ++crownLevel)
+			if (!options.bonusSkillsBreakdown || crownLevelCount[1][0] + crownLevelCount[1][1] === 0)
 			{
-				let skillCount = crownLevelCount[0][crownLevel];
-
-				if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
-					continue;
-
-				let crownCount = skillCount * crownLevel;
-			
-				imgContainer.lastChild.classList.add("crownLevel" + crownLevel + "Count");
-				imgContainer.lastChild.textContent = crownLevel;
-
-				let breakdownListItem = document.createElement("li");
-				breakdownListItem.className = "crownLevelItem";
-				breakdownListItem.style =
-				`
-					display: grid;
-					align-items: center;
-					justify-items: right;
-					grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
-				`;
-
-				const skillCountSpan = document.createElement("span");
-				skillCountSpan.textContent = skillCount;
-				breakdownListItem.appendChild(skillCountSpan);
-
-				const skillsAtSpan = document.createElement("span");
-				skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
-				skillsAtSpan.style.justifySelf = "center";
-				breakdownListItem.appendChild(skillsAtSpan);
-
-				breakdownListItem.appendChild(imgContainer);
-				imgContainer = imgContainer.cloneNode(true);
-
-				breakdownListItem.appendChild(document.createTextNode("="));
-				
-				const crownCountSpan = document.createElement("span");
-				crownCountSpan.textContent = crownCount;
-				breakdownListItem.appendChild(crownCountSpan);
-
-				const crownsSpan = document.createElement("span");
-				crownsSpan.textContent = `crown${(crownCount == 1 )?"":"s"}`;
-				breakdownListItem.appendChild(crownsSpan);
-
-				breakdownList.appendChild(breakdownListItem);
+				// Don't show bonus skills breakdown.
+				crownLevelCount[1].length = 0;
 			}
 
-
-			if (crownLevelCount[1][0] + crownLevelCount[1][1] != 0 && options.bonusSkillsBreakdown)
+			if (!options.separateGrammarSkillsInBreakdown)
 			{
-				// The tree has some bonus skills so let's display a breakdown of their crown levels.
-				let bonusSkillsBreakdownHeader = document.createElement("h3");
-				bonusSkillsBreakdownHeader.textContent = "Bonus Skills";
-				bonusSkillsBreakdownHeader.style =
-				`
-					margin: 0;
-					font-size: 100%;
-					justify-self: center
-				`;
+				// Include the grammar skills with the normal skills.
+				crownLevelCount[0][0] += crownLevelCount[2][0];
+				crownLevelCount[0][1] += crownLevelCount[2][1];
+				crownLevelCount[0][2] += crownLevelCount[2][2];
 
-				breakdownList.appendChild(bonusSkillsBreakdownHeader);
+				// Remove the grammar skills count as it is not needed now.
+				crownLevelCount[2].length = 0;
+			}
 
-				for(let crownLevel = 0; crownLevel < crownLevelCount[1].length; crownLevel++)
+			if (!options.grammarSkillsBreakdown)
+			{
+				// Remove the grammar skills count as we don't want to display it
+				crownLevelCount[2].length = 0;
+			}
+
+			for (let skillType = 0; skillType < crownLevelCount.length; ++skillType)
+			{
+				// Loop through the skills types and make a breakdown table for each.
+				// skillType 0 : normal
+				// skillType 1 : bonus
+				// skillType 2 : grammar, if being shown, else included in normal
+
+
+				if (skillType !== 0 && crownLevelCount[skillType].length !== 0)
 				{
-					let skillCount = crownLevelCount[1][crownLevel];
+					const breakdownHeader = document.createElement("h3");
+					breakdownHeader.textContent = (skillType === 1) ? "Bonus Skills" : "Grammar Skills";
+					breakdownHeader.style =
+					`
+						margin: 0;
+						font-size: 100%;
+						justify-self: center
+					`;
+					breakdownList.appendChild(breakdownHeader);
+				}
+
+				for (let crownLevel = 0; crownLevel < crownLevelCount[skillType].length; ++crownLevel)
+				{
+					const skillCount = crownLevelCount[skillType][crownLevel];
 
 					if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
-					continue;
+						continue;
 
-					let crownCount = skillCount * crownLevel;
+					const crownCount = skillCount * crownLevel;
 				
-					imgContainer.lastChild.classList.add("bonusSkillCrownLevel" + crownLevel + "Count");
+					imgContainer.lastChild.classList.add("crownLevel" + crownLevel + "Count");
 					imgContainer.lastChild.textContent = crownLevel;
 
 					let breakdownListItem = document.createElement("li");
@@ -3100,7 +3093,7 @@ function displayCrownsBreakdown()
 						justify-items: right;
 						grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
 					`;
-					
+
 					const skillCountSpan = document.createElement("span");
 					skillCountSpan.textContent = skillCount;
 					breakdownListItem.appendChild(skillCountSpan);
@@ -3126,8 +3119,9 @@ function displayCrownsBreakdown()
 					breakdownList.appendChild(breakdownListItem);
 				}
 			}
-			
+
 			breakdownContainer.appendChild(breakdownList);
+
 			if (options.crownsBreakdown) crownsInfoContainer.appendChild(breakdownContainer);
 
 			// Checkpoint Prediction

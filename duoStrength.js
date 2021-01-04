@@ -91,6 +91,7 @@ let languageLogo;
 
 let options = {};
 let progress = [];
+let mastered = [];
 let username = "";
 let userId = "";
 let userData = {};
@@ -177,6 +178,8 @@ function retrieveOptions()
 					"focusMode":								false,
 					"focusModeButton":							true,
 					"fixedSidebar":								false,
+					"ignoreMasteredSkills":						true,
+					"masteredButton":							true,
 				};
 
 			if (Object.entries(data).length === 0)
@@ -326,6 +329,51 @@ function storeTreeLevel()
 					data.treeLevels[`${userId}:${UICode}->${languageCode}`] = currentTreeLevel();
 
 					chrome.storage.sync.set({"treeLevels": data.treeLevels});
+					resolve();
+				}
+			);
+		}
+	);
+}
+
+function storeMasteredSkills()
+{
+	return new Promise(
+		(resolve, reject) =>
+		{
+			chrome.storage.sync.get("mastered",
+				(data) =>
+				{
+					if (data.mastered === undefined)
+					{
+						data.mastered = {};
+					}
+
+					data.mastered[`${userId}:${UICode}->${languageCode}`] = mastered;
+
+					chrome.storage.sync.set({"mastered": data.mastered});
+					resolve();
+				}
+			);
+		}
+	);
+}
+
+function retrieveMasteredSkills()
+{
+	return new Promise(
+		(resolve, reject) =>
+		{
+			chrome.storage.sync.get("mastered",
+				(data) =>
+				{
+					if (data.mastered !== undefined)
+					{
+						if (data.mastered[`${userId}:${UICode}->${languageCode}`] !== undefined)
+						{
+							mastered = data.mastered[`${userId}:${UICode}->${languageCode}`];
+						}
+					}
 					resolve();
 				}
 			);
@@ -529,7 +577,7 @@ function removeLanguagesInfo()
 function removePractiseButton()
 {
 	const practiseButton = document.querySelector(`[data-test="practise-button"]`);
-	if (practiseButton != null)
+	if (practiseButton !== null)
 	{
 		practiseButton.remove();
 	}
@@ -538,14 +586,23 @@ function removePractiseButton()
 function removeWordsButton()
 {
 	const wordsButton = document.querySelector(`[data-test="words-button"]`);
-	if (wordsButton != null)
+	if (wordsButton !== null)
 	{
 		wordsButton.parentNode.removeAttribute("style");
 		wordsButton.remove();
 	}
 	const wordsListBubble = document.querySelector(`#wordsListBubble`);
-	if (wordsListBubble != null)
+	if (wordsListBubble !== null)
 		wordsListBubble.remove();
+}
+
+function removeMasterdSkillButton()
+{
+	const masteredButton = document.querySelector(`[data-test="mastered-button"]`);
+	if (masteredButton !== null)
+	{
+		masteredButton.remove();
+	}
 }
 
 function removeCheckpointButtons()
@@ -2023,8 +2080,8 @@ function addGrammarSkillTestOutButton(skillPopout)
 	{
 		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
 	}
-	const testOutButton = document.createElement("div");
-	testOutButton.classList.add(...SMALL_BUTTON.split(" "));
+
+	const testOutButton = addSmallButtonToPopout(skillPopout, true);
 	testOutButton.setAttribute("data-test", "test-out-button");
 
 	const testOutIcon = document.createElement("img");
@@ -2046,8 +2103,6 @@ function addGrammarSkillTestOutButton(skillPopout)
 			window.location = `/skill/${languageCode}/${skillData.url_title}/test`;
 		}
 	);
-
-	smallButtonsContainer.appendChild(testOutButton);
 }
 
 function addWordsButton(skillPopout)
@@ -2062,42 +2117,15 @@ function addWordsButton(skillPopout)
 	const words = skillData.words;
 	const isLocked = skillData.locked;
 
-	let smallButtonsContainer;
-	let wordsButton;
-	const tipsButton = skillPopout.querySelector(`[data-test="test-out-button"]`);
-	
-	if (tipsButton != null)
-	{
-		smallButtonsContainer = tipsButton.parentNode;
-		wordsButton = tipsButton.cloneNode(false); // don't copy the contained test out icon
-		tipsButton.parentNode.insertBefore(wordsButton, tipsButton);
-	}
-	else
-	{
-		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
-		wordsButton = document.createElement("button");
-		wordsButton.classList.add(...SMALL_BUTTON.split(" "));
-		smallButtonsContainer.appendChild(wordsButton);
-	}
-
-	smallButtonsContainer.style = `
-		position: relative;
-		width: 50%;
-		display: flex;
-		justify-content: flex-end;
-	`;
+	let wordsButton = addSmallButtonToPopout(skillPopout);
+	const smallButtonsContainer = skillPopout.querySelector(`.${SMALL_BUTTONS_CONTAINER}`)
 
 	smallButtonsContainer.parentNode.style = `
 		overflow: visible;
 	`;
 	
 	wordsButton.setAttribute("data-test", "words-button");
-	wordsButton.textContent = "Words";
-	wordsButton.style = `
-		text-transform: capitalize;
-		width: auto;
-		padding: 0em 0.3em !important;
-	`;
+	wordsButton.textContent = "words";
 
 	if (isLocked)
 	{
@@ -2110,7 +2138,7 @@ function addWordsButton(skillPopout)
 			const smallButtonsContainer = event.target.parentNode;
 			const wordsListBubble = smallButtonsContainer.querySelector("#wordsListBubble");
 			if (wordsListBubble == null)
-				smallButtonsContainer.appendChild(createWordsListBubble(words, smallButtonsContainer, isLocked));
+				smallButtonsContainer.appendChild(createWordsListBubble(words, wordsButton, smallButtonsContainer, isLocked));
 			else
 				wordsListBubble.remove();
 			event.stopPropagation();
@@ -2126,12 +2154,13 @@ function addWordsButton(skillPopout)
 	);
 }
 
-function createWordsListBubble(words, container, isLocked)
+function createWordsListBubble(words, button, container, isLocked)
 {
 	const bubble = document.createElement("div");
 	bubble.id = "wordsListBubble";
 	const backgroundColor = isLocked ? "darkgrey" : "white";
 	const textColor = isLocked ? "white" : window.getComputedStyle(container.parentNode).backgroundColor;
+	
 	bubble.style = `
 		background-color: ${backgroundColor};
 		color: ${textColor};
@@ -2143,21 +2172,21 @@ function createWordsListBubble(words, container, isLocked)
 		border-radius: 1em;
 		box-shadow: 0.25em 0.25em rgba(0,0,0,0.2);
 		padding: 0.5em;
-		width: 200%;
-		transform: translate(-50%, 0);
+		width: ${100*(100/parseFloat(container.style.width))}%;
+		transform: translate(-${100-parseFloat(container.style.width)}%, 0);
 	`;
 
 	bubble.addEventListener("click", (event) => {event.stopPropagation();})
 
 	const arrow = document.createElement("div");
-	const arrowOffset = container.firstChild.offsetLeft + 0.5*container.firstChild.offsetWidth;
+	const arrowOffset = button.offsetLeft + 0.5*button.offsetWidth;
 	arrow.style = `
 		background-color: ${backgroundColor};
 		position: absolute;
 		width: 0.5em;
 		height: 0.5em;
 		top: -0.25em;
-		left: 50%;
+		left: ${100-parseFloat(container.style.width)}%;
 		transform: translate(calc(-50% + ${arrowOffset}px), 0) rotate(45deg);
 	`;
 	bubble.appendChild(arrow);
@@ -2181,6 +2210,82 @@ function createWordsListBubble(words, container, isLocked)
 	);
 
 	return bubble;
+}
+
+function addSmallButtonToPopout(skillPopout, div = false)
+{
+	// Adds a new small button in the top right of a skill popout, will add it to the front of the buttons.
+
+	let newButton;
+	let smallButtonsContainer = skillPopout.querySelector(`.${SMALL_BUTTONS_CONTAINER}`);
+
+	if (smallButtonsContainer === null)
+	{
+		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
+	}
+	
+	newButton = document.createElement(div ? "div" : "button");
+	newButton.classList.add(...SMALL_BUTTON.split(" "));
+	smallButtonsContainer.insertBefore(newButton, smallButtonsContainer.firstChild);
+
+	smallButtonsContainer.style = `
+		position: relative;
+		display: flex;
+		justify-content: flex-end;
+		width: ${smallButtonsContainer.childElementCount*65/3}%;
+	`;
+
+	if (!div)
+	{
+		newButton.style =
+		`
+			text-transform: capitalize;
+			width: auto;
+			padding: 0em 0.3em !important;
+		`;
+	}
+
+	return newButton;
+}
+
+function addMasteredSkillButton(skillPopout)
+{
+	const skillData = getSkillFromPopout(skillPopout);
+	if (skillData.locked)
+	{
+		return false;
+	}
+
+	const masteredButton = addSmallButtonToPopout(skillPopout);
+
+	let skillIsMastered = mastered.includes(skillData.id);
+
+	masteredButton.textContent = (skillIsMastered) ? "\u2718" : "\u2714"; // cross or tick
+	masteredButton.style.fontSize = "150%";
+	masteredButton.setAttribute("data-test", "mastered-button");
+	masteredButton.title = `${(skillIsMastered) ? "Unm" : "M"}ark Skill as Mastered`;
+
+	masteredButton.addEventListener("click",
+		(event) =>
+		{
+			if (skillIsMastered)
+			{
+				mastered = mastered.filter(id => id !== skillData.id);
+			}
+			else
+			{
+				mastered.push(skillData.id);
+			}
+			skillIsMastered = !skillIsMastered;
+
+			masteredButton.textContent = (skillIsMastered) ? "\u2718" : "\u2714";
+			masteredButton.title = `${(skillIsMastered) ? "Unm" : "M"}ark Skill as Mastered`;
+			storeMasteredSkills();
+
+
+			addFeatures();
+		}
+	);
 }
 
 function addPractiseButton(skillPopout)
@@ -4049,7 +4154,7 @@ function getNeedsStrengthening()
 	{
 		if (skill.strength != 1 && skill.strength != 0 && skill.skill_progress.level != 0)
 		{
-			//Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started
+			// Add to needs strengthening if not at 100% and not at 0% and not at 0 crowns i.e. not started.
 			needsStrengthening[0].push(skill);
 		}
 	}
@@ -4174,6 +4279,34 @@ function processUserData()
 
 	skills.sort(sortByTreePosition);
 	bonusSkills.sort(sortByTreePosition);
+
+	[...skills, ...bonusSkills].forEach(
+		(skill) =>
+		{
+			if (skill.originalStrength === undefined)
+			{
+				skill.originalStrength = skill.strength;
+			}
+
+			if (options.ignoreMasteredSkills)
+			{
+				// We will force all the skills that are marked as mastered to have strength 1.0.
+				if (mastered.includes(skill.id))
+				{
+					skill.strength = 1.0;
+				}
+				else
+				{
+					skill.strength = skill.originalStrength;
+				}
+			}
+			else
+			{
+				skill.strength = skill.originalStrength;
+			}
+		}
+	);
+
 }
 
 function addFeatures()
@@ -4269,19 +4402,19 @@ function addFeatures()
 		showOnlyNeededSkills();
 	}
 
-	// Practise and Words Button in skill popouts
+	// Practise, Words and Mastered Buttons in skill popouts
 	{
 		const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
 
-		if (options.practiseButton || options.wordsButton)
+		if (options.practiseButton || options.wordsButton || options.grammarSkillsTestButton || options.masteredButton)
 		{
-			if (skillPopout != null)
+			if (skillPopout !== null)
 			{
 				if (options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"]`) === null)
 				{
 					// Want practise button and there isn't one.
 					const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
-					if (introLesson == null || !introLesson.contains(skillPopout))
+					if (introLesson === null || !introLesson.contains(skillPopout))
 					{
 						// No introduction lesson, or if there is this skillPopout isn't from that skill
 						addPractiseButton(skillPopout);
@@ -4298,6 +4431,12 @@ function addFeatures()
 				{
 					// No testout button, might be a grammar skill and we want to add one.
 					addGrammarSkillTestOutButton(skillPopout);
+				}
+
+				if (options.masteredButton && skillPopout.querySelector(`[data-test="mastered-button"]`) === null)
+				{
+					// Add the button to mark skills as mastered.
+					addMasteredSkillButton(skillPopout);
 				}
 			}
 
@@ -4317,6 +4456,10 @@ function addFeatures()
 		{
 			// Don't want words button, let's remove it if there is one there.
 			removeWordsButton();
+		}
+		if (!options.masteredButton)
+		{
+			removeMasterdSkillButton();
 		}
 
 		if (inMobileLayout && skillPopout !== null && document.querySelector("#revealHiddenSkillsButton") !== null)
@@ -4546,6 +4689,8 @@ async function handleDataResponse(responseText)
 			await retrieveProgressHistory();
 			updateProgress();
 
+			await retrieveMasteredSkills();
+
 			usingOldData = false;
 			addFeatures(); // actual processing of the data.
 		}
@@ -4566,9 +4711,10 @@ async function handleDataResponse(responseText)
 			// Not a language change and the data is for the current language, just process it.
 			userData = newUserData;
 
-			await retrieveProgressHistory()
+			await retrieveProgressHistory();
 			updateProgress();
 
+			await retrieveMasteredSkills();
 			usingOldData = false;
 			addFeatures();
 		}
@@ -5246,6 +5392,8 @@ function childListMutationHandle(mutationsList, observer)
 		}
 
 		if (options.wordsButton) addWordsButton(skillPopout);
+
+		if (options.masteredButton) addMasteredSkillButton(skillPopout);
 
 		if (options.grammarSkillsTestButton) addGrammarSkillTestOutButton(skillPopout);
 

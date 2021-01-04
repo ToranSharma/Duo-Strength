@@ -17,6 +17,11 @@ scrollable.
 - Option to only show skills in the tree that need to be addressed. This means
 cracked skills, skills that need strengthening, or a suggested skill to practise
 next.
+- Button to skill popouts to mark skills as 'mastered', which forces their
+strength to be 100%. This can be used to ignore skills that are stuck needing
+strengthening.
+  - Option to toggle the button in skill popouts.
+  - Option to toggle the forcing of the skills marked as mastered to 100%.
 
 ### Changed
 - Grammar skills are now separated in the crowns info breakdown. There are

@@ -1876,7 +1876,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 		if (event.target.getAttribute("href") !== "#")
 		{
-			const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/(.*)/`))[1];
+			const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
 			const button = createOpenPopoutButton(urlTitle);
 			button.id = (cracked) ? "crackedPopoutButton" : "needsStrengtheningPopoutButton";
 
@@ -2078,7 +2078,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 	const firstSkillLink = strengthenBox.querySelector("a");
 
-	const firstSkillUrlTitle = firstSkillLink.href.match(new RegExp(`/${languageCode}/(.*)/`))[1];
+	const firstSkillUrlTitle = firstSkillLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
 
 	const button = createOpenPopoutButton(firstSkillUrlTitle);
 	button.id = (cracked) ? "crackedPopoutButton" : "needsStrengtheningPopoutButton";
@@ -3842,7 +3842,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 			if (event.target.getAttribute("href") !== "/practice")
 			{
-				const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/(.*)/`))[1];
+				const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
 				const button = createOpenPopoutButton(urlTitle);
 				button.id = "suggestionPopoutButton";
 
@@ -3958,7 +3958,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	if (options.suggestionPopoutButton && Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).some(skillName => skillName.textContent === suggestionName))
 	{
 		// Add button that opens up the suggested skill's popout
-		const suggestionUrlTitle = suggestionLink.href.match(new RegExp(`/${languageCode}/(.*)/`))[1];
+		const suggestionUrlTitle = suggestionLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
 		const button = createOpenPopoutButton(suggestionUrlTitle);
 		button.id = "suggestionPopoutButton";
 		container.querySelector(`p`).appendChild(button);

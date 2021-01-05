@@ -172,6 +172,7 @@ function retrieveOptions()
 						"XPPrediction":								true,
 					"languagesInfo":							true,
 						"languagesInfoSortOrder":					"0",
+					"totalStrengthBox":							true,
 					"showTranslationText":						true,
 						"revealHotkey":								true,
 							"revealHotkeyCode":							"Ctrl+Alt+H",
@@ -562,18 +563,29 @@ function removeXPBoxes()
 
 function removeSuggestion()
 {
-	let suggestionContainer = document.getElementById("skillSuggestionMessageContainer");
-	if (suggestionContainer != null)
+	const suggestionContainer = document.getElementById("skillSuggestionMessageContainer");
+	if (suggestionContainer !== null)
 	{
-		suggestionContainer.parentNode.removeChild(suggestionContainer);
+		suggestionContainer.remove();
+	}
+}
+
+function removeTotalStrengthBox()
+{
+	const totalStrengthBox = document.querySelector("#totalStrengthBox");
+	if (totalStrengthBox !== null)
+	{
+		totalStrengthBox.remove();
 	}
 }
 
 function removeLanguagesInfo()
 {
-	let languagesInfoBox = document.getElementById("languagesBox");
-	if (languagesInfoBox != null)
-		languagesInfoBox.parentNode.removeChild(languagesInfoBox);
+	const languagesInfoBox = document.getElementById("languagesBox");
+	if (languagesInfoBox !== null)
+	{
+		languagesInfoBox.remove();
+	}
 }
 
 function removePractiseButton()
@@ -3594,11 +3606,86 @@ function displayXPBreakdown()
 	}
 }
 
+function displayTotalStrenthBox()
+{
+	const sidebar = document.querySelector(`.${SIDEBAR}`);
+	if (sidebar == null) return false;
+
+	const skills = userData.language_data[languageCode].skills.filter(skill => skill.skill_progress.level !== 0);
+	if (skills.length === 0) return false;
+
+	const strengths = skills.map(skill => skill.strength);
+	const strengthSplit = [0,0.25,0.5,0.75,1].map(strength => strengths.filter(s=>s===strength).length);
+
+	const totalStrength = 100*strengthSplit.reduce((total, count, strengthx4) => total + count*strengthx4/4, 0)/strengths.length;
+
+	const totalStrengthBox = document.createElement("DIV");
+	totalStrengthBox.id = "totalStrengthBox";
+	totalStrengthBox.className = WHITE_SIDEBAR_BOX_CONTAINER;
+	
+	const heading = document.createElement("H2");
+	heading.textContent = "Total Strength: ";
+	totalStrengthBox.appendChild(heading);
+
+	const totalStrengthSpan = document.createElement("span");
+	totalStrengthSpan.textContent = `${Math.round(totalStrength)}%`;
+	totalStrengthSpan.style =
+	`
+		font-weight: normal;
+	`;
+
+	heading.appendChild(totalStrengthSpan);
+
+	const barBg = document.createElement("div");
+	barBg.style =
+	`
+		padding-right: ${100-totalStrength}%;
+		width: 100%;
+		height: 0.3em;
+		background-color: lightgrey;
+	`;
+	const barFg = document.createElement("div");
+	barFg.style =
+	`
+		width: 100%;
+		height: 100%;
+		background-color: orange;
+	`;
+
+	barBg.appendChild(barFg);
+	totalStrengthBox.appendChild(barBg);
+
+	const breakdown = document.createElement("p");
+	breakdown.textContent = `${strengthSplit[4]}@100% + ${strengthSplit[3]}@75% + ${strengthSplit[2]}@50% + ${strengthSplit[1]}@25%`;
+	breakdown.style =
+	`
+		font-size: 85%;
+		margin: 0;
+	`;
+
+	totalStrengthBox.appendChild(breakdown);
+
+	if (document.querySelector("#totalStrengthBox") === null)
+	{
+		if (sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`) === null) return false;
+
+		const insertAfterTarget =
+		[
+			...Array.from(sidebar.querySelectorAll("#languagesBox")),
+			...Array.from(sidebar.querySelectorAll(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`))
+		][0];
+		sidebar.insertBefore(totalStrengthBox, insertAfterTarget.nextSibling);
+	}
+	else
+	{
+		document.querySelector("#totalStrengthBox").replaceWith(totalStrengthBox);
+	}
+}
+
 function displayLanguagesInfo(languages)
 {
 	const sidebar = document.querySelector(`.${SIDEBAR}`);
-	if (sidebar == null)
-		return false;
+	if (sidebar == null) return false;
 
 	if (languages.length == 0)
 	{
@@ -3606,137 +3693,78 @@ function displayLanguagesInfo(languages)
 		return false;
 	}
 
-	let languagesBox = document.getElementById("languagesBox");
-
-	if (languagesBox != null)
-	{
-		// We already have a languagesBox.
+		
+	const languagesBox = document.createElement("DIV");
+	languagesBox.id = "languagesBox";
+	languagesBox.className = WHITE_SIDEBAR_BOX_CONTAINER;
 	
-		const displayedLanguages = Array.from(languagesBox.querySelectorAll(`table > tr > td:first-child`)).map(td => td.textContent);
-		// Need to repopulate the table if there are a different number of languages, or the order of the languages is different
-		const repopulate = (
-			displayedLanguages.length != languages.length ||
-			!displayedLanguages.every(
-				(language, index) => {
-					return language == languages[index][0];
-				}
-			)
-		);
+	const heading = document.createElement("H2");
+	heading.textContent = `Languages Info`;
+	languagesBox.appendChild(heading);
 
-		if (!repopulate)
-		{	
-			// Number and order of languages is unchanged, just update the data.
-			for (languageInfo of languages)
-			{
-				const tableRow = document.getElementById(`${languageInfo[0]}Row`);
-				const tableDataElements = tableRow.querySelectorAll("td");
+	const subHeading = document.createElement("H3");
+	subHeading.textContent = `From ${UICode[0].toUpperCase() + UICode[1]}`;
+	languagesBox.appendChild(subHeading);
 
-				languageInfo.forEach(
-					(data, index) => {
-						const tableData = tableDataElements[index];
-						tableData.textContent = data;
-					}
-				);
-			}
-		}
-		else
-		{
-			// Number of languages or the order of them has changed, need to repopulate table.
-			const table = languagesBox.querySelector("#languagesTable");
-			const tableRowElements = table.querySelectorAll("table>tr");
+	const table = document.createElement("TABLE");
+	table.id = "languagesTable";
+	languagesBox.appendChild(table);
 
-			// Clear current table
-			tableRowElements.forEach(row => row.remove());
+	const tableHead = document.createElement("THEAD");
+	table.appendChild(tableHead);
+	const tableHeadRow = document.createElement("TR");
+	tableHeadRow.style.borderBottom = "1px solid black";
+	tableHead.appendChild(tableHeadRow);
+	
+	const tableHeading = document.createElement("TH");
+	tableHeading.style.padding = "0";
 
-			// Add new rows
-			languages.forEach(
-				(languageInfo, index) => {
-					const tableRow = document.createElement("TR");
-					tableRow.id = `${languageInfo[0]}Row`;
-					tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
-					table.appendChild(tableRow);
+	tableHeading.textContent = "Language";
+	tableHeading.style.width = "30%";
+	tableHeadRow.appendChild(tableHeading.cloneNode(true));
+	
+	tableHeading.textContent = "Level";
+	tableHeading.style.width = "20%";
+	tableHeadRow.appendChild(tableHeading.cloneNode(true));
 
-					languageInfo.forEach(
-						(data) => {
-							const tableData = document.createElement("TD");
-							tableData.style.padding = "0";
-							tableData.textContent = data;
-							tableRow.appendChild(tableData);
-						}
-					);
+	tableHeading.textContent = "Total XP";
+	tableHeading.style.width = "25%";
+	tableHeadRow.appendChild(tableHeading.cloneNode(true));
+
+	tableHeading.textContent = "XP to Next Level";
+	tableHeading.style.width = "25%";
+	tableHeadRow.appendChild(tableHeading.cloneNode(true));
+
+	languages.forEach(
+		(languageInfo, index) => {
+			const tableRow = document.createElement("TR");
+			tableRow.id = `${languageInfo[0]}Row`;
+			tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
+			table.appendChild(tableRow);
+
+			languageInfo.forEach(
+				(data) => {
+					const tableData = document.createElement("TD");
+					tableData.style.padding = "0";
+					tableData.textContent = data;
+					tableRow.appendChild(tableData);
 				}
 			);
 		}
+	);
+
+	// Add the new side bar box to the page
+	const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`);
+	if (dailyGoalBox == null)
+		return false;
+
+	if (document.querySelector("#languagesBox") === null)
+	{
+		sidebar.insertBefore(languagesBox, dailyGoalBox.nextSibling);
 	}
 	else
 	{
-		// Need to make a languagesBox.
-		
-		languagesBox = document.createElement("DIV");
-		languagesBox.id = "languagesBox";
-		languagesBox.className = WHITE_SIDEBAR_BOX_CONTAINER;
-		
-		const heading = document.createElement("H2");
-		heading.textContent = `Languages Info`;
-		languagesBox.appendChild(heading);
-
-		const subHeading = document.createElement("H3");
-		subHeading.textContent = `From ${UICode[0].toUpperCase() + UICode[1]}`;
-		languagesBox.appendChild(subHeading);
-
-		const table = document.createElement("TABLE");
-		table.id = "languagesTable";
-		languagesBox.appendChild(table);
-
-		const tableHead = document.createElement("THEAD");
-		table.appendChild(tableHead);
-		const tableHeadRow = document.createElement("TR");
-		tableHeadRow.style.borderBottom = "1px solid black";
-		tableHead.appendChild(tableHeadRow);
-		
-		const tableHeading = document.createElement("TH");
-		tableHeading.style.padding = "0";
-
-		tableHeading.textContent = "Language";
-		tableHeading.style.width = "30%";
-		tableHeadRow.appendChild(tableHeading.cloneNode(true));
-		
-		tableHeading.textContent = "Level";
-		tableHeading.style.width = "20%";
-		tableHeadRow.appendChild(tableHeading.cloneNode(true));
-
-		tableHeading.textContent = "Total XP";
-		tableHeading.style.width = "25%";
-		tableHeadRow.appendChild(tableHeading.cloneNode(true));
-
-		tableHeading.textContent = "XP to Next Level";
-		tableHeading.style.width = "25%";
-		tableHeadRow.appendChild(tableHeading.cloneNode(true));
-
-		languages.forEach(
-			(languageInfo, index) => {
-				const tableRow = document.createElement("TR");
-				tableRow.id = `${languageInfo[0]}Row`;
-				tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
-				table.appendChild(tableRow);
-
-				languageInfo.forEach(
-					(data) => {
-						const tableData = document.createElement("TD");
-						tableData.style.padding = "0";
-						tableData.textContent = data;
-						tableRow.appendChild(tableData);
-					}
-				);
-			}
-		);
-
-		// Add the new side bar box to the page
-		const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`);
-		if (dailyGoalBox == null)
-			return false;
-
-		sidebar.insertBefore(languagesBox, dailyGoalBox.nextSibling);
+		document.querySelector("#languagesBox").replaceWith(languagesBox);
 	}
 }
 
@@ -4458,12 +4486,28 @@ function addFeatures()
 			removeCrownsBreakdown();
 	}
 
+	// Total Strength Box
+	{
+		if (options.totalStrengthBox)
+		{
+			displayTotalStrenthBox();
+		}
+		else
+		{
+			removeTotalStrengthBox();
+		}
+	}
+
 	// Languages Info
 	{
 		if (options.languagesInfo)
+		{
 			displayLanguagesInfo(getLanguagesInfo());
+		}
 		else
+		{
 			removeLanguagesInfo();
+		}
 	}
 
 	// Lists of skills that need attention next
@@ -5422,6 +5466,8 @@ function childListMutationHandle(mutationsList, observer)
 		// Try and add the Crowns and XP info in case the popups are there.
 		if (options.XPInfo) displayXPBreakdown();
 		if (options.crownsInfo) displayCrownsBreakdown();
+
+		if (options.totalStrengthBox) displayTotalStrenthBox();
 
 		// Try to add the languages info incase the sidebar has been added back.
 		if (options.languagesInfo) displayLanguagesInfo(getLanguagesInfo());

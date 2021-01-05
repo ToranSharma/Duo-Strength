@@ -9,7 +9,9 @@ full width.
   - Option to enable and disable focus mode.
   - Button to bottom of the page to toggle the focus mode.
   - Option to enable and disabled the focus mode button.
-- Button next to suggestion link, to open that skill's popout bubble.
+- Button next to links in lists at the top of the tree, to open that skill's
+popout bubble.
+ - Options to toggle these buttons for the different lists.
 - Option to make sidebar fixed when scrolling down the page, and hidden content
 scrollable.
 - Automatic clicking of new words in lessons to reveal their translations.
@@ -17,6 +19,11 @@ scrollable.
 - Option to only show skills in the tree that need to be addressed. This means
 cracked skills, skills that need strengthening, or a suggested skill to practise
 next.
+- Button to skill popouts to mark skills as 'mastered', which forces their
+strength to be 100%. This can be used to ignore skills that are stuck needing
+strengthening.
+  - Option to toggle the button in skill popouts.
+  - Option to toggle the forcing of the skills marked as mastered to 100%.
 
 ### Changed
 - Grammar skills are now separated in the crowns info breakdown. There are

@@ -9,7 +9,9 @@ full width.
   - Option to enable and disable focus mode.
   - Button to bottom of the page to toggle the focus mode.
   - Option to enable and disabled the focus mode button.
-- Button next to suggestion link, to open that skill's popout bubble.
+- Button next to links in lists at the top of the tree, to open that skill's
+popout bubble.
+ - Options to toggle these buttons for the different lists.
 - Option to make sidebar fixed when scrolling down the page, and hidden content
 scrollable.
 - Automatic clicking of new words in lessons to reveal their translations.

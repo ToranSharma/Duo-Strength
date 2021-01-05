@@ -130,10 +130,12 @@ function retrieveOptions()
 						"needsStrengtheningListLength":				"10",
 						"needsStrengtheningListSortOrder":			"0",
 						"showBonusSkillsInNeedsStrengtheningList":	true,
+						"needsStrengtheningPopoutButton":			true,
 					"crackedSkillsList":						true,
 						"crackedSkillsListLength":					"10",
 						"crackedSkillsListSortOrder":				"0",
 						"showBonusSkillsInCrackedSkillsList":		true,
+						"crackedPopoutButton":						true,
 					"skillSuggestion":							true,
 						"skillSuggestionMethod":					"0",
 						"hideSuggestionNonStrengthened":			true,
@@ -627,6 +629,24 @@ function removeFocusModeButton()
 	if (focusModeButton !== null)
 	{
 		focusModeButton.remove();
+	}
+}
+
+function removeNeedsStrengtheningPopoutButton()
+{
+	const suggestionPopoutButton = document.querySelector(`#needsStrengtheningPopoutButton`);
+	if (suggestionPopoutButton !== null)
+	{
+		suggestionPopoutButton.remove();
+	}
+}
+
+function removeCrackedPopoutButton()
+{
+	const suggestionPopoutButton = document.querySelector(`#crackedPopoutButton`);
+	if (suggestionPopoutButton !== null)
+	{
+		suggestionPopoutButton.remove();
 	}
 }
 
@@ -1851,11 +1871,31 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	{
 		event.target.style.fontWeight = "bold";
 		event.target.style.textDecoration = "underline";
+
+		(cracked) ? removeCrackedPopoutButton() : removeNeedsStrengtheningPopoutButton();
+
+		if (event.target.getAttribute("href") !== "#")
+		{
+			const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/(.*)/`))[1];
+			const button = createOpenPopoutButton(urlTitle);
+			button.id = (cracked) ? "crackedPopoutButton" : "needsStrengtheningPopoutButton";
+
+			if (
+				!cracked && options.needsStrengtheningPopoutButton
+				|| cracked && options.crackedPopoutButton
+			)
+			{
+				event.target.parentNode.insertBefore(button, event.target.nextSibling);
+			}
+		}
 	};
 	const blur = (event) =>
 	{
-		event.target.style.fontWeight = "normal";
-		event.target.style.textDecoration = "none";
+		if (event.target !== document.activeElement)
+		{
+			event.target.style.fontWeight = "normal";
+			event.target.style.textDecoration = "none";
+		}
 	};
 
 	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, (!cracked)?options.needsStrengtheningListLength:options.crackedSkillsListLength);
@@ -1865,6 +1905,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		skillLink.style.color = "blue";
 		skillLink.addEventListener("focus", focus);
 		skillLink.addEventListener("blur", blur);
+		skillLink.addEventListener("mouseenter", focus);
+		skillLink.addEventListener("mouseleave", blur);
 
 		if (i < needsStrengthening[0].length)
 		{
@@ -1910,6 +1952,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		skillLink.style.color = "blue";
 		skillLink.addEventListener("focus", focus);
 		skillLink.addEventListener("blur", blur);
+		skillLink.addEventListener("mouseenter", focus);
+		skillLink.addEventListener("mouseleave", blur);
 
 		// we are showing every skill that needs to be stregnthened.
 		if (needsStrengthening[1].length > 0 && 
@@ -1948,6 +1992,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		skillLink.color = "blue";
 		skillLink.addEventListener("focus", focus);
 		skillLink.addEventListener("blur", blur);
+		skillLink.addEventListener("mouseenter", focus);
+		skillLink.addEventListener("mouseleave", blur);
 
 		let lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
 		if (lastIndexToBeShown < needsStrengthening[0].length)
@@ -1994,9 +2040,11 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			showMore.id = `showMore${(!cracked)?"ToStrengthen":"ToRepair"}`;
 			showMore.style.color = "blue";
 			showMore.textContent = numSkillsLeft + " more...";
-			showMore.href = "";
+			showMore.href = "#";
 			showMore.addEventListener("focus", focus);
 			showMore.addEventListener("blur", blur);
+			showMore.addEventListener("mouseenter", focus);
+			showMore.addEventListener("mouseleave", blur);
 
 			if (!cracked)
 			{
@@ -2030,10 +2078,28 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 	const firstSkillLink = strengthenBox.querySelector("a");
 
+	const firstSkillUrlTitle = firstSkillLink.href.match(new RegExp(`/${languageCode}/(.*)/`))[1];
+
+	const button = createOpenPopoutButton(firstSkillUrlTitle);
+	button.id = (cracked) ? "crackedPopoutButton" : "needsStrengtheningPopoutButton";
+
+	if (
+		!cracked && options.needsStrengtheningPopoutButton
+		|| cracked && options.crackedPopoutButton
+	)
+	{
+		firstSkillLink.parentNode.insertBefore(button, firstSkillLink.nextSibling);
+	}
+	else
+	{
+		cracked ? removeCrackedPopoutButton() : removeNeedsStrengtheningPopoutButton();
+	}
+
 	if (options.focusFirstSkill)
 	{
 		firstSkillLink.focus();
 	}
+
 }
 
 function getSkillFromPopout(skillPopout)
@@ -2741,18 +2807,31 @@ function getLanguagesInfo()
 	return languagesInfo;
 }
 
-function addSuggestionPopoutButton(skillName)
+function createOpenPopoutButton(skillUrlTitle)
 {
-	const skillElement = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}`)).find(
-		(skill) => 
+	const allSkills = [...userData.language_data[languageCode].skills,...userData.language_data[languageCode].bonus_skills];
+	const skill = allSkills.find(
+		(skillObject) =>
 		{
-			return skill.querySelector(SKILL_NAME_SELECTOR).textContent === skillName;
+			return skillObject.url_title === skillUrlTitle;
 		}
 	);
+
+	const skillName = skill.short;
+
+	const nameIndex = allSkills.filter(skillObject => skillObject.short === skillName).findIndex(skillObject => skillObject === skill);
+
+	const sameNamedSkills = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}`)).filter(
+		(skillElement) =>
+		{
+			return skillElement.querySelector(SKILL_NAME_SELECTOR).textContent === skillName;
+		}
+	);
+
+	const skillElement = sameNamedSkills[nameIndex];
 	
 	const button = document.createElement("button");
 	button.title = `Open popout for ${skillName}`;
-	button.id = "suggestionPopoutButton";
 	button.addEventListener("click",
 		(event) =>
 		{
@@ -2760,6 +2839,20 @@ function addSuggestionPopoutButton(skillName)
 			skillElement.firstChild.click();
 		}
 	);
+
+	const focus = (event) =>
+	{
+		event.target.style.transform = "scale(1.2)";
+	};
+	const blur = (event) =>
+	{
+		event.target.style.transform = "unset";
+	};
+
+	button.addEventListener("focus", focus);
+	button.addEventListener("blur", blur);
+	button.addEventListener("mouseenter", focus);
+	button.addEventListener("mouseleave", blur);
 	button.style =
 	`
 		background: none;
@@ -3744,30 +3837,49 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		{
 			event.target.style.fontWeight = 'bold';
 			event.target.style.textDecoration = 'underline';
+
+			removeSuggestionPopoutButton();
+
+			if (event.target.getAttribute("href") !== "/practice")
+			{
+				const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/(.*)/`))[1];
+				const button = createOpenPopoutButton(urlTitle);
+				button.id = "suggestionPopoutButton";
+
+				if (options.suggestionPopoutButton)
+				{
+					event.target.parentNode.insertBefore(button, event.target.nextSibling);
+				}
+			}
 		}
 
 		const blur = (event) =>
 		{
-			event.target.style.fontWeight = 'normal';
-			event.target.style.textDecoration = 'none';
+			if (event.target !== document.activeElement)
+			{
+				event.target.style.fontWeight = "normal";
+				event.target.style.textDecoration = "none";
+			}
 		}
 
-		link.addEventListener('focus', focus);
-		link.addEventListener('blur', blur);
+		link.addEventListener("focus", focus);
+		link.addEventListener("blur", blur);
+		link.addEventListener("mouseenter", focus);
+		link.addEventListener("mouseleave", blur);
 		
 		const suggestionMessage = document.createElement("p");
 		if (treeLevel === 5)
 		{
-			let messageText = `Your ${language} tree is `
+			let messageText = `Your ${language} tree is `;
 			if (fullyStrengthened)
-				messageText += `fully strengthened and `;
+				messageText += "fully strengthened and ";
 			
-			messageText += `at Level 5`;
+			messageText += "at Level 5";
 
 			if (noCrackedSkills)
-				messageText += ` with no cracked skills`;
+				messageText += " with no cracked skills";
 
-			messageText += `! Why not do a `;
+			messageText += "! Why not do a ";
 
 			suggestionMessage.textContent = messageText;
 
@@ -3777,6 +3889,8 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			suggestionMessage.lastChild.textContent = "general practice";
 			suggestionMessage.lastChild.addEventListener("focus", focus);
 			suggestionMessage.lastChild.addEventListener("blur", blur);
+			suggestionMessage.lastChild.addEventListener("mouseenter", focus);
+			suggestionMessage.lastChild.addEventListener("mouseleave", blur);
 		}
 		else if (treeLevel == 0)
 		{
@@ -3827,7 +3941,6 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			suggestionMessage.appendChild(link);
 		}
 
-
 		container.appendChild(suggestionMessage);
 	}
 	else
@@ -3839,12 +3952,15 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	// Skill Suggestion Popout Button
 	removeSuggestionPopoutButton(); // Remove if already exists.
 
-	const suggestionName = container.querySelector(`a`).textContent;
+	const suggestionLink = container.querySelector("a");
+	const suggestionName = suggestionLink.textContent;
 
 	if (options.suggestionPopoutButton && Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).some(skillName => skillName.textContent === suggestionName))
 	{
 		// Add button that opens up the suggested skill's popout
-		const button = addSuggestionPopoutButton(suggestionName);
+		const suggestionUrlTitle = suggestionLink.href.match(new RegExp(`/${languageCode}/(.*)/`))[1];
+		const button = createOpenPopoutButton(suggestionUrlTitle);
+		button.id = "suggestionPopoutButton";
 		container.querySelector(`p`).appendChild(button);
 	}
 
@@ -5391,11 +5507,11 @@ function childListMutationHandle(mutationsList, observer)
 			if (options.practiseButton) addPractiseButton(skillPopout);
 		}
 
+		if (options.grammarSkillsTestButton) addGrammarSkillTestOutButton(skillPopout);
+
 		if (options.wordsButton) addWordsButton(skillPopout);
 
 		if (options.masteredButton) addMasteredSkillButton(skillPopout);
-
-		if (options.grammarSkillsTestButton) addGrammarSkillTestOutButton(skillPopout);
 
 		if (inMobileLayout && document.querySelector("#revealHiddenSkillsButton") !== null) fixPopoutAlignment(skillPopout);
 	}

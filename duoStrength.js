@@ -148,6 +148,8 @@ function retrieveOptions()
 						"lessonThreshold":							"4",
 					"wordsButton":								true,
 					"grammarSkillsTestButton":					true,
+					"ignoreMasteredSkills":						true,
+						"masteredButton":							true,
 					"checkpointButtons":						true,
 					"treeLevelBorder":							true,
 					"crownsInfo":								true,
@@ -180,8 +182,6 @@ function retrieveOptions()
 					"focusMode":								false,
 					"focusModeButton":							true,
 					"fixedSidebar":								false,
-					"ignoreMasteredSkills":						true,
-					"masteredButton":							true,
 				};
 
 			if (Object.entries(data).length === 0)

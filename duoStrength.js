@@ -65,6 +65,7 @@ const CROWN_TOTAL_SELECTOR = "._1HHlZ._3F5mM, ._12yJ8._3F5mM";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 const SKILL_ROW_SELECTOR = "._3f9ou";
 const SKILL_TREE_SELECTOR = "._3YEom";
+const TIPS_PAGE_BODY_SELECTOR = "._1yyg2";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -183,6 +184,8 @@ function retrieveOptions()
 					"focusMode":								false,
 					"focusModeButton":							true,
 					"fixedSidebar":								false,
+					"addTipsPagePractiseButton":				true,
+					"addTipsPageBottomButtons":					true,
 				};
 
 			if (Object.entries(data).length === 0)
@@ -643,6 +646,28 @@ function removeFocusModeButton()
 		focusModeButton.remove();
 	}
 }
+
+function removeTipsPageButtons()
+{
+	const buttonContainersToRemove = Array.from(document.querySelectorAll(`[data-test="start-lesson"]`)).slice(1).map(elem=>elem.parentNode);
+	buttonContainersToRemove.forEach(
+		(container) =>
+		{
+			container.remove();
+		}
+	);
+
+	const buttonsToRemove = Array.from(document.querySelectorAll(`[data-test="start-lesson"], [data-test="practise-button"]`))
+								.slice(1);
+	buttonsToRemove.forEach(
+		(button) =>
+		{
+			button.remove();
+		}
+	);
+
+}
+
 
 function removeNeedsStrengtheningPopoutButton()
 {
@@ -2588,6 +2613,112 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 	}
 
 	popoutContent.scrollIntoView({block: "center"});
+}
+
+function addButtonsToTipsPage()
+{
+	if ((new RegExp("/tips/?")).test(window.location.pathname))
+	{
+		const desiredNumButtons = (1 + options.addTipsPagePractiseButton) * (options.addTipsPageBottomButtons? 2 : 1 )
+
+		const startLessonButtons = document.querySelectorAll(`[data-test="start-lesson"]`);
+		const practiseButtons = document.querySelectorAll(`[data-test="practise-button"]`);
+
+		if (desiredNumButtons !== startLessonButtons.length + practiseButtons.length)
+		{
+			// We have the wrong number of buttons, so we need to do something.
+			// Start off by removing all the extra buttons.
+			removeTipsPageButtons();
+
+			// Find the skill for the current tips page
+			const skillUrlTitle = window.location.pathname.match(new RegExp(`/${languageCode}/(.*)/tips`))[1];
+
+			const skillObject = [...userData.language_data[languageCode].skills, ...userData.language_data[languageCode].bonus_skills]
+								.find(skill => skill.url_title === skillUrlTitle);
+
+			// See if this skill is at max crown level so the start-lesson button will be point to a practice sesison.
+			const toPractise = skillObject.skill_progress.level === 5
+							|| (
+								skillObject.category === "grammar"
+								&& skillObject.skill_progress.level === 2
+							)
+							|| (
+								skillObject.bonus && skillObject.skill_progress.level === 1
+							);
+
+			const startLessonButton = startLessonButtons[0];
+			// Add the practise button at the top if it is wanted.
+			if (options.addTipsPagePractiseButton && !toPractise)
+			{
+				const practiseButton = startLessonButton.cloneNode(true);
+				practiseButton.setAttribute("data-test", "practise-button");
+				practiseButton.textContent = "practise";
+				practiseButton.style = 
+				`
+					margin-left: 1em;
+				`;
+
+				startLessonButton.parentNode.insertBefore(practiseButton, startLessonButton.nextElementSibling);
+			}
+
+			startLessonButton.parentNode.style = 
+			`
+				justify-content: flex-end;
+			`;
+			startLessonButton.parentNode.firstChild.style =
+			`
+				margin-right: auto;
+			`;
+
+			// Now copy all the top buttons to the bottom of the page if wanted.
+			if (options.addTipsPageBottomButtons)
+			{
+				const buttons = [startLessonButton, ...document.querySelectorAll(`[data-test="practise-button"]`)];
+
+				const bottomButtonsContainer = startLessonButton.parentNode.cloneNode(false);
+				bottomButtonsContainer.style.borderBottom = "1em";
+				document.querySelector(TIPS_PAGE_BODY_SELECTOR).parentNode.appendChild(bottomButtonsContainer);
+
+				buttons.forEach(
+					(button) =>
+					{
+						bottomButtonsContainer.appendChild(button.cloneNode(true));
+					}
+				);
+			}
+
+			// Add click handler to practise buttons
+			document.querySelectorAll(`[data-test="practise-button"]`).forEach(
+				(practiseButton) =>
+				{
+					practiseButton.addEventListener("click",
+						(event) =>
+						{
+							window.location.pathname = `/skill/${languageCode}/${skillUrlTitle}/practice`;
+						}
+					);
+				}
+			);
+
+			// click handler to second start-lesson button
+			Array.from(document.querySelectorAll(`[data-test="start-lesson"]`)).slice(1).forEach(
+				(startButton) =>
+				{
+					startButton.addEventListener("click",
+						(event)=>
+						{
+							window.location.pathname = `/skill/${languageCode}/${skillUrlTitle}${toPractise ? "/practice" : ""}`;
+						}
+					);
+				}
+			);
+		}
+	}
+	else
+	{
+		// Not on a tips page.
+		return false;
+	}
 }
 
 function applyFocusMode()
@@ -4704,6 +4835,11 @@ function addFeatures()
 	{
 		applyFixedSidebar();
 	}
+
+	// Tips Page Buttons
+	{
+		addButtonsToTipsPage();
+	}
 }
 
 function httpGetAsync(url, responseHandler)
@@ -5670,8 +5806,11 @@ function classNameMutationHandle(mutationsList, observer)
 		}
 		else
 		{
-			// not on main page, don't need to do anything other than set the flag.
+			// not on main page, so need to set the flag
 			onMainPage = false;
+			
+			// We may be on a tips page so try to add the buttons.
+			addButtonsToTipsPage();
 		}
 	}
 	if (questionCheckStatusChange)

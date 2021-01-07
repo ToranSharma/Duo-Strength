@@ -30,6 +30,10 @@ average strength of all the finished skills (crown level > 0), excluding bonus
 skills. Skills marked as mastered are considered as mentioned above are counted
 as 100% strength.
   - Option to enable and disable this box.
+- Practise Button to top of tips pages.
+  - Option to enable or disable this.
+- A second set of buttons at the bottom of tips pages.
+  - Option to enable or disable this.
 
 ### Changed
 - Grammar skills are now separated in the crowns info breakdown. There are

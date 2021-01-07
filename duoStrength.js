@@ -3655,7 +3655,6 @@ function displayTotalStrenthBox()
 	barBg.appendChild(barFg);
 	totalStrengthBox.appendChild(barBg);
 
-	console.log(strengthSplit);
 	const breakdown = document.createElement("p");
 	breakdown.textContent = strengthSplit.map(
 			(numSkills, strengthx4) =>

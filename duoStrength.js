@@ -3655,8 +3655,17 @@ function displayTotalStrenthBox()
 	barBg.appendChild(barFg);
 	totalStrengthBox.appendChild(barBg);
 
+	console.log(strengthSplit);
 	const breakdown = document.createElement("p");
-	breakdown.textContent = `${strengthSplit[4]}@100% + ${strengthSplit[3]}@75% + ${strengthSplit[2]}@50% + ${strengthSplit[1]}@25%`;
+	breakdown.textContent = strengthSplit.map(
+			(numSkills, strengthx4) =>
+			{
+				return (numSkills > 0) ? `${numSkills}@${100*strengthx4/4}%`: "";
+			}
+		).filter(str => str !== "")
+		.reverse()
+		.join(" + ");
+
 	breakdown.style =
 	`
 		font-size: 85%;

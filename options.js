@@ -159,6 +159,44 @@ function init()
 	}
 	document.getElementById("enableAll").onclick = () => changeAll(true);
 	document.getElementById("disableAll").onclick = () => changeAll(false);
+
+	document.getElementById("clearMasteredSkills").onclick = (event) =>
+	{
+		if (tabs.length === 0)
+		{
+			event.target.disabled = true;
+		}
+		else
+		{
+			event.target.textContent = "...";
+			tabs.forEach(
+				(id) =>
+				{
+					chrome.tabs.sendMessage(id, {type: "clearMasteredSkills"},
+						(response) => {
+							if (response.cleared)
+							{
+								event.target.disabled = true;
+								event.target.textContent = "List Cleared";
+							}
+							else
+							{
+								event.target.disabled = true;
+								event.target.textContent = "Error Clearing, Try Again";
+							}
+							setTimeout(() =>
+								{
+									event.target.disabled = false;
+									event.target.textContent = "Clear Mastered List for Current Tree"
+								}
+								, 3000
+							);
+						}
+					);
+				}
+			);
+		}
+	};
 }
 
 function getOptions(firstLoad=false)
@@ -437,8 +475,11 @@ window.onload = () => {
 	chrome.runtime.sendMessage({type: "tabsRequest"},
 		(response) => {
 			tabs = response.openedTabs;
+			if (tabs.length === 0)
+			{
+				document.querySelector("#clearMasteredSkills").disabbled = true;
+			}
 		}
 	);
 	getOptions(true);
-
 }

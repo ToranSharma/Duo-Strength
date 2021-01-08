@@ -388,6 +388,32 @@ function retrieveMasteredSkills()
 	);
 }
 
+function clearMasteredSkills()
+{
+	return new Promise(
+		(resolve, reject) =>
+		{
+			chrome.storage.sync.get("mastered",
+				(data) =>
+				{
+					if (data.mastered !== undefined)
+					{
+						const currentTreeKey = `${userId}:${UICode}->${languageCode}`;
+						if (data.mastered[currentTreeKey] !== undefined)
+						{
+							delete data.mastered[currentTreeKey];
+							mastered = [];
+						}
+
+						chrome.storage.sync.set({"mastered": data.mastered});
+					}
+					resolve();
+				}
+			);
+		}
+	);
+}
+
 function updateProgress()
 {
 	let entry = [(new Date()).setHours(0,0,0,0), currentTreeLevel(), currentProgress()];
@@ -6170,10 +6196,28 @@ function start()
 {
 	chrome.runtime.sendMessage({type: "showPageAction"});
 	chrome.runtime.onMessage.addListener(
-		(message) => {
-			if (message.type == "optionsChanged")
+		(message, sender, sendResponse) => {
+			if (message.type === "optionsChanged")
 			{
 				init();
+			}
+			if (message.type === "clearMasteredSkills")
+			{
+				if (userId !== "" && UICode !== "" && languageCode !== "")
+				{
+					clearMasteredSkills()
+					.then(() => 
+						{
+							sendResponse({"cleared": true});
+							addFeatures();
+						}
+					);
+					return true; // needs to return tru as response is asynchronous
+				}
+				else
+				{
+					sendResponse({"cleared": false});
+				}
 			}
 		}
 	);

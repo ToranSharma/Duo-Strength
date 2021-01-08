@@ -24,6 +24,8 @@ strength to be 100%. This can be used to ignore skills that are stuck needing
 strengthening.
   - Option to toggle the button in skill popouts.
   - Option to toggle the forcing of the skills marked as mastered to 100%.
+  - Button in the options page to clear the list of mastered skills for the
+  currently active tree.
 - New box to the sidebar show the total strength of the tree, and a breakdown
 of how many skills are at each strength level. The total strength is the
 average strength of all the finished skills (crown level > 0), excluding bonus

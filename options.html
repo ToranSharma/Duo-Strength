@@ -77,6 +77,13 @@
 					{
 						border-style: none;
 					}
+				
+				li > button
+				{
+					grid-column: 2 / -1;
+					z-index: 1;
+					width: auto;
+				}
 
 		input
 		{
@@ -414,6 +421,9 @@
 					<input class="dummy" type="checkbox" disabled />
 					<input class="option" id="masteredButton" type="checkbox" checked />
 					<label for="masteredSkillButton">Mark Skill as Mastered Button in Skill Popouts</label>
+				</li>
+				<li>
+					<button id="clearMasteredSkills">Clear Mastered List for Current Tree</button>
 				</li>
 			</ul>
 		</li>

@@ -362,6 +362,23 @@
 		<li>
 			<input class="option" id="focusFirstSkill" type="checkbox" checked />
 			<label for="focusFirstSkill">Focus First Skill in Lists</label>
+			<ul>
+				<li class="textOnly">
+					<span>Lists Priority for Focus</span>
+					<ul>
+						<li class="hasSelect">
+							<select class="option" id="focusPriorities">
+								<option value="ncs" selected>Needs Strengthening &gt; Cracked &gt; Suggestion</option>
+								<option value="nsc">Needs Strengthening &gt; Suggestion &gt; Cracked</option>
+								<option value="cns">Cracked &gt; Needs Strengthening &gt; Suggestion</option>
+								<option value="csn">Cracked &gt; Suggestion &gt; Needs Strengthening</option>
+								<option value="snc">Suggestion &gt; Needs Strengthening &gt; Cracked</option>
+								<option value="scn">Suggestion &gt; Cracked &gt; Needs Strengthening</option>
+							</select>
+						</li>
+					</ul>
+				</li>
+			</ul>
 		</li>
 		<li>
 			<input class="option" id="practiseButton" type="checkbox" checked />
@@ -369,7 +386,7 @@
 		</li>
 		<li class="selectFirst">
 			<select class="option selective" subOptionsEnabled="2" id="practiceType">
-				<option value="0" selected="true">Lessons (Earn Crowns)</selected>
+				<option value="0" selected>Lessons (Earn Crowns)</option>
 				<option value="1">Practice (Strengthen Only)</option>
 				<option value="2">Lessons up to Threshold</option>
 			</select>

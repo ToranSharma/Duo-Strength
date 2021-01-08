@@ -144,6 +144,7 @@ function retrieveOptions()
 						"suggestionPopoutButton":					true,
 					"showOnlyNeededSkills":						false,
 					"focusFirstSkill":							true,
+						"focusPriorities":							"0",
 					"practiseButton":							true,
 					"practiceType":								"0",
 						"lessonThreshold":							"4",
@@ -2131,12 +2132,21 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	{
 		cracked ? removeCrackedPopoutButton() : removeNeedsStrengtheningPopoutButton();
 	}
+}
 
-	if (options.focusFirstSkill)
-	{
-		firstSkillLink.focus();
-	}
-
+function focusFirstSkill()
+{
+	Array.from(options.focusPriorities).map(
+		(abrv) =>
+		{
+			if (abrv === "n") return "strengthenBox";
+			if (abrv === "c") return "crackedBox";
+			if (abrv === "s") return "skillSuggestionMessageContainer";
+		}
+	).map(id => document.querySelector(`#${id} a`))
+	.filter(elem => elem !== null)
+	.slice(0, 1)
+	.forEach(link => link.focus());
 }
 
 function getSkillFromPopout(skillPopout)
@@ -4050,14 +4060,16 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 			suggestionMessage.textContent = messageText;
 
-			suggestionMessage.appendChild(document.createElement("a"));
-			suggestionMessage.lastChild.href = "/practice";
-			suggestionMessage.lastChild.style.color = "blue";
-			suggestionMessage.lastChild.textContent = "general practice";
-			suggestionMessage.lastChild.addEventListener("focus", focus);
-			suggestionMessage.lastChild.addEventListener("blur", blur);
-			suggestionMessage.lastChild.addEventListener("mouseenter", focus);
-			suggestionMessage.lastChild.addEventListener("mouseleave", blur);
+			const generalPracticeLink = document.createElement("a");
+			generalPracticeLink.href = "/practice";
+			generalPracticeLink.style.color = "blue";
+			generalPracticeLink.textContent = "general practice";
+			generalPracticeLink.addEventListener("focus", focus);
+			generalPracticeLink.addEventListener("blur", blur);
+			generalPracticeLink.addEventListener("mouseenter", focus);
+			generalPracticeLink.addEventListener("mouseleave", blur);
+
+			suggestionMessage.appendChild(generalPracticeLink);
 		}
 		else if (treeLevel == 0)
 		{
@@ -4135,8 +4147,6 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	if (!document.body.contains(container))
 	{
 		topOfTree.appendChild(container);
-
-		if (options.focusFirstSkill) container.querySelector(`a`).focus();
 	}
 }
 function showOnlyNeededSkills()
@@ -4693,6 +4703,12 @@ function addFeatures()
 		{
 			// Should not be displaying a suggestion.
 			removeSuggestion() // if there happens to be one
+		}
+		
+		// Focus the fist skill of one of the lists based on the priority options
+		if (options.focusFirstSkill)
+		{
+			focusFirstSkill();
 		}
 	}
 

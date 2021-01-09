@@ -144,7 +144,7 @@ function retrieveOptions()
 						"suggestionPopoutButton":					true,
 					"showOnlyNeededSkills":						false,
 					"focusFirstSkill":							true,
-						"focusPriorities":							"0",
+						"focusPriorities":							"ncs",
 					"practiseButton":							true,
 					"practiceType":								"0",
 						"lessonThreshold":							"4",

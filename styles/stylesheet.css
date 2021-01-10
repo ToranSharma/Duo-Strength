@@ -327,3 +327,67 @@
 {
 	background-color: #f0f0f0;
 }
+
+
+/* Top of Tree Lists */
+.topOfTree
+{
+	height: auto;
+	width: 100%;
+	z-index: 1;
+}
+
+.topOfTreeList
+{
+	text-align: left;
+	margin: 1em 0;
+	min-height: 3em
+}
+.mobileLayout .topOfTreeList
+{
+	margin: 0.5em 1em;
+}
+.hasInBetaLabel .topOfTreeList
+{
+	margin-top: 0.5em;
+}
+
+.hasInBetaLabel ._2UV5Z /* IN_BETA_LABEL */
+{
+	position: relative;
+}
+
+.topOfTreeList a
+{
+	color: blue;
+}
+.topOfTreeList a:hover,
+.topOfTreeList a:focus
+{
+	font-weight: bold;
+	text-decoration: underline;
+}
+.desktopLayout .topOfTreeList:first-child
+{
+	margin-top: 0;
+}
+
+.openPopoutButton
+{
+	background: none;
+	border: none;
+	line-height: 1em;
+	cursor: pointer;
+}
+.openPopoutButton:hover,
+.openPopoutButton:focus
+{
+	transform: scale(1.2);
+}
+
+
+.openPopoutButton img
+{
+	width: 1em;
+	vertical-align: middle;
+}

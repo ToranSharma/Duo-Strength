@@ -13,8 +13,7 @@ const imgSrcBaseUrl = "//d35aaqx5ub95lt.cloudfront.net/images";
 // Duolingo class names:
 const BONUS_SKILL_DIVIDER_SELECTOR = "._3Sis0";
 const TOP_OF_TREE_WITH_IN_BETA = "_1q00o _3_JLW";
-const TOP_OF_TREE = "_2joxc";
-const MOBILE_TOP_OF_TREE = "RviFd";
+const TOP_OF_TREE = "RviFd";
 const TRY_PLUS_BUTTON_SELECTOR = `[data-test="try-plus-badge"], ._-7YNG`;
 const IN_BETA_LABEL = "_2UV5Z"; // container of div with IN BETA textContent. Will be sibling of needsStrengtheningContainer etc.
 const CROWNS_POPUP_CONTAINER_SELECTOR = "._37JAM.j1W0k"; // parent of Crown logo container and crown description container, shares one class with the lingots popout container
@@ -1674,15 +1673,13 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	
 	let topOfTree;
 	if (
-			document.querySelector(`[data-test="skill-tree"]`) != null &&
-			document.querySelector(`[data-test="tree-section"]`) != null &&
-			(
-				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
-				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
-				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
-			)
-
-		) // Has the tree loaded from a page change
+		document.querySelector(`[data-test="skill-tree"]`) !== null
+		&& document.querySelector(`[data-test="tree-section"]`) != null
+		&& (
+			document.getElementsByClassName(TOP_OF_TREE).length !== 0
+			|| document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length !== 0
+		)
+	) // Has the tree loaded from a page change
 	{
 		topOfTree = document.querySelector(`[data-test="skill-tree"]>div`);
 	}
@@ -1820,35 +1817,21 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		}
 	}
 	
-	topOfTree.style =
-	`
-		height: auto;
-		width: 100%;
-		z-index: 1;
-	`;
+	topOfTree.classList.add("topOfTree");
 
 	let strengthenBox = document.getElementById((!cracked)?"strengthenBox":"crackedBox"); // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;
 
-	if (strengthenBox == null) // if we haven't made the box yet, make it
+	if (strengthenBox === null) // if we haven't made the box yet, make it
 	{
 		needToAddBox = true;
 		strengthenBox = document.createElement("div");
-		strengthenBox.id = (!cracked)?"strengthenBox":"crackedBox";
-		strengthenBox.style =
-		`
-			text-align: left;
-			margin: 0 0 2em 0;
-			min-height: 3em
-		`;
-		if (inMobileLayout)
-			strengthenBox.style.margin = "0.5em 1em 0.5em 1em";
+		strengthenBox.id = (!cracked) ? "strengthenBox" : "crackedBox";
+		strengthenBox.classList.add("topOfTreeList");
 
-		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length != 0)
+		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length !== 0)
 		{
-			// If there is the IN BETA label, make it relative, not aboslute.
-			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style.position = 'relative';
-			strengthenBox.style.marginTop = "0.5em";
+			topOfTree.classList.add("hasInBetaLabel");
 		}
 
 		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) !== null)
@@ -1860,9 +1843,15 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			{
 				// Is zero if element has been hidden e.g by an adblocker
 				const offset = boxRightEdge - buttonLeftEdge;
-				strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
+				if (inMobileLayout)
+				{
+					strengthenBox.style.width = `calc(100% - ${offset}px - 1.5em)`;
+				}
+				else
+				{
+					strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
+				}
 			}
-
 		}
 	}
 
@@ -1872,7 +1861,9 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		(!cracked && options.showBonusSkillsInNeedsStrengtheningList) ||
 		(cracked && options.showBonusSkillsInCrackedSkillsList)
 	)
+	{
 		numSkillsToBeStrengthened += needsStrengthening[1].length;
+	}
 
 	strengthenBox.textContent = `Your tree has ${numSkillsToBeStrengthened}`;
 
@@ -1897,9 +1888,6 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 	const focus = (event) =>
 	{
-		event.target.style.fontWeight = "bold";
-		event.target.style.textDecoration = "underline";
-
 		(cracked) ? removeCrackedPopoutButton() : removeNeedsStrengtheningPopoutButton();
 
 		if (event.target.getAttribute("href") !== "#")
@@ -1917,24 +1905,13 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			}
 		}
 	};
-	const blur = (event) =>
-	{
-		if (event.target !== document.activeElement)
-		{
-			event.target.style.fontWeight = "normal";
-			event.target.style.textDecoration = "none";
-		}
-	};
 
 	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, (!cracked)?options.needsStrengtheningListLength:options.crackedSkillsListLength);
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
 		let skillLink = document.createElement("a");
-		skillLink.style.color = "blue";
 		skillLink.addEventListener("focus", focus);
-		skillLink.addEventListener("blur", blur);
 		skillLink.addEventListener("mouseenter", focus);
-		skillLink.addEventListener("mouseleave", blur);
 
 		if (i < needsStrengthening[0].length)
 		{
@@ -1977,11 +1954,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	if (numSkillsToShow == numSkillsToBeStrengthened)
 	{
 		const skillLink = document.createElement("a");
-		skillLink.style.color = "blue";
 		skillLink.addEventListener("focus", focus);
-		skillLink.addEventListener("blur", blur);
 		skillLink.addEventListener("mouseenter", focus);
-		skillLink.addEventListener("mouseleave", blur);
 
 		// we are showing every skill that needs to be stregnthened.
 		if (needsStrengthening[1].length > 0 && 
@@ -2017,11 +1991,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	{
 		// some skills that need to be strengthened are not being shown, so the last one we are showing is just the next one in the order we have
 		const skillLink = document.createElement("a");
-		skillLink.color = "blue";
 		skillLink.addEventListener("focus", focus);
-		skillLink.addEventListener("blur", blur);
 		skillLink.addEventListener("mouseenter", focus);
-		skillLink.addEventListener("mouseleave", blur);
 
 		let lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
 		if (lastIndexToBeShown < needsStrengthening[0].length)
@@ -2066,13 +2037,10 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 			showMore = document.createElement("a");
 			showMore.id = `showMore${(!cracked)?"ToStrengthen":"ToRepair"}`;
-			showMore.style.color = "blue";
 			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "#";
 			showMore.addEventListener("focus", focus);
-			showMore.addEventListener("blur", blur);
 			showMore.addEventListener("mouseenter", focus);
-			showMore.addEventListener("mouseleave", blur);
 
 			if (!cracked)
 			{
@@ -2974,6 +2942,7 @@ function createOpenPopoutButton(skillUrlTitle)
 	const skillElement = sameNamedSkills[nameIndex];
 	
 	const button = document.createElement("button");
+	button.classList.add("openPopoutButton");
 	button.title = `Open popout for ${skillName}`;
 	button.addEventListener("click",
 		(event) =>
@@ -2983,33 +2952,8 @@ function createOpenPopoutButton(skillUrlTitle)
 		}
 	);
 
-	const focus = (event) =>
-	{
-		event.target.style.transform = "scale(1.2)";
-	};
-	const blur = (event) =>
-	{
-		event.target.style.transform = "unset";
-	};
-
-	button.addEventListener("focus", focus);
-	button.addEventListener("blur", blur);
-	button.addEventListener("mouseenter", focus);
-	button.addEventListener("mouseleave", blur);
-	button.style =
-	`
-		background: none;
-		border: none;
-		line-height: 1em;
-		cursor: pointer;
-	`;
 	button.appendChild(document.createElement("img"));
 	button.lastChild.src = chrome.runtime.getURL("images/popout.svg");
-	button.lastChild.style =
-	`
-		width: 1em;
-		vertical-align: middle;
-	`;
 
 	return button;
 }
@@ -3758,15 +3702,13 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 	let topOfTree;
 	if (
-			document.querySelector(`[data-test="skill-tree"]`) != null &&
-			document.querySelector(`[data-test="tree-section"]`) != null &&
-			(
-				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
-				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
-				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
-			)
-
-		) // Has the tree loaded from a page change
+		document.querySelector(`[data-test="skill-tree"]`) !== null
+		&& document.querySelector(`[data-test="tree-section"]`) != null
+		&& (
+			document.getElementsByClassName(TOP_OF_TREE).length !== 0
+			|| document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length !== 0
+		)
+	) // Has the tree loaded from a page change
 	{
 		topOfTree = document.querySelector(`[data-test="skill-tree"]>div`);
 	}
@@ -3784,12 +3726,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		return false;
 	}
 
-	topOfTree.style =
-	`
-		height: auto;
-		width: 100%;
-		z-index: 1;
-	`;
+	topOfTree.classList.add("topOfTree");
 
 	let container = document.getElementById("skillSuggestionMessageContainer");
 
@@ -3797,19 +3734,15 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	{
 		container = document.createElement("div");
 		container.id = "skillSuggestionMessageContainer";
-		if (inMobileLayout)
-			container.style = "margin: 0.5em 1em 0.5em 1em;";
-		else
-			container.style = "margin: 0 0 2em 0;";
+		container.classList.add("topOfTreeList");
 
-		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length != 0)
+		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length !== 0)
 		{
 			// If there is the IN BETA label, make it relative, not absolute.
-			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style.position = 'relative';
-			container.style.marginTop = "0.5em";
+			topOfTree.classList.add("hasInBetaLabel");
 		}
 
-		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) !== null)
 		{
 			// There is a TRY PLUS button on the right which we have to make room for.
 			const boxRightEdge = topOfTree.getBoundingClientRect().right;
@@ -3842,13 +3775,9 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			link.href = `/skill/${languageCode}/${suggestedSkill.url_title}${toPractise ? "/practice/" : "/"}`;
 			link.textContent = suggestedSkill.short;
 		}
-		link.style.color = 'blue';
 
 		const focus = (event) =>
 		{
-			event.target.style.fontWeight = 'bold';
-			event.target.style.textDecoration = 'underline';
-
 			removeSuggestionPopoutButton();
 
 			if (event.target.getAttribute("href") !== "/practice")
@@ -3864,19 +3793,8 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			}
 		}
 
-		const blur = (event) =>
-		{
-			if (event.target !== document.activeElement)
-			{
-				event.target.style.fontWeight = "normal";
-				event.target.style.textDecoration = "none";
-			}
-		}
-
 		link.addEventListener("focus", focus);
-		link.addEventListener("blur", blur);
 		link.addEventListener("mouseenter", focus);
-		link.addEventListener("mouseleave", blur);
 		
 		const suggestionMessage = document.createElement("p");
 		if (treeLevel === 5)
@@ -3896,16 +3814,13 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 			const generalPracticeLink = document.createElement("a");
 			generalPracticeLink.href = "/practice";
-			generalPracticeLink.style.color = "blue";
 			generalPracticeLink.textContent = "general practice";
 			generalPracticeLink.addEventListener("focus", focus);
-			generalPracticeLink.addEventListener("blur", blur);
 			generalPracticeLink.addEventListener("mouseenter", focus);
-			generalPracticeLink.addEventListener("mouseleave", blur);
 
 			suggestionMessage.appendChild(generalPracticeLink);
 		}
-		else if (treeLevel == 0)
+		else if (treeLevel === 0)
 		{
 			// Tree not finished, so the suggestion is the next skill that is not yet been completed.
 			
@@ -4000,7 +3915,7 @@ function showOnlyNeededSkills()
 
 		if (inMobileLayout)
 		{
-			document.querySelector(`.${MOBILE_TOP_OF_TREE}`).style["marginBottom"] = "";
+			document.querySelector(`.${TOP_OF_TREE}`).style["marginBottom"] = "";
 		}
 
 		return false;
@@ -4164,7 +4079,7 @@ function showOnlyNeededSkills()
 	// If in mobile layout get rid of negative bottom margin of topOfTree
 	if (inMobileLayout)
 	{
-		document.querySelector(`.${MOBILE_TOP_OF_TREE}`).style["marginBottom"] = "0";
+		document.querySelector(`.${TOP_OF_TREE}`).style["marginBottom"] = "0";
 	}
 
 	// Add button to reveal hidden skills
@@ -4509,12 +4424,18 @@ function addFeatures()
 		) == 0;
 
 		if (options.needsStrengtheningList && !fullyStrengthened)
+		{
 			displayNeedsStrengthening(needsStrengthening); // Not fully strengthened and the list is enabled.
+		}
 		else
+		{
 			removeNeedsStrengtheningBox(); // Remove if there happens to be one.
+		}
 
 		if (options.crackedSkillsList && !noCrackedSkills)
+		{
 			displayNeedsStrengthening(crackedSkills, true); // There are cracked skills and the list is enabled.
+		}
 		else
 			removeCrackedSkillsList(); // Remove if there happens to be one.
 
@@ -5386,14 +5307,25 @@ function childListMutationHandle(mutationsList, observer)
 	if (bottomNavToggled)
 	{
 		// Switched between mobile and desktop layouts.
+		if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
+		{
+			// There is the bottom navigation bar so we are in the mobile layout.
+			inMobileLayout = true;
+			rootElem.classList.add("mobileLayout");
+			rootElem.classList.remove("desktopLayout");
+		}
+		else
+		{
+			// There is not a bottom navigation bar so we are in normal desktop layout.
+			inMobileLayout = false;
+			rootElem.classList.add("desktopLayout");
+			rootElem.classList.remove("mobileLayout");
+		}
 
 		// Set appropriate styling to need strengthing list or skill suggestion
-		let mobileMargin = "0.5em 1em 0.5em 1em";
-		let desktopMargin = "0 0 2em 0";
-
 		let mobileWidth = "auto";
-		let desktopWidth;
-		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+		let desktopWidth = "auto";
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) !== null)
 		{
 			const boxRightEdge = document.querySelector(`[data-test="skill-tree"]>div`).getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
@@ -5406,65 +5338,16 @@ function childListMutationHandle(mutationsList, observer)
 			}
 		}
 
-		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
+		document.querySelectorAll(`.topOfTreeList`).forEach(
+			(list) =>
+			{
+				list.style.width = (inMobileLayout) ? mobileWidth : desktopWidth;
+			}
+		);
+
+		if (inMobileLayout && document.querySelector("#revealHiddenSkillsButton") !== null)
 		{
-			// There is an IN BETA label
-			mobileMargin = "0.5em 1em 0.5em 1em";
-			desktopMargin = "0.5em 0 2em 0";
-		}
-
-		if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
-		{
-			// There is the bottom navigation bar so we are in the mobile layout.
-			inMobileLayout = true;
-			rootElem.classList.add("mobileLayout");
-
-			if (document.getElementById("strengthenBox") != null)
-			{
-				document.getElementById("strengthenBox").style.margin = mobileMargin;
-				document.getElementById("strengthenBox").style.width = mobileWidth;
-			}
-			if (document.getElementById("crackedBox") != null)
-			{
-				document.getElementById("crackedBox").style.margin = mobileMargin;
-				document.getElementById("crackedBox").style.width = mobileWidth;
-
-			}
-			if (document.getElementById("skillSuggestionMessageContainer") != null)
-			{
-				document.getElementById("skillSuggestionMessageContainer").style.margin = mobileMargin;
-				document.getElementById("skillSuggestionMessageContainer").style.width = mobileWidth;
-			}
-
-			if (document.querySelector("#revealHiddenSkillsButton") !== null)
-			{
-				document.querySelector(`.${MOBILE_TOP_OF_TREE}`).style["marginBottom"] = "0";
-			}
-		}
-		else
-		{
-			// There is not a bottom navigation bar so we are in normal desktop layout.
-			inMobileLayout = false;
-			rootElem.classList.add("desktopLayout");
-
-			if (document.getElementById("strengthenBox") != null)
-			{
-				document.getElementById("strengthenBox").style.margin = desktopMargin;
-				document.getElementById("strengthenBox").style.width = desktopWidth;
-				
-			}
-			if (document.getElementById("crackedBox") != null)
-			{
-				document.getElementById("crackedBox").style.margin = desktopMargin;
-				document.getElementById("crackedBox").style.width = desktopWidth;
-				
-			}
-			if (document.getElementById("skillSuggestionMessageContainer") != null)
-			{
-				document.getElementById("skillSuggestionMessageContainer").style.margin = desktopMargin;
-				document.getElementById("skillSuggestionMessageContainer").style.width = desktopWidth;
-			}
-			
+			document.querySelector(`.${TOP_OF_TREE}`).style["marginBottom"] = "0";
 		}
 
 		// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
@@ -5851,11 +5734,13 @@ async function init()
 	{
 		inMobileLayout = true;
 		rootElem.classList.add("mobileLayout");
+		rootElem.classList.remove("desktopLayout");
 	}
 	else
 	{
 		inMobileLayout = false;
 		rootElem.classList.add("desktopLayout");
+		rootElem.classList.remove("mobileLayout");
 	}
 	
 	if (rootChild.firstChild.className === LOGIN_PAGE)

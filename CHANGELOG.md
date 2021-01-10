@@ -9,7 +9,166 @@ full width.
   - Option to enable and disable focus mode.
   - Button to bottom of the page to toggle the focus mode.
   - Option to enable and disabled the focus mode button.
-- Button next to suggestion link, to open that skill's popout bubble.
+- Button next to links in lists at the top of the tree, to open that skill's
+popout bubble.
+ - Options to toggle these buttons for the different lists.
+- Option to make sidebar fixed when scrolling down the page, and hidden content
+scrollable.
+- Automatic clicking of new words in lessons to reveal their translations.
+  - Option to enable and disable this behaviour.
+- Option to only show skills in the tree that need to be addressed. This means
+cracked skills, skills that need strengthening, or a suggested skill to practise
+next.
+- Button to skill popouts to mark skills as 'mastered', which forces their
+strength to be 100%. This can be used to ignore skills that are stuck needing
+strengthening.
+  - Option to toggle the button in skill popouts.
+  - Option to toggle the forcing of the skills marked as mastered to 100%.
+  - Button in the options page to clear the list of mastered skills for the
+  currently active tree.
+- New box to the sidebar show the total strength of the tree, and a breakdown
+of how many skills are at each strength level. The total strength is the
+average strength of all the finished skills (crown level > 0), excluding bonus
+skills. Skills marked as mastered are considered as mentioned above are counted
+as 100% strength.
+  - Option to enable and disable this box.
+- Practise Button to top of tips pages.
+  - Option to enable or disable this.
+- A second set of buttons at the bottom of tips pages.
+  - Option to enable or disable this.
+- Sub option to the Focus First Skills Option to set the priority order for which
+of the lists at the top of the tree is initially focused.
+
+### Changed
+- Grammar skills are now separated in the crowns info breakdown. There are
+options to disable this or hide the grammar skills breakdown.
+- Tree levels are saved in the storage API, in a similar way to the progress
+history. These are now used in adding the border colour for the different trees
+show in the change language drop down. This is temporarily initialised by using
+the progress history saved data.
+
+### Fixed
+- Suggested skill on for tree level 2 trees not to suggest grammar skills as
+they will not contribute towards getting to tree level 3.
+- Selector for crowns popup container to not select lingots popup.
+
+[v1.3.45] - 2020-12-21
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.45)
+### Fixed
+- Sentence text revealing after an incorrect response.
+- Styling issue if user has an adblocker hiding the try plus button.
+
+[v1.3.44] - 2020-12-17
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.44)
+### Fixed
+- Checkpoint popout selector to not select skill popouts on first load. This
+was causing the checkpoint retry buttons to be added to skill popouts that were
+open when the script adds its features.
+
+[v1.3.43] - 2020-12-17
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.43)
+### Fixed
+- Updated checkpoint popout selector to new class names.
+- Retry Test Out Challenge button on golden owl checkpoint  message to point to
+ the challenge not the practice.
+
+### Added
+- PRACTICE +10 XP button to the golden owl checkpoint message that acts the
+same way as the duolingo added ones for the other checkpoints.
+
+[v1.3.42] - 2020-12-10
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.42)
+### Fixed
+- Styling of messages at the top of the tree to make more room for the new try
+plus icon.
+
+### Changed
+- Any user+tree combinations for which the most recent progress history entry
+is more than 3 months ago is removed to save space as the tree is most likely
+inactive.
+- Format of the key under which the progress history of a user tree is saved to
+use the user's ID rather than the username. This is to stop new entries being
+created if the user changes username. Any existing entries under the old format
+will be transferred to the new format then removed if the user uses that tree.
+
+### Depreciated
+- Old username based key format for saving the progress history. After 3 months
+the transferring of old format data will be stopped. This data will have
+either been transferred or deleted for being old.
+
+[v1.3.41] - 2020-12-09
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.41)
+### Fixed
+- Progress history to only store 7 most recent improvements. This stops the
+storage from filling up with old data that will not be used.
+
+[v1.3.40] - 2020-11-23
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.40)
+### Changed
+- Added back retry checkpoint challenge button to checkpoint popout even if
+there is a practice button.
+
+[v1.3.39] - 2020-10-31
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.39)
+### Changed
+- Added backup extra condition for when testing if a skill element in the tree
+is a bonus skill or not. This is to try to and prevent an issue with a new
+German tree that cannot be directly tested.
+
+[v1.3.38] - 2020-10-28
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.38)
+### Fixed
+- The tree level calculation now ignores grammar skills. This had caused the
+tree level to be stuck at level 2, the maximum level that grammar skills can
+get to.
+
+[v1.3.37] - 2020-10-26
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.37)
+### Fixed
+- Class names and selectors of the elements in the navigation bars.
+
+[v1.3.36] - 2020-10-20
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.36)
+### Fixed
+- Practice links to new grammar skills in lists at the top of the tree.
+- Maximum crown count to account for grammar skills maximum possible crown
+level of 2.
+
+
+[v1.3.35] - 2020-10-17
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.35)
+### Fixed
+- Strength bars on new grammar skills.
+- Displaying of words list button on new grammar skills. The words in the list
+are currently placeholders and not helpful, so they shouldn't be shown.
+
+### Added
+- Option to add missing Test Out button to new grammar skills.
+
+[v1.3.34] - 2020-10-02
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.34)
+### Fixed
+- Addition of retry buttons to the golden owl message overlay that is displayed
+when the golden owl checkpoint is clicked on.
+
+[v1.3.33] - 2020-09-21
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.3.33)
+### Fixed
+- How the crowns progress graph handles apparent negative progress after a tree
+update adding new skills.
 
 [v1.3.32] - 2020-09-04
 -----------------
@@ -1012,6 +1171,19 @@ strengthening, above the first skill in the tree.
 from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v1.3.45]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.44...v1.3.45
+[v1.3.44]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.43...v1.3.44
+[v1.3.43]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.42...v1.3.43
+[v1.3.42]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.41...v1.3.42
+[v1.3.41]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.40...v1.3.41
+[v1.3.40]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.39...v1.3.40
+[v1.3.39]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.38...v1.3.39
+[v1.3.38]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.37...v1.3.38
+[v1.3.37]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.36...v1.3.37
+[v1.3.36]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.35...v1.3.36
+[v1.3.35]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.34...v1.3.35
+[v1.3.34]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.33...v1.3.34
+[v1.3.33]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.32...v1.3.33
 [v1.3.32]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.31...v1.3.32
 [v1.3.31]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.30...v1.3.31
 [v1.3.30]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.29...v1.3.30

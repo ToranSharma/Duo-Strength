@@ -77,6 +77,13 @@
 					{
 						border-style: none;
 					}
+				
+				li > button
+				{
+					grid-column: 2 / -1;
+					z-index: 1;
+					width: auto;
+				}
 
 		input
 		{
@@ -227,7 +234,7 @@
 	</style>
 </head>
 <body>
-	<h1>Duo Strength Options <span id="version">v1.3.32</span></h1>
+	<h1>Duo Strength Options <span id="version">v1.3.45</span></h1>
 	<h2>Enable or Disable Features Here</h2>
 	<ul>
 		<li>
@@ -288,6 +295,11 @@
 					<input class="option" id="showBonusSkillsInNeedsStrengtheningList" type="checkbox" checked />
 					<label for="showBonusSkillsInNeedsStrengtheningList">Show Bonus Skills in List</label>
 				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled />
+					<input class="option" id="needsStrengtheningPopoutButton" type="checkbox" checked />
+					<label for="needsStrengtheningPopoutButton">Skill Popout Button</label>
+				</li>
 			</ul>
 		</li>
 		<li>
@@ -313,6 +325,11 @@
 					<input class="dummy" type="checkbox" disabled />
 					<input class="option" id="showBonusSkillsInCrackedSkillsList" type="checkbox" checked />
 					<label for="showBonusSkillsInCrackedSkillsList">Show Bonus Skills in List</label>
+				</li>
+				<li>
+					<input class="dummy" type="checkbox" disabled />
+					<input class="option" id="crackedPopoutButton" type="checkbox" checked />
+					<label for="crackedPopoutButton">Skill Popout Button</label>
 				</li>
 			</ul>
 		</li>
@@ -346,8 +363,29 @@
 			</ul>
 		</li>
 		<li>
+			<input class="option" id="showOnlyNeededSkills" type="checkBox" />
+			<label for="showOnlyNeededSkills">Show Only the Skills that Need Attention</label>
+		</li>
+		<li>
 			<input class="option" id="focusFirstSkill" type="checkbox" checked />
 			<label for="focusFirstSkill">Focus First Skill in Lists</label>
+			<ul>
+				<li class="textOnly">
+					<span>Lists Priority for Focus</span>
+					<ul>
+						<li class="hasSelect">
+							<select class="option" id="focusPriorities">
+								<option value="ncs" selected>Needs Strengthening &gt; Cracked &gt; Suggestion</option>
+								<option value="nsc">Needs Strengthening &gt; Suggestion &gt; Cracked</option>
+								<option value="cns">Cracked &gt; Needs Strengthening &gt; Suggestion</option>
+								<option value="csn">Cracked &gt; Suggestion &gt; Needs Strengthening</option>
+								<option value="snc">Suggestion &gt; Needs Strengthening &gt; Cracked</option>
+								<option value="scn">Suggestion &gt; Cracked &gt; Needs Strengthening</option>
+							</select>
+						</li>
+					</ul>
+				</li>
+			</ul>
 		</li>
 		<li>
 			<input class="option" id="practiseButton" type="checkbox" checked />
@@ -355,7 +393,7 @@
 		</li>
 		<li class="selectFirst">
 			<select class="option selective" subOptionsEnabled="2" id="practiceType">
-				<option value="0" selected="true">Lessons (Earn Crowns)</selected>
+				<option value="0" selected>Lessons (Earn Crowns)</option>
 				<option value="1">Practice (Strengthen Only)</option>
 				<option value="2">Lessons up to Threshold</option>
 			</select>
@@ -368,8 +406,26 @@
 			</ul>
 		</li>
 		<li>
-			<input class="option" id="wordsButton" type="checkbox" check="true" />
+			<input class="option" id="wordsButton" type="checkbox" checked />
 			<label for="wordsButton">Words Button in Skill Popout Box</label>
+		</li>
+		<li>
+			<input class="option" id="grammarSkillsTestButton" type="checkbox" checked />
+			<label for="grammarSkillsTestButton">Test Out Button for Grammar Skills</label>
+		</li>
+		<li>
+			<input class="option" id="ignoreMasteredSkills" type="checkbox" checked />
+			<label for="ignoreMasteredSkills">Force Skills Marked as Mastered to 100% Strength</label>
+			<ul>
+				<li>
+					<input class="dummy" type="checkbox" disabled />
+					<input class="option" id="masteredButton" type="checkbox" checked />
+					<label for="masteredSkillButton">Mark Skill as Mastered Button in Skill Popouts</label>
+				</li>
+				<li>
+					<button id="clearMasteredSkills">Clear Mastered List for Current Tree</button>
+				</li>
+			</ul>
 		</li>
 		<li>
 			<input class="option" id="checkpointButtons" type="checkbox" checked />
@@ -417,13 +473,25 @@
 					<ul>
 						<li>
 							<input class="dummy" type="checkbox" disabled />
-							<input class="option" id="crownsBreakdownShowZerosRows" type="checkbox" checked="true;">
+							<input class="option" id="crownsBreakdownShowZerosRows" type="checkbox" checked >
 							<label for="crownsBreakdownShowZerosRows">Show Rows with Zero Skills</label>
 						</li>
 						<li>
 							<input class="dummy" type="checkbox" disabled />
-							<input class="option" id="bonusSkillsBreakdown" type="checkbox" checked="true;">
+							<input class="option" id="bonusSkillsBreakdown" type="checkbox" checked >
 							<label for="bonusSkillsBreakdown">Show Bonus Skills Breakdown</label>
+						</li>
+						<li>
+							<input class="dummy" type="checkbox" disabled />
+							<input class="option" id="separateGrammarSkillsInBreakdown" type="checkbox" checked >
+							<label for="separateGrammarSkillsInBreakdown">Separate Grammar Skills</label>
+							<ul>
+								<li>
+									<input class="dummy" type="checkbox" disabled />
+									<input class="option" id="grammarSkillsBreakdown" type="checkbox" checked >
+									<label for="grammarSkillsBreakdown">Show Grammar Skills Breakdown</label>
+								</li>
+							</ul>
 						</li>
 					</ul>
 				</li>
@@ -491,6 +559,10 @@
 			</ul>
 		</li>
 		<li>
+			<input class="option" id="totalStrengthBox" type="checkbox" checked />
+			<label for="totalStrengthBox">Total Strength Box</label>
+		</li>
+		<li>
 			<input class="option negative" id="showTranslationText" type="checkbox" checked />
 			<label for="showTranslationText">Show Translation Text</label>
 			<ul>
@@ -517,6 +589,10 @@
 			<label for="showToggleHidingTextButton">Show Button in Lessons to Toggle Sentence Hiding</label>
 		</li>
 		<li>
+			<input class="option" id="revealNewWordTranslation" type="checkbox" checked />
+			<label for="revealNewWordTranslation">Reveal New Word Translations Automatically</label>
+		</li>
+		<li>
 			<input class="option" id="showLeagues" type="checkbox" checked />
 			<label for="showLeagues">Show League Table</label>
 		</li>
@@ -527,6 +603,18 @@
 		<li>
 			<input class="option" id="focusModeButton" type="checkbox" checked />
 			<label for="focusModeButton">Show Button on Learn Page to Toggle the Focus Mode</label>
+		</li>
+		<li>
+			<input class="option" id="fixedSidebar" type="checkbox" />
+			<label for="fixedSidebar">Make Sidebar Fixed When Scrolling Page</label>
+		</li>
+		<li>
+			<input class="option" id="addTipsPagePractiseButton" type="checkbox" />
+			<label for="addTipsPagePractiseButton">Practise Button at the Top of the Tips Page</label>
+		</li>
+		<li>
+			<input class="option" id="addTipsPageBottomButtons" type="checkbox" />
+			<label for="addTipsPageBottomButtons">Set of Buttons at the Bottom of the Tips Page</label>
 		</li>
 	</ul>
 	<button id="enableAll">Enable all</button>

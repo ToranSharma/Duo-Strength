@@ -3898,6 +3898,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		topOfTree.appendChild(container);
 	}
 }
+
 function showOnlyNeededSkills()
 {
 	// Remove existing reveal button
@@ -3909,17 +3910,17 @@ function showOnlyNeededSkills()
 		document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}`).forEach(
 			(element) =>
 			{
-				element.removeAttribute("style");
+				element.classList.remove("outOfView", "outOfViewSkill");
 			}
 		);
 
-		if (inMobileLayout)
-		{
-			document.querySelector(`.${TOP_OF_TREE}`).style["marginBottom"] = "";
-		}
+		document.querySelector(`.${TOP_OF_TREE}`).classList.remove("hasOutOfViewSkills");
 
 		return false;
 	}
+	
+	document.querySelector(`.${TOP_OF_TREE}`).classList.add("hasOutOfViewSkills");
+
 	const needsStrengthening = getNeedsStrengthening();
 	const crackedSkills = getCrackedSkills();
 
@@ -4027,29 +4028,16 @@ function showOnlyNeededSkills()
 	);
 
 	// Now we hide everything.
-	const hiddenStyle =
-	`
-		position: relative;
-		height: 0;
-		margin: 0;
-		padding: 0;
-		left: -50000px;
-	`;
-
-	document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}`).forEach(
+	document.querySelectorAll(`${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}`).forEach(
 		(element) =>
 		{
-			element.style = hiddenStyle;
+			element.classList.add("outOfView");
 		}
 	);
 	document.querySelectorAll(SKILL_SELECTOR).forEach(
 		(element) =>
 		{
-			element.style =
-			`
-				position: absolute;
-				top: -50000px;
-			`;
+			element.classList.add("outOfViewSkill");
 		}
 	);
 
@@ -4057,30 +4045,10 @@ function showOnlyNeededSkills()
 	elementsToShow.forEach(
 		(element) =>
 		{
-			element.removeAttribute("style");
-
-			if (element.className.includes(TREE_SECTION_SELECTOR.slice(1)) && element !== document.querySelector(TREE_SECTION_SELECTOR))
-			{
-				element.style =
-				`
-					margin: 0;
-				`;
-			}
-			else if (element.className.includes(CHECKPOINT_SECTION_SELECTOR.slice(1)))
-			{
-				element.style =
-				`
-					padding: 1em 0;
-				`;
-			}
+			element.classList.remove("outOfView", "outOfViewSkill");
+			element.classList.add("inView");
 		}
 	);
-
-	// If in mobile layout get rid of negative bottom margin of topOfTree
-	if (inMobileLayout)
-	{
-		document.querySelector(`.${TOP_OF_TREE}`).style["marginBottom"] = "0";
-	}
 
 	// Add button to reveal hidden skills
 	const revealButton = document.createElement("button");
@@ -4093,34 +4061,6 @@ function showOnlyNeededSkills()
 		}
 	);
 	revealButton.id = "revealHiddenSkillsButton";
-	revealButton.style =
-	`
-		background-color: ${LIGHT_BLUE};
-		color: white;
-		border-radius: 8px;
-		padding: 6px 8px;
-		border: 0;
-		border-bottom: 4px solid ${DARK_BLUE};
-
-		font-size: 15px;
-		line-height: 20px;
-		font-weight: 700;
-		letter-spacing: 0.8px;
-		text-transform: uppercase;
-	`;
-	const md = (event) =>
-	{
-		event.target.style["marginTop"] = "4px";
-		event.target.style["borderBottom"] = "0";
-	}
-	const ml = (event) =>
-	{
-		event.target.style["marginTop"] = "0";
-		event.target.style["borderBottom"] = `4px solid ${DARK_BLUE}`;
-	}
-
-	revealButton.addEventListener("mousedown", md);
-	revealButton.addEventListener("mouseleave", ml);
 
 	revealButton.textContent = `Reveal ${numHiddenSkills} Hidden Skill${numHiddenSkills === 1 ? "" : "s"}`;
 	if (numHiddenSkills === 0)
@@ -5344,11 +5284,6 @@ function childListMutationHandle(mutationsList, observer)
 				list.style.width = (inMobileLayout) ? mobileWidth : desktopWidth;
 			}
 		);
-
-		if (inMobileLayout && document.querySelector("#revealHiddenSkillsButton") !== null)
-		{
-			document.querySelector(`.${TOP_OF_TREE}`).style["marginBottom"] = "0";
-		}
 
 		// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
 		setUpObservers();

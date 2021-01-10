@@ -391,3 +391,58 @@
 	width: 1em;
 	vertical-align: middle;
 }
+
+/* Show Only Skills to Address */
+.outOfView
+{
+	position: relative;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	left: -50000px;
+}
+.outOfViewSkill
+{
+	position: absolute;
+	top: -50000px;
+}
+
+._3uC-w.inView /*TREE_SECTION*/
+{
+	margin-bottom: 0;
+}
+._3uC-w ~ ._3uC-w.inView /*TREE_SECTION*/
+{
+	margin-top: 0;
+}
+
+._2tZPV.inView /*CHECKPOINT_SECTION*/
+{
+	padding: 1em 0;
+}
+
+.mobileLayout .topOfTree.hasOutOfViewSkills
+{
+	margin-bottom: 0;
+}
+
+#revealHiddenSkillsButton
+{
+	background-color: var(--light-blue);
+	color: white;
+	border-radius: 8px;
+	padding: 6px 8px;
+	border: 0;
+	border-bottom: 4px solid var(--dark-blue);
+
+	font-size: 15px;
+	line-height: 20px;
+	font-weight: 700;
+	letter-spacing: 0.8px;
+	text-transform: uppercase;
+}
+#revealHiddenSkillsButton:active
+{
+	margin-top: 4px;
+	border-bottom: 0;
+}

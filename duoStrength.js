@@ -65,6 +65,7 @@ const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 const SKILL_ROW_SELECTOR = "._3f9ou";
 const SKILL_TREE_SELECTOR = "._3YEom";
 const TIPS_PAGE_BODY_SELECTOR = "._1yyg2";
+const LOCKED_SKILL_POPOUT = "._1fMEX";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -2232,44 +2233,16 @@ function createWordsListBubble(words, button, container, isLocked)
 	const backgroundColor = isLocked ? "darkgrey" : "white";
 	const textColor = isLocked ? "white" : window.getComputedStyle(container.parentNode).backgroundColor;
 	
-	bubble.style = `
-		background-color: ${backgroundColor};
-		color: ${textColor};
-		font-weight: bold;
-		position: absolute;
-		left: 0;
-		top: calc(100% + 0.5em);
-		z-index: 1;
-		border-radius: 1em;
-		box-shadow: 0.25em 0.25em rgba(0,0,0,0.2);
-		padding: 0.5em;
-		width: ${100*(100/parseFloat(container.style.width))}%;
-		transform: translate(-${100-parseFloat(container.style.width)}%, 0);
-	`;
+	bubble.style.color = textColor;
 
 	bubble.addEventListener("click", (event) => {event.stopPropagation();})
 
 	const arrow = document.createElement("div");
 	const arrowOffset = button.offsetLeft + 0.5*button.offsetWidth;
-	arrow.style = `
-		background-color: ${backgroundColor};
-		position: absolute;
-		width: 0.5em;
-		height: 0.5em;
-		top: -0.25em;
-		left: ${100-parseFloat(container.style.width)}%;
-		transform: translate(calc(-50% + ${arrowOffset}px), 0) rotate(45deg);
-	`;
+	arrow.style.transform = `translateX(calc(-50% + ${arrowOffset}px)) rotate(45deg)`;
 	bubble.appendChild(arrow);
 
-
 	const list = document.createElement("ul");
-	list.style = `
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		white-space: pre;
-	`;
 	bubble.appendChild(list);
 
 	words.forEach(
@@ -2294,27 +2267,14 @@ function addSmallButtonToPopout(skillPopout, div = false)
 	{
 		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
 	}
+
+	smallButtonsContainer.classList.add("smallButtonsContainer");
 	
 	newButton = document.createElement(div ? "div" : "button");
 	newButton.classList.add(...SMALL_BUTTON.split(" "));
 	smallButtonsContainer.insertBefore(newButton, smallButtonsContainer.firstChild);
 
-	smallButtonsContainer.style = `
-		position: relative;
-		display: flex;
-		justify-content: flex-end;
-		width: ${smallButtonsContainer.childElementCount*65/3}%;
-	`;
-
-	if (!div)
-	{
-		newButton.style =
-		`
-			text-transform: capitalize;
-			width: auto;
-			padding: 0em 0.3em !important;
-		`;
-	}
+	smallButtonsContainer.setAttribute("numChildren", `${smallButtonsContainer.childElementCount}`);
 
 	return newButton;
 }
@@ -2332,7 +2292,6 @@ function addMasteredSkillButton(skillPopout)
 	let skillIsMastered = mastered.includes(skillData.id);
 
 	masteredButton.textContent = (skillIsMastered) ? "\u2718" : "\u2714"; // cross or tick
-	masteredButton.style.fontSize = "150%";
 	masteredButton.setAttribute("data-test", "mastered-button");
 	masteredButton.title = `${(skillIsMastered) ? "Unm" : "M"}ark Skill as Mastered`;
 
@@ -2376,14 +2335,7 @@ function addPractiseButton(skillPopout)
 	const startButton = document.querySelector(`[data-test="start-button"]`);
 	startButton.textContent = "START LESSON";
 
-	const startButtonContainer = startButton.parentNode;
-
-	const practiseButtonContainer = startButtonContainer.cloneNode(true);
-	practiseButtonContainer.style.marginTop = "0.5em";
-
-	Array.from(practiseButtonContainer.childNodes).slice(0,-1).forEach(button => button.remove());
-
-	const practiseButton = practiseButtonContainer.firstChild;
+	const practiseButton = startButton.cloneNode(true);
 	practiseButton.textContent = "Practise";
 	practiseButton.title = "Practising this skill will strengthen it, but will not contribute any progress towards earning the next crown.";
 	practiseButton.setAttribute("data-test", "practise-button");
@@ -2401,7 +2353,7 @@ function addPractiseButton(skillPopout)
 		window.location = `/skill/${languageCode}/${urlTitle}/practice`;
 	});
 
-	startButtonContainer.parentNode.insertBefore(practiseButtonContainer, startButtonContainer.nextSibling);
+	startButton.parentNode.insertBefore(practiseButton, startButton.nextSibling);
 
 	skillPopout.scrollIntoView({block: "center"});
 }
@@ -2435,21 +2387,6 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		popoutContent = checkpointPopout;
 	}
 
-	const oml = function ()
-	{
-		this.style.boxShadow = `0 0.25em ${(!completedMessage) ? "rgba(255, 255, 255, 0.5)" : "grey"}`;
-		this.style.transform = "none";
-	};
-	const omd = function ()
-	{
-		this.style.boxShadow = "none";
-		this.style.transform = "translate(0, 0.3em)";
-	};
-	const omu = function ()
-	{
-		this.style.boxShadow = `0 0.25em ${(!completedMessage) ? "rgba(255, 255, 255, 0.5)" : "grey"}`;
-		this.style.transform = "none";
-	};
 	const storeCheckpointSource = () =>
 	{
 		const lastSkill = {checkpointNumber: checkpointNumber}
@@ -2491,44 +2428,19 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		// No buttons so we have to made them both
 		const redoTestButton = document.createElement("BUTTON");
 		redoTestButton.setAttribute("data-test", "redo-test-button");
+		redoTestButton.classList.add("checkpointButton");
 		redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
-		redoTestButton.style = 
-		`
-			font-size: 15px;
-			line-height: 20px;
-			width: 100%;
-			color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
-			border: 0;
-			border-radius: 1em;
-			padding: .8em;
-			font-weight: 700;
-			background-color: white;
-			box-shadow: 0 0.25em rgba(255, 255, 255, 0.5);
-			transition: filter 0.2s;
-			cursor: pointer;
-		`;
-
+		redoTestButton.style.color = window.getComputedStyle(popoutContent).getPropertyValue("background-color"); // Make this Same as background colour of box
 
 		if (completedMessage)
 		{
-			redoTestButton.style.border = `2px solid grey`;
-			redoTestButton.style.color = "grey";
-			redoTestButton.style.backgroundColor = GOLD;
-			redoTestButton.style.width = "75%";
-			redoTestButton.style.alignSelf = "center";
-			redoTestButton.style.boxShadow = `0 0.25em grey`;
-			redoTestButton.style.marginTop = "1em";
-
-			popoutContent.style.padding = "0 0 0.5em 0"
+			redoTestButton.removeAttribute("style");
 		}
 		else if (checkpointPopout.querySelector(CHECKPOINT_BLURB_SELECTOR) === null)
 		{
-			popoutContent.style.width = "300px";
+			popoutContent.classList.add("noBlurb");
 		}
 
-		redoTestButton.addEventListener("mouseleave", oml);
-		redoTestButton.addEventListener("mousedown", omd);
-		redoTestButton.addEventListener("mouseup", omu);
 		redoTestButton.addEventListener("click",
 			(event) =>
 			{
@@ -2541,9 +2453,6 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
 		testOutButton.setAttribute("data-test", "test-out-button");
 
-		testOutButton.addEventListener("mouseleave", oml);
-		testOutButton.addEventListener("mousedown", omd);
-		testOutButton.addEventListener("mouseup", omu);
 		testOutButton.addEventListener("click",
 			(event) =>
 			{
@@ -2562,9 +2471,6 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 			practiseButton.textContent = "PRACTICE +10 XP";
 			practiseButton.setAttribute("data-test", "practise-button");
 
-			practiseButton.addEventListener("mouseleave", oml);
-			practiseButton.addEventListener("mousedown", omd);
-			practiseButton.addEventListener("mouseup", omu);
 			practiseButton.addEventListener("click",
 				(event) =>
 				{

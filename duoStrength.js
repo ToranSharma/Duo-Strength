@@ -3983,7 +3983,7 @@ function fixPopoutAlignment(skillPopout)
 	// The horizontal alignment of a skill's popout can be wrong if the other skills on its row are hidden.
 	const skill = skillPopout.parentNode;
 	const skillRow = skill.parentNode;
-	const displayedSkillsInRow = Array.from(skillRow.children).filter(skill => skill.getAttribute("style") === null || skill.getAttribute("style") === "");
+	const displayedSkillsInRow = Array.from(skillRow.querySelectorAll(".inView"));
 	const skillIndex = displayedSkillsInRow.findIndex(element => element === skill);
 
 	// For every skill that is displayed to the left of the skill with the popout we need to shift the popout right by 140px.
@@ -3992,8 +3992,10 @@ function fixPopoutAlignment(skillPopout)
 	const numDisplayedSkillsBefore = displayedSkillsInRow.slice(0,skillIndex).length;
 	const numDisplayedSkillsAfter = displayedSkillsInRow.slice(skillIndex+1).length;
 
-	skillPopout.firstChild.style["transform"] = `translateX(-50%) translateX(${(numDisplayedSkillsAfter - numDisplayedSkillsBefore) * (58 - 12)}px)`;
-	skillPopout.firstChild.lastChild.style["left"] = `calc(50% + ${(numDisplayedSkillsAfter - numDisplayedSkillsBefore) * -(58 - 12)}px - 15px)`;
+	skill.setAttribute("right-bias", numDisplayedSkillsAfter - numDisplayedSkillsBefore);
+	// Remove Duolingo's own fudging for centring as it won't know we have hidden some skills in the row.
+	skillPopout.firstChild.removeAttribute("style");
+	skillPopout.firstChild.lastChild.removeAttribute("style");
 }
 
 function getStrengths()

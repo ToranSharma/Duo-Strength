@@ -447,6 +447,47 @@
 	border-bottom: 0;
 }
 
+.mobileLayout [right-bias="-2"] [data-test="skill-popout"] > *
+{
+	transform: translateX(-50%) translateX(calc(-2 * (58px - 12px)));
+}
+.mobileLayout [right-bias="-2"] [data-test="skill-popout"] > * > *:last-child
+{
+	left: calc(50% + -2 * (12px - 58px) - 15px);
+}
+.mobileLayout [right-bias="-1"] [data-test="skill-popout"] > *
+{
+	transform: translateX(-50%) translateX(calc(-1 * (58px - 12px)));
+}
+.mobileLayout [right-bias="-1"] [data-test="skill-popout"] > * > *:last-child
+{
+	left: calc(50% + -1 * (12px - 58px) - 15px);
+}
+.mobileLayout [right-bias="0"] [data-test="skill-popout"] > *
+{
+	transform: translateX(-50%) translateX(calc(0 * (58px - 12px)));
+}
+.mobileLayout [right-bias="0"] [data-test="skill-popout"] > * > *:last-child
+{
+	left: calc(50% + 0 * (12px - 58px) - 15px);
+}
+.mobileLayout [right-bias="1"] [data-test="skill-popout"] > *
+{
+	transform: translateX(-50%) translateX(calc(1 * (58px - 12px)));
+}
+.mobileLayout [right-bias="1"] [data-test="skill-popout"] > * > *:last-child
+{
+	left: calc(50% + 1 * (12px - 58px) - 15px);
+}
+.mobileLayout [right-bias="2"] [data-test="skill-popout"] > *
+{
+	transform: translateX(-50%) translateX(calc(2 * (58px - 12px)));
+}
+.mobileLayout [right-bias="2"] [data-test="skill-popout"] > * > *:last-child
+{
+	left: calc(50% + 2 * (12px - 58px) - 15px);
+}
+
 
 /* Buttons in Skill Popouts */
 [data-test="practise-button"]

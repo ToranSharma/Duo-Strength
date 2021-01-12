@@ -2567,37 +2567,15 @@ function addButtonsToTipsPage()
 
 function applyFocusMode()
 {
-	// Hide the sidebar if in focus mode
-	document.querySelectorAll(`.${SIDEBAR}`).forEach(
-		(sidebar) =>
-		{
-			if (options.focusMode)
-			{
-				sidebar.style["display"] = "none";
-				sidebar.style["visibility"] = "hidden";
-			}
-			else
-			{
-				sidebar.style["display"] = "";
-				sidebar.style["visibility"] = "";
-			}
-		}
-	);
-
-	// Made the main section of the page full width if in focus mode
-	document.querySelectorAll(MAIN_SECTION_SELECTOR).forEach(
-		(mainSection) =>
-		{
-			if (options.focusMode)
-			{
-				mainSection.style["margin-right"] = "0";
-			}
-			else
-			{
-				mainSection.style["margin-right"] = "";
-			}
-		}
-	);
+	// Hide the sidebar if in focus mode.
+	if (options.focusMode)
+	{
+		rootElem.classList.add("focusMode");
+	}
+	else
+	{
+		rootElem.classList.remove("focusMode");
+	}
 
 	removeFocusModeButton();
 
@@ -2612,18 +2590,8 @@ function applyFocusMode()
 
 		const focusModeButton = globalPractiseButtonContainer.cloneNode(true);
 		focusModeButton.id = "focusModeButton";
-		focusModeButton.style =
-		`
-			margin-left: auto;
-			margin-right: 0;
-			height: 0;
-		`;
 
 		focusModeButton.firstChild.setAttribute("data-test", "focusModeButton");
-		focusModeButton.firstChild.style =
-		`
-			transform: translateY(-100%);
-		`;
 		focusModeButton.firstChild.title = `${(options.focusMode) ? "Disable" : "Enable"} Focus Mode`;
 		focusModeButton.firstChild.removeAttribute("href");
 		focusModeButton.addEventListener("click",

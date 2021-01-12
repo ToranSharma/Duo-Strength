@@ -681,3 +681,26 @@
 	width: 75%;
 	transform: translate(-50%, 50%);
 }
+
+
+/* Focus Mode */
+.focusMode ._1YfQ8/*SIDEBAR*/
+{
+	display: none;
+	visibility: hidden;
+}
+.focusMode ._33Mo9/*MAIN_SECETION_SELECTOR*/
+{
+	margin-right: 0;
+}
+
+#focusModeButton
+{
+	margin-left: auto;
+	margin-right: 0;
+	height: 0;
+}
+[data-test="focusModeButton"]
+{
+	transform: translateY(-100%);
+}

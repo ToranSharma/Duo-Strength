@@ -640,3 +640,44 @@
 {
 	width: 300px;
 }
+
+
+/* Flag Borders */
+.borderedFlag
+{
+	border-color: white;
+	border-width: 4px;
+	border-style: solid;
+	border-radius: 10px;
+	background-position: var(--bgPosX) var(--bgPosY);
+	height: var(--height);
+	width: var(--width);
+}
+.borderedFlag[tree-level="1"]
+{
+	border-color: var(--blue);
+}
+.borderedFlag[tree-level="2"]
+{
+	border-color: var(--green);
+}
+.borderedFlag[tree-level="3"]
+{
+	border-color: var(--red);
+}
+.borderedFlag[tree-level="4"]
+{
+	border-color: var(--orange);
+}
+.borderedFlag[tree-level="5"]
+{
+	border-color: var(--gold);
+}
+.borderedFlag[tree-level="5"] img
+{
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 75%;
+	transform: translate(-50%, 50%);
+}

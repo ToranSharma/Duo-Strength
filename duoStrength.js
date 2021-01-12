@@ -1418,7 +1418,10 @@ function addFlagBorders()
 						const flag1 = container.firstChild;
 						const flag2 = flag1.nextElementSibling;
 
-						if (flag1.getAttribute("style") !== null)
+						if (
+							flag1.getAttribute("style") !== null
+							|| flag1.classList.contains("borderedFlag")
+						)
 						{
 							// In the unlikely case where we have already added the borders and are trying to again
 							return false;
@@ -1429,7 +1432,7 @@ function addFlagBorders()
 						const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
 						
 
-						// Bbckground offsets in px as strings
+						// Background offsets in px as strings
 						const x1 = backgroundPosition1[0];
 						const y1 = backgroundPosition1[1];
 
@@ -1454,53 +1457,20 @@ function addFlagBorders()
 							treeLevel = 0;
 						}
 
-						let color;
 
-						switch (treeLevel)
-						{
-							case 0:
-								color = "white";
-								break;
-							case 1:
-								color = BLUE;
-								break;
-							case 2:
-								color = GREEN;
-								break;
-							case 3:
-								color = RED;
-								break;
-							case 4:
-								color = ORANGE;
-								break;
-							case 5:
-								color = GOLD;
-								break;
-						}
-
-
-						flag1.style = 
+						flag1.classList.add("borderedFlag");
+						flag1.setAttribute("tree-level", treeLevel);
+						flag1.style =
 						`
-							border-color: ${color};
-							border-width: 4px;
-							border-style: solid;
-							border-radius: 10px;
-							background-position: calc(${x1} - 2px) calc(${y1} - 2px);
-							height: ${+height1 + 4}px;
-							width: ${+width1 + 4}px;
+							--bgPosX: ${parseFloat(x1) - 2}px;
+							--bgPosY: ${parseFloat(y1) - 2}px;
+							--height: ${+height1 + 4}px;
+							--width: ${+width1 + 4}px;
 						`;
-						
 						if (treeLevel == 5)
 						{
 							const crown = document.createElement("IMG");
 							crown.src = imgSrcBaseUrl+"/juicy-crown.svg";
-							crown.style = `
-								position: 	absolute;
-								left: 0;
-								bottom: 0;
-								width: 75%;
-								transform: translate(-50%, 50%);
-							`;
 							flag1.appendChild(crown);
 						}
 					}

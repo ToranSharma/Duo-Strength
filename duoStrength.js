@@ -2491,28 +2491,17 @@ function addButtonsToTipsPage()
 							);
 
 			const startLessonButton = startLessonButtons[0];
+			startLessonButton.parentNode.classList.add("tipsPageButtonContainer");
+			startLessonButton.parentNode.id = "tipsPageTopContainer";
 			// Add the practise button at the top if it is wanted.
 			if (options.addTipsPagePractiseButton && !toPractise)
 			{
 				const practiseButton = startLessonButton.cloneNode(true);
 				practiseButton.setAttribute("data-test", "practise-button");
 				practiseButton.textContent = "practise";
-				practiseButton.style = 
-				`
-					margin-left: 1em;
-				`;
 
 				startLessonButton.parentNode.insertBefore(practiseButton, startLessonButton.nextElementSibling);
 			}
-
-			startLessonButton.parentNode.style = 
-			`
-				justify-content: flex-end;
-			`;
-			startLessonButton.parentNode.firstChild.style =
-			`
-				margin-right: auto;
-			`;
 
 			// Now copy all the top buttons to the bottom of the page if wanted.
 			if (options.addTipsPageBottomButtons)
@@ -2520,7 +2509,7 @@ function addButtonsToTipsPage()
 				const buttons = [startLessonButton, ...document.querySelectorAll(`[data-test="practise-button"]`)];
 
 				const bottomButtonsContainer = startLessonButton.parentNode.cloneNode(false);
-				bottomButtonsContainer.style.borderBottom = "1em";
+				bottomButtonsContainer.id = "tipsPageBottomContainer";
 				document.querySelector(TIPS_PAGE_BODY_SELECTOR).parentNode.appendChild(bottomButtonsContainer);
 
 				buttons.forEach(

@@ -490,7 +490,7 @@
 
 
 /* Buttons in Skill Popouts */
-[data-test="practise-button"]
+[data-test="skill-popout"] [data-test="practise-button"]
 {
 	margin-top: 0.5em;
 }
@@ -705,6 +705,7 @@
 	transform: translateY(-100%);
 }
 
+
 /* Fixed Sidebar */
 .fixedSidebar
 {
@@ -712,4 +713,27 @@
 	top: 94px;
 	height: calc(100vh - 94px);
 	overflow-y: scroll;
+}
+
+
+
+/* Tips Page Button */
+.tipsPageButtonContainer
+{
+	justify-content: flex-end;
+}
+.tipsPageButtonContainer [data-test="practise-button"]
+{
+	margin-left: 1em;
+}
+
+#tipsPageTopContainer *:first-child
+{
+	margin-right: auto;
+}
+
+#tipsPageBottomContainer
+{
+	border-bottom: 1em;
+	justify-content: flex-end;
 }

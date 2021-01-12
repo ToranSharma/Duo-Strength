@@ -704,3 +704,12 @@
 {
 	transform: translateY(-100%);
 }
+
+/* Fixed Sidebar */
+.fixedSidebar
+{
+	position: sticky;
+	top: 94px;
+	height: calc(100vh - 94px);
+	overflow-y: scroll;
+}

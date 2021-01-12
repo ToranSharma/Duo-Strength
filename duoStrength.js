@@ -2624,19 +2624,12 @@ function applyFixedSidebar()
 
 	if (options.fixedSidebar)
 	{
-		sidebar.style =
-		`
-			position: sticky;
-			top: 94px;
-			height: calc(100vh - 94px);
-			overflow-y: scroll;
-		`
+		sidebar.classList.add("fixedSidebar");
 	}
 	else
 	{
-		sidebar.removeAttribute("style");
+		sidebar.classList.remove("fixedSidebar");
 	}
-
 }
 
 function getCrackedSkills()

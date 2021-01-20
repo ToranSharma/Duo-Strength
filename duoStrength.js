@@ -568,8 +568,9 @@ function removeFlagBorders()
 	);
 }
 
-function deleteElementsByClassesAndIds({classList, idList} = {classList: [], idList: []})
+function deleteElementsByClassesAndIds({classList = [], idList = []})
 {
+	// Delete elements that match either a class or id for deletion
 	const deleteSelector =
 		[
 			...classList.map(className => `.${className}`),
@@ -579,20 +580,20 @@ function deleteElementsByClassesAndIds({classList, idList} = {classList: [], idL
 	document.querySelectorAll(deleteSelector).forEach(element => element.remove());
 }
 
-function removeClassesAndIds({classList, idList} = {classList: [], idList: []})
+function removeClassesAndIds({classList = [], idList = []})
 {
+	// Remove classes and ids from elements that have been labeled for styling purposes.
 	document.querySelectorAll(
-		classList.map(className => `.${className}`).join(", ")
+		classList.map(className => `.${className}`).join(", ") || null
 	).forEach(element => element.classList.remove(...classList));
 
 	document.querySelectorAll(
-		idList.map(id => `#${id}`).join(", ")
+		idList.map(id => `#${id}`).join(", ") || null
 	).forEach(element => element.removeAttribute("id"));
 }
 
 function removeCrownsBreakdown()
 {
-	// Delete elements that match either a class or id for deletion
 
 	const toDeleteClassList =
 	[
@@ -607,11 +608,6 @@ function removeCrownsBreakdown()
 	[
 		"sidebarCrownsInfoContainer"
 	];
-
-	deleteElementsByClassesAndIds({classList: toDeleteClassList, idList: toDeleteIdList});
-
-	// Remove classes and ids from elements that have been labeled for styling purposes.
-
 	const classesToRemove = 
 	[
 		"crownDescriptionContainer",
@@ -623,18 +619,25 @@ function removeCrownsBreakdown()
 		"crownsPopupContainer"
 	];
 
+	deleteElementsByClassesAndIds({classList: toDeleteClassList, idList: toDeleteIdList});
+
 	removeClassesAndIds({classList: classesToRemove, idList: idsToRemove});
 }
 
 function removeXPBoxes()
 {
-	document.querySelectorAll(".XPBox").forEach(
-		box =>
-		{
-			box.parentNode.removeAttribute("style");
-			box.remove();
-		}
-	);
+	const toDeleteClassList =
+	[
+		"XPBox"
+	]
+
+	const classesToRemove =
+	[
+		"XPBoxOverflowContainer"
+	];
+	
+	deleteElementsByClassesAndIds({classList: toDeleteClassList});
+	removeClassesAndIds({classList: classesToRemove});
 }
 
 function removeSuggestion()

@@ -561,23 +561,69 @@ function removeFlagBorders()
 	flags.forEach(
 		(flag) => {
 			flag.removeAttribute("style");
+			flag.classList.remove("borderedFlag");
+			flag.removeAttribute("tree-level");
 			flag.querySelectorAll("img").forEach(img => img.remove());
 		}
 	);
 }
 
+function deleteElementsByClassesAndIds({classList, idList} = {classList: [], idList: []})
+{
+	const deleteSelector =
+		[
+			...classList.map(className => `.${className}`),
+			...idList.map(id => `#${id}`)
+		].join(", ");
+
+	document.querySelectorAll(deleteSelector).forEach(element => element.remove());
+}
+
+function removeClassesAndIds({classList, idList} = {classList: [], idList: []})
+{
+	document.querySelectorAll(
+		classList.map(className => `.${className}`).join(", ")
+	).forEach(element => element.classList.remove(...classList));
+
+	document.querySelectorAll(
+		idList.map(id => `#${id}`).join(", ")
+	).forEach(element => element.removeAttribute("id"));
+}
+
 function removeCrownsBreakdown()
 {
-	document.querySelectorAll(".maxCrowns").forEach(
-		(maxCrowns) =>
-		{
-			maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
-			maxCrowns.remove();
-		}
-	);
+	// Delete elements that match either a class or id for deletion
 
-	document.querySelectorAll("#sidebarCrownsInfoContainer, .crownCountPercentage, .crownsGraph, .crownLevelBreakdownContainer, .checkpointPrediction, .treeLevelPrediction")
-		.forEach(element => element.remove());
+	const toDeleteClassList =
+	[
+		"crownCountPercentage",
+		"crownsGraph",
+		"crownLevelBreakdownContainer",
+		"checkpointPrediction",
+		"treeLevelPrediction",
+		"maxCrowns"
+	];
+	const toDeleteIdList =
+	[
+		"sidebarCrownsInfoContainer"
+	];
+
+	deleteElementsByClassesAndIds({classList: toDeleteClassList, idList: toDeleteIdList});
+
+	// Remove classes and ids from elements that have been labeled for styling purposes.
+
+	const classesToRemove = 
+	[
+		"crownDescriptionContainer",
+		"crownCountImg"
+	];
+	const idsToRemove = 
+	[
+		"crownsPopupContainerParent",
+		"crownsPopupContainer"
+	];
+
+	removeClassesAndIds({classList: classesToRemove, idList: idsToRemove});
 }
 
 function removeXPBoxes()
@@ -3146,12 +3192,6 @@ function displayCrownsBreakdown()
 					const breakdownHeader = document.createElement("h3");
 					breakdownHeader.classList.add("breakdownHeader");
 					breakdownHeader.textContent = (skillType === 1) ? "Bonus Skills" : "Grammar Skills";
-					breakdownHeader.style =
-					`
-						margin: 0;
-						font-size: 100%;
-						justify-self: center
-					`;
 					breakdownList.appendChild(breakdownHeader);
 				}
 

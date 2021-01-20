@@ -676,17 +676,29 @@ function removePractiseButton()
 	}
 }
 
+function removeGrammarSkillTestOutButton()
+{
+	const grammarSkillTestOutButton = document.querySelector("#grammarSkillTestOutButton");
+	if (grammarSkillTestOutButton !== null)
+	{
+		grammarSkillTestOutButton.parentNode.setAttribute("numChildren", --grammarSkillTestOutButton.parentNode.childElementCount);
+		grammarSkillTestOutButton.remove();
+	}
+}
+
 function removeWordsButton()
 {
 	const wordsButton = document.querySelector(`[data-test="words-button"]`);
 	if (wordsButton !== null)
 	{
-		wordsButton.parentNode.removeAttribute("style");
+		wordsButton.parentNode.setAttribute("numChildren", --wordsButton.parentNode.childElementCount);
 		wordsButton.remove();
 	}
 	const wordsListBubble = document.querySelector(`#wordsListBubble`);
 	if (wordsListBubble !== null)
+	{
 		wordsListBubble.remove();
+	}
 }
 
 function removeMasterdSkillButton()
@@ -694,6 +706,7 @@ function removeMasterdSkillButton()
 	const masteredButton = document.querySelector(`[data-test="mastered-button"]`);
 	if (masteredButton !== null)
 	{
+		masteredButton.parentNode.setAttribute("numChildren", --masteredButton.parentNode.childElementCount);
 		masteredButton.remove();
 	}
 }
@@ -2165,15 +2178,9 @@ function addGrammarSkillTestOutButton(skillPopout)
 
 	// Not at max level so can test out.
 
-	let smallButtonsContainer = skillPopout.querySelector(`.${SMALL_BUTTONS_CONTAINER}`);
-
-	if (smallButtonsContainer === null)
-	{
-		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
-	}
-
 	const testOutButton = addSmallButtonToPopout(skillPopout, true);
 	testOutButton.setAttribute("data-test", "test-out-button");
+	testOutButton.id = "grammarSkillTestOutButton";
 
 	const testOutIcon = document.createElement("img");
 	testOutIcon.src = `${imgSrcBaseUrl}/key.svg`;
@@ -4287,66 +4294,44 @@ function addFeatures()
 	{
 		const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
 
-		if (options.practiseButton || options.wordsButton || options.grammarSkillsTestButton || options.masteredButton)
+		if (skillPopout !== null)
 		{
-			if (skillPopout !== null)
+			// Clear Popup Buttons.
+			removePractiseButton();
+			removeGrammarSkillTestOutButton();
+			removeWordsButton();
+			removeMasterdSkillButton();
+
+			if (options.practiseButton)
 			{
-				if (options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"]`) === null)
+				// Want practise button and there isn't one.
+				const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
+				if (introLesson === null || !introLesson.contains(skillPopout))
 				{
-					// Want practise button and there isn't one.
-					const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
-					if (introLesson === null || !introLesson.contains(skillPopout))
-					{
-						// No introduction lesson, or if there is this skillPopout isn't from that skill
-						addPractiseButton(skillPopout);
-					}
-				}
-
-				if (options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) === null)
-				{
-					// Want words button and there isn't one
-					addWordsButton(skillPopout);
-				}
-
-				if (options.grammarSkillsTestButton && skillPopout.querySelector(`[data-test="test-out-button"]`) === null)
-				{
-					// No testout button, might be a grammar skill and we want to add one.
-					addGrammarSkillTestOutButton(skillPopout);
-				}
-
-				if (options.masteredButton && skillPopout.querySelector(`[data-test="mastered-button"]`) === null)
-				{
-					// Add the button to mark skills as mastered.
-					addMasteredSkillButton(skillPopout);
+					// No introduction lesson, or if there is this skillPopout isn't from that skill
+					addPractiseButton(skillPopout);
 				}
 			}
 
-			// Add each skill to childListObserver
-			document.querySelectorAll(SKILL_SELECTOR).forEach(
-				(skill) => {
-					childListObserver.observe(skill, {childList: true});
-				}
-			);
-		}
-		if (!options.practiseButton)
-		{
-			// Don't want practise button, let's remove it if there is one there.
-			removePractiseButton();
-		}
-		if (!options.wordsButton)
-		{
-			// Don't want words button, let's remove it if there is one there.
-			removeWordsButton();
-		}
-		if (!options.masteredButton)
-		{
-			removeMasterdSkillButton();
+			if (options.grammarSkillsTestButton) addGrammarSkillTestOutButton(skillPopout);
+
+			if (options.wordsButton) addWordsButton(skillPopout);
+
+			if (options.masteredButton) addMasteredSkillButton(skillPopout);
+
+			if (inMobileLayout && document.querySelector("#revealHiddenSkillsButton") !== null)
+			{
+				// Hiding stuff while in mobile layout so need to fix the aligment of the popout.
+				fixPopoutAlignment(skillPopout);
+			}
 		}
 
-		if (inMobileLayout && skillPopout !== null && document.querySelector("#revealHiddenSkillsButton") !== null)
-		{
-			fixPopoutAlignment(skillPopout);
-		}
+		// Add each skill to childListObserver so we catch popout being added and removed.
+		document.querySelectorAll(SKILL_SELECTOR).forEach(
+			(skill) => {
+				childListObserver.observe(skill, {childList: true});
+			}
+		);
 	}
 
 	// Redo checkpoint buttons on checkpoint popouts

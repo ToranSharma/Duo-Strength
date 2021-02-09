@@ -303,6 +303,7 @@
 
 
 /* Languages Box  */
+
 #languagesTable
 {
 	width: 100%;
@@ -329,6 +330,7 @@
 }
 
 /* Total Strength Box */
+
 #totalStrengthBox span
 {
 	font-weight: normal;
@@ -353,6 +355,7 @@
 }
 
 /* Top of Tree Lists */
+
 .topOfTree
 {
 	height: auto;
@@ -416,6 +419,7 @@
 }
 
 /* Show Only Skills to Address */
+
 .outOfView
 {
 	position: relative;
@@ -434,7 +438,11 @@
 {
 	margin-bottom: 0;
 }
-._3uC-w ~ ._3uC-w.inView /*TREE_SECTION*/
+._3uC-w.inView ~ ._3uC-w.inView /*TREE_SECTION*/
+{
+	margin-top: 0;
+}
+.mobileLayout ._3uC-w.inView
 {
 	margin-top: 0;
 }
@@ -513,6 +521,7 @@
 
 
 /* Buttons in Skill Popouts */
+
 .skillPopout
 {
 	overflow: visible;
@@ -623,6 +632,7 @@
 
 
 /* Checkpoint Buttons */
+
 .checkpointButton
 {
 	font-size: 15px;
@@ -671,6 +681,7 @@
 
 
 /* Flag Borders */
+
 .borderedFlag
 {
 	border-color: white;
@@ -712,6 +723,7 @@
 
 
 /* Focus Mode */
+
 .focusMode ._1YfQ8/*SIDEBAR*/
 {
 	display: none;
@@ -735,6 +747,7 @@
 
 
 /* Fixed Sidebar */
+
 .fixedSidebar
 {
 	position: sticky;
@@ -746,6 +759,7 @@
 
 
 /* Tips Page Button */
+
 .tipsPageButtonContainer
 {
 	justify-content: flex-end;
@@ -767,6 +781,7 @@
 }
 
 /* Sentence Hiding */
+
 .blurringSentence [data-test="hint-sentence"],
 .blurringSentence [data-test="hint-popover"] td
 {
@@ -809,6 +824,7 @@
 
 
 /* League Hiding */
+
 .hideLeagueTable ._1_p4S /*LEAGUE_TABLE*/
 {
 	display: none;

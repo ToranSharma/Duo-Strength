@@ -46,6 +46,8 @@ options to disable this or hide the grammar skills breakdown.
 history. These are now used in adding the border colour for the different trees
 show in the change language drop down. This is temporarily initialised by using
 the progress history saved data.
+- All possible static styling has been changed from inline styles into an
+external style sheet.
 
 ### Fixed
 - Suggested skill on for tree level 2 trees not to suggest grammar skills as

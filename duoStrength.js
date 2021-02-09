@@ -4703,19 +4703,19 @@ function hideTranslationText(reveal = false, setupObserver = true)
 	if (document.getElementsByClassName(QUESTION_CONTAINER).length == 0)
 		return false;
 	
-	const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
+	const questionContainer = document.querySelector(`.${QUESTION_CONTAINER}`);
 
 	if (questionContainer.firstChild == null)
 		return false; // Duo ecouragement message, no question box, do nothing.
 
 	const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
 
-	if (questionTypeString != null && questionTypeString.includes("translate"))
+	if (questionTypeString !== null && questionTypeString.includes("translate"))
 	{
 		// Translate type question
 		const challengeTranslatePrompt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
 		
-		if (challengeTranslatePrompt.querySelectorAll("BUTTON").length != 0)
+		if (challengeTranslatePrompt.querySelectorAll("BUTTON").length !== 0)
 		{
 			// There is an svg in the question sentence which is the speaker button so we are translating from the target to the native language
 			const questionArea = questionContainer.firstChild.firstChild;
@@ -4723,11 +4723,10 @@ function hideTranslationText(reveal = false, setupObserver = true)
 			
 			const hintSentence = challengeTranslatePrompt.querySelector('[data-test="hint-sentence"]');
 			
-
-			if (options.showNewWords && hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length != 0)
+			if (options.showNewWords && hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length !== 0)
 			{
 				// There is a new word, so we don't want to be hiding this sentence.
-				hintSentence.style.filter = "none";
+				document.body.classList.remove("blurringSentence");
 				hintSentence.title = "";
 				const enableDisableButton = questionContainer.querySelector(`.hideTextEnableDisable`);
 				if (enableDisableButton !== null)
@@ -4735,7 +4734,6 @@ function hideTranslationText(reveal = false, setupObserver = true)
 					// Remove the enable disable button
 					const headerContainer = questionContainer.querySelector(`.hideTextEnableDisable`).parentNode;
 					const header = headerContainer.firstChild;
-					header.removeAttribute("style");
 					headerContainer.parentNode.insertBefore(header, headerContainer); // Move the header back to where it should be;
 					headerContainer.remove();
 				}
@@ -4743,106 +4741,68 @@ function hideTranslationText(reveal = false, setupObserver = true)
 				return false;
 			}
 
-			if (options.showTranslationText == false && reveal == false)
+			if (options.showTranslationText === false && reveal === false)
 			{
-				hintSentence.style.filter = "blur(0.3em)";
-				hintSentence.onclick = () => {
-					hintSentence.style.filter = "unset";
-					hintSentence.title = "";
-				};
+				document.body.classList.add("blurringSentence");
 				hintSentence.title = "Click to Show Sentence";
+				hintSentence.onclick = () =>
+				{
+					hideTranslationText(true, false);
+				};
 
 				if (options.revealHotkey)
 				{
 					hintSentence.tile += " or Press " + options.revealHotkeyCode;
-					document.onkeydown = (e) => {
+					document.onkeydown = (e) =>
+					{
 						const hotkeyList = options.revealHotkeyCode.split("+");
 						const numKeys = hotkeyList.length;
 						if (
-							e.key.toUpperCase() == hotkeyList[numKeys-1] &&
-							( (hotkeyList.includes("Ctrl") && e.ctrlKey) || !hotkeyList.includes("Ctrl") ) &&
-							( (hotkeyList.includes("Shift") && e.shiftKey) || !hotkeyList.includes("Shift") ) &&
-							( (hotkeyList.includes("Meta") && e.metaKey) || !hotkeyList.includes("Meta") ) &&
-							( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
+							e.key.toUpperCase() == hotkeyList[numKeys-1]
+							&& ( (hotkeyList.includes("Ctrl") && e.ctrlKey) || !hotkeyList.includes("Ctrl") )
+							&& ( (hotkeyList.includes("Shift") && e.shiftKey) || !hotkeyList.includes("Shift") )
+							&& ( (hotkeyList.includes("Meta") && e.metaKey) || !hotkeyList.includes("Meta") )
+							&& ( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
 						)
 						{
 							// Reveal hokey has been hit,
 							// show the question text
 							hideTranslationText(true, false);
-							// and show an hint popovers
-							document.querySelectorAll(`[data-test="hint-popover"]`).forEach(
-								(hintBox) =>
-								{
-									hintBox.style["filter"] = "unset";
-								}
-							);
-							
 						}
 					};
 				}
 			}
 			else
 			{
-				hintSentence.style.filter = "none";
+				document.body.classList.remove("blurringSentence");
 				hintSentence.title = "";
 			}
 
 			let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
 
-			if (enableDisableButton.length == 0)
+			if (enableDisableButton.length === 0)
 			{
 				// No enableDisableButton so make one and add it next to the question header if the option is enabled.
 				if (options.showToggleHidingTextButton)
 				{
 					const headerContainer = document.createElement("div");
-					headerContainer.style =
-					`
-						width: 100%;
-						margin-top: 1em;
-						display: flex;
-						justify-content: space-between;
-						align-items: center;
-					`;
+					headerContainer.classList.add("questionHeaderContainer");
 
 					const questionHeader = questionContainer.querySelector(`[data-test="challenge-header"]`);
-					questionHeader.style.width = `max-content`;
 					questionHeader.parentNode.insertBefore(headerContainer, questionHeader);
 					headerContainer.appendChild(questionHeader);
 
 					enableDisableButton = document.createElement("button");
 					enableDisableButton.className = "hideTextEnableDisable";
 					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
-					enableDisableButton.style =
-					`
-						color: white;
-						border: 0;
-						border-radius: 0.5em;
-						padding: 0.4em;
-						background-color: ${LIGHT_BLUE};
-						box-shadow: 0 0.3em ${DARK_BLUE};
-						transition: filter 0.2s;
-						filter: brightness(1.0);
-					`;
-					enableDisableButton.onmouseover = () => {
-						enableDisableButton.style.filter = "brightness(1.1)";
-					};
-					enableDisableButton.onmouseleave = () => {
-						enableDisableButton.style.filter = "brightness(1.0)";
-						enableDisableButton.style.boxShadow = `0 0.3em ${DARK_BLUE}`;
-						enableDisableButton.style.transform = "none";
-					};
-					enableDisableButton.onmousedown = () => {
-						enableDisableButton.style.boxShadow = "none";
-						enableDisableButton.style.transform = "translate(0, 0.3em)";
-					};
-					enableDisableButton.onmouseup = () => {
-						enableDisableButton.style.boxShadow = `0 0.3em ${DARK_BLUE}`;
-						enableDisableButton.style.transform = "none";
-
-						options.showTranslationText = !options.showTranslationText;
-						chrome.storage.sync.set({"options": options});
-						hideTranslationText();
-					};
+					enableDisableButton.addEventListener("click",
+						() =>
+						{
+							options.showTranslationText = !options.showTranslationText;
+							chrome.storage.sync.set({"options": options});
+							hideTranslationText(undefined, false);
+						}
+					);
 
 					headerContainer.appendChild(enableDisableButton);
 				}
@@ -4863,7 +4823,6 @@ function hideTranslationText(reveal = false, setupObserver = true)
 					
 					const headerContainer = questionContainer.querySelector(`.hideTextEnableDisable`).parentNode;
 					const header = headerContainer.firstChild;
-					header.removeAttribute("style");
 					headerContainer.parentNode.insertBefore(header, headerContainer); // Move the header back to where it should be;
 					headerContainer.remove();
 
@@ -4915,7 +4874,6 @@ function childListMutationHandle(mutationsList, observer)
 	let skillPopout;
 	let checkpointPopoutAdded = false;
 	let checkpointPopout;
-	let hintPopoverAdded = false;
 	
 	for (let mutation of mutationsList)
 	{
@@ -5009,12 +4967,6 @@ function childListMutationHandle(mutationsList, observer)
 		{
 			checkpointPopoutAdded = true;
 			checkpointPopout = mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR);
-		}
-		else if (
-			Array.from(mutation.addedNodes).some((node) => node.getAttribute("data-test") === "hint-popover")
-		)
-		{
-			hintPopoverAdded = true;
 		}
 	}
 
@@ -5228,20 +5180,6 @@ function childListMutationHandle(mutationsList, observer)
 	if (checkpointPopoutAdded)
 	{
 		if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);
-	}
-
-	if (hintPopoverAdded)
-	{
-		if (document.querySelector(`[data-test="hint-sentence"][style^="filter: blur"]`) !== null)
-		{
-			// We are hiding a sentence, so hide the translations
-			document.querySelectorAll(`[data-test="hint-popover"]`).forEach(
-				(hintBox) =>
-				{
-					hintBox.style["filter"] = "blur(0.3em)";
-				}
-			);
-		}
 	}
 };
 

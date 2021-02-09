@@ -2207,6 +2207,8 @@ function addWordsButton(skillPopout)
 {
 	if (skillPopout === null) return false;
 
+	skillPopout.classList.add("skillPopout");
+
 	const skillData = getSkillFromPopout(skillPopout);
 
 	// Grammar skills words list are not currently helpful, so don't add the button.
@@ -2217,10 +2219,6 @@ function addWordsButton(skillPopout)
 
 	let wordsButton = addSmallButtonToPopout(skillPopout);
 	const smallButtonsContainer = skillPopout.querySelector(`.${SMALL_BUTTONS_CONTAINER}`)
-
-	smallButtonsContainer.parentNode.style = `
-		overflow: visible;
-	`;
 	
 	wordsButton.setAttribute("data-test", "words-button");
 	wordsButton.textContent = "words";
@@ -3424,35 +3422,19 @@ function displayTotalStrenthBox()
 	const totalStrengthBox = document.createElement("DIV");
 	totalStrengthBox.id = "totalStrengthBox";
 	totalStrengthBox.className = WHITE_SIDEBAR_BOX_CONTAINER;
+	totalStrengthBox.style = `--totalStrength: ${totalStrength}%`;
 	
 	const heading = document.createElement("H2");
 	heading.textContent = "Total Strength: ";
 	totalStrengthBox.appendChild(heading);
 
 	const totalStrengthSpan = document.createElement("span");
-	totalStrengthSpan.textContent = `${Math.round(totalStrength)}%`;
-	totalStrengthSpan.style =
-	`
-		font-weight: normal;
-	`;
+	totalStrengthSpan.textContent = `${Math.floor(totalStrength)}%`;
 
 	heading.appendChild(totalStrengthSpan);
 
 	const barBg = document.createElement("div");
-	barBg.style =
-	`
-		padding-right: ${100-totalStrength}%;
-		width: 100%;
-		height: 0.3em;
-		background-color: lightgrey;
-	`;
 	const barFg = document.createElement("div");
-	barFg.style =
-	`
-		width: 100%;
-		height: 100%;
-		background-color: orange;
-	`;
 
 	barBg.appendChild(barFg);
 	totalStrengthBox.appendChild(barBg);
@@ -3466,12 +3448,6 @@ function displayTotalStrenthBox()
 		).filter(str => str !== "")
 		.reverse()
 		.join(" + ");
-
-	breakdown.style =
-	`
-		font-size: 85%;
-		margin: 0;
-	`;
 
 	totalStrengthBox.appendChild(breakdown);
 

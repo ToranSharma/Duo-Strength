@@ -5590,12 +5590,13 @@ async function init()
 				await optionsLoaded;
 
 				// League hiding
-				if (document.getElementsByClassName(LEAGUE_TABLE).length != 0)
+				if (options.showLeagues)
 				{
-					if (options.showLeagues)
-						document.getElementsByClassName(LEAGUE_TABLE)[0].style.removeProperty('display');
-					else
-						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
+					rootChild.classList.remove("hideLeagueTable");
+				}
+				else
+				{
+					rootChild.classList.add("hideLeagueTable");
 				}
 
 				// Focus mode - sidebar hiding

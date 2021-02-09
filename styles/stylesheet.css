@@ -808,3 +808,8 @@
 }
 
 
+/* League Hiding */
+.hideLeagueTable ._1_p4S /*LEAGUE_TABLE*/
+{
+	display: none;
+}

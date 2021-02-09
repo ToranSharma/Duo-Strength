@@ -65,7 +65,8 @@ const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 const SKILL_ROW_SELECTOR = "._3f9ou";
 const SKILL_TREE_SELECTOR = "._3YEom";
 const TIPS_PAGE_BODY_SELECTOR = "._1yyg2";
-const LOCKED_SKILL_POPOUT = "._1fMEX";
+const LOCKED_SKILL_POPOUT_SELECTOR = "._1fMEX";
+const MOBILE_TIPS_PAGE_HEADER_SELECTOR = "._36P0W";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -5069,8 +5070,11 @@ function childListMutationHandle(mutationsList, observer)
 			}
 		);
 
-		// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
-		setUpObservers();
+		if (document.querySelector(MOBILE_TIPS_PAGE_HEADER_SELECTOR) === null)
+		{
+			// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
+			setUpObservers();
+		}
 
 		// Try to re apply focus mode option
 		applyFocusMode();
@@ -5315,7 +5319,7 @@ function setUpObservers()
 	{
 		// In normal layout, with everything in the top bar.
 
-		let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
+		let numNavButtons = topBarDiv.querySelectorAll(`.${NAVIGATION_BUTTON}`).length;
 		// if numNavButtons = 4 then there is no stories button.
 		// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
 
@@ -5435,7 +5439,7 @@ async function init()
 	if (mainBody == null)
 		return false;
 	
-	if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
+	if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null || document.querySelector(MOBILE_TIPS_PAGE_HEADER_SELECTOR) !== null)
 	{
 		inMobileLayout = true;
 		rootElem.classList.add("mobileLayout");
@@ -5559,9 +5563,9 @@ async function init()
 			*/
 
 			questionNumber = 1;
-			if (rootChild.childElementCount === 1)
+			if (rootChild.childElementCount === 1 || document.querySelector(MOBILE_TIPS_PAGE_HEADER_SELECTOR) !== null)
 			{
-				// no topBarDiv so nothing left to do
+				// no topBarDiv
 				onMainPage = false;
 				return false;
 			}

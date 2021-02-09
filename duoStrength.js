@@ -13,8 +13,7 @@ const imgSrcBaseUrl = "//d35aaqx5ub95lt.cloudfront.net/images";
 // Duolingo class names:
 const BONUS_SKILL_DIVIDER_SELECTOR = "._3Sis0";
 const TOP_OF_TREE_WITH_IN_BETA = "_1q00o _3_JLW";
-const TOP_OF_TREE = "_2joxc";
-const MOBILE_TOP_OF_TREE = "RviFd";
+const TOP_OF_TREE = "RviFd";
 const TRY_PLUS_BUTTON_SELECTOR = `[data-test="try-plus-badge"], ._-7YNG`;
 const IN_BETA_LABEL = "_2UV5Z"; // container of div with IN BETA textContent. Will be sibling of needsStrengtheningContainer etc.
 const CROWNS_POPUP_CONTAINER_SELECTOR = "._37JAM.j1W0k"; // parent of Crown logo container and crown description container, shares one class with the lingots popout container
@@ -66,6 +65,8 @@ const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 const SKILL_ROW_SELECTOR = "._3f9ou";
 const SKILL_TREE_SELECTOR = "._3YEom";
 const TIPS_PAGE_BODY_SELECTOR = "._1yyg2";
+const LOCKED_SKILL_POPOUT_SELECTOR = "._1fMEX";
+const MOBILE_TIPS_PAGE_HEADER_SELECTOR = "._36P0W";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -561,34 +562,83 @@ function removeFlagBorders()
 	flags.forEach(
 		(flag) => {
 			flag.removeAttribute("style");
+			flag.classList.remove("borderedFlag");
+			flag.removeAttribute("tree-level");
 			flag.querySelectorAll("img").forEach(img => img.remove());
 		}
 	);
 }
 
+function deleteElementsByClassesAndIds({classList = [], idList = []})
+{
+	// Delete elements that match either a class or id for deletion
+	const deleteSelector =
+		[
+			...classList.map(className => `.${className}`),
+			...idList.map(id => `#${id}`)
+		].join(", ");
+
+	document.querySelectorAll(deleteSelector).forEach(element => element.remove());
+}
+
+function removeClassesAndIds({classList = [], idList = []})
+{
+	// Remove classes and ids from elements that have been labeled for styling purposes.
+	document.querySelectorAll(
+		classList.map(className => `.${className}`).join(", ") || null
+	).forEach(element => element.classList.remove(...classList));
+
+	document.querySelectorAll(
+		idList.map(id => `#${id}`).join(", ") || null
+	).forEach(element => element.removeAttribute("id"));
+}
+
 function removeCrownsBreakdown()
 {
-	document.querySelectorAll(".maxCrowns").forEach(
-		(maxCrowns) =>
-		{
-			maxCrowns.parentNode.removeAttribute("style"); // may need to do this another way for cases where the element is null.
-			maxCrowns.remove();
-		}
-	);
 
-	document.querySelectorAll(".sidebarCrownsInfoContainer, .crownCountPercentage, .crownsGraph, .crownLevelBreakdownContainer, .checkpointPrediction, .treeLevelPrediction")
-		.forEach(element => element.remove());
+	const toDeleteClassList =
+	[
+		"crownCountPercentage",
+		"crownsGraph",
+		"crownLevelBreakdownContainer",
+		"checkpointPrediction",
+		"treeLevelPrediction",
+		"maxCrowns"
+	];
+	const toDeleteIdList =
+	[
+		"sidebarCrownsInfoContainer"
+	];
+	const classesToRemove = 
+	[
+		"crownDescriptionContainer",
+		"crownCountImg"
+	];
+	const idsToRemove = 
+	[
+		"crownsPopupContainerParent",
+		"crownsPopupContainer"
+	];
+
+	deleteElementsByClassesAndIds({classList: toDeleteClassList, idList: toDeleteIdList});
+
+	removeClassesAndIds({classList: classesToRemove, idList: idsToRemove});
 }
 
 function removeXPBoxes()
 {
-	document.querySelectorAll(".XPBox").forEach(
-		box =>
-		{
-			box.parentNode.removeAttribute("style");
-			box.remove();
-		}
-	);
+	const toDeleteClassList =
+	[
+		"XPBox"
+	]
+
+	const classesToRemove =
+	[
+		"XPBoxOverflowContainer"
+	];
+	
+	deleteElementsByClassesAndIds({classList: toDeleteClassList});
+	removeClassesAndIds({classList: classesToRemove});
 }
 
 function removeSuggestion()
@@ -627,17 +677,29 @@ function removePractiseButton()
 	}
 }
 
+function removeGrammarSkillTestOutButton()
+{
+	const grammarSkillTestOutButton = document.querySelector("#grammarSkillTestOutButton");
+	if (grammarSkillTestOutButton !== null)
+	{
+		grammarSkillTestOutButton.parentNode.setAttribute("numChildren", --grammarSkillTestOutButton.parentNode.childElementCount);
+		grammarSkillTestOutButton.remove();
+	}
+}
+
 function removeWordsButton()
 {
 	const wordsButton = document.querySelector(`[data-test="words-button"]`);
 	if (wordsButton !== null)
 	{
-		wordsButton.parentNode.removeAttribute("style");
+		wordsButton.parentNode.setAttribute("numChildren", --wordsButton.parentNode.childElementCount);
 		wordsButton.remove();
 	}
 	const wordsListBubble = document.querySelector(`#wordsListBubble`);
 	if (wordsListBubble !== null)
+	{
 		wordsListBubble.remove();
+	}
 }
 
 function removeMasterdSkillButton()
@@ -645,6 +707,7 @@ function removeMasterdSkillButton()
 	const masteredButton = document.querySelector(`[data-test="mastered-button"]`);
 	if (masteredButton !== null)
 	{
+		masteredButton.parentNode.setAttribute("numChildren", --masteredButton.parentNode.childElementCount);
 		masteredButton.remove();
 	}
 }
@@ -925,7 +988,7 @@ function currentLanguageHistory()
 	);
 }
 
-function daysToNextXPLevel(history, xpLeft)
+function daysToNextXPLevel(history, XPLeft)
 {
 	const currentDate = (new Date()).setHours(0,0,0,0);
 	const metGoal = hasMetGoal();
@@ -933,7 +996,7 @@ function daysToNextXPLevel(history, xpLeft)
 	if (history.length == 0)
 		return -1;
 
-	let xpTotal = 0;
+	let XPTotal = 0;
 	
 	const firstDate = (new Date(history[0].datetime)).setHours(0,0,0,0);
 	if (firstDate == currentDate && !metGoal)
@@ -951,7 +1014,7 @@ function daysToNextXPLevel(history, xpLeft)
 		{
 			// Not from today
 			// or it is and the goal has been met
-			xpTotal += lesson.improvement;
+			XPTotal += lesson.improvement;
 			lastDate = date;
 		}
 		else
@@ -964,9 +1027,9 @@ function daysToNextXPLevel(history, xpLeft)
 
 	let timePeriod = (lastDate - firstDate)/(1000*60*60*24) + 1; // number of days, inclusive of start and end.
 
-	let xpRate = xpTotal/timePeriod; // in units of xp/day
+	let XPRate = XPTotal/timePeriod; // in units of XP/day
 
-	return Math.ceil(xpLeft/xpRate);
+	return Math.ceil(XPLeft/XPRate);
 }
 
 function daysToNextTreeLevel()
@@ -1142,11 +1205,12 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	let target = "";
 
 	const prediction = document.createElement("p");
+	prediction.classList.add("prediction");
 
 	switch (type)
 	{
 		case "XPLevel":
-			prediction.id = "XPPrediction";
+			prediction.classList.add("XPPrediction");
 			target = `the next level, Level\xA0${userData.language_data[languageCode].level + 1}`;
 			break;
 		case "treeLevel":
@@ -1170,9 +1234,6 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	if (type !== "XPLevel")
 	{
 		prediction.lastChild.title = `${Number(rate).toFixed(2)} lessons/day with ${lessonsLeft} lesson to go`;
-		prediction.lastChild.style["text-decoration"] = "underline dashed #777";
-		prediction.lastChild.style["text-underline-position"] = "under";
-		prediction.style["line-height"] = "120%";
 	}
 
 	prediction.appendChild(
@@ -1180,13 +1241,11 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	);
 	prediction.appendChild(document.createElement("span"));
 	prediction.lastChild.textContent = numDays;
-	prediction.lastChild.style.fontWeight = "bold";
 	prediction.appendChild(
 		document.createTextNode(` days, on `)
 	);
 	prediction.appendChild(document.createElement("span"));
 	prediction.lastChild.textContent = new Date((new Date()).setHours(0,0,0,0) + numDays*24*60*60*1000).toLocaleDateString();
-	prediction.lastChild.style.fontWeight = "bold";
 
 	return prediction;
 }
@@ -1422,7 +1481,10 @@ function addFlagBorders()
 						const flag1 = container.firstChild;
 						const flag2 = flag1.nextElementSibling;
 
-						if (flag1.getAttribute("style") !== null)
+						if (
+							flag1.getAttribute("style") !== null
+							|| flag1.classList.contains("borderedFlag")
+						)
 						{
 							// In the unlikely case where we have already added the borders and are trying to again
 							return false;
@@ -1433,7 +1495,7 @@ function addFlagBorders()
 						const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
 						
 
-						// Bbckground offsets in px as strings
+						// Background offsets in px as strings
 						const x1 = backgroundPosition1[0];
 						const y1 = backgroundPosition1[1];
 
@@ -1458,53 +1520,20 @@ function addFlagBorders()
 							treeLevel = 0;
 						}
 
-						let color;
 
-						switch (treeLevel)
-						{
-							case 0:
-								color = "white";
-								break;
-							case 1:
-								color = BLUE;
-								break;
-							case 2:
-								color = GREEN;
-								break;
-							case 3:
-								color = RED;
-								break;
-							case 4:
-								color = ORANGE;
-								break;
-							case 5:
-								color = GOLD;
-								break;
-						}
-
-
-						flag1.style = 
+						flag1.classList.add("borderedFlag");
+						flag1.setAttribute("tree-level", treeLevel);
+						flag1.style =
 						`
-							border-color: ${color};
-							border-width: 4px;
-							border-style: solid;
-							border-radius: 10px;
-							background-position: calc(${x1} - 2px) calc(${y1} - 2px);
-							height: ${+height1 + 4}px;
-							width: ${+width1 + 4}px;
+							--bgPosX: ${parseFloat(x1) - 2}px;
+							--bgPosY: ${parseFloat(y1) - 2}px;
+							--height: ${+height1 + 4}px;
+							--width: ${+width1 + 4}px;
 						`;
-						
 						if (treeLevel == 5)
 						{
 							const crown = document.createElement("IMG");
 							crown.src = imgSrcBaseUrl+"/juicy-crown.svg";
-							crown.style = `
-								position: 	absolute;
-								left: 0;
-								bottom: 0;
-								width: 75%;
-								transform: translate(-50%, 50%);
-							`;
 							flag1.appendChild(crown);
 						}
 					}
@@ -1608,98 +1637,66 @@ function addStrengthBars(strengths)
 	
 	let numBarsAdded = 0;
 
-	let strengthBarBackground = document.createElement("div");
+	const strengthBarBackground = document.createElement("div");
 	strengthBarBackground.className = "strengthBarBackground";
-	strengthBarBackground.style =
-	`
-		position: absolute;
-		display: inline-block;
-		width: 100%;
-		height: 1em;
-		left: 0;
-		background-color: #e5e5e5;
-		border-radius: 0.5em;
-		z-index: 1;
-	`;
-
 	
 	for (let i = 0; i< skills.length; i++)
 	{
-		let iconElement = skills[i][0];
-		let nameElement = skills[i][1];
-		let strength = skills[i][2]*1.0;
-		let display = (skills[i][3])? "" : "none";
-		let name = skills[i][4];
+		const iconElement = skills[i][0];
+		const nameElement = skills[i][1];
+		const strength = skills[i][2]*100;
+		const display = (skills[i][3]) ? "" : "none";
+		const name = skills[i][4];
 		
 		if(document.getElementsByClassName("strengthBarHolder").length == numBarsAdded) // if we have only the number of bars added this time round, keep adding new ones.
 		{
-			let strengthBarHolder = document.createElement("div");
-			strengthBarHolder.className = "strengthBarHolder";
-			strengthBarHolder.style = 
-			`
-				width: 100%;
-				position: relative;
-				display: ${display};
-				margin-top: 0.5em;
-				margin-bottom: -8px;
-			`;
-			
-			nameElement.parentNode.style.width = "100%";
+			const strengthBarHolder = document.createElement("div");
+			strengthBarHolder.classList.add("strengthBarHolder")
+			strengthBarHolder.setAttribute("display", display);
+
+			nameElement.parentNode.classList.add("fullWidth");
 			nameElement.parentNode.insertBefore(strengthBarHolder, nameElement);
 
-			let strengthBar = document.createElement("div");
-			strengthBar.className = "strengthBar";
+			const strengthBar = document.createElement("div");
+			strengthBar.classList.add("strengthBar");
+			strengthBar.setAttribute("strength", strength);
 			strengthBar.id = name + "StrengthBar";
-			strengthBar.style = 
-			`
-				display: inline-block;
-				position: absolute;
-				left: 0;
-				width: ${strength*100}%;
-				height: 1em;
-				background-color: ${strength == 1.0 ? GOLD : RED};
-				border-radius: 0.5em;
-				z-index: 2;
-			`;
+
 			
-			let strengthValue = document.createElement("div");
+			const strengthValue = document.createElement("div");
 			strengthValue.className = "strengthValue";
 			strengthValue.id = name + "StrengthValue";
-			strengthValue.style = 
-			`
-				position: relative;
-				width: 97%;
-				text-align: right;
-				vertical-align: middle;
-				font-size: 75%;
-				z-index: 3;
-				margin: auto;
-			`;
-			strengthValue.textContent = strength*100 + "%";
+			strengthValue.textContent = strength + "%";
 			
-		if (options.strengthBarBackgrounds) strengthBarHolder.appendChild(strengthBarBackground.cloneNode());
-		strengthBarHolder.appendChild(strengthBar);
-		strengthBarHolder.appendChild(strengthValue);
-		
-		numBarsAdded ++; // added a bar so increment counter.
-		
-	} else // we already have the elements made previously, just update their values.
-	{
-		let strengthBar = document.getElementById(name + "StrengthBar");
-		strengthBar.style.width = (strength*100)+"%";
-		strengthBar.style.backgroundColor = (strength == 1.0 ? GOLD : RED);
-		
-		let strengthValue = document.getElementById(name + "StrengthValue");
-		strengthValue.textContent = strength*100 + "%";
+			if (options.strengthBarBackgrounds)
+			{
+				strengthBarHolder.appendChild(strengthBarBackground.cloneNode());
+			}
 
-		strengthBar.parentNode.style.display = display;
-		
-		const background = strengthBar.parentNode.querySelector(`.strengthBarBackground`);
-		if (options.strengthBarBackgrounds && background == null)
-				strengthBar.parentNode.insertBefore(strengthBarBackground.cloneNode(),strengthBar);
-		else if (!options.strengthBarBackgrounds && background != null)
-			background.remove();
-				
+			strengthBarHolder.appendChild(strengthBar);
+			strengthBarHolder.appendChild(strengthValue);
+			
+			numBarsAdded++; // added a bar so increment counter.
+		}
+		else // we already have the elements made previously, just update their values.
+		{
+			const strengthBar = document.getElementById(name + "StrengthBar");
+			strengthBar.setAttribute("strength", strength);
+			
+			const strengthValue = document.getElementById(name + "StrengthValue");
+			strengthValue.textContent = strength + "%";
+
+			strengthBar.parentNode.setAttribute("display", display);
+			
+			const background = strengthBar.parentNode.querySelector(`.strengthBarBackground`);
+			if (options.strengthBarBackgrounds && background === null)
+			{
+				strengthBar.parentNode.insertBefore(strengthBarBackground.cloneNode(), strengthBar);
+			}
+			else if (!options.strengthBarBackgrounds && background !== null)
+			{
+				background.remove();
+			}
 		}
 	}
 }
@@ -1710,15 +1707,13 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	
 	let topOfTree;
 	if (
-			document.querySelector(`[data-test="skill-tree"]`) != null &&
-			document.querySelector(`[data-test="tree-section"]`) != null &&
-			(
-				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
-				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
-				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
-			)
-
-		) // Has the tree loaded from a page change
+		document.querySelector(`[data-test="skill-tree"]`) !== null
+		&& document.querySelector(`[data-test="tree-section"]`) != null
+		&& (
+			document.getElementsByClassName(TOP_OF_TREE).length !== 0
+			|| document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length !== 0
+		)
+	) // Has the tree loaded from a page change
 	{
 		topOfTree = document.querySelector(`[data-test="skill-tree"]>div`);
 	}
@@ -1856,35 +1851,21 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		}
 	}
 	
-	topOfTree.style =
-	`
-		height: auto;
-		width: 100%;
-		z-index: 1;
-	`;
+	topOfTree.classList.add("topOfTree");
 
 	let strengthenBox = document.getElementById((!cracked)?"strengthenBox":"crackedBox"); // will be a div to hold list of skills that need strengthenening
 	let needToAddBox = false;
 
-	if (strengthenBox == null) // if we haven't made the box yet, make it
+	if (strengthenBox === null) // if we haven't made the box yet, make it
 	{
 		needToAddBox = true;
 		strengthenBox = document.createElement("div");
-		strengthenBox.id = (!cracked)?"strengthenBox":"crackedBox";
-		strengthenBox.style =
-		`
-			text-align: left;
-			margin: 0 0 2em 0;
-			min-height: 3em
-		`;
-		if (inMobileLayout)
-			strengthenBox.style.margin = "0.5em 1em 0.5em 1em";
+		strengthenBox.id = (!cracked) ? "strengthenBox" : "crackedBox";
+		strengthenBox.classList.add("topOfTreeList");
 
-		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length != 0)
+		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length !== 0)
 		{
-			// If there is the IN BETA label, make it relative, not aboslute.
-			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style.position = 'relative';
-			strengthenBox.style.marginTop = "0.5em";
+			topOfTree.classList.add("hasInBetaLabel");
 		}
 
 		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) !== null)
@@ -1896,9 +1877,15 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			{
 				// Is zero if element has been hidden e.g by an adblocker
 				const offset = boxRightEdge - buttonLeftEdge;
-				strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
+				if (inMobileLayout)
+				{
+					strengthenBox.style.width = `calc(100% - ${offset}px - 1.5em)`;
+				}
+				else
+				{
+					strengthenBox.style.width = `calc(100% - ${offset}px - 0.5em)`;
+				}
 			}
-
 		}
 	}
 
@@ -1908,7 +1895,9 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		(!cracked && options.showBonusSkillsInNeedsStrengtheningList) ||
 		(cracked && options.showBonusSkillsInCrackedSkillsList)
 	)
+	{
 		numSkillsToBeStrengthened += needsStrengthening[1].length;
+	}
 
 	strengthenBox.textContent = `Your tree has ${numSkillsToBeStrengthened}`;
 
@@ -1933,9 +1922,6 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 	const focus = (event) =>
 	{
-		event.target.style.fontWeight = "bold";
-		event.target.style.textDecoration = "underline";
-
 		(cracked) ? removeCrackedPopoutButton() : removeNeedsStrengtheningPopoutButton();
 
 		if (event.target.getAttribute("href") !== "#")
@@ -1953,24 +1939,13 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			}
 		}
 	};
-	const blur = (event) =>
-	{
-		if (event.target !== document.activeElement)
-		{
-			event.target.style.fontWeight = "normal";
-			event.target.style.textDecoration = "none";
-		}
-	};
 
 	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, (!cracked)?options.needsStrengtheningListLength:options.crackedSkillsListLength);
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
 		let skillLink = document.createElement("a");
-		skillLink.style.color = "blue";
 		skillLink.addEventListener("focus", focus);
-		skillLink.addEventListener("blur", blur);
 		skillLink.addEventListener("mouseenter", focus);
-		skillLink.addEventListener("mouseleave", blur);
 
 		if (i < needsStrengthening[0].length)
 		{
@@ -2013,11 +1988,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	if (numSkillsToShow == numSkillsToBeStrengthened)
 	{
 		const skillLink = document.createElement("a");
-		skillLink.style.color = "blue";
 		skillLink.addEventListener("focus", focus);
-		skillLink.addEventListener("blur", blur);
 		skillLink.addEventListener("mouseenter", focus);
-		skillLink.addEventListener("mouseleave", blur);
 
 		// we are showing every skill that needs to be stregnthened.
 		if (needsStrengthening[1].length > 0 && 
@@ -2053,11 +2025,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 	{
 		// some skills that need to be strengthened are not being shown, so the last one we are showing is just the next one in the order we have
 		const skillLink = document.createElement("a");
-		skillLink.color = "blue";
 		skillLink.addEventListener("focus", focus);
-		skillLink.addEventListener("blur", blur);
 		skillLink.addEventListener("mouseenter", focus);
-		skillLink.addEventListener("mouseleave", blur);
 
 		let lastIndexToBeShown = numSkillsToShow - 1; // the last for loop ended with i = numSkillsToShow - 2
 		if (lastIndexToBeShown < needsStrengthening[0].length)
@@ -2102,13 +2071,10 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 			showMore = document.createElement("a");
 			showMore.id = `showMore${(!cracked)?"ToStrengthen":"ToRepair"}`;
-			showMore.style.color = "blue";
 			showMore.textContent = numSkillsLeft + " more...";
 			showMore.href = "#";
 			showMore.addEventListener("focus", focus);
-			showMore.addEventListener("blur", blur);
 			showMore.addEventListener("mouseenter", focus);
-			showMore.addEventListener("mouseleave", blur);
 
 			if (!cracked)
 			{
@@ -2213,15 +2179,9 @@ function addGrammarSkillTestOutButton(skillPopout)
 
 	// Not at max level so can test out.
 
-	let smallButtonsContainer = skillPopout.querySelector(`.${SMALL_BUTTONS_CONTAINER}`);
-
-	if (smallButtonsContainer === null)
-	{
-		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
-	}
-
 	const testOutButton = addSmallButtonToPopout(skillPopout, true);
 	testOutButton.setAttribute("data-test", "test-out-button");
+	testOutButton.id = "grammarSkillTestOutButton";
 
 	const testOutIcon = document.createElement("img");
 	testOutIcon.src = `${imgSrcBaseUrl}/key.svg`;
@@ -2248,6 +2208,8 @@ function addWordsButton(skillPopout)
 {
 	if (skillPopout === null) return false;
 
+	skillPopout.classList.add("skillPopout");
+
 	const skillData = getSkillFromPopout(skillPopout);
 
 	// Grammar skills words list are not currently helpful, so don't add the button.
@@ -2258,10 +2220,6 @@ function addWordsButton(skillPopout)
 
 	let wordsButton = addSmallButtonToPopout(skillPopout);
 	const smallButtonsContainer = skillPopout.querySelector(`.${SMALL_BUTTONS_CONTAINER}`)
-
-	smallButtonsContainer.parentNode.style = `
-		overflow: visible;
-	`;
 	
 	wordsButton.setAttribute("data-test", "words-button");
 	wordsButton.textContent = "words";
@@ -2300,44 +2258,16 @@ function createWordsListBubble(words, button, container, isLocked)
 	const backgroundColor = isLocked ? "darkgrey" : "white";
 	const textColor = isLocked ? "white" : window.getComputedStyle(container.parentNode).backgroundColor;
 	
-	bubble.style = `
-		background-color: ${backgroundColor};
-		color: ${textColor};
-		font-weight: bold;
-		position: absolute;
-		left: 0;
-		top: calc(100% + 0.5em);
-		z-index: 1;
-		border-radius: 1em;
-		box-shadow: 0.25em 0.25em rgba(0,0,0,0.2);
-		padding: 0.5em;
-		width: ${100*(100/parseFloat(container.style.width))}%;
-		transform: translate(-${100-parseFloat(container.style.width)}%, 0);
-	`;
+	bubble.style.color = textColor;
 
 	bubble.addEventListener("click", (event) => {event.stopPropagation();})
 
 	const arrow = document.createElement("div");
 	const arrowOffset = button.offsetLeft + 0.5*button.offsetWidth;
-	arrow.style = `
-		background-color: ${backgroundColor};
-		position: absolute;
-		width: 0.5em;
-		height: 0.5em;
-		top: -0.25em;
-		left: ${100-parseFloat(container.style.width)}%;
-		transform: translate(calc(-50% + ${arrowOffset}px), 0) rotate(45deg);
-	`;
+	arrow.style.transform = `translateX(calc(-50% + ${arrowOffset}px)) rotate(45deg)`;
 	bubble.appendChild(arrow);
 
-
 	const list = document.createElement("ul");
-	list.style = `
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		white-space: pre;
-	`;
 	bubble.appendChild(list);
 
 	words.forEach(
@@ -2362,27 +2292,14 @@ function addSmallButtonToPopout(skillPopout, div = false)
 	{
 		smallButtonsContainer = addSmallButtonsConatiner(skillPopout);
 	}
+
+	smallButtonsContainer.classList.add("smallButtonsContainer");
 	
 	newButton = document.createElement(div ? "div" : "button");
 	newButton.classList.add(...SMALL_BUTTON.split(" "));
 	smallButtonsContainer.insertBefore(newButton, smallButtonsContainer.firstChild);
 
-	smallButtonsContainer.style = `
-		position: relative;
-		display: flex;
-		justify-content: flex-end;
-		width: ${smallButtonsContainer.childElementCount*65/3}%;
-	`;
-
-	if (!div)
-	{
-		newButton.style =
-		`
-			text-transform: capitalize;
-			width: auto;
-			padding: 0em 0.3em !important;
-		`;
-	}
+	smallButtonsContainer.setAttribute("numChildren", `${smallButtonsContainer.childElementCount}`);
 
 	return newButton;
 }
@@ -2400,7 +2317,6 @@ function addMasteredSkillButton(skillPopout)
 	let skillIsMastered = mastered.includes(skillData.id);
 
 	masteredButton.textContent = (skillIsMastered) ? "\u2718" : "\u2714"; // cross or tick
-	masteredButton.style.fontSize = "150%";
 	masteredButton.setAttribute("data-test", "mastered-button");
 	masteredButton.title = `${(skillIsMastered) ? "Unm" : "M"}ark Skill as Mastered`;
 
@@ -2444,14 +2360,7 @@ function addPractiseButton(skillPopout)
 	const startButton = document.querySelector(`[data-test="start-button"]`);
 	startButton.textContent = "START LESSON";
 
-	const startButtonContainer = startButton.parentNode;
-
-	const practiseButtonContainer = startButtonContainer.cloneNode(true);
-	practiseButtonContainer.style.marginTop = "0.5em";
-
-	Array.from(practiseButtonContainer.childNodes).slice(0,-1).forEach(button => button.remove());
-
-	const practiseButton = practiseButtonContainer.firstChild;
+	const practiseButton = startButton.cloneNode(true);
 	practiseButton.textContent = "Practise";
 	practiseButton.title = "Practising this skill will strengthen it, but will not contribute any progress towards earning the next crown.";
 	practiseButton.setAttribute("data-test", "practise-button");
@@ -2469,7 +2378,7 @@ function addPractiseButton(skillPopout)
 		window.location = `/skill/${languageCode}/${urlTitle}/practice`;
 	});
 
-	startButtonContainer.parentNode.insertBefore(practiseButtonContainer, startButtonContainer.nextSibling);
+	startButton.parentNode.insertBefore(practiseButton, startButton.nextSibling);
 
 	skillPopout.scrollIntoView({block: "center"});
 }
@@ -2503,21 +2412,6 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		popoutContent = checkpointPopout;
 	}
 
-	const oml = function ()
-	{
-		this.style.boxShadow = `0 0.25em ${(!completedMessage) ? "rgba(255, 255, 255, 0.5)" : "grey"}`;
-		this.style.transform = "none";
-	};
-	const omd = function ()
-	{
-		this.style.boxShadow = "none";
-		this.style.transform = "translate(0, 0.3em)";
-	};
-	const omu = function ()
-	{
-		this.style.boxShadow = `0 0.25em ${(!completedMessage) ? "rgba(255, 255, 255, 0.5)" : "grey"}`;
-		this.style.transform = "none";
-	};
 	const storeCheckpointSource = () =>
 	{
 		const lastSkill = {checkpointNumber: checkpointNumber}
@@ -2559,44 +2453,19 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		// No buttons so we have to made them both
 		const redoTestButton = document.createElement("BUTTON");
 		redoTestButton.setAttribute("data-test", "redo-test-button");
+		redoTestButton.classList.add("checkpointButton");
 		redoTestButton.textContent = "RETRY CHECKPOINT CHALLENGE";
-		redoTestButton.style = 
-		`
-			font-size: 15px;
-			line-height: 20px;
-			width: 100%;
-			color: ${window.getComputedStyle(popoutContent).getPropertyValue("background-color")}; /* Make this Same as background colour of box*/
-			border: 0;
-			border-radius: 1em;
-			padding: .8em;
-			font-weight: 700;
-			background-color: white;
-			box-shadow: 0 0.25em rgba(255, 255, 255, 0.5);
-			transition: filter 0.2s;
-			cursor: pointer;
-		`;
-
+		redoTestButton.style.color = window.getComputedStyle(popoutContent).getPropertyValue("background-color"); // Make this Same as background colour of box
 
 		if (completedMessage)
 		{
-			redoTestButton.style.border = `2px solid grey`;
-			redoTestButton.style.color = "grey";
-			redoTestButton.style.backgroundColor = GOLD;
-			redoTestButton.style.width = "75%";
-			redoTestButton.style.alignSelf = "center";
-			redoTestButton.style.boxShadow = `0 0.25em grey`;
-			redoTestButton.style.marginTop = "1em";
-
-			popoutContent.style.padding = "0 0 0.5em 0"
+			redoTestButton.removeAttribute("style");
 		}
 		else if (checkpointPopout.querySelector(CHECKPOINT_BLURB_SELECTOR) === null)
 		{
-			popoutContent.style.width = "300px";
+			popoutContent.classList.add("noBlurb");
 		}
 
-		redoTestButton.addEventListener("mouseleave", oml);
-		redoTestButton.addEventListener("mousedown", omd);
-		redoTestButton.addEventListener("mouseup", omu);
 		redoTestButton.addEventListener("click",
 			(event) =>
 			{
@@ -2609,9 +2478,6 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 		testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
 		testOutButton.setAttribute("data-test", "test-out-button");
 
-		testOutButton.addEventListener("mouseleave", oml);
-		testOutButton.addEventListener("mousedown", omd);
-		testOutButton.addEventListener("mouseup", omu);
 		testOutButton.addEventListener("click",
 			(event) =>
 			{
@@ -2630,9 +2496,6 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 			practiseButton.textContent = "PRACTICE +10 XP";
 			practiseButton.setAttribute("data-test", "practise-button");
 
-			practiseButton.addEventListener("mouseleave", oml);
-			practiseButton.addEventListener("mousedown", omd);
-			practiseButton.addEventListener("mouseup", omu);
 			practiseButton.addEventListener("click",
 				(event) =>
 				{
@@ -2683,28 +2546,17 @@ function addButtonsToTipsPage()
 							);
 
 			const startLessonButton = startLessonButtons[0];
+			startLessonButton.parentNode.classList.add("tipsPageButtonContainer");
+			startLessonButton.parentNode.id = "tipsPageTopContainer";
 			// Add the practise button at the top if it is wanted.
 			if (options.addTipsPagePractiseButton && !toPractise)
 			{
 				const practiseButton = startLessonButton.cloneNode(true);
 				practiseButton.setAttribute("data-test", "practise-button");
 				practiseButton.textContent = "practise";
-				practiseButton.style = 
-				`
-					margin-left: 1em;
-				`;
 
 				startLessonButton.parentNode.insertBefore(practiseButton, startLessonButton.nextElementSibling);
 			}
-
-			startLessonButton.parentNode.style = 
-			`
-				justify-content: flex-end;
-			`;
-			startLessonButton.parentNode.firstChild.style =
-			`
-				margin-right: auto;
-			`;
 
 			// Now copy all the top buttons to the bottom of the page if wanted.
 			if (options.addTipsPageBottomButtons)
@@ -2712,7 +2564,7 @@ function addButtonsToTipsPage()
 				const buttons = [startLessonButton, ...document.querySelectorAll(`[data-test="practise-button"]`)];
 
 				const bottomButtonsContainer = startLessonButton.parentNode.cloneNode(false);
-				bottomButtonsContainer.style.borderBottom = "1em";
+				bottomButtonsContainer.id = "tipsPageBottomContainer";
 				document.querySelector(TIPS_PAGE_BODY_SELECTOR).parentNode.appendChild(bottomButtonsContainer);
 
 				buttons.forEach(
@@ -2759,37 +2611,15 @@ function addButtonsToTipsPage()
 
 function applyFocusMode()
 {
-	// Hide the sidebar if in focus mode
-	document.querySelectorAll(`.${SIDEBAR}`).forEach(
-		(sidebar) =>
-		{
-			if (options.focusMode)
-			{
-				sidebar.style["display"] = "none";
-				sidebar.style["visibility"] = "hidden";
-			}
-			else
-			{
-				sidebar.style["display"] = "";
-				sidebar.style["visibility"] = "";
-			}
-		}
-	);
-
-	// Made the main section of the page full width if in focus mode
-	document.querySelectorAll(MAIN_SECTION_SELECTOR).forEach(
-		(mainSection) =>
-		{
-			if (options.focusMode)
-			{
-				mainSection.style["margin-right"] = "0";
-			}
-			else
-			{
-				mainSection.style["margin-right"] = "";
-			}
-		}
-	);
+	// Hide the sidebar if in focus mode.
+	if (options.focusMode)
+	{
+		rootElem.classList.add("focusMode");
+	}
+	else
+	{
+		rootElem.classList.remove("focusMode");
+	}
 
 	removeFocusModeButton();
 
@@ -2804,18 +2634,8 @@ function applyFocusMode()
 
 		const focusModeButton = globalPractiseButtonContainer.cloneNode(true);
 		focusModeButton.id = "focusModeButton";
-		focusModeButton.style =
-		`
-			margin-left: auto;
-			margin-right: 0;
-			height: 0;
-		`;
 
 		focusModeButton.firstChild.setAttribute("data-test", "focusModeButton");
-		focusModeButton.firstChild.style =
-		`
-			transform: translateY(-100%);
-		`;
 		focusModeButton.firstChild.title = `${(options.focusMode) ? "Disable" : "Enable"} Focus Mode`;
 		focusModeButton.firstChild.removeAttribute("href");
 		focusModeButton.addEventListener("click",
@@ -2848,19 +2668,12 @@ function applyFixedSidebar()
 
 	if (options.fixedSidebar)
 	{
-		sidebar.style =
-		`
-			position: sticky;
-			top: 94px;
-			height: calc(100vh - 94px);
-			overflow-y: scroll;
-		`
+		sidebar.classList.add("fixedSidebar");
 	}
 	else
 	{
-		sidebar.removeAttribute("style");
+		sidebar.classList.remove("fixedSidebar");
 	}
-
 }
 
 function getCrackedSkills()
@@ -3010,6 +2823,7 @@ function createOpenPopoutButton(skillUrlTitle)
 	const skillElement = sameNamedSkills[nameIndex];
 	
 	const button = document.createElement("button");
+	button.classList.add("openPopoutButton");
 	button.title = `Open popout for ${skillName}`;
 	button.addEventListener("click",
 		(event) =>
@@ -3019,33 +2833,8 @@ function createOpenPopoutButton(skillUrlTitle)
 		}
 	);
 
-	const focus = (event) =>
-	{
-		event.target.style.transform = "scale(1.2)";
-	};
-	const blur = (event) =>
-	{
-		event.target.style.transform = "unset";
-	};
-
-	button.addEventListener("focus", focus);
-	button.addEventListener("blur", blur);
-	button.addEventListener("mouseenter", focus);
-	button.addEventListener("mouseleave", blur);
-	button.style =
-	`
-		background: none;
-		border: none;
-		line-height: 1em;
-		cursor: pointer;
-	`;
 	button.appendChild(document.createElement("img"));
 	button.lastChild.src = chrome.runtime.getURL("images/popout.svg");
-	button.lastChild.style =
-	`
-		width: 1em;
-		vertical-align: middle;
-	`;
 
 	return button;
 }
@@ -3072,7 +2861,6 @@ function displayCrownsBreakdown()
 	{
 		return false;
 	}
-
 
 	let skills = userData.language_data[languageCode].skills;
 	skills = skills.filter(skill => skill.category !== "grammar");
@@ -3108,46 +2896,18 @@ function displayCrownsBreakdown()
 	if ((inMobileLayout || options.crownsInfoInPopup) && isPopupContainer)
 	{
 		const crownsPopupContainer = document.querySelector(CROWNS_POPUP_CONTAINER_SELECTOR);
-		placesToAdd.push(crownsPopupContainer);
-		
-		// Style the popup container appropriately
-		if (!inMobileLayout)
-		{
-			crownsPopupContainer.style =
-			`
-				flex-wrap: wrap;
-				justify-content: center;
-				overflow-y: auto;
-				max-height: calc(100vh - ${(70+20)}px);
-			`;
-		}
-		else
-		{
-			crownsPopupContainer.style =
-			`
-				flex-wrap: wrap;
-				justify-content: center;
-			`;
+		crownsPopupContainer.id = "crownsPopupContainer";
+		crownsPopupContainer.parentNode.id = "crownsPopupContainerParent";
 
-			crownsPopupContainer.parentNode.style =
-			`
-				overflow-y: auto;
-				max-height: calc(100vh - ${(58+90)}px);
-			`;
-		}
+		placesToAdd.push(crownsPopupContainer);
 	}
 
 	if (options.crownsInfoInSidebar && isSidebar)
 	{
 		const sidebarCrownsInfoContainer = document.createElement("div");
 		sidebarCrownsInfoContainer.classList.add(WHITE_SIDEBAR_BOX_CONTAINER);
-		sidebarCrownsInfoContainer.classList.add("sidebarCrownsInfoContainer");
-		sidebarCrownsInfoContainer.style =
-		`
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-		`;
+		sidebarCrownsInfoContainer.id = "sidebarCrownsInfoContainer";
+
 		let elementToInsertCrownsInfoBefore = document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`).nextElementSibling;
 		if (document.querySelector(`#languagesBox`) != null)
 		{
@@ -3160,11 +2920,7 @@ function displayCrownsBreakdown()
 		// Add crowns icon and count
 		const crownLogoContainer = document.createElement("div");
 		crownLogoContainer.classList.add(CROWN_LOGO_CONTAINER);
-		crownLogoContainer.style =
-		`
-			width: max-content;
-			height: max-content;
-		`;
+
 		sidebarCrownsInfoContainer.appendChild(crownLogoContainer);
 
 		const crownImg = document.createElement("img");
@@ -3188,19 +2944,15 @@ function displayCrownsBreakdown()
 		crownLogoContainer.appendChild(crownTotalContainer);
 
 		// Add Crowns Header and Text
-		sidebarCrownsInfoContainer.appendChild(document.createElement("div"));
-		sidebarCrownsInfoContainer.lastChild.style["width"] = "50%";
-		sidebarCrownsInfoContainer.lastChild.classList.add(CROWN_DESCRIPTION_CONTAINER);
-		sidebarCrownsInfoContainer.lastChild.appendChild(document.createElement("h2"));
-		sidebarCrownsInfoContainer.lastChild.lastChild.textContent = "Crowns";
-		sidebarCrownsInfoContainer.lastChild.lastChild.style["margin"] = "0";
-		sidebarCrownsInfoContainer.lastChild.appendChild(document.createElement("p"));
-		sidebarCrownsInfoContainer.lastChild.lastChild.textContent = "Level up your skills to earn crowns!";
-		sidebarCrownsInfoContainer.lastChild.lastChild.style =
-		`
-			margin: 10px 0 0 0;
-			color: #777;
-		`;
+		const crownDescriptionContainer = document.createElement("div");
+		crownDescriptionContainer.classList.add(CROWN_DESCRIPTION_CONTAINER);
+		crownDescriptionContainer.classList.add("crownDescriptionContainer");
+		sidebarCrownsInfoContainer.appendChild(crownDescriptionContainer);
+
+		crownDescriptionContainer.appendChild(document.createElement("h2"));
+		crownDescriptionContainer.lastChild.textContent = "Crowns";
+		crownDescriptionContainer.appendChild(document.createElement("p"));
+		crownDescriptionContainer.lastChild.textContent = "Level up your skills to earn crowns!";
 	}
 
 	placesToAdd.forEach(
@@ -3210,22 +2962,20 @@ function displayCrownsBreakdown()
 
 			const crownLogoContainer = crownsInfoContainer.querySelector(`.${CROWN_LOGO_CONTAINER}`);
 			const crownCountImg = crownLogoContainer.querySelector(`:scope > img`);
-			crownCountImg.style["transform"] = "scale(1.3)";
+			crownCountImg.classList.add("crownCountImg");
 
-			const crownDescriptionContainer = document.querySelector(`.${CROWN_DESCRIPTION_CONTAINER}`); // Only exists in popup container
+			const crownDescriptionContainer = crownsInfoContainer.querySelector(`.${CROWN_DESCRIPTION_CONTAINER}`);
 			if (crownDescriptionContainer !== null)
 			{
-				crownDescriptionContainer.style.width = '50%';
+				crownDescriptionContainer.classList.add("crownDescriptionContainer");
 			}
 
 			// Add max crowns and crowns precentage
 			const crownTotalContainer = crownsInfoContainer.querySelector(`.${CROWN_TOTAL_CONTAINER}`);
 
-			let maximumCrownCountContainer;
-			let crownCountPercentage;
 			if (options.crownsMaximum)
 			{
-				maximumCrownCountContainer = document.createElement("span");
+				const maximumCrownCountContainer = document.createElement("span");
 				maximumCrownCountContainer.classList.add("maxCrowns");
 				maximumCrownCountContainer.textContent = "/" + maxCrownCount;
 				
@@ -3233,17 +2983,9 @@ function displayCrownsBreakdown()
 
 				if (options.crownsPercentage)
 				{
-					crownCountPercentage = document.createElement("span");
+					const crownCountPercentage = document.createElement("span");
 					crownCountPercentage.classList.add("crownCountPercentage");
 					crownCountPercentage.textContent = `(${(100*document.querySelector(CROWN_TOTAL_SELECTOR).textContent/maxCrownCount).toFixed(1)}%)`;
-					crownCountPercentage.style = `
-						font-size: 0.8em;
-						position: absolute;
-						transform: translate(-50%, -50%);
-						left: 50%;
-						top: calc(50% + 1.3em);
-						color: #cd7900;
-					`;
 
 					crownTotalContainer.parentNode.appendChild(crownCountPercentage);
 				}
@@ -3257,8 +2999,8 @@ function displayCrownsBreakdown()
 				// treeLevelProgressInWeek[0] : week ago;
 				// treeLevelProgressInWeek[6] : today;
 
-				let dateToday = (new Date()).setHours(0,0,0,0);
-				let msInDay = 24*60*60*1000;
+				const dateToday = (new Date()).setHours(0,0,0,0);
+				const msInDay = 24*60*60*1000;
 				
 				let day = dateToday;
 				let i = progress.length - 1; // used to index into progress
@@ -3383,80 +3125,45 @@ function displayCrownsBreakdown()
 
 
 				// Generate a graph for the data.
-				let graph = graphSVG(treeLevelProgressInWeek);
+				const graph = graphSVG(treeLevelProgressInWeek);
 				graph.classList.add("crownsGraph");
-				graph.width = "100%";
-				graph.style["marginTop"] = "1em";
-				graph.style["padding"] = "0 1em";
 
 				crownsInfoContainer.appendChild(graph);
 			}
 
 			// Add breakdown table
 
-			let breakdownContainer = document.createElement("div");
+			const breakdownContainer = document.createElement("div");
 			breakdownContainer.classList.add("crownLevelBreakdownContainer");
-			breakdownContainer.style =
-			`
-				margin: 1em 1em 0 1em;
-				text-align: left;
-				flex-grow: 1;
-				color: black;
-			`;
 
-			let treeLevelContainer = document.createElement("div");
+
+			const treeLevelContainer = document.createElement("div");
 			treeLevelContainer.classList.add("treeLevel");
-			treeLevelContainer.style = "display: inline-block";
 			treeLevelContainer.textContent = treeLevel;
 
-			let breakdownList = document.createElement("ul");
-			breakdownList.classList.add("breakdownList");
-			breakdownList.style =
-			`
-				display: grid;
-				grid-auto-rows: 1.5em;
-				align-items: center;
-			`;
-			
-			let imgContainer = document.createElement("div");
-			imgContainer.style =
-			`
-				position: relative;
-				display: inline-block;
-				width: 100%;
-				justify-self:center;
-			`;
-			
-			let levelContainer = document.createElement("div");
-			levelContainer.style =
-			`
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translateX(-50%) translateY(-50%);
-				z-index: 2;
-				color: #cd7900;
-			`;
+			const treeLevelSentence = document.createElement("p");
+			treeLevelSentence.classList.add("treeLevelSentence");
+			treeLevelSentence.textContent = "Your tree is at Level\xA0";
+			treeLevelSentence.appendChild(treeLevelContainer);
 
-			let crownImg = document.createElement("img");
+			breakdownContainer.appendChild(treeLevelSentence);
+
+
+			const breakdownList = document.createElement("ul");
+			breakdownList.classList.add("breakdownList");
+			
+			const imgContainer = document.createElement("div");
+			imgContainer.classList.add("crownImgContainer");
+			
+			const levelContainer = document.createElement("div");
+
+			const crownImg = document.createElement("img");
 			crownImg.alt = "crown";
-			// Class name _2PyWM used for other small crowns on skills. Corresponds to height & width 100% and z-index 1.
-			crownImg.style =
-			`
-				width: 100%;
-				padding: 0 0.2em ;
-				z-index: 1;
-			`;
 			crownImg.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
 
 			imgContainer.appendChild(crownImg);
 			imgContainer.appendChild(levelContainer);
 
-
-			breakdownContainer.appendChild(document.createElement("p"));
-			breakdownContainer.lastChild.style = "text-align: center; color: black; margin: 0 0 1em 0;";
-			breakdownContainer.lastChild.textContent = "Your tree is at Level\xA0";
-			breakdownContainer.lastChild.appendChild(treeLevelContainer);
 
 			if (!options.bonusSkillsBreakdown || crownLevelCount[1][0] + crownLevelCount[1][1] === 0)
 			{
@@ -3492,13 +3199,8 @@ function displayCrownsBreakdown()
 				if (skillType !== 0 && crownLevelCount[skillType].length !== 0)
 				{
 					const breakdownHeader = document.createElement("h3");
+					breakdownHeader.classList.add("breakdownHeader");
 					breakdownHeader.textContent = (skillType === 1) ? "Bonus Skills" : "Grammar Skills";
-					breakdownHeader.style =
-					`
-						margin: 0;
-						font-size: 100%;
-						justify-self: center
-					`;
 					breakdownList.appendChild(breakdownHeader);
 				}
 
@@ -3507,7 +3209,9 @@ function displayCrownsBreakdown()
 					const skillCount = crownLevelCount[skillType][crownLevel];
 
 					if (!options.crownsBreakdownShowZerosRows && skillCount == 0)
+					{
 						continue;
+					}
 
 					const crownCount = skillCount * crownLevel;
 				
@@ -3515,26 +3219,18 @@ function displayCrownsBreakdown()
 					imgContainer.lastChild.textContent = crownLevel;
 
 					let breakdownListItem = document.createElement("li");
-					breakdownListItem.className = "crownLevelItem";
-					breakdownListItem.style =
-					`
-						display: grid;
-						align-items: center;
-						justify-items: right;
-						grid-template-columns: 2.5fr 7.5fr 2.5em 1fr 3fr 5.5fr;
-					`;
-
+					breakdownListItem.classList.add("crownLevelItem");
+					
 					const skillCountSpan = document.createElement("span");
 					skillCountSpan.textContent = skillCount;
 					breakdownListItem.appendChild(skillCountSpan);
 
 					const skillsAtSpan = document.createElement("span");
+					skillsAtSpan.classList.add("skillsAtSpan");
 					skillsAtSpan.textContent = `skill${skillCount == 1 ? "" : "s"} at`;
-					skillsAtSpan.style.justifySelf = "center";
 					breakdownListItem.appendChild(skillsAtSpan);
 
-					breakdownListItem.appendChild(imgContainer);
-					imgContainer = imgContainer.cloneNode(true);
+					breakdownListItem.appendChild(imgContainer.cloneNode(true));
 
 					breakdownListItem.appendChild(document.createTextNode("="));
 					
@@ -3562,13 +3258,6 @@ function displayCrownsBreakdown()
 				if (predictionData.time >= 0)
 				{
 					const prediction = createPredictionElement("checkpoint", predictionData);
-					prediction.style =
-					`
-						margin: 1em 1em 0;
-						text-align: center;
-						color: black;
-					`;
-
 					crownsInfoContainer.appendChild(prediction);
 
 				}
@@ -3582,13 +3271,6 @@ function displayCrownsBreakdown()
 				if (predictionData.time >= 0)
 				{
 					const prediction = createPredictionElement("treeLevel", predictionData);
-					prediction.style =
-					`
-						margin: 1em 1em 0;
-						text-align: center;
-						color: black;
-					`;
-
 					crownsInfoContainer.appendChild(prediction);
 				}
 			}
@@ -3596,7 +3278,7 @@ function displayCrownsBreakdown()
 			if (treeLevel === 5)
 			{
 				const maxLevelMessage = document.createElement("p");
-				maxLevelMessage.style.color = "black";
+				maxLevelMessage.classList.add("treeLevelPrediction");
 				maxLevelMessage.textContent = "You have reached the maximum tree level!";
 				crownsInfoContainer.appendChild(maxLevelMessage);
 			}
@@ -3641,13 +3323,8 @@ function displayXPBreakdown()
 
 	let levelProgressPercentage = (data.level_progress*100)/(data.level_points);
 
-	let container = document.createElement("div");
-	container.classList.add("XPBox");
-	container.style = 
-	`
-		margin-top: 1em;
-		color: black;
-	`;
+	let XPBox = document.createElement("div");
+	XPBox.classList.add("XPBox");
 
 	let languageLevelContainer = document.createElement("div");
 	languageLevelContainer.classList.add("XPBreakdown");
@@ -3658,62 +3335,32 @@ function displayXPBreakdown()
 	languageLevelContainer.appendChild(XPHeader);
 
 	let languageLevelElement = document.createElement("p");
-	languageLevelElement.classList.add("xpTotalAndLevel");
+	languageLevelElement.classList.add("XPTotalAndLevel");
 	languageLevelElement.textContent = "Level " + data.level;
-	languageLevelElement.style =
-	`
-		font-size: 175%;
-		font-weight: bold;
-		text-align: center;
-		color: ${ORANGE};
-	`;
 
 	let languageXPElement = document.createElement("span");
 	languageXPElement.textContent = data.points + " XP - ";
-	languageXPElement.style =
-	`
-		color: black;
-		font-weight: normal;
-	`;
 	
 	languageLevelElement.insertBefore(languageXPElement, languageLevelElement.childNodes[0]);
 	languageLevelContainer.appendChild(languageLevelElement);
-	if (options.XPBreakdown) container.appendChild(languageLevelContainer);
+	if (options.XPBreakdown) XPBox.appendChild(languageLevelContainer);
 	
 	if (data.level != 25)
 	{
 		let nextLevelProgressElement = document.createElement("p");
-		nextLevelProgressElement.style =
-		`
-			text-align: center;
-			margin-bottom: 0;
-		`;
+		nextLevelProgressElement.classList.add("nextLevelProgress");
 		nextLevelProgressElement.textContent = `${data.level_points - data.level_progress} XP till Level ${data.level+1}`;
 
 		let languageLevelProgressBarContainer = document.createElement("div");
-		languageLevelProgressBarContainer.className = "languageLevelProgressBar";
-		languageLevelProgressBarContainer.style =
-		`
-			height: 0.5em;
-			width: 100%;
-			background-color: ${GREY};
-			border-radius: 0.25em;
-		`;
+		languageLevelProgressBarContainer.className = "languageLevelProgressBarContainer";
 
 		let languageLevelProgressBar = document.createElement("div");
 		languageLevelProgressBar.className = "languageLevelProgressBar";
-		languageLevelProgressBar.style =
-		`
-			height: 100%;
-			width: ${levelProgressPercentage}%;
-			background-color: ${ORANGE};
-			border-radius: 0.25em;
-		`;
+		languageLevelProgressBar.style.width = `${levelProgressPercentage}%`;
 
 		languageLevelProgressBarContainer.appendChild(languageLevelProgressBar);
 
 		let currentLevelProgressElement = document.createElement("p");
-		currentLevelProgressElement.style = "text-align: center;";
 		currentLevelProgressElement.textContent = `(${data.level_progress}/${data.level_points} XP - ${Number(levelProgressPercentage).toFixed(1)}%)`;
 
 		languageLevelContainer.appendChild(nextLevelProgressElement);
@@ -3726,13 +3373,8 @@ function displayXPBreakdown()
 		if (numDays != -1 && options.XPPrediction)
 		{
 			const prediction = createPredictionElement("XPLevel", {time: numDays});
-			prediction.style =
-			`
-				margin-bottom: 0;
-				text-align: center;
-			`;
 
-			container.appendChild(prediction);
+			XPBox.appendChild(prediction);
 		}
 	}
 	else
@@ -3747,28 +3389,20 @@ function displayXPBreakdown()
 
 	if (options.XPInfoInSidebar && isSidebarContainer)
 	{
-		document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`).appendChild(container.cloneNode(true));
+		document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`).appendChild(XPBox.cloneNode(true));
 	}
 
 	if ((inMobileLayout || options.XPInfoInPopup) && isPopupContainer)
 	{
-		document.querySelector(`.${DAILY_GOAL_POPUP_CONTAINER}`).appendChild(container);
+		document.querySelector(`.${DAILY_GOAL_POPUP_CONTAINER}`).appendChild(XPBox);
 		
 		if(!inMobileLayout)
 		{
-			container.parentNode.style =
-			`
-				overflow-y: auto;
-				max-height: calc(100vh - ${(58+90)}px);
-			`;
+			XPBox.parentNode.classList.add("XPBoxOverflowContainer");
 		}
 		else
 		{
-			container.parentNode.parentNode.style =
-			`
-				overflow-y: auto;
-				max-height: calc(100vh - ${(58+90)}px);
-			`;
+			XPBox.parentNode.parentNode.classList.add("XPBoxOverflowContainer");
 		}
 	}
 }
@@ -3789,35 +3423,19 @@ function displayTotalStrenthBox()
 	const totalStrengthBox = document.createElement("DIV");
 	totalStrengthBox.id = "totalStrengthBox";
 	totalStrengthBox.className = WHITE_SIDEBAR_BOX_CONTAINER;
+	totalStrengthBox.style = `--totalStrength: ${totalStrength}%`;
 	
 	const heading = document.createElement("H2");
 	heading.textContent = "Total Strength: ";
 	totalStrengthBox.appendChild(heading);
 
 	const totalStrengthSpan = document.createElement("span");
-	totalStrengthSpan.textContent = `${Math.round(totalStrength)}%`;
-	totalStrengthSpan.style =
-	`
-		font-weight: normal;
-	`;
+	totalStrengthSpan.textContent = `${Math.floor(totalStrength)}%`;
 
 	heading.appendChild(totalStrengthSpan);
 
 	const barBg = document.createElement("div");
-	barBg.style =
-	`
-		padding-right: ${100-totalStrength}%;
-		width: 100%;
-		height: 0.3em;
-		background-color: lightgrey;
-	`;
 	const barFg = document.createElement("div");
-	barFg.style =
-	`
-		width: 100%;
-		height: 100%;
-		background-color: orange;
-	`;
 
 	barBg.appendChild(barFg);
 	totalStrengthBox.appendChild(barBg);
@@ -3831,12 +3449,6 @@ function displayTotalStrenthBox()
 		).filter(str => str !== "")
 		.reverse()
 		.join(" + ");
-
-	breakdown.style =
-	`
-		font-size: 85%;
-		margin: 0;
-	`;
 
 	totalStrengthBox.appendChild(breakdown);
 
@@ -3868,7 +3480,6 @@ function displayLanguagesInfo(languages)
 		return false;
 	}
 
-		
 	const languagesBox = document.createElement("DIV");
 	languagesBox.id = "languagesBox";
 	languagesBox.className = WHITE_SIDEBAR_BOX_CONTAINER;
@@ -3888,39 +3499,31 @@ function displayLanguagesInfo(languages)
 	const tableHead = document.createElement("THEAD");
 	table.appendChild(tableHead);
 	const tableHeadRow = document.createElement("TR");
-	tableHeadRow.style.borderBottom = "1px solid black";
 	tableHead.appendChild(tableHeadRow);
 	
 	const tableHeading = document.createElement("TH");
-	tableHeading.style.padding = "0";
 
 	tableHeading.textContent = "Language";
-	tableHeading.style.width = "30%";
 	tableHeadRow.appendChild(tableHeading.cloneNode(true));
 	
 	tableHeading.textContent = "Level";
-	tableHeading.style.width = "20%";
 	tableHeadRow.appendChild(tableHeading.cloneNode(true));
 
 	tableHeading.textContent = "Total XP";
-	tableHeading.style.width = "25%";
 	tableHeadRow.appendChild(tableHeading.cloneNode(true));
 
 	tableHeading.textContent = "XP to Next Level";
-	tableHeading.style.width = "25%";
 	tableHeadRow.appendChild(tableHeading.cloneNode(true));
 
 	languages.forEach(
 		(languageInfo, index) => {
 			const tableRow = document.createElement("TR");
 			tableRow.id = `${languageInfo[0]}Row`;
-			tableRow.style.backgroundColor = (index %2) ? "#f0f0f0" : "";
 			table.appendChild(tableRow);
 
 			languageInfo.forEach(
 				(data) => {
 					const tableData = document.createElement("TD");
-					tableData.style.padding = "0";
 					tableData.textContent = data;
 					tableRow.appendChild(tableData);
 				}
@@ -3931,7 +3534,9 @@ function displayLanguagesInfo(languages)
 	// Add the new side bar box to the page
 	const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`);
 	if (dailyGoalBox == null)
+	{
 		return false;
+	}
 
 	if (document.querySelector("#languagesBox") === null)
 	{
@@ -3950,15 +3555,13 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 	let topOfTree;
 	if (
-			document.querySelector(`[data-test="skill-tree"]`) != null &&
-			document.querySelector(`[data-test="tree-section"]`) != null &&
-			(
-				document.getElementsByClassName(TOP_OF_TREE).length != 0 ||
-				document.getElementsByClassName(MOBILE_TOP_OF_TREE).length != 0 ||
-				document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length != 0
-			)
-
-		) // Has the tree loaded from a page change
+		document.querySelector(`[data-test="skill-tree"]`) !== null
+		&& document.querySelector(`[data-test="tree-section"]`) != null
+		&& (
+			document.getElementsByClassName(TOP_OF_TREE).length !== 0
+			|| document.getElementsByClassName(TOP_OF_TREE_WITH_IN_BETA).length !== 0
+		)
+	) // Has the tree loaded from a page change
 	{
 		topOfTree = document.querySelector(`[data-test="skill-tree"]>div`);
 	}
@@ -3976,12 +3579,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		return false;
 	}
 
-	topOfTree.style =
-	`
-		height: auto;
-		width: 100%;
-		z-index: 1;
-	`;
+	topOfTree.classList.add("topOfTree");
 
 	let container = document.getElementById("skillSuggestionMessageContainer");
 
@@ -3989,19 +3587,15 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	{
 		container = document.createElement("div");
 		container.id = "skillSuggestionMessageContainer";
-		if (inMobileLayout)
-			container.style = "margin: 0.5em 1em 0.5em 1em;";
-		else
-			container.style = "margin: 0 0 2em 0;";
+		container.classList.add("topOfTreeList");
 
-		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length != 0)
+		if (topOfTree.getElementsByClassName(IN_BETA_LABEL).length !== 0)
 		{
 			// If there is the IN BETA label, make it relative, not absolute.
-			topOfTree.getElementsByClassName(IN_BETA_LABEL)[0].style.position = 'relative';
-			container.style.marginTop = "0.5em";
+			topOfTree.classList.add("hasInBetaLabel");
 		}
 
-		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) !== null)
 		{
 			// There is a TRY PLUS button on the right which we have to make room for.
 			const boxRightEdge = topOfTree.getBoundingClientRect().right;
@@ -4034,13 +3628,9 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			link.href = `/skill/${languageCode}/${suggestedSkill.url_title}${toPractise ? "/practice/" : "/"}`;
 			link.textContent = suggestedSkill.short;
 		}
-		link.style.color = 'blue';
 
 		const focus = (event) =>
 		{
-			event.target.style.fontWeight = 'bold';
-			event.target.style.textDecoration = 'underline';
-
 			removeSuggestionPopoutButton();
 
 			if (event.target.getAttribute("href") !== "/practice")
@@ -4056,19 +3646,8 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			}
 		}
 
-		const blur = (event) =>
-		{
-			if (event.target !== document.activeElement)
-			{
-				event.target.style.fontWeight = "normal";
-				event.target.style.textDecoration = "none";
-			}
-		}
-
 		link.addEventListener("focus", focus);
-		link.addEventListener("blur", blur);
 		link.addEventListener("mouseenter", focus);
-		link.addEventListener("mouseleave", blur);
 		
 		const suggestionMessage = document.createElement("p");
 		if (treeLevel === 5)
@@ -4088,16 +3667,13 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 			const generalPracticeLink = document.createElement("a");
 			generalPracticeLink.href = "/practice";
-			generalPracticeLink.style.color = "blue";
 			generalPracticeLink.textContent = "general practice";
 			generalPracticeLink.addEventListener("focus", focus);
-			generalPracticeLink.addEventListener("blur", blur);
 			generalPracticeLink.addEventListener("mouseenter", focus);
-			generalPracticeLink.addEventListener("mouseleave", blur);
 
 			suggestionMessage.appendChild(generalPracticeLink);
 		}
-		else if (treeLevel == 0)
+		else if (treeLevel === 0)
 		{
 			// Tree not finished, so the suggestion is the next skill that is not yet been completed.
 			
@@ -4175,6 +3751,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		topOfTree.appendChild(container);
 	}
 }
+
 function showOnlyNeededSkills()
 {
 	// Remove existing reveal button
@@ -4186,17 +3763,17 @@ function showOnlyNeededSkills()
 		document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}`).forEach(
 			(element) =>
 			{
-				element.removeAttribute("style");
+				element.classList.remove("outOfView", "outOfViewSkill");
 			}
 		);
 
-		if (inMobileLayout)
-		{
-			document.querySelector(`.${MOBILE_TOP_OF_TREE}`).style["marginBottom"] = "";
-		}
+		document.querySelector(`.${TOP_OF_TREE}`).classList.remove("hasOutOfViewSkills");
 
 		return false;
 	}
+	
+	document.querySelector(`.${TOP_OF_TREE}`).classList.add("hasOutOfViewSkills");
+
 	const needsStrengthening = getNeedsStrengthening();
 	const crackedSkills = getCrackedSkills();
 
@@ -4304,29 +3881,16 @@ function showOnlyNeededSkills()
 	);
 
 	// Now we hide everything.
-	const hiddenStyle =
-	`
-		position: relative;
-		height: 0;
-		margin: 0;
-		padding: 0;
-		left: -50000px;
-	`;
-
-	document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}`).forEach(
+	document.querySelectorAll(`${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}`).forEach(
 		(element) =>
 		{
-			element.style = hiddenStyle;
+			element.classList.add("outOfView");
 		}
 	);
 	document.querySelectorAll(SKILL_SELECTOR).forEach(
 		(element) =>
 		{
-			element.style =
-			`
-				position: absolute;
-				top: -50000px;
-			`;
+			element.classList.add("outOfViewSkill");
 		}
 	);
 
@@ -4334,30 +3898,10 @@ function showOnlyNeededSkills()
 	elementsToShow.forEach(
 		(element) =>
 		{
-			element.removeAttribute("style");
-
-			if (element.className.includes(TREE_SECTION_SELECTOR.slice(1)) && element !== document.querySelector(TREE_SECTION_SELECTOR))
-			{
-				element.style =
-				`
-					margin: 0;
-				`;
-			}
-			else if (element.className.includes(CHECKPOINT_SECTION_SELECTOR.slice(1)))
-			{
-				element.style =
-				`
-					padding: 1em 0;
-				`;
-			}
+			element.classList.remove("outOfView", "outOfViewSkill");
+			element.classList.add("inView");
 		}
 	);
-
-	// If in mobile layout get rid of negative bottom margin of topOfTree
-	if (inMobileLayout)
-	{
-		document.querySelector(`.${MOBILE_TOP_OF_TREE}`).style["marginBottom"] = "0";
-	}
 
 	// Add button to reveal hidden skills
 	const revealButton = document.createElement("button");
@@ -4370,34 +3914,6 @@ function showOnlyNeededSkills()
 		}
 	);
 	revealButton.id = "revealHiddenSkillsButton";
-	revealButton.style =
-	`
-		background-color: ${LIGHT_BLUE};
-		color: white;
-		border-radius: 8px;
-		padding: 6px 8px;
-		border: 0;
-		border-bottom: 4px solid ${DARK_BLUE};
-
-		font-size: 15px;
-		line-height: 20px;
-		font-weight: 700;
-		letter-spacing: 0.8px;
-		text-transform: uppercase;
-	`;
-	const md = (event) =>
-	{
-		event.target.style["marginTop"] = "4px";
-		event.target.style["borderBottom"] = "0";
-	}
-	const ml = (event) =>
-	{
-		event.target.style["marginTop"] = "0";
-		event.target.style["borderBottom"] = `4px solid ${DARK_BLUE}`;
-	}
-
-	revealButton.addEventListener("mousedown", md);
-	revealButton.addEventListener("mouseleave", ml);
 
 	revealButton.textContent = `Reveal ${numHiddenSkills} Hidden Skill${numHiddenSkills === 1 ? "" : "s"}`;
 	if (numHiddenSkills === 0)
@@ -4414,7 +3930,7 @@ function fixPopoutAlignment(skillPopout)
 	// The horizontal alignment of a skill's popout can be wrong if the other skills on its row are hidden.
 	const skill = skillPopout.parentNode;
 	const skillRow = skill.parentNode;
-	const displayedSkillsInRow = Array.from(skillRow.children).filter(skill => skill.getAttribute("style") === null || skill.getAttribute("style") === "");
+	const displayedSkillsInRow = Array.from(skillRow.querySelectorAll(".inView"));
 	const skillIndex = displayedSkillsInRow.findIndex(element => element === skill);
 
 	// For every skill that is displayed to the left of the skill with the popout we need to shift the popout right by 140px.
@@ -4423,8 +3939,10 @@ function fixPopoutAlignment(skillPopout)
 	const numDisplayedSkillsBefore = displayedSkillsInRow.slice(0,skillIndex).length;
 	const numDisplayedSkillsAfter = displayedSkillsInRow.slice(skillIndex+1).length;
 
-	skillPopout.firstChild.style["transform"] = `translateX(-50%) translateX(${(numDisplayedSkillsAfter - numDisplayedSkillsBefore) * (58 - 12)}px)`;
-	skillPopout.firstChild.lastChild.style["left"] = `calc(50% + ${(numDisplayedSkillsAfter - numDisplayedSkillsBefore) * -(58 - 12)}px - 15px)`;
+	skill.setAttribute("right-bias", numDisplayedSkillsAfter - numDisplayedSkillsBefore);
+	// Remove Duolingo's own fudging for centring as it won't know we have hidden some skills in the row.
+	skillPopout.firstChild.removeAttribute("style");
+	skillPopout.firstChild.lastChild.removeAttribute("style");
 }
 
 function getStrengths()
@@ -4701,12 +4219,18 @@ function addFeatures()
 		) == 0;
 
 		if (options.needsStrengtheningList && !fullyStrengthened)
+		{
 			displayNeedsStrengthening(needsStrengthening); // Not fully strengthened and the list is enabled.
+		}
 		else
+		{
 			removeNeedsStrengtheningBox(); // Remove if there happens to be one.
+		}
 
 		if (options.crackedSkillsList && !noCrackedSkills)
+		{
 			displayNeedsStrengthening(crackedSkills, true); // There are cracked skills and the list is enabled.
+		}
 		else
 			removeCrackedSkillsList(); // Remove if there happens to be one.
 
@@ -4747,66 +4271,44 @@ function addFeatures()
 	{
 		const skillPopout = document.querySelector(`[data-test="skill-popout"]`);
 
-		if (options.practiseButton || options.wordsButton || options.grammarSkillsTestButton || options.masteredButton)
+		if (skillPopout !== null)
 		{
-			if (skillPopout !== null)
+			// Clear Popup Buttons.
+			removePractiseButton();
+			removeGrammarSkillTestOutButton();
+			removeWordsButton();
+			removeMasterdSkillButton();
+
+			if (options.practiseButton)
 			{
-				if (options.practiseButton && skillPopout.querySelector(`[data-test="practise-button"]`) === null)
+				// Want practise button and there isn't one.
+				const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
+				if (introLesson === null || !introLesson.contains(skillPopout))
 				{
-					// Want practise button and there isn't one.
-					const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
-					if (introLesson === null || !introLesson.contains(skillPopout))
-					{
-						// No introduction lesson, or if there is this skillPopout isn't from that skill
-						addPractiseButton(skillPopout);
-					}
-				}
-
-				if (options.wordsButton && skillPopout.querySelector(`[data-test="words-button"]`) === null)
-				{
-					// Want words button and there isn't one
-					addWordsButton(skillPopout);
-				}
-
-				if (options.grammarSkillsTestButton && skillPopout.querySelector(`[data-test="test-out-button"]`) === null)
-				{
-					// No testout button, might be a grammar skill and we want to add one.
-					addGrammarSkillTestOutButton(skillPopout);
-				}
-
-				if (options.masteredButton && skillPopout.querySelector(`[data-test="mastered-button"]`) === null)
-				{
-					// Add the button to mark skills as mastered.
-					addMasteredSkillButton(skillPopout);
+					// No introduction lesson, or if there is this skillPopout isn't from that skill
+					addPractiseButton(skillPopout);
 				}
 			}
 
-			// Add each skill to childListObserver
-			document.querySelectorAll(SKILL_SELECTOR).forEach(
-				(skill) => {
-					childListObserver.observe(skill, {childList: true});
-				}
-			);
-		}
-		if (!options.practiseButton)
-		{
-			// Don't want practise button, let's remove it if there is one there.
-			removePractiseButton();
-		}
-		if (!options.wordsButton)
-		{
-			// Don't want words button, let's remove it if there is one there.
-			removeWordsButton();
-		}
-		if (!options.masteredButton)
-		{
-			removeMasterdSkillButton();
+			if (options.grammarSkillsTestButton) addGrammarSkillTestOutButton(skillPopout);
+
+			if (options.wordsButton) addWordsButton(skillPopout);
+
+			if (options.masteredButton) addMasteredSkillButton(skillPopout);
+
+			if (inMobileLayout && document.querySelector("#revealHiddenSkillsButton") !== null)
+			{
+				// Hiding stuff while in mobile layout so need to fix the aligment of the popout.
+				fixPopoutAlignment(skillPopout);
+			}
 		}
 
-		if (inMobileLayout && skillPopout !== null && document.querySelector("#revealHiddenSkillsButton") !== null)
-		{
-			fixPopoutAlignment(skillPopout);
-		}
+		// Add each skill to childListObserver so we catch popout being added and removed.
+		document.querySelectorAll(SKILL_SELECTOR).forEach(
+			(skill) => {
+				childListObserver.observe(skill, {childList: true});
+			}
+		);
 	}
 
 	// Redo checkpoint buttons on checkpoint popouts
@@ -5202,19 +4704,19 @@ function hideTranslationText(reveal = false, setupObserver = true)
 	if (document.getElementsByClassName(QUESTION_CONTAINER).length == 0)
 		return false;
 	
-	const questionContainer = document.getElementsByClassName(QUESTION_CONTAINER)[0];
+	const questionContainer = document.querySelector(`.${QUESTION_CONTAINER}`);
 
 	if (questionContainer.firstChild == null)
 		return false; // Duo ecouragement message, no question box, do nothing.
 
 	const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
 
-	if (questionTypeString != null && questionTypeString.includes("translate"))
+	if (questionTypeString !== null && questionTypeString.includes("translate"))
 	{
 		// Translate type question
 		const challengeTranslatePrompt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
 		
-		if (challengeTranslatePrompt.querySelectorAll("BUTTON").length != 0)
+		if (challengeTranslatePrompt.querySelectorAll("BUTTON").length !== 0)
 		{
 			// There is an svg in the question sentence which is the speaker button so we are translating from the target to the native language
 			const questionArea = questionContainer.firstChild.firstChild;
@@ -5222,11 +4724,10 @@ function hideTranslationText(reveal = false, setupObserver = true)
 			
 			const hintSentence = challengeTranslatePrompt.querySelector('[data-test="hint-sentence"]');
 			
-
-			if (options.showNewWords && hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length != 0)
+			if (options.showNewWords && hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length !== 0)
 			{
 				// There is a new word, so we don't want to be hiding this sentence.
-				hintSentence.style.filter = "none";
+				document.body.classList.remove("blurringSentence");
 				hintSentence.title = "";
 				const enableDisableButton = questionContainer.querySelector(`.hideTextEnableDisable`);
 				if (enableDisableButton !== null)
@@ -5234,7 +4735,6 @@ function hideTranslationText(reveal = false, setupObserver = true)
 					// Remove the enable disable button
 					const headerContainer = questionContainer.querySelector(`.hideTextEnableDisable`).parentNode;
 					const header = headerContainer.firstChild;
-					header.removeAttribute("style");
 					headerContainer.parentNode.insertBefore(header, headerContainer); // Move the header back to where it should be;
 					headerContainer.remove();
 				}
@@ -5242,106 +4742,68 @@ function hideTranslationText(reveal = false, setupObserver = true)
 				return false;
 			}
 
-			if (options.showTranslationText == false && reveal == false)
+			if (options.showTranslationText === false && reveal === false)
 			{
-				hintSentence.style.filter = "blur(0.3em)";
-				hintSentence.onclick = () => {
-					hintSentence.style.filter = "unset";
-					hintSentence.title = "";
-				};
+				document.body.classList.add("blurringSentence");
 				hintSentence.title = "Click to Show Sentence";
+				hintSentence.onclick = () =>
+				{
+					hideTranslationText(true, false);
+				};
 
 				if (options.revealHotkey)
 				{
 					hintSentence.tile += " or Press " + options.revealHotkeyCode;
-					document.onkeydown = (e) => {
+					document.onkeydown = (e) =>
+					{
 						const hotkeyList = options.revealHotkeyCode.split("+");
 						const numKeys = hotkeyList.length;
 						if (
-							e.key.toUpperCase() == hotkeyList[numKeys-1] &&
-							( (hotkeyList.includes("Ctrl") && e.ctrlKey) || !hotkeyList.includes("Ctrl") ) &&
-							( (hotkeyList.includes("Shift") && e.shiftKey) || !hotkeyList.includes("Shift") ) &&
-							( (hotkeyList.includes("Meta") && e.metaKey) || !hotkeyList.includes("Meta") ) &&
-							( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
+							e.key.toUpperCase() == hotkeyList[numKeys-1]
+							&& ( (hotkeyList.includes("Ctrl") && e.ctrlKey) || !hotkeyList.includes("Ctrl") )
+							&& ( (hotkeyList.includes("Shift") && e.shiftKey) || !hotkeyList.includes("Shift") )
+							&& ( (hotkeyList.includes("Meta") && e.metaKey) || !hotkeyList.includes("Meta") )
+							&& ( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
 						)
 						{
 							// Reveal hokey has been hit,
 							// show the question text
 							hideTranslationText(true, false);
-							// and show an hint popovers
-							document.querySelectorAll(`[data-test="hint-popover"]`).forEach(
-								(hintBox) =>
-								{
-									hintBox.style["filter"] = "unset";
-								}
-							);
-							
 						}
 					};
 				}
 			}
 			else
 			{
-				hintSentence.style.filter = "none";
+				document.body.classList.remove("blurringSentence");
 				hintSentence.title = "";
 			}
 
 			let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
 
-			if (enableDisableButton.length == 0)
+			if (enableDisableButton.length === 0)
 			{
 				// No enableDisableButton so make one and add it next to the question header if the option is enabled.
 				if (options.showToggleHidingTextButton)
 				{
 					const headerContainer = document.createElement("div");
-					headerContainer.style =
-					`
-						width: 100%;
-						margin-top: 1em;
-						display: flex;
-						justify-content: space-between;
-						align-items: center;
-					`;
+					headerContainer.classList.add("questionHeaderContainer");
 
 					const questionHeader = questionContainer.querySelector(`[data-test="challenge-header"]`);
-					questionHeader.style.width = `max-content`;
 					questionHeader.parentNode.insertBefore(headerContainer, questionHeader);
 					headerContainer.appendChild(questionHeader);
 
 					enableDisableButton = document.createElement("button");
 					enableDisableButton.className = "hideTextEnableDisable";
 					enableDisableButton.textContent = options.showTranslationText ? "Enable text hiding" : "Disable text hiding";
-					enableDisableButton.style =
-					`
-						color: white;
-						border: 0;
-						border-radius: 0.5em;
-						padding: 0.4em;
-						background-color: ${LIGHT_BLUE};
-						box-shadow: 0 0.3em ${DARK_BLUE};
-						transition: filter 0.2s;
-						filter: brightness(1.0);
-					`;
-					enableDisableButton.onmouseover = () => {
-						enableDisableButton.style.filter = "brightness(1.1)";
-					};
-					enableDisableButton.onmouseleave = () => {
-						enableDisableButton.style.filter = "brightness(1.0)";
-						enableDisableButton.style.boxShadow = `0 0.3em ${DARK_BLUE}`;
-						enableDisableButton.style.transform = "none";
-					};
-					enableDisableButton.onmousedown = () => {
-						enableDisableButton.style.boxShadow = "none";
-						enableDisableButton.style.transform = "translate(0, 0.3em)";
-					};
-					enableDisableButton.onmouseup = () => {
-						enableDisableButton.style.boxShadow = `0 0.3em ${DARK_BLUE}`;
-						enableDisableButton.style.transform = "none";
-
-						options.showTranslationText = !options.showTranslationText;
-						chrome.storage.sync.set({"options": options});
-						hideTranslationText();
-					};
+					enableDisableButton.addEventListener("click",
+						() =>
+						{
+							options.showTranslationText = !options.showTranslationText;
+							chrome.storage.sync.set({"options": options});
+							hideTranslationText(undefined, false);
+						}
+					);
 
 					headerContainer.appendChild(enableDisableButton);
 				}
@@ -5362,7 +4824,6 @@ function hideTranslationText(reveal = false, setupObserver = true)
 					
 					const headerContainer = questionContainer.querySelector(`.hideTextEnableDisable`).parentNode;
 					const header = headerContainer.firstChild;
-					header.removeAttribute("style");
 					headerContainer.parentNode.insertBefore(header, headerContainer); // Move the header back to where it should be;
 					headerContainer.remove();
 
@@ -5377,6 +4838,23 @@ function hideTranslationText(reveal = false, setupObserver = true)
 		}
 	}
 	return false;
+}
+
+function addStyleSheet()
+{
+	if (document.head.querySelector("#duoStrengthStylesheet") === null)
+	{
+		// We haven't previously added the stylesheet
+
+		const linkElem = document.createElement("link");
+		linkElem.type = "text/css";
+		linkElem.rel = "stylesheet";
+		linkElem.href = chrome.runtime.getURL("styles/stylesheet.css");
+
+		linkElem.id = "duoStrengthStylesheet";
+
+		document.head.append(linkElem);
+	}
 }
 
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
@@ -5397,7 +4875,6 @@ function childListMutationHandle(mutationsList, observer)
 	let skillPopout;
 	let checkpointPopoutAdded = false;
 	let checkpointPopout;
-	let hintPopoverAdded = false;
 	
 	for (let mutation of mutationsList)
 	{
@@ -5492,12 +4969,6 @@ function childListMutationHandle(mutationsList, observer)
 			checkpointPopoutAdded = true;
 			checkpointPopout = mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR);
 		}
-		else if (
-			Array.from(mutation.addedNodes).some((node) => node.getAttribute("data-test") === "hint-popover")
-		)
-		{
-			hintPopoverAdded = true;
-		}
 	}
 
 	if (rootChildReplaced)
@@ -5561,14 +5032,25 @@ function childListMutationHandle(mutationsList, observer)
 	if (bottomNavToggled)
 	{
 		// Switched between mobile and desktop layouts.
+		if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
+		{
+			// There is the bottom navigation bar so we are in the mobile layout.
+			inMobileLayout = true;
+			rootElem.classList.add("mobileLayout");
+			rootElem.classList.remove("desktopLayout");
+		}
+		else
+		{
+			// There is not a bottom navigation bar so we are in normal desktop layout.
+			inMobileLayout = false;
+			rootElem.classList.add("desktopLayout");
+			rootElem.classList.remove("mobileLayout");
+		}
 
 		// Set appropriate styling to need strengthing list or skill suggestion
-		let mobileMargin = "0.5em 1em 0.5em 1em";
-		let desktopMargin = "0 0 2em 0";
-
 		let mobileWidth = "auto";
-		let desktopWidth;
-		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) != null)
+		let desktopWidth = "auto";
+		if (document.querySelector(TRY_PLUS_BUTTON_SELECTOR) !== null)
 		{
 			const boxRightEdge = document.querySelector(`[data-test="skill-tree"]>div`).getBoundingClientRect().right;
 			const buttonLeftEdge = document.querySelector(TRY_PLUS_BUTTON_SELECTOR).getBoundingClientRect().left;
@@ -5581,67 +5063,18 @@ function childListMutationHandle(mutationsList, observer)
 			}
 		}
 
-		if (document.getElementsByClassName(IN_BETA_LABEL).length != 0)
+		document.querySelectorAll(`.topOfTreeList`).forEach(
+			(list) =>
+			{
+				list.style.width = (inMobileLayout) ? mobileWidth : desktopWidth;
+			}
+		);
+
+		if (document.querySelector(MOBILE_TIPS_PAGE_HEADER_SELECTOR) === null)
 		{
-			// There is an IN BETA label
-			mobileMargin = "0.5em 1em 0.5em 1em";
-			desktopMargin = "0.5em 0 2em 0";
+			// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
+			setUpObservers();
 		}
-
-		if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
-		{
-			// There is the bottom navigation bar so we are in the mobile layout.
-			inMobileLayout = true;
-
-			if (document.getElementById("strengthenBox") != null)
-			{
-				document.getElementById("strengthenBox").style.margin = mobileMargin;
-				document.getElementById("strengthenBox").style.width = mobileWidth;
-			}
-			if (document.getElementById("crackedBox") != null)
-			{
-				document.getElementById("crackedBox").style.margin = mobileMargin;
-				document.getElementById("crackedBox").style.width = mobileWidth;
-
-			}
-			if (document.getElementById("skillSuggestionMessageContainer") != null)
-			{
-				document.getElementById("skillSuggestionMessageContainer").style.margin = mobileMargin;
-				document.getElementById("skillSuggestionMessageContainer").style.width = mobileWidth;
-			}
-
-			if (document.querySelector("#revealHiddenSkillsButton") !== null)
-			{
-				document.querySelector(`.${MOBILE_TOP_OF_TREE}`).style["marginBottom"] = "0";
-			}
-		}
-		else
-		{
-			// There is not a bottom navigation bar so we are in normal desktop layout.
-			inMobileLayout = false;
-
-			if (document.getElementById("strengthenBox") != null)
-			{
-				document.getElementById("strengthenBox").style.margin = desktopMargin;
-				document.getElementById("strengthenBox").style.width = desktopWidth;
-				
-			}
-			if (document.getElementById("crackedBox") != null)
-			{
-				document.getElementById("crackedBox").style.margin = desktopMargin;
-				document.getElementById("crackedBox").style.width = desktopWidth;
-				
-			}
-			if (document.getElementById("skillSuggestionMessageContainer") != null)
-			{
-				document.getElementById("skillSuggestionMessageContainer").style.margin = desktopMargin;
-				document.getElementById("skillSuggestionMessageContainer").style.width = desktopWidth;
-			}
-			
-		}
-
-		// Re set up the observers as topBarDiv will have been replaced and there might be a bottomNav
-		setUpObservers();
 
 		// Try to re apply focus mode option
 		applyFocusMode();
@@ -5751,20 +5184,6 @@ function childListMutationHandle(mutationsList, observer)
 	if (checkpointPopoutAdded)
 	{
 		if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);
-	}
-
-	if (hintPopoverAdded)
-	{
-		if (document.querySelector(`[data-test="hint-sentence"][style^="filter: blur"]`) !== null)
-		{
-			// We are hiding a sentence, so hide the translations
-			document.querySelectorAll(`[data-test="hint-popover"]`).forEach(
-				(hintBox) =>
-				{
-					hintBox.style["filter"] = "blur(0.3em)";
-				}
-			);
-		}
 	}
 };
 
@@ -5900,7 +5319,7 @@ function setUpObservers()
 	{
 		// In normal layout, with everything in the top bar.
 
-		let numNavButtons = topBarDiv.getElementsByClassName(NAVIGATION_BUTTON).length;
+		let numNavButtons = topBarDiv.querySelectorAll(`.${NAVIGATION_BUTTON}`).length;
 		// if numNavButtons = 4 then there is no stories button.
 		// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
 
@@ -5977,7 +5396,11 @@ function setUpObservers()
 
 async function init()
 {
+	// Load options
 	let optionsLoaded = retrieveOptions();
+
+	// Add external stylesheet
+	addStyleSheet();
 
 	rootElem = document.getElementById("root"); // When logging in child list is changed.
 	childListObserver.observe(rootElem,{childList: true}); // Observing for changes to its children to detect logging in and out?
@@ -6016,10 +5439,18 @@ async function init()
 	if (mainBody == null)
 		return false;
 	
-	if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
+	if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null || document.querySelector(MOBILE_TIPS_PAGE_HEADER_SELECTOR) !== null)
+	{
 		inMobileLayout = true;
+		rootElem.classList.add("mobileLayout");
+		rootElem.classList.remove("desktopLayout");
+	}
 	else
+	{
 		inMobileLayout = false;
+		rootElem.classList.add("desktopLayout");
+		rootElem.classList.remove("mobileLayout");
+	}
 	
 	if (rootChild.firstChild.className === LOGIN_PAGE)
 	{
@@ -6132,9 +5563,9 @@ async function init()
 			*/
 
 			questionNumber = 1;
-			if (rootChild.childElementCount === 1)
+			if (rootChild.childElementCount === 1 || document.querySelector(MOBILE_TIPS_PAGE_HEADER_SELECTOR) !== null)
 			{
-				// no topBarDiv so nothing left to do
+				// no topBarDiv
 				onMainPage = false;
 				return false;
 			}
@@ -6163,12 +5594,13 @@ async function init()
 				await optionsLoaded;
 
 				// League hiding
-				if (document.getElementsByClassName(LEAGUE_TABLE).length != 0)
+				if (options.showLeagues)
 				{
-					if (options.showLeagues)
-						document.getElementsByClassName(LEAGUE_TABLE)[0].style.removeProperty('display');
-					else
-						document.getElementsByClassName(LEAGUE_TABLE)[0].style.display = "none";
+					rootChild.classList.remove("hideLeagueTable");
+				}
+				else
+				{
+					rootChild.classList.add("hideLeagueTable");
 				}
 
 				// Focus mode - sidebar hiding

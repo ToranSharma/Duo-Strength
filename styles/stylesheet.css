@@ -838,8 +838,8 @@
 	visibility: hidden !important;
 }
 
-.hideCartoons ._1Q4WV, /* HINT_SENTENCE_CONTAINER */
-.hideCartoons ._2nhmY /* HINT_SENTENCE_BUBBLE_ARROW*/
+.hideCartoons [data-test~="challenge"] ._1Q4WV, /* HINT_SENTENCE_CONTAINER */
+.hideCartoons [data-test~="challenge"] ._2nhmY /* HINT_SENTENCE_BUBBLE_ARROW*/
 {
 	border: none !important;
 }

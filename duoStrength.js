@@ -2167,6 +2167,7 @@ function addGrammarSkillTestOutButton(skillPopout)
 
 	if (
 		skillData.category !== "grammar"
+		|| skillData.locked === true
 		|| skillPopout.querySelector(`[data-test="test-out-button"]`) !== null
 	)
 	{

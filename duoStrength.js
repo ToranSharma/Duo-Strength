@@ -67,6 +67,9 @@ const SKILL_TREE_SELECTOR = "._3YEom";
 const TIPS_PAGE_BODY_SELECTOR = "._1yyg2";
 const LOCKED_SKILL_POPOUT_SELECTOR = "._1fMEX";
 const MOBILE_TIPS_PAGE_HEADER_SELECTOR = "._36P0W";
+const CARTOON_CONTAINER = "F2B9m"; // used only in styles/stylesheet.css
+const HINT_SENTENCE_CONTAINER = "_1Q4WV"; // used only in styles/stylesheet.css
+const HINT_SENTENCE_BUBBLE_ARROW = "_2nhmY"; // used only in styles/stylesheet.css
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -188,6 +191,7 @@ function retrieveOptions()
 					"fixedSidebar":								false,
 					"addTipsPagePractiseButton":				true,
 					"addTipsPageBottomButtons":					true,
+					"hideCartoons":								false,
 				};
 
 			if (Object.entries(data).length === 0)
@@ -5473,6 +5477,15 @@ async function init()
 			await optionsLoaded;
 			hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
 			revealNewWord();
+
+			if (options.hideCartoons)
+			{
+				document.body.classList.add("hideCartoons");
+			}
+			else
+			{
+				document.body.classList.remove("hideCartoons");
+			}
 
 			lastSkill = await retrieveLastSkill();
 			const pageUrl = window.location.href;

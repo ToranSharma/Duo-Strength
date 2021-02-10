@@ -829,3 +829,17 @@
 {
 	display: none;
 }
+
+/* Hide Cartoons */
+
+.hideCartoons .F2B9m /* CARTOON_CONTAINER */
+{
+	display: none !important;
+	visibility: hidden !important;
+}
+
+.hideCartoons ._1Q4WV, /* HINT_SENTENCE_CONTAINER */
+.hideCartoons ._2nhmY /* HINT_SENTENCE_BUBBLE_ARROW*/
+{
+	border: none !important;
+}

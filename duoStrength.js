@@ -1873,6 +1873,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 		if (event.target.getAttribute("href") !== "#")
 		{
+
 			const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
 			const button = createOpenPopoutButton(urlTitle);
 			button.id = (cracked) ? "crackedPopoutButton" : "needsStrengtheningPopoutButton";
@@ -2749,27 +2750,38 @@ function getLanguagesInfo()
 
 function createOpenPopoutButton(skillUrlTitle)
 {
-	const allSkills = [...userData.language_data[languageCode].skills,...userData.language_data[languageCode].bonus_skills];
-	const skill = allSkills.find(
-		(skillObject) =>
-		{
-			return skillObject.url_title === skillUrlTitle;
-		}
-	);
+	let skillElement;
+	let skillName;
 
-	const skillName = skill.short;
+	if (/checkpoint/.test(skillUrlTitle))
+	{
+		const checkpointNumber = Number(skillUrlTitle.split('/')[1]);
+		skillName = `Checkpoint ${1 + checkpointNumber}`;
+		skillElement = document.querySelectorAll(CHECKPOINT_SELECTOR)[checkpointNumber];
+	}
+	else
+	{
+		const allSkills = [...userData.language_data[languageCode].skills,...userData.language_data[languageCode].bonus_skills];
+		const skill = allSkills.find(
+			(skillObject) =>
+			{
+				return skillObject.url_title === skillUrlTitle;
+			}
+		);
 
-	const nameIndex = allSkills.filter(skillObject => skillObject.short === skillName).findIndex(skillObject => skillObject === skill);
+		skillName = skill.short;
 
-	const sameNamedSkills = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}`)).filter(
-		(skillElement) =>
-		{
-			return skillElement.querySelector(SKILL_NAME_SELECTOR).textContent === skillName;
-		}
-	);
+		const nameIndex = allSkills.filter(skillObject => skillObject.short === skillName).findIndex(skillObject => skillObject === skill);
 
-	const skillElement = sameNamedSkills[nameIndex];
-	
+		const sameNamedSkills = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}`)).filter(
+			(skillElement) =>
+			{
+				return skillElement.querySelector(SKILL_NAME_SELECTOR).textContent === skillName;
+			}
+		);
+
+		skillElement = sameNamedSkills[nameIndex];
+	}
 	const button = document.createElement("button");
 	button.classList.add("openPopoutButton");
 	button.title = `Open popout for ${skillName}`;
@@ -3583,8 +3595,9 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 			if (event.target.getAttribute("href") !== "/practice")
 			{
+				const isCheckpoint = /checkpoint/.test(event.target.href);
 				const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
-				const button = createOpenPopoutButton(urlTitle);
+				const button = createOpenPopoutButton(isCheckpoint ? `checkpoint/${urlTitle}`: urlTitle);
 				button.id = "suggestionPopoutButton";
 
 				if (options.suggestionPopoutButton)

@@ -451,6 +451,14 @@
 {
 	padding: 1em 0;
 }
+.desktopLayout ._2tZPV.inView /*CHECKPOINT_SECTION*/
+{
+	margin-top: 1em;
+}
+.desktopLayout .inView ~ ._2tZPV.inview
+{
+	margin-top: 0;
+}
 
 .mobileLayout .topOfTree.hasOutOfViewSkills
 {

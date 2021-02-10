@@ -531,29 +531,22 @@ function resetLanguageFlags()
 
 function removeStrengthBars()
 {
-	let bars = Array.from(document.getElementsByClassName("strengthBarHolder"));
-	for (let bar of bars)
-	{
-		bar.parentNode.removeChild(bar);
-	}
+	document.querySelectorAll(".strengthBarHolder").forEach(bar => bar.remove());
 }
 
 function removeNeedsStrengtheningBox()
 {
-	let strengthenBox = document.getElementById("strengthenBox");
-	if(strengthenBox != null) // could be null if changed from old to new UI and the topOfTree div gets removed.
-	{
-		strengthenBox.parentNode.removeChild(strengthenBox);
-	}
+	document.querySelector("#strengthenBox")?.remove();
 }
 
 function removeCrackedSkillsList()
 {
-	let crackedBox = document.getElementById("crackedBox");
-	if (crackedBox != null) // could be null if changed from old to new UI and the topOfTree div gets removed.
-	{
-		crackedBox.parentNode.removeChild(crackedBox);
-	}
+	document.querySelector("#crackedBox")?.remove();
+}
+
+function removeSuggestion()
+{
+	document.querySelector("#skillSuggestionMessageContainer")?.remove();
 }
 
 function removeFlagBorders()
@@ -641,40 +634,19 @@ function removeXPBoxes()
 	removeClassesAndIds({classList: classesToRemove});
 }
 
-function removeSuggestion()
-{
-	const suggestionContainer = document.getElementById("skillSuggestionMessageContainer");
-	if (suggestionContainer !== null)
-	{
-		suggestionContainer.remove();
-	}
-}
-
 function removeTotalStrengthBox()
 {
-	const totalStrengthBox = document.querySelector("#totalStrengthBox");
-	if (totalStrengthBox !== null)
-	{
-		totalStrengthBox.remove();
-	}
+	document.querySelector("#totalStrengthBox")?.remove();
 }
 
 function removeLanguagesInfo()
 {
-	const languagesInfoBox = document.getElementById("languagesBox");
-	if (languagesInfoBox !== null)
-	{
-		languagesInfoBox.remove();
-	}
+	document.getElementById("#languagesBox")?.remove();
 }
 
 function removePractiseButton()
 {
-	const practiseButton = document.querySelector(`[data-test="practise-button"]`);
-	if (practiseButton !== null)
-	{
-		practiseButton.remove();
-	}
+	document.querySelector(`[data-test="practise-button"]`)?.remove();
 }
 
 function removeGrammarSkillTestOutButton()
@@ -695,11 +667,7 @@ function removeWordsButton()
 		wordsButton.parentNode.setAttribute("numChildren", --wordsButton.parentNode.childElementCount);
 		wordsButton.remove();
 	}
-	const wordsListBubble = document.querySelector(`#wordsListBubble`);
-	if (wordsListBubble !== null)
-	{
-		wordsListBubble.remove();
-	}
+	ocument.querySelector(`#wordsListBubble`)?.remove();
 }
 
 function removeMasterdSkillButton()
@@ -721,20 +689,12 @@ function removeCheckpointButtons()
 		redoTestButton.remove();
 	}
 
-	const testOutButton = document.querySelector(`[data-test="test-out-button"]`);
-	if (testOutButton != null)
-	{
-		testOutButton.remove();
-	}
+	document.querySelector(`[data-test="test-out-button"]`)?.remove();
 }
 
 function removeFocusModeButton()
 {
-	const focusModeButton = document.querySelector(`#focusModeButton`);
-	if (focusModeButton !== null)
-	{
-		focusModeButton.remove();
-	}
+	document.querySelector(`#focusModeButton`)?.remove();
 }
 
 function removeTipsPageButtons()
@@ -758,32 +718,19 @@ function removeTipsPageButtons()
 
 }
 
-
 function removeNeedsStrengtheningPopoutButton()
 {
-	const suggestionPopoutButton = document.querySelector(`#needsStrengtheningPopoutButton`);
-	if (suggestionPopoutButton !== null)
-	{
-		suggestionPopoutButton.remove();
-	}
+	document.querySelector(`#needsStrengtheningPopoutButton`)?.remove();
 }
 
 function removeCrackedPopoutButton()
 {
-	const suggestionPopoutButton = document.querySelector(`#crackedPopoutButton`);
-	if (suggestionPopoutButton !== null)
-	{
-		suggestionPopoutButton.remove();
-	}
+	document.querySelector(`#crackedPopoutButton`)?.remove();
 }
 
 function removeSuggestionPopoutButton()
 {
-	const suggestionPopoutButton = document.querySelector(`#suggestionPopoutButton`);
-	if (suggestionPopoutButton !== null)
-	{
-		suggestionPopoutButton.remove();
-	}
+	document.querySelector(`#suggestionPopoutButton`)?.remove();
 }
 
 function hasMetGoal()

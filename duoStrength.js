@@ -3701,11 +3701,12 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	const suggestionLink = container.querySelector("a");
 	const suggestionName = suggestionLink.textContent;
 
-	if (options.suggestionPopoutButton && Array.from(document.querySelectorAll(SKILL_NAME_SELECTOR)).some(skillName => skillName.textContent === suggestionName))
+	if (options.suggestionPopoutButton && suggestionName !== "general practice")
 	{
 		// Add button that opens up the suggested skill's popout
+		const isCheckpoint = /checkpoint/.test(suggestionLink.href);
 		const suggestionUrlTitle = suggestionLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
-		const button = createOpenPopoutButton(suggestionUrlTitle);
+		const button = createOpenPopoutButton(isCheckpoint ? `checkpoint/${suggestionUrlTitle}` : suggestionUrlTitle);
 		button.id = "suggestionPopoutButton";
 		container.querySelector(`p`).appendChild(button);
 	}

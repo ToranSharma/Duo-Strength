@@ -150,6 +150,7 @@ function retrieveOptions()
 					"focusFirstSkill":							true,
 						"focusPriorities":							"ncs",
 					"practiseButton":							true,
+						"crownZeroPractiseButton":					false,
 					"practiceType":								"0",
 						"lessonThreshold":							"4",
 					"wordsButton":								true,
@@ -2307,7 +2308,7 @@ function addPractiseButton(skillPopout)
 
 	const skillLevel = levelContainer.textContent.slice(-3,-2);
 	const maxLevel = levelContainer.textContent.slice(-1);
-	if (skillLevel === maxLevel || skillLevel === "0")
+	if (skillLevel === maxLevel || (skillLevel === "0" && !options.crownZeroPractiseButton))
 		return false; // Skill is at max level so only practising is possible
 
 	const startButton = document.querySelector(`[data-test="start-button"]`);

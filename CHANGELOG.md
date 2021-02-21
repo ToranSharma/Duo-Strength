@@ -39,6 +39,7 @@ as 100% strength.
 - Sub option to the Focus First Skills Option to set the priority order for which
 of the lists at the top of the tree is initially focused.
 - Option to hide the cartoon characters in lessons.
+- Sub option to toggle the adding of the practise button to crown 0 skills
 
 ### Changed
 - Grammar skills are now separated in the crowns info breakdown. There are

@@ -460,7 +460,7 @@
 	margin-top: 0;
 }
 
-.mobileLayout .topOfTree.hasOutOfViewSkills
+.mobileLayout .hasOutOfViewSkills .topOfTree
 {
 	margin-bottom: 0;
 }

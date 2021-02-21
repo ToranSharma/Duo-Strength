@@ -3734,12 +3734,12 @@ function showOnlyNeededSkills()
 			}
 		);
 
-		document.querySelector(`.${TOP_OF_TREE}`).classList.remove("hasOutOfViewSkills");
+		document.querySelector(`[data-test="skill-tree"]`).classList.remove("hasOutOfViewSkills");
 
 		return false;
 	}
 	
-	document.querySelector(`.${TOP_OF_TREE}`).classList.add("hasOutOfViewSkills");
+	document.querySelector(`[data-test="skill-tree"]`).classList.add("hasOutOfViewSkills");
 
 	const needsStrengthening = getNeedsStrengthening();
 	const crackedSkills = getCrackedSkills();

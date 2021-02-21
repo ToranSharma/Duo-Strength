@@ -3730,7 +3730,7 @@ function showOnlyNeededSkills()
 		document.querySelectorAll(`${SKILL_SELECTOR}, ${SKILL_ROW_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}`).forEach(
 			(element) =>
 			{
-				element.classList.remove("outOfView", "outOfViewSkill");
+				element.classList.remove("outOfView", "outOfViewSkill", "inView");
 			}
 		);
 
@@ -3852,12 +3852,14 @@ function showOnlyNeededSkills()
 		(element) =>
 		{
 			element.classList.add("outOfView");
+			element.classList.remove("inView");
 		}
 	);
 	document.querySelectorAll(SKILL_SELECTOR).forEach(
 		(element) =>
 		{
 			element.classList.add("outOfViewSkill");
+			element.classList.remove("inView");
 		}
 	);
 

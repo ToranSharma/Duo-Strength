@@ -4878,8 +4878,6 @@ function childListMutationHandle(mutationsList, observer)
 			mainBodyReplaced = true;
 		}
 		else if (
-			mutation.target.parentNode === rootChild
-			&&
 			(
 				[
 					...Array.from(mutation.addedNodes),

@@ -6,6 +6,7 @@ html.dark
 	--tertiary: #888;
 	--text: white;
 	--contrast: #81C800;
+	--red: #b11;
 }
 html.light
 {
@@ -146,6 +147,10 @@ button
 	cursor: pointer;
 	outline: none;
 }
+button:disabled
+{
+	opacity: 0.5;
+}
 button:hover
 {
 	filter: brightness(1.2);
@@ -166,7 +171,7 @@ input
 	cursor: pointer;
 }
 
-#categories
+body > ul
 {
 	overflow: auto;
 }
@@ -201,7 +206,7 @@ input
 
 li.checkboxOption,
 li.numberOption,
-li.textOption,
+li.hotkeyOption,
 li.subsection
 {
 	display: grid;
@@ -211,7 +216,7 @@ li.subsection
 }
 li.checkboxOption > label,
 li.numberOption > label,
-li.textOption > label,
+li.hotkeyOption > label,
 li.subsection > label
 {
 	padding: 0.5rem;
@@ -220,7 +225,7 @@ li.subsection > label
 }
 li.checkboxOption > input,
 li.numberOption > input,
-li.textOption > input,
+li.hotkeyOption > input,
 li.subsection > img
 {
 	margin-right: 0.5rem;
@@ -260,23 +265,13 @@ li.button button
 	padding: 0.5rem;
 }
 
-li.textOption
+li.hotkeyOption
 {
 	grid-template-columns: 1fr 1fr;
 }
-li.textOption > label
+li.hotkeyOption > label
 {
 	padding-right: calc(50% + 0.5rem);
-}
-
-
-li.selectOption
-{
-	padding: 0.5rem;
-	display: grid;
-	grid-template-rows: 1.25rem 1rem;
-	align-items: start;
-	align-items: stretch;
 }
 
 li.numberOption > label
@@ -293,6 +288,36 @@ li.numberOption label.greaterThan
 	display: flex;
 	justify-content: space-between;
 	padding-right: 2.7rem;
+}
+
+li.selectOption
+{
+	padding: 0.5rem;
+	display: grid;
+	grid-template-rows: 1.25rem 1rem;
+	align-items: start;
+	align-items: stretch;
+}
+
+.multiPart li.selectOption
+{
+	position: relative;
+}
+
+.multiPart .removeSortCriterion
+{
+	position: absolute;
+	right: 0.5rem;
+	top: 0.5rem;
+	cursor: pointer;
+	background: var(--red);
+	font-size: 1.2rem;
+	border-radius: 50%;
+	width: 0.75rem;
+	height: 0.75rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .addSortList

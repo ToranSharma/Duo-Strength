@@ -41,7 +41,8 @@
 		"images/focus.svg",
 		"images/defocus.svg",
 		"images/popout.svg",
-		"styles/stylesheet.css"
+		"styles/stylesheet.css",
+		"defaultOptions.js"
 	],
 
 	"permissions"		:	["storage"],

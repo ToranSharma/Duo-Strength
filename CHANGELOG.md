@@ -42,6 +42,7 @@ of the lists at the top of the tree is initially focused.
 - Sub option to toggle the adding of the practise button to crown 0 skills
 
 ### Changed
+- Option Page has been redesigned, and split into sections.
 - Grammar skills are now separated in the crowns info breakdown. There are
 options to disable this or hide the grammar skills breakdown.
 - Tree levels are saved in the storage API, in a similar way to the progress

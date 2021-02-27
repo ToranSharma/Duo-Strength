@@ -1,5 +1,9 @@
 export default
 {
+/* options list only */
+	"darkOptions": true,
+/*********************/
+
 // STRENGTH BARS
 	"strengthBars":								true,
 	"strengthBarBackgrounds":					true, 

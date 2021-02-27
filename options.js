@@ -44,21 +44,23 @@ async function init()
 	document.querySelector("#darkOptions").addEventListener("change",
 		(event) =>
 		{
-			const darkMode = event.target.checked;
-			document.documentElement.classList.add(darkMode? "dark" : "light");
-			document.documentElement.classList.remove(darkMode? "light" : "dark");
+			options["darkOptions"] = event.target.checked;
+			applyDarkMode();
+			saveOptions();
 		}
 	);
 	document.querySelector("#reset").addEventListener("click",
 		async () =>
 		{
 			await getDefaultOptions();
+			applyDarkMode();
 			applyOptions();
 			saveOptions();
 		}
 	);
 
 	await (optionsLoaded = getOptions());
+	applyDarkMode();
 	applyOptions();
 	saveOptions();
 	setupChangeHandlers();
@@ -522,3 +524,10 @@ function goBackFromChildPage(childPage)
 	setTimeout(() => childPage.classList.remove("visible"), 500);
 }
 
+function applyDarkMode()
+{
+	const darkOptions = options["darkOptions"];
+	document.querySelector("#darkOptions").checked = darkOptions;
+	document.documentElement.classList.add(darkOptions ? "dark" : "light");
+	document.documentElement.classList.remove(darkOptions ? "light" : "dark");
+}

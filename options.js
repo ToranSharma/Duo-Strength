@@ -3,6 +3,8 @@ let options = {};
 let tabs = [];
 let optionsLoaded;
 
+let undoResetOptions = {};
+
 const ordinalLabels = {
 	"0": "Primary",
 	"1": "Secondary",
@@ -50,12 +52,45 @@ async function init()
 		}
 	);
 	document.querySelector("#reset").addEventListener("click",
-		async () =>
+		async (event) =>
 		{
-			await getDefaultOptions();
-			applyDarkMode();
-			applyOptions();
-			saveOptions();
+			if (event.target.textContent !== "Undo")
+			{
+				undoResetOptions = {...options};
+
+				if (await getDefaultOptions() === false)
+				{
+					applyDarkMode();
+					applyOptions();
+					saveOptions();
+
+					event.target.textContent = "Undo";
+					setTimeout(
+						() =>
+						{
+							event.target.textContent = "Reset to Defaults";
+							undoResetOptions = {};
+						}
+						, 5000
+					);
+				}
+				else
+				{
+					undoResetOptions = {};
+				}
+			}
+			else
+			{
+				options = {...undoResetOptions};
+				undoResetOptions = {};
+
+				applyDarkMode();
+				applyOptions();
+				saveOptions();
+				event.target.textContent = "Reset to Defaults";
+			}
+
+
 		}
 	);
 
@@ -95,7 +130,11 @@ async function getOptions()
 
 async function getDefaultOptions()
 {
-	options = await import("./defaultOptions.js").then(module => module.default);
+	const defaultOptions = await import("./defaultOptions.js").then(module => module.default);
+	const cmp = compareOptions(defaultOptions, options);
+	options = {...defaultOptions};
+	return cmp;
+
 }
 
 function applyOptions()
@@ -126,7 +165,7 @@ function applyOptions()
 		}
 		else
 		{
-			// needsStrengtheningList order is a multi part option, encoded in one string with comma seperated values
+			// needsStrengtheningListOrder is a multi part option, encoded in one string with comma seperated values
 			const sortingCriteria = options[option].split(",");
 			const addButton = optionElement.querySelector(".addSortList");
 
@@ -179,16 +218,7 @@ async function saveOptions(sendToTabs = true)
 {
 	await (optionsLoaded ?? getOptions());
 
-	const sortObject = (obj) =>
-	{
-		return Object.fromEntries(Object.entries(obj).sort(
-			(a, b) => a[0] < b[0] ? -1 : 1
-		))
-	};
-	oldOptions = sortObject(oldOptions);
-	options = sortObject(options);
-
-	if (JSON.stringify(oldOptions) !== JSON.stringify(options))
+	if (compareOptions(oldOptions, options) === false)
 	{
 		chrome.storage.sync.set({"options": options});
 		oldOptions = {...options};
@@ -534,3 +564,18 @@ function applyDarkMode()
 	document.documentElement.classList.add(darkOptions ? "dark" : "light");
 	document.documentElement.classList.remove(darkOptions ? "light" : "dark");
 }
+
+function compareOptions(optionsA, optionsB)
+{
+	const sortObject = (obj) =>
+	{
+		return Object.fromEntries(Object.entries(obj).sort(
+			(a, b) => a[0] < b[0] ? -1 : 1
+		))
+	};
+	aSorted = sortObject({...optionsA});
+	bSorted = sortObject({...optionsB});
+
+	return JSON.stringify(aSorted) === JSON.stringify(bSorted)
+}
+

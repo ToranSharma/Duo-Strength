@@ -111,7 +111,7 @@ footer
 {
 	height: 2rem;
 	display: grid;
-	grid-template-columns: 1fr [reset] auto [dark] 1fr;
+	grid-template-columns: 5fr [reset] 6fr [dark] 5fr;
 	align-content: stretch;
 	justify-content: center;
 	padding: 0.5rem;

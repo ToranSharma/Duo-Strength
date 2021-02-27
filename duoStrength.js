@@ -121,79 +121,19 @@ let questionNumber = 1;
 const classNameObserver = new MutationObserver(classNameMutationHandle);
 const childListObserver = new MutationObserver(childListMutationHandle);
 
+async function retrieveDefaultOptions()
+{
+	return import("./defaultOptions.js").then(module=>module.default)
+}
+
 function retrieveOptions()
 {
 	return new Promise(function (resolve, reject){
-		chrome.storage.sync.get("options", function (data)
+		chrome.storage.sync.get("options",
+		async function (data)
 		{
 			// Set options to default settings
-			options =
-				{
-					"strengthBars":								true,
-						"strengthBarBackgrounds":					true, 
-					"needsStrengtheningList":					true,
-						"needsStrengtheningListLength":				"10",
-						"needsStrengtheningListSortOrder":			"0",
-						"showBonusSkillsInNeedsStrengtheningList":	true,
-						"needsStrengtheningPopoutButton":			true,
-					"crackedSkillsList":						true,
-						"crackedSkillsListLength":					"10",
-						"crackedSkillsListSortOrder":				"0",
-						"showBonusSkillsInCrackedSkillsList":		true,
-						"crackedPopoutButton":						true,
-					"skillSuggestion":							true,
-						"skillSuggestionMethod":					"0",
-						"hideSuggestionNonStrengthened":			true,
-						"hideSuggestionWithCrackedSkills":			true,
-						"suggestionPopoutButton":					true,
-					"showOnlyNeededSkills":						false,
-					"focusFirstSkill":							true,
-						"focusPriorities":							"ncs",
-					"practiseButton":							true,
-						"crownZeroPractiseButton":					false,
-					"practiceType":								"0",
-						"lessonThreshold":							"4",
-					"wordsButton":								true,
-					"grammarSkillsTestButton":					true,
-					"ignoreMasteredSkills":						true,
-						"masteredButton":							true,
-					"checkpointButtons":						true,
-					"treeLevelBorder":							true,
-					"crownsInfo":								true,
-						"crownsInfoInSidebar":						false,
-						"crownsInfoInPopup":						true,
-						"crownsMaximum":							true,
-							"crownsPercentage":							true,
-						"crownsGraph":								true,
-						"crownsBreakdown":							true,
-							"crownsBreakdownShowZerosRows":				true,
-							"bonusSkillsBreakdown":						true,
-							"separateGrammarSkillsInBreakdown":			true,
-								"grammarSkillsBreakdown":					true,
-						"checkpointPrediction":						true,
-						"treeLevelPrediction":						true,
-					"XPInfo":									true,
-						"XPInfoInSidebar":							true,
-						"XPInfoInPopup":							false,
-						"XPBreakdown":								true,
-						"XPPrediction":								true,
-					"languagesInfo":							true,
-						"languagesInfoSortOrder":					"0",
-					"totalStrengthBox":							true,
-					"showTranslationText":						true,
-						"revealHotkey":								true,
-							"revealHotkeyCode":							"Ctrl+Alt+H",
-						"showNewWords":								true,
-					"showToggleHidingTextButton":				true,
-					"revealNewWordTranslation":					true,
-					"showLeagues":								true,
-					"focusMode":								false,
-					"focusModeButton":							true,
-					"fixedSidebar":								false,
-					"addTipsPagePractiseButton":				true,
-					"addTipsPageBottomButtons":					true,
-					"hideCartoons":								false,
-				};
+			options = await retrieveDefaultOptions();
 
 			if (Object.entries(data).length === 0)
 			{
@@ -205,8 +145,7 @@ function retrieveOptions()
 				// let's apply them individually in case new options have been added since last on the options page
 				for (let option in data.options)
 				{
-					if (data.options.hasOwnProperty(option))
-						options[option] = data.options[option];
+					if (data.options.hasOwnProperty(option)) options[option] = data.options[option];
 				}
 			}
 			// Now let's save the options for next time.
@@ -672,7 +611,7 @@ function removeWordsButton()
 		wordsButton.parentNode.setAttribute("numChildren", --wordsButton.parentNode.childElementCount);
 		wordsButton.remove();
 	}
-	ocument.querySelector(`#wordsListBubble`)?.remove();
+	document.querySelector(`#wordsListBubble`)?.remove();
 }
 
 function removeMasterdSkillButton()
@@ -4547,7 +4486,7 @@ function requestData()
 		{
 			// If there is already userData and not changing language, display current data while requesting new data.
 			usingOldData = true;
-			getStrengths(userData);
+			addFeatures();
 		}
 
 		httpGetAsync( // asks for data and async calls handle function when ready.

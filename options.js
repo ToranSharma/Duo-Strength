@@ -91,6 +91,8 @@ async function getDefaultOptions()
 
 function applyOptions()
 {
+	// May collapse some options, but don't really want the transitions.
+	document.querySelectorAll("*").forEach(element => element.style = "transition: all 0s");
 	for (const option in options)
 	{
 		const optionElement = document.querySelector(`#${option}`);
@@ -105,9 +107,11 @@ function applyOptions()
 			{
 				case "boolean":
 					optionElement.checked = options[option];
+					applyControlledOptionCollapsing(optionElement, optionElement.checked);
 					break;
 				case "string":
 					optionElement.value = options[option];
+					applyControlledOptionCollapsing(optionElement, optionElement.value);
 					break;
 			}
 		}
@@ -157,6 +161,8 @@ function applyOptions()
 			);
 		}
 	}
+	// Allow transitions again
+	setTimeout(() => document.querySelectorAll("*").forEach(element => element.removeAttribute("style")), 10);
 }
 
 function saveOptions()
@@ -179,23 +185,33 @@ function saveOptions()
 function setupChangeHandlers()
 {
 	document.querySelectorAll(".checkboxOption .option").forEach(
-		(checkboxOption) => {
+		(checkboxOption) =>
+		{
 			checkboxOption.addEventListener("change", checkboxChangeHander);
 		}
 	);
 	document.querySelectorAll(".numberOption .option").forEach(
-		(numberOption) => {
+		(numberOption) =>
+		{
 			numberOption.addEventListener("change", numberChangeHandler);
 		}
 	);
+	document.querySelectorAll(":not(.multiPart) > .selectOption .option").forEach(
+		(selectOption) =>
+		{
+			selectOption.addEventListener("change", selectChangeHandler);
+		}
+	);
 	document.querySelectorAll(".hotkeyOption .option").forEach(
-		(hotkeyOption) => {
+		(hotkeyOption) =>
+		{
 			hotkeyOption.addEventListener("keydown", hotkeyKeydownHandler);
 			hotkeyOption.addEventListener("keyup", hotkeyKeyupHandler);
 		}
 	);
 	document.querySelectorAll(".multiPart .option").forEach(
-		(multiPartOption) => {
+		(multiPartOption) =>
+		{
 			multiPartOption.addEventListener("change", multiPartChangeHandler);
 		}
 	);
@@ -212,6 +228,8 @@ function checkboxChangeHander()
 	{
 		options[option] = this.checked;
 	}
+
+	applyControlledOptionCollapsing(this, this.checked);
 	saveOptions();
 }
 
@@ -224,6 +242,16 @@ function numberChangeHandler()
 	}
 	const option = this.id;
 	options[option] = this.value;
+
+	saveOptions();
+}
+
+function selectChangeHandler()
+{
+	const option = this.id;
+	options[option] = this.value;
+
+	applyControlledOptionCollapsing(this, this.value);
 	saveOptions();
 }
 
@@ -347,6 +375,33 @@ function multiPartChangeHandler()
 	const option = this.parentNode.parentNode.id;
 	options[option] = Array.from(this.parentNode.parentNode.querySelectorAll(".option")).map(part => part.value).join(",");
 	saveOptions();
+}
+
+function applyControlledOptionCollapsing(optionElement, optionState)
+{
+	let [displayStates, controlledSelectors] = optionElement.getAttribute("controlling")?.split(":").map(str => JSON.parse(str)) ?? [null, []];
+	if (displayStates !== null)
+	{
+		const controlledSelector = controlledSelectors.join(", ")
+		if (displayStates.includes(optionState))
+		{
+			document.querySelectorAll(controlledSelector).forEach(
+				(controlledOption) =>
+				{
+					controlledOption.parentNode.classList.add("collapsed");
+				}
+			);
+		}
+		else
+		{
+			document.querySelectorAll(controlledSelector).forEach(
+				(controlledOption) =>
+				{
+					controlledOption.parentNode.classList.remove("collapsed");
+				}
+			);
+		}
+	}
 }
 
 function addSortListButtonClickHandler()

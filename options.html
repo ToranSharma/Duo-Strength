@@ -17,7 +17,7 @@
 			<ul class="sectionOptionsList">
 				<li class="checkboxOption">
 					<label for="strengthBars">Display Strength Bars</label>
-					<input class="option" id="strengthBars" type="checkbox" />
+					<input class="option" id="strengthBars" type="checkbox" controlling='[false]:["#strengthBarBackgrounds"]' />
 				</li>
 				<li class="checkboxOption">
 					<label for="strengthBarBackgrounds">Show Background of Full Bar Width</label>
@@ -30,7 +30,7 @@
 			<ul class="sectionOptionsList">
 				<li class="checkboxOption">
 					<label for="ignoreMasteredSkills">Force Skills Marked as Matersted to 100% Strength</label>
-					<input class="option" id="ignoreMasteredSkills" type="checkbox" />
+					<input class="option" id="ignoreMasteredSkills" type="checkbox" controlling='[false]:["#masteredButton"]' />
 				</li>
 				<li class="checkboxOption">
 					<label for="masteredButton">Add Button to Mark Skills as mastered in Skill Popouts</label>
@@ -56,7 +56,7 @@
 							<ul class="sectionOptionsList">
 								<li class="checkboxOption">
 									<label for="needsStrengtheningList">Display Needs Strengthening List</label>
-									<input class="option"  id="needsStrengtheningList" type="checkbox"/>
+									<input class="option"  id="needsStrengtheningList" type="checkbox" controlling='[false]:["#needsStrengtheningListLength", "#showBonusSkillsInNeedsStrengtheningList", "#needsStrengtheningPopoutButton", "#needsStrengtheningListSortOrder"]' />
 								</li>
 								<li class="numberOption">
 									<label for="needsStrengtheningListLength">Number of Skills Show in List</label>
@@ -64,11 +64,11 @@
 								</li>
 								<li class="checkboxOption">
 									<label for="showBonusSkillsInNeedsStrengtheningList">Include Bonus Skills</label>
-									<input class="option"  id="showBonusSkillsInNeedsStrengtheningList" type="checkbox"/>
+									<input class="option"  id="showBonusSkillsInNeedsStrengtheningList" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
 									<label for="needsStrengtheningPopoutButton">Skill Popout Button for Links</label>
-									<input class="option"  id="needsStrengtheningPopoutButton" type="checkbox"/>
+									<input class="option"  id="needsStrengtheningPopoutButton" type="checkbox" />
 								</li>
 							</ul>
 						</li>
@@ -108,7 +108,7 @@
 							<ul class="sectionOptionsList">
 								<li class="checkboxOption">
 									<label for="crackedSkillsList">Display Cracked Skills List</label>
-									<input class="option"  id="crackedSkillsList" type="checkbox"/>
+									<input class="option"  id="crackedSkillsList" type="checkbox" controlling='[false]:["#crackedSkillsListLength", "#showBonusSkillsInCrackedSkillsList", "#crackedPopoutButton", "#crackedSkillsListSortOrder"]' />
 								</li>
 								<li class="numberOption">
 									<label for="crackedSkillsListLength">Number of Skills Show in List</label>
@@ -116,11 +116,11 @@
 								</li>
 								<li class="checkboxOption">
 									<label for="showBonusSkillsInCrackedSkillsList">Include Bonus Skills</label>
-									<input class="option"  id="showBonusSkillsInCrackedSkillsList" type="checkbox"/>
+									<input class="option"  id="showBonusSkillsInCrackedSkillsList" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
 									<label for="crackedPopoutButton">Skill Popout Button for Links</label>
-									<input class="option"  id="crackedPopoutButton" type="checkbox"/>
+									<input class="option"  id="crackedPopoutButton" type="checkbox" />
 								</li>
 								<li class="selectOption">
 									<label>Order of Skills in List</label>
@@ -148,7 +148,7 @@
 							<ul class="sectionOptionsList">
 								<li class="checkboxOption">
 									<label for="skillSuggestion">Display Skill Suggestion</label>
-									<input class="option"  id="skillSuggestion" type="checkbox"/>
+									<input class="option"  id="skillSuggestion" type="checkbox" controlling='[false]:["#skillSuggestionMethod", "#hideSuggestionNonStrengthened", "#hideSuggestionWithCrackedSkills", "#suggestionPopoutButton"]' />
 								</li>
 								<li class="selectOption">
 									<label for="skillSuggestionMethod">Selection Method from Skils at current Tree Level</label>
@@ -160,15 +160,15 @@
 								</li>
 								<li class="checkboxOption">
 									<label for="hideSuggestionNonStrengthened">Hide Suggestion When Not Fully Strengthened</label>
-									<input class="option"  id="hideSuggestionNonStrengthened" type="checkbox"/>
+									<input class="option"  id="hideSuggestionNonStrengthened" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
 									<label for="hideSuggestionWithCrackedSkills">Hide Suggestion When There Arre Cracked Skills</label>
-									<input class="option"  id="hideSuggestionWithCrackedSkills" type="checkbox"/>
+									<input class="option"  id="hideSuggestionWithCrackedSkills" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
 									<label for="suggestionPopoutButton">Skill Popout Button for Links</label>
-									<input class="option"  id="suggestionPopoutButton" type="checkbox"/>
+									<input class="option"  id="suggestionPopoutButton" type="checkbox" />
 								</li>
 							</ul>
 						</li>
@@ -176,7 +176,7 @@
 				</li>
 				<li class="checkboxOption">
 					<label for="focusFirstSkill">Focus First Skill In List</label>
-					<input class="option" id="focusFirstSkill" type="checkbox" />
+					<input class="option" id="focusFirstSkill" type="checkbox" controlling='[false]:["#focusPriorities"]' />
 				</li>
 				<li class="selectOption">
 					<label for="focusPriorities">List Priority for Focus</label>
@@ -191,7 +191,7 @@
 				</li>
 				<li class="selectOption">
 					<label for="practiceType">Link Session Type</label>
-					<select class="option selective" subOptionsEnabled="2" id="practiceType">
+					<select class="option selective" id="practiceType" controlling='["0", "1"]:["#lessonThreshold"]'>
 						<option value="0" selected>Lessons (Earn Crowns)</option>
 						<option value="1">Practice (Strengthen Only)</option>
 						<option value="2">Lessons up to Threshold</option>
@@ -226,11 +226,11 @@
 							<ul class="sectionOptionsList">
 								<li class="checkboxOption">
 									<label for="focusMode">Enable Focus Mode (Hide Sidebar)</label>
-									<input class="option"  id="focusMode" type="checkbox"/>
+									<input class="option"  id="focusMode" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
 									<label for="focusModeButton">Display Button to Toggle Focus Mode</label>
-									<input class="option"  id="focusModeButton" type="checkbox"/>
+									<input class="option"  id="focusModeButton" type="checkbox" />
 								</li>
 							</ul>
 						</li>
@@ -256,37 +256,37 @@
 							<ul class="sectionOptionsList">
 								<li class="checkboxOption">
 									<label for="crownsInfo">Show Additional Crowns Information</label>
-									<input class="option" id="crownsInfo" type="checkbox"/>
+									<input class="option" id="crownsInfo" type="checkbox"  controlling='[false]:["#crownsLocation","#crownsInformation","#crownsPredictions"]'/>
 								</li>
 							</ul>
 						</li>
 						<li class="section">
 							<h3 class="sectionHeading">Location</h3>
-							<ul class="sectionOptionsList">
+							<ul class="sectionOptionsList" id="crownsLocation">
 								<li class="checkboxOption">
 									<label for="crownsInfoInSidebar">Add Crowns Info Sidebar Box</label>
-									<input class="option" id="crownsInfoInSidebar" type="checkbox"/>
+									<input class="option" id="crownsInfoInSidebar" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
 									<label for="crownsInfoInPopup">Add Crowns Info to the Crowns Popup Box</label>
-									<input class="option" id="crownsInfoInPopup" type="checkbox"/>
+									<input class="option" id="crownsInfoInPopup" type="checkbox" />
 								</li>
 							</ul>
 						</li>
 						<li class="section">
 							<h3 class="sectionHeading">Information</h3>
-							<ul class="sectionOptionsList">
+							<ul class="sectionOptionsList" id="crownsInformation">
 								<li class="checkboxOption">
 									<label for="crownsMaximum">Show Crowns Maximum</label>
-									<input class="option" id="crownsMaximum" type="checkbox"/>
+									<input class="option" id="crownsMaximum" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
 									<label for="crownsPercentage">Show Percentage of Maximum</label>
-									<input class="option" id="crownsPercentage" type="checkbox"/>
+									<input class="option" id="crownsPercentage" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
 									<label for="crownsGraph">Add Graph of Tree Level Progress</label>
-									<input class="option" id="crownsGraph" type="checkbox"/>
+									<input class="option" id="crownsGraph" type="checkbox" />
 								</li>
 								<li class="subsection">
 									<label>Crowns Breakdown Table</label>
@@ -330,7 +330,7 @@
 						</li>
 						<li class="section">
 							<h3 class="sectionHeading">Predictions</h3>
-							<ul class="sectionOptionsList">
+							<ul class="sectionOptionsList" id="crownsPredictions">
 								<li class="checkboxOption">
 									<label for="checkpointPrediction">Next Checkpoint Prediction</label>
 									<input class="option" id="checkpointPrediction" type="checkbox" />
@@ -355,26 +355,26 @@
 							<ul class="sectionOptionsList">
 								<li class="checkboxOption">
 									<label for="XPInfo">Show Additional XP Information</label>
-									<input class="option" id="XPInfo" type="checkbox"/>
+									<input class="option" id="XPInfo" type="checkbox" controlling='[false]:["#XPLocation", "#XPInformation", "#XPPredictions"]' />
 								</li>
 							</ul>
 						</li>
 						<li class="section">
 							<h3 class="sectionHeading">Location</h3>
-							<ul class="sectionOptionsList">
+							<ul class="sectionOptionsList" id="XPLocation">
 								<li class="checkboxOption">
 									<label for="XPInfoInSidebar">Add XP Info Sidebar Box</label>
-									<input class="option" id="XPInfoInSidebar" type="checkbox"/>
+									<input class="option" id="XPInfoInSidebar" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
 									<label for="XPInfoInPopup">Add XP Info to the Streak Popup Box</label>
-									<input class="option" id="XPInfoInPopup" type="checkbox"/>
+									<input class="option" id="XPInfoInPopup" type="checkbox" />
 								</li>
 							</ul>
 						</li>
 						<li class="section">
 							<h3 class="sectionHeading">Information</h3>
-							<ul class="sectionOptionsList">
+							<ul class="sectionOptionsList" id="XPInformation">
 								<li class="checkboxOption">
 									<label for="XPBreakdown">XP &amp; Level Breakdown</label>
 									<input class="option" id="XPBreakdown" type="checkbox" />
@@ -382,8 +382,8 @@
 							</ul>
 						</li>
 						<li class="section">
-							<h3 class="sectionHeading">Prediction</h3>
-							<ul class="sectionOptionsList">
+							<h3 class="sectionHeading">Predictions</h3>
+							<ul class="sectionOptionsList" id="XPPredictions">
 								<li class="checkboxOption">
 									<label for="XPPrediction">XP Prediction</label>
 									<input class="option" id="XPPrediction" type="checkbox" />
@@ -442,7 +442,7 @@
 							<ul class="sectionOptionsList">
 								<li class="checkboxOption">
 									<label for="showTranslationText">Hide Translation Question Sentence Text</label>
-									<input class="option negative" id="showTranslationText" type="checkbox" />
+									<input class="option negative" id="showTranslationText" type="checkbox" controlling='[true]:["#sentenceHidingNewWords", "#sentenceHidingRevealSentenceHotkey"]' />
 								</li>
 								<li class="checkboxOption">
 									<label for="showToggleHidingTextButton">Add Button in Lessons to Toggle Sentence Hiding</label>
@@ -452,7 +452,7 @@
 						</li>
 						<li class="section">
 							<h3 class="sectionHeading">New Words</h3>
-							<ul class="sectionOptionsList">
+							<ul class="sectionOptionsList" id="sentenceHidingNewWords">
 								<li class="checkboxOption">
 									<label for="showNewWords">Show Sentences with New (Yellow) Words</label>
 									<input class="option" id="showNewWords" type="checkbox" />
@@ -461,10 +461,10 @@
 						</li>
 						<li class="section">
 							<h3 class="sectionHeading">Reveal Sentence Hotkey</h3>
-							<ul class="sectionOptionsList">
+							<ul class="sectionOptionsList" id="sentenceHidingRevealSentenceHotkey">
 								<li class="checkboxOption">
 									<label for="revealHotkey">Enable Hotkey to Unhide Current Sentence</label>
-									<input class="option" id="revealHotkey" type="checkbox" />
+									<input class="option" id="revealHotkey" type="checkbox" controlling='[false]:["#revealHotkeyCode"]' />
 								</li>
 								<li class="hotkeyOption">
 									<label for="revealHotkeyCode">Custom Hotkey</label>
@@ -502,7 +502,7 @@
 			<ul class="sectionOptionsList">
 				<li class="checkboxOption">
 					<label for="practiseButton">Practise Button</label>
-					<input class="option" id="practiseButton" type="checkbox" />
+					<input class="option" id="practiseButton" type="checkbox" controlling='[false]:["#crownZeroPractiseButton"]'/>
 				</li>
 				<li class="checkboxOption">
 					<label for="crownZeroPractiseButton">Practise Button on Crown 0 Skills</label>

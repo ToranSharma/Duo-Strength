@@ -22,11 +22,11 @@ html
 	font-size: 20px;
 	width: 20rem;
 	height: 28.6rem;
-	font-family: sans-serif;
 	letter-spacing: 0.03rem;
 	color: var(--text);
 	background: var(--primary);
 	margin: auto;
+	overflow: hidden;
 }
 
 *
@@ -47,6 +47,7 @@ body
 	grid-template-rows: auto 1fr auto;
 	position: relative;
 	transition: left 0.5s ease-in;
+	font-family: "Fira Sans", arial, sans-serif;
 }
 
 body[page="0"]
@@ -255,6 +256,35 @@ li.subsection:active > img
 {
 	content: url("../images/arrow_light.svg");
 }
+
+.sectionOptionsList > li
+{
+	max-height: 2.8rem;
+}
+.section
+{
+	max-height: 30rem; 
+}
+.sectionOptionsList > li,
+.section
+{
+	transition: max-height 0.5s cubic-bezier(0.9, 0.7, 0.15, 1);
+	overflow: hidden;
+}
+.sectionOptionsList > li.collapsed,
+.section.collapsed
+{
+	padding-top: 0;
+	padding-bottom: 0;
+	border-width: 0;
+	max-height: 0;
+	transition:
+		max-height 0.5s cubic-bezier(0.9, 0.7, 0.15, 1),
+	   	border-width 0s 0.3s,
+		padding 0.2s 0.3s;
+}
+
+
 li.button
 {
 	display: flex;

@@ -46,7 +46,7 @@ async function init()
 		{
 			options["darkOptions"] = event.target.checked;
 			applyDarkMode();
-			saveOptions();
+			saveOptions(false);
 		}
 	);
 	document.querySelector("#reset").addEventListener("click",
@@ -175,7 +175,7 @@ function applyOptions()
 	setTimeout(() => document.querySelectorAll("*").forEach(element => element.removeAttribute("style")), 10);
 }
 
-async function saveOptions()
+async function saveOptions(sendToTabs = true)
 {
 	await (optionsLoaded ?? getOptions());
 
@@ -192,11 +192,14 @@ async function saveOptions()
 	{
 		chrome.storage.sync.set({"options": options});
 		oldOptions = {...options};
-		tabs.forEach(
-			(id) => {
-				chrome.tabs.sendMessage(id, {type: "optionsChanged"});
-			}
-		);
+		if (sendToTabs)
+		{
+			tabs.forEach(
+				(id) => {
+					chrome.tabs.sendMessage(id, {type: "optionsChanged"});
+				}
+			);
+		}
 	}
 }
 

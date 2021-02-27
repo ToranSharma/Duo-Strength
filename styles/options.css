@@ -111,7 +111,7 @@ footer
 {
 	height: 2rem;
 	display: grid;
-	grid-template-columns: 1fr 1fr [mid] auto [label] 1fr [box] 1fr;
+	grid-template-columns: 1fr [reset] auto [dark] 1fr;
 	align-content: stretch;
 	justify-content: center;
 	padding: 0.5rem;
@@ -119,18 +119,21 @@ footer
 }
 footer button#reset
 {
-	grid-column: mid;
+	grid-column: reset;
 }
 footer label
 {
-	grid-column: label / span 2;
+	grid-column: dark;
 	grid-row: 1;
 	justify-self: center;
 	align-self: center;
+	margin-left: 0.5rem;
+	padding-right: 1rem;
+	text-align: center;
 }
 footer input
 {
-	grid-column: box;
+	grid-column: dark;
 	grid-row: 1;
 	justify-self: end;
 	align-self: center;
@@ -297,6 +300,7 @@ li.button
 {
 	display: flex;
 	justify-content: center;
+	padding: 0.2rem;
 }
 li.button button
 {

@@ -176,6 +176,14 @@ body > ul
 {
 	overflow: auto;
 }
+
+
+.hidden
+{
+	display: none;
+	visibility: hidden;
+}
+
 .section
 {
 	display: block;

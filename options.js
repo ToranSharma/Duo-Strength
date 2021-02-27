@@ -1,14 +1,13 @@
 let oldOptions = {};
 let options = {};
 let tabs = [];
+let optionsLoaded;
 
 const ordinalLabels = {
 	"0": "Primary",
 	"1": "Secondary",
 	"2": "Tertiary"
 };
-
-let addButtonListItem;
 
 window.onload = () =>
 {
@@ -41,7 +40,7 @@ async function init()
 			backButton.addEventListener("click", () => goBackFromChildPage(childPage));
 		}
 	);
-	document.querySelector("#clearMasteredSkills").addEventListener("click",clearMasteredSkills);
+	document.querySelector("#clearMasteredSkills").addEventListener("click", clearMasteredSkills);
 	document.querySelector("#darkOptions").addEventListener("change",
 		(event) =>
 		{
@@ -50,8 +49,16 @@ async function init()
 			document.documentElement.classList.remove(darkMode? "light" : "dark");
 		}
 	);
+	document.querySelector("#reset").addEventListener("click",
+		async () =>
+		{
+			await getDefaultOptions();
+			applyOptions();
+			saveOptions();
+		}
+	);
 
-	await getOptions();
+	await (optionsLoaded = getOptions());
 	applyOptions();
 	saveOptions();
 	setupChangeHandlers();
@@ -120,11 +127,12 @@ function applyOptions()
 			// needsStrengtheningList order is a multi part option, encoded in one string with comma seperated values
 			const sortingCriteria = options[option].split(",");
 			const addButton = optionElement.querySelector(".addSortList");
-			addButtonListItem = addButton.parentNode.cloneNode(true); // save for adding later
 
+			addButton.removeEventListener("click", addSortListButtonClickHandler);
 			addButton.addEventListener("click", addSortListButtonClickHandler);
-			addButtonListItem.querySelector(".addSortList").addEventListener("click", addSortListButtonClickHandler); // has to be added seperating as cloning doesn't copy event listeners
 
+			// Make sure there is only one part initially
+			removePartsAfter(document.querySelector(`#${option} .option`));
 			sortingCriteria.forEach(
 				(criterion, index) =>
 				{
@@ -146,16 +154,16 @@ function applyOptions()
 						{
 							// last saved criterion and last possible criterion
 							// no more ambiguity in the list
-							// remove the button to add another drop down list
-							addButton.parentNode.remove();
+							// hide the button to add another drop down list
+							addButton.parentNode.classList.add("hidden");
 						}
 
 					}
 					else
 					{
 						// no further sorting can be done
-						// remove the button to add another drop down list
-						addButton.parentNode.remove();
+						// hide the button to add another drop down list
+						addButton.parentNode.classList.add("hidden");
 					}
 				}
 			);
@@ -165,20 +173,28 @@ function applyOptions()
 	setTimeout(() => document.querySelectorAll("*").forEach(element => element.removeAttribute("style")), 10);
 }
 
-function saveOptions()
+async function saveOptions()
 {
-	chrome.storage.sync.set({"options": options});
-	if (
-		Object.keys(oldOptions).length !== 0
-		&& JSON.stringify(oldOptions) !== JSON.stringify(options)
-	)
+	await optionsLoaded ?? getOptions();
+
+	const sortObject = (obj) =>
 	{
+		return Object.fromEntries(Object.entries(obj).sort(
+			(a, b) => a[0] < b[0] ? -1 : 1
+		))
+	};
+	oldOptions = sortObject(oldOptions);
+	options = sortObject(options);
+
+	if (JSON.stringify(oldOptions) !== JSON.stringify(options))
+	{
+		chrome.storage.sync.set({"options": options});
+		oldOptions = {...options};
 		tabs.forEach(
 			(id) => {
 				chrome.tabs.sendMessage(id, {type: "optionsChanged"});
 			}
 		);
-		oldOptions = {...options};
 	}
 }
 
@@ -328,49 +344,38 @@ function hotkeyKeyupHandler()
 	}
 }
 
+function removePartsAfter(lastWantedPart)
+{
+	const parts = Array.from(lastWantedPart.parentNode.parentNode.querySelectorAll(".option"));
+	const partIndex = parts.indexOf(lastWantedPart);
+	parts.slice(partIndex + 1).forEach(
+		(part) =>
+		{
+			part.parentNode.remove();
+		}
+	);
+}
+
 function multiPartChangeHandler()
 {
-	const parts = Array.from(this.parentNode.parentNode.querySelectorAll(".option"));
-	const partIndex = parts.indexOf(this);
+	const partIndex = this.id.slice(-1)[0];
 
-	const removeFurtherCriteria = () => parts.slice(partIndex + 1).forEach(
-			(part) => {
-				part.parentNode.parentNode.removeChild(part.parentNode);
-			}
-		);
-
-	if (this.value <= 4)
+	// Any existing subsequent parts are no longer valid.
+	removePartsAfter(this);
+	
+	if (partIndex < 2 && this.value > 4)
 	{
-		// no more sorting can be done
-		if (partIndex + 1 != parts.length)
-		{
-			// there are some further criteria that we need to remove
-			removeFurtherCriteria();
-		}
-		else
-		{
-			// this is the last criterion
-			// remove the add further criterion button
-			const button = this.parentNode.parentNode.querySelector(".addSortList");
-			if (button != null)
-			{
-				button.parentNode.parentNode.removeChild(button.parentNode);
-			}
-		}
-	}
-	else if (partIndex < 2)
-	{
-		// can sort further
-		// first remove further criteria as they may be invalid
-		removeFurtherCriteria();
-
-		// now add link to add further criterion
-		this.parentNode.parentNode.appendChild(addButtonListItem);
+		// Can sort further.
+		// make button to add further criterion visible
+		this.parentNode.parentNode.querySelector(".addSortList").parentNode.classList.remove("hidden");
 	}
 	else
 	{
-		// nothing to do
+		// Can't sort further.
+		// remove the add further criterion button
+		this.parentNode.parentNode.querySelector(".addSortList").parentNode.classList.add("hidden");
 	}
+
 
 	const option = this.parentNode.parentNode.id;
 	options[option] = Array.from(this.parentNode.parentNode.querySelectorAll(".option")).map(part => part.value).join(",");
@@ -409,7 +414,7 @@ function addSortListButtonClickHandler()
 	const lastList = this.parentNode.previousElementSibling;
 	const newList = newSortList(lastList);
 	lastList.parentNode.insertBefore(newList, lastList.nextSibling);
-	this.parentNode.remove();
+	this.parentNode.classList.add("hidden");
 
 	const option = lastList.parentNode.id;
 	options[option] = Array.from(document.querySelectorAll(`#${option} .option`)).map(option => option.value).join(",");
@@ -452,7 +457,7 @@ function newSortList(previousListItem)
 				const selectToBeRemoved = document.querySelector(`#${optionId}${i}`)?.parentNode.remove();
 			}
 
-			previousListItem.parentNode.appendChild(addButtonListItem);
+			previousListItem.parentNode.querySelector(".addSortList").parentNode.classList.remove("hidden");
 
 			options[optionId] = Array.from(document.querySelectorAll(`#${optionId} .option`)).map(option => option.value).join(",");
 			saveOptions();

@@ -177,7 +177,7 @@ function applyOptions()
 
 async function saveOptions()
 {
-	await optionsLoaded ?? getOptions();
+	await (optionsLoaded ?? getOptions());
 
 	const sortObject = (obj) =>
 	{

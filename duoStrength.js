@@ -58,7 +58,9 @@ const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-te
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 const MAIN_SECTION_SELECTOR = "._33Mo9";
-const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0";
+const TREE_OVERLAY_CONTAINER_SELECTOR = "._1fnwn";
+const GLOBAL_PRACTISE_BUTTON_ANCHOR = "_3_B9a _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
+const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0.np6Tv";
 const BOTTOM_NAV_SELECTOR = "._3oP45";
 const CROWN_TOTAL_SELECTOR = "._1HHlZ._3F5mM, ._12yJ8._3F5mM";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
@@ -2516,7 +2518,17 @@ function applyFocusMode()
 
 	removeFocusModeButton();
 
-	const globalPractiseButtonContainer = document.querySelector(GLOBAL_PRACTISE_BUTTON_SELECTOR);
+	let globalPractiseButtonContainer = document.querySelector(GLOBAL_PRACTISE_BUTTON_SELECTOR);
+	if (globalPractiseButtonContainer === null)
+	{
+		globalPractiseButtonContainer = document.createElement("div");
+		globalPractiseButtonContainer.classList.add(...GLOBAL_PRACTISE_BUTTON_SELECTOR.split(".").slice(1));
+		const button = document.createElement("a");
+		button.classList.add(...GLOBAL_PRACTISE_BUTTON_ANCHOR.split(" "));
+		globalPractiseButtonContainer.appendChild(button);
+		button.appendChild(document.createElement("img"));
+		document.querySelector(TREE_OVERLAY_CONTAINER_SELECTOR)?.appendChild(globalPractiseButtonContainer) ?? (globalPractiseButtonContainer = null);
+	}
 	// Add button to toggle the focus mode, if is wanted
 	if (
 		options.focusModeButton
@@ -2547,6 +2559,12 @@ function applyFocusMode()
 		focusModeButton.querySelector(`img`).src = (options.focusMode) ? chrome.runtime.getURL("images/defocus.svg") : chrome.runtime.getURL("images/focus.svg");
 
 		globalPractiseButtonContainer.parentNode.appendChild(focusModeButton);
+
+		if (globalPractiseButtonContainer.firstChild.getAttribute("data-test") === null)
+		{
+			// We made this button above, let's delete it now.
+			globalPractiseButtonContainer.remove();
+		}
 	}
 }
 

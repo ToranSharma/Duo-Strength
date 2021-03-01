@@ -13,7 +13,11 @@ zip -r "Duo Strength v$VERNUM - chrome & opera.zip" \
 	options.html \
 	duoStrength.js \
 	icons \
-	background.js
+	background.js \
+	images \
+	styles \
+	defaultOptions.json \
+	disabledOptions.json
 
 sed "s|^//||" manifest.json.original > manifest.json
 zip -r "Duo Strength v$VERNUM - firefox.zip" \
@@ -24,7 +28,12 @@ zip -r "Duo Strength v$VERNUM - firefox.zip" \
 	options.html \
 	duoStrength.js \
 	icons \
-	background.js
+	background.js \
+	images \
+	styles \
+	defaultOptions.json \
+	disabledOptions.json
+
 
 mv manifest.json.original manifest.json
 zip -r "Duo Strength v$VERNUM.zip" \
@@ -35,4 +44,9 @@ zip -r "Duo Strength v$VERNUM.zip" \
 	options.html \
 	duoStrength.js \
 	icons \
-	background.js
+	background.js \
+	images \
+	styles \
+	defaultOptions.json \
+	disabledOptions.json
+

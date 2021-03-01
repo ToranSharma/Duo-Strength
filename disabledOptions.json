@@ -1,0 +1,45 @@
+{
+
+	"strengthBars":								false,
+
+	"ignoreMasteredSkills":						false,
+	"masteredButton":							false,
+
+	
+		"needsStrengtheningList":					false,
+	
+		"crackedSkillsList":						false,
+	
+		"skillSuggestion":							false,
+	"focusFirstSkill":							false,
+
+	"showOnlyNeededSkills":						false,
+	"fixedSidebar":								false,
+	
+		"focusMode":								false,
+		"focusModeButton":							false,
+	"showLeagues":								true,
+	"treeLevelBorder":							false,
+	
+		"crownsInfo":								false,
+	
+		"XPInfo":									false,
+	
+		"languagesInfo":							false,
+	"totalStrengthBox":							false,
+
+	
+		"showTranslationText":						true,
+		"showToggleHidingTextButton":				false,
+	"revealNewWordTranslation":					false,
+	"hideCartoons":								false,
+
+	"addTipsPagePractiseButton":				false,
+	"addTipsPageBottomButtons":					false,
+
+	"practiseButton":							false,
+	"wordsButton":								false,
+	"grammarSkillsTestButton":					false,
+
+	"checkpointButtons":						false
+}

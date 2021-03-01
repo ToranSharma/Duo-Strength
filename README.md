@@ -21,24 +21,29 @@ Duo Strength is licensed under MIT, see [LICENSE](/LICENSE) for more details.
 
 ## Screenshots of Duo Strength in use:
 
-### Needs Strengthening List & Strength Bars under Skills
-<img alt="Needs Strengthening List" src="https://toransharma.com/i/Duo%20Strength%20v1.2%20Needs%20Strengthening%20List.png" width="50%" /><img alt="Strength Bars" src="https://toransharma.com/i/Duo%20Strength%20v1.2%20Strength%20Bars.png" width="50%" />
+### Top of Tree Summary and Strength Bars under Skills
+<img alt="Top of Tree Summary" src="https://toransharma.com/i/Duo-Strength/v2.0/fullpage/top-of-tree-summary.png" width="50%" /><img alt="Strength Bars" src="https://toransharma.com/i/Duo-Strength/v2.0/fullpage/strength-bars.png" width="50%" />
 
-### List of Cracked Skills
+### Mark Skills as Mastered
 <p align="center">
-  <img alt="Cracked Skills List" src="https://toransharma.com/i/Duo%20Strength%20v1.2%20Cracked%20Skills%20List.png" align="top" width="50%" />
+  <img alt="Mastered Skill" src="https://toransharma.com/i/Duo-Strength/v2.0/mastered-skill.png" width="50%" />
 </p>
 
-### Suggestion on Fully Strengthened Trees
-<img alt="Skill Suggestion" src="https://toransharma.com/i/Duo%20Strength%20v1.2%20Skill%20Suggestion.png" align="top" width="50%" /><img alt="Next Lesson" src="https://toransharma.com/i/Duo%20Strength%20v1.2%20Next%20Lesson.png" width="50%" />
+### Jump to Skill Popout from Top of Tree Summary Buttons
+<p align="center">
+  <img alt="Top of Tree Summary Link Popout Button" src="https://toransharma.com/i/Duo-Strength/v2.0/link-popout-button.png" width="50%" />
+</p>
 
 ### Additional Crowns & XP Information and Coloured Flag Borders to Show Tree Level
-<img alt="Crowns Info" src="https://toransharma.com/i/Duo-Strength/v1.3/crowns-info.png" align="top" width="33%" /><img alt="XP Info" src="https://toransharma.com/i/Duo%20Strength%20v1.2%20XP%20Info.png" align="top" width="33%" /><img alt="Language Change Flag Borders" src="https://toransharma.com/i/Duo-Strength/v1.3/flag-borders.png" align="top" width="33%" />
+<img alt="Crowns Info" src="https://toransharma.com/i/Duo-Strength/v2.0/crowns-info.png" align="top" width="33%" /><img alt="XP Info" src="https://toransharma.com/i/Duo-Strength/v2.0/XP-info.png" align="top" width="33%" /><img alt="Language Change Flag Borders" src="https://toransharma.com/i/Duo-Strength/v2.0/flag-borders.png" align="top" width="33%" />
+
+### Lanuages Info and Total Strength Box
+<img alt="Languages Info Box" src="https://toransharma.com/i/Duo-Strength/v2.0/languages-info.png" width="50%" /><img alt="Total Strength Box" src="https://toransharma.com/i/Duo-Strength/v2.0/total-strength-box.png" width="50%" />
 
 ### Buttons to Practise a Skill, Redo a Passed Checkpoint and Show Words List
-<img alt="Practise Button" src="https://toransharma.com/i/Duo-Strength/v1.3/practise-button.png" align="top" width="33%" /><img alt="Redo Checkpoints" src="https://toransharma.com/i/Duo-Strength/v1.3/redo-checkpoint-buttons.png" align="top" width="33%" /><img alt="Words List Button" src="https://toransharma.com/i/Duo-Strength/v1.3/words-list.png" align="top" width="33%" />
+<img alt="Practise Button" src="https://toransharma.com/i/Duo-Strength/v2.0/skill-popout-buttons.png" align="top" width="33%" /><img alt="Redo Checkpoints" src="https://toransharma.com/i/Duo-Strength/v2.0/checkpoint-buttons.png" align="top" width="33%" /><img alt="Words List Button" src="https://toransharma.com/i/Duo-Strength/v2.0/words-list.png" align="top" width="33%" />
 
 ### Customise Features in the Options Popup
 <p align="center">
-  <img alt="Options Page" src="https://toransharma.com/i/Duo-Strength/v1.3/options-popup.png" width="50%" />
+  <img alt="Options Page" src="https://toransharma.com/i/Duo-Strength/v2.0/fullpage/options.png" width="50%" />
 </p>

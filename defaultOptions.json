@@ -1,0 +1,95 @@
+{
+
+	"darkOptions": true,
+
+
+
+	"strengthBars":								true,
+	"strengthBarBackgrounds":					true, 
+
+	"ignoreMasteredSkills":						true,
+	"masteredButton":							true,
+
+
+		"needsStrengtheningList":					true,
+		"needsStrengtheningListLength":				"10",
+		"needsStrengtheningListSortOrder":			"0",
+		"showBonusSkillsInNeedsStrengtheningList":	true,
+		"needsStrengtheningPopoutButton":			true,
+
+		"crackedSkillsList":						true,
+		"crackedSkillsListLength":					"10",
+		"crackedSkillsListSortOrder":				"0",
+		"showBonusSkillsInCrackedSkillsList":		true,
+		"crackedPopoutButton":						true,
+
+		"skillSuggestion":							true,
+		"skillSuggestionMethod":					"0",
+		"hideSuggestionNonStrengthened":			true,
+		"hideSuggestionWithCrackedSkills":			true,
+		"suggestionPopoutButton":					true,
+	"focusFirstSkill":							true,
+	"focusPriorities":							"ncs",
+	"practiceType":								"0",
+	"lessonThreshold":							"4",
+
+	"showOnlyNeededSkills":						false,
+	"fixedSidebar":								false,
+
+		"focusMode":								false,
+		"focusModeButton":							true,
+	"showLeagues":								true,
+	"treeLevelBorder":							true,
+
+		"crownsInfo":								true,
+
+		"crownsInfoInSidebar":						false,
+		"crownsInfoInPopup":						true,
+
+		"crownsMaximum":							true,
+		"crownsPercentage":							true,
+		"crownsGraph":								true,
+
+			"crownsBreakdown":							true,
+			"crownsBreakdownShowZerosRows":				true,
+			"bonusSkillsBreakdown":						true,
+			"separateGrammarSkillsInBreakdown":			true,
+			"grammarSkillsBreakdown":					true,
+
+		"checkpointPrediction":						true,
+		"treeLevelPrediction":						true,
+
+		"XPInfo":									true,
+
+		"XPInfoInSidebar":							true,
+		"XPInfoInPopup":							false,
+
+		"XPBreakdown":								true,
+
+		"XPPrediction":								true,
+
+		"languagesInfo":							true,
+		"languagesInfoSortOrder":					"0",
+	"totalStrengthBox":							true,
+
+
+		"showTranslationText":						true,
+		"showToggleHidingTextButton":				true,
+
+		"showNewWords":								true,
+
+		"revealHotkey":								true,
+		"revealHotkeyCode":							"Ctrl+Alt+H",
+	"revealNewWordTranslation":					true,
+	"hideCartoons":								false,
+
+	"addTipsPagePractiseButton":				true,
+	"addTipsPageBottomButtons":					true,
+
+	"practiseButton":							true,
+	"crownZeroPractiseButton":					false,
+	"wordsButton":								true,
+	"grammarSkillsTestButton":					true,
+
+	"checkpointButtons":						true
+}

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+_newversion_completions()
+{
+	if [ "${#COMP_WORDS[@]}" == "2" ]; then
+		COMPREPLY=($(compgen -W "hotfix release" "${COMP_WORDS[1]}"))
+	elif [ "${#COMP_WORDS[@]}" == "3" ]; then
+		if [ "${COMP_WORDS[1]}" == "release" ]; then
+			OLDVERNUM=$(cat manifest.json | awk '(/"version"/){vernum = $NF; gsub(/[^0-9^.]/, "", vernum); print vernum}')
+			COMPREPLY=($(compgen -W "$(echo $OLDVERNUM | awk -F "." '{print $1 "." $2+1 ".0"}') $(echo $OLDVERNUM | awk -F "." '{print $1+1 ".0.0"}')
+" "${COMP_WORDS[2]}"))
+		else
+			return
+		fi
+	fi
+
+}
+
+complete -F _newversion_completions newversion

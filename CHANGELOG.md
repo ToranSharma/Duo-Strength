@@ -3,6 +3,11 @@ Changelog
 
 [Unreleased]
 ------------
+-
+
+[v2.0.0] - 2021-03-01
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.0)
 ### Added
 - Focus mode which hides the sidebar and makes the main section of the page
   full width.
@@ -1181,6 +1186,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.45...v2.0.0
 [v1.3.45]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.44...v1.3.45
 [v1.3.44]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.43...v1.3.44
 [v1.3.43]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.42...v1.3.43

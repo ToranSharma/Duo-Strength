@@ -56,7 +56,7 @@ async function init()
 
 	await (optionsLoaded = getOptions());
 	applyDarkMode();
-	applyOptions();
+	applyOptions(true);
 	saveOptions();
 	setupChangeHandlers();
 }
@@ -105,10 +105,13 @@ async function disableAllFeatures()
 	return compareOptions(enabledOptions, options);
 }
 
-function applyOptions()
+function applyOptions(hideTransitions = false)
 {
 	// May collapse some options, but don't really want the transitions.
-	document.querySelectorAll("*").forEach(element => element.style = "transition: all 0s");
+	if (hideTransitions)
+	{
+		document.querySelectorAll("*").forEach(element => element.style = "transition: all 0s");
+	}
 	for (const option in options)
 	{
 		const optionElement = document.querySelector(`#${option}`);
@@ -178,8 +181,11 @@ function applyOptions()
 			);
 		}
 	}
-	// Allow transitions again
-	setTimeout(() => document.querySelectorAll("*").forEach(element => element.removeAttribute("style")), 10);
+	if (hideTransitions)
+	{
+		// Allow transitions again
+		setTimeout(() => document.querySelectorAll("*").forEach(element => element.removeAttribute("style")), 10);
+	}
 }
 
 async function saveOptions(sendToTabs = true)

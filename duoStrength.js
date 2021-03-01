@@ -123,7 +123,7 @@ const childListObserver = new MutationObserver(childListMutationHandle);
 
 async function retrieveDefaultOptions()
 {
-	return import("./defaultOptions.js").then(module=>module.default)
+	return fetch(chrome.runtime.getURL("defaultOptions.json")).then(response => response.json);
 }
 
 function retrieveOptions()
@@ -5578,7 +5578,7 @@ window.onunload = function()
 
 if (document.readyState === "complete" || document.readyState === "interactive")
 {
-	start()
+	start();
 }
 else
 {

@@ -38,7 +38,7 @@ Duo Strength is licensed under MIT, see [LICENSE](/LICENSE) for more details.
 <img alt="Crowns Info" src="https://toransharma.com/i/Duo-Strength/v2.0/crowns-info.png" align="top" width="33%" /><img alt="XP Info" src="https://toransharma.com/i/Duo-Strength/v2.0/XP-info.png" align="top" width="33%" /><img alt="Language Change Flag Borders" src="https://toransharma.com/i/Duo-Strength/v2.0/flag-borders.png" align="top" width="33%" />
 
 ### Lanuages Info and Total Strength Box
-<img alt="Lanuages Info Box" src="https://toransharma.com/i/Duo-Strength/v2.0/languages-info.png" width="50%" /><img alt="Total Strength Box" src="https://toransharma.com/i/Duo-Strength/v2.0/total-strength-box.png" width="50%" />
+<img alt="Languages Info Box" src="https://toransharma.com/i/Duo-Strength/v2.0/languages-info.png" width="50%" /><img alt="Total Strength Box" src="https://toransharma.com/i/Duo-Strength/v2.0/total-strength-box.png" width="50%" />
 
 ### Buttons to Practise a Skill, Redo a Passed Checkpoint and Show Words List
 <img alt="Practise Button" src="https://toransharma.com/i/Duo-Strength/v2.0/skill-popout-buttons.png" align="top" width="33%" /><img alt="Redo Checkpoints" src="https://toransharma.com/i/Duo-Strength/v2.0/checkpoint-buttons.png" align="top" width="33%" /><img alt="Words List Button" src="https://toransharma.com/i/Duo-Strength/v2.0/words-list.png" align="top" width="33%" />

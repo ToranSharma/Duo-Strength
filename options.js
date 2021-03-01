@@ -162,7 +162,7 @@ function applyOptions(hideTransitions = false)
 							const newList = newSortList(listItem);
 							listItem.parentNode.insertBefore(newList, listItem.nextSibling);
 						}
-						else if (index == 2)
+						else if (index === 2)
 						{
 							// last saved criterion and last possible criterion
 							// no more ambiguity in the list
@@ -340,7 +340,7 @@ function hotkeyKeydownHandler(e)
 		if (!e.ctrlKey) this.value = "Shift+" + this.value;
 		else this.value += "Shift+";
 	}
-	else if (e.code.includes("Meta"))
+	else if (e.code.includes("Meta") || e.code.includes("OS"))
 	{
 		if (!e.ctrlKey && e.shiftKey) this.value = "Meta+" + this.value;
 		else this.value += "Meta+";
@@ -350,31 +350,35 @@ function hotkeyKeydownHandler(e)
 		if (!e.ctrlKey && !e.shiftKey && !e.metaKey) this.value = "Alt+" + this.value;
 		else this.value += "Alt+";
 	}
-	else if (e.code == "Space")
+	else if (e.key.length !== 1 || e.key === " ")
 	{
-		this.value += "Space";
+		this.value += e.code;
 	}
 	else
 	{
 		this.value += e.key.toUpperCase();
 	}
 
-	if (
-		this.value[this.value.length-1] !== "+"
-		&& !this.value.includes("Ctrl")
-		&& !this.value.includes("Alt")
-		&& !this.value.includes("Meta")
-	)
+	if (this.value[this.value.length-1] !== "+")
 	{
-		// Hotkey is a single key, which should not be allowed.
-		// Reset to saved value.
-		this.value = options[this.id];
-	}
-	else
-	{
-		this.blur();
-		options[this.id] = this.value;
-		saveOptions();
+		// Cannot compose any more keys.
+		if (
+			!this.value.includes("Ctrl")
+			&& !this.value.includes("Alt")
+			&& !this.value.includes("Meta")
+		)
+		{
+			// Hotkey is a single key, which should not be allowed.
+			// Reset to saved value.
+			this.value = options[this.id];
+		}
+		else
+		{
+			// Seems to be valid, exit to box and save the hotkey.
+			this.blur();
+			options[this.id] = this.value;
+			saveOptions();
+		}
 	}
 }
 
@@ -382,7 +386,7 @@ function hotkeyKeyupHandler()
 {
 	if (
 		this.value[this.value.length-1] === "+"
-		|| this.value == options[this.id]
+		|| this.value === options[this.id]
 	)
 	{
 		// Hotkey not finished, reset to saved value.
@@ -390,6 +394,7 @@ function hotkeyKeyupHandler()
 	}
 	else
 	{
+		// Finished hotkey, save it, though we should have already done this.
 		options[this.id] = this.value;
 		saveOptions();
 	}

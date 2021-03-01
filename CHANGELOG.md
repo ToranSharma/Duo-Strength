@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v2.0.1] - 2021-03-02
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.1)
+### Fixed
+- Typos in options list.
+
 [v2.0.0] - 2021-03-01
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.0)
@@ -1186,6 +1192,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.1]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.45...v2.0.0
 [v1.3.45]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.44...v1.3.45
 [v1.3.44]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.43...v1.3.44

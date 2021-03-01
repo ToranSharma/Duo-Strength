@@ -58,7 +58,9 @@ const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-te
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 const MAIN_SECTION_SELECTOR = "._33Mo9";
-const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0";
+const TREE_OVERLAY_CONTAINER_SELECTOR = "._1fnwn";
+const GLOBAL_PRACTISE_BUTTON_ANCHOR = "_3_B9a _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
+const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0.np6Tv";
 const BOTTOM_NAV_SELECTOR = "._3oP45";
 const CROWN_TOTAL_SELECTOR = "._1HHlZ._3F5mM, ._12yJ8._3F5mM";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
@@ -123,7 +125,7 @@ const childListObserver = new MutationObserver(childListMutationHandle);
 
 async function retrieveDefaultOptions()
 {
-	return import("./defaultOptions.js").then(module=>module.default)
+	return fetch(chrome.runtime.getURL("defaultOptions.json")).then(response => response.json);
 }
 
 function retrieveOptions()
@@ -893,7 +895,7 @@ function daysToNextXPLevel(history, XPLeft)
 	if (firstDate == currentDate && !metGoal)
 	{
 		// The only data from this language is for today and the goal has yet to me met.
-		return -1;
+		return {time: -1};
 	}
 
 	let lastDate;
@@ -920,7 +922,10 @@ function daysToNextXPLevel(history, XPLeft)
 
 	let XPRate = XPTotal/timePeriod; // in units of XP/day
 
-	return Math.ceil(XPLeft/XPRate);
+	return {
+		time: Math.ceil(XPLeft/XPRate),
+		rate: XPRate
+	};
 }
 
 function daysToNextTreeLevel()
@@ -1115,7 +1120,7 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	}
 
 	prediction.appendChild(
-		document.createTextNode(`At your `)
+		document.createTextNode("At your ")
 	);
 
 	prediction.appendChild(
@@ -1125,6 +1130,10 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	if (type !== "XPLevel")
 	{
 		prediction.lastChild.title = `${Number(rate).toFixed(2)} lessons/day with ${lessonsLeft} lesson to go`;
+	}
+	else
+	{
+		prediction.lastChild.title = `${Number(rate).toFixed(2)} XP/day`;
 	}
 
 	prediction.appendChild(
@@ -2516,7 +2525,17 @@ function applyFocusMode()
 
 	removeFocusModeButton();
 
-	const globalPractiseButtonContainer = document.querySelector(GLOBAL_PRACTISE_BUTTON_SELECTOR);
+	let globalPractiseButtonContainer = document.querySelector(GLOBAL_PRACTISE_BUTTON_SELECTOR);
+	if (globalPractiseButtonContainer === null)
+	{
+		globalPractiseButtonContainer = document.createElement("div");
+		globalPractiseButtonContainer.classList.add(...GLOBAL_PRACTISE_BUTTON_SELECTOR.split(".").slice(1));
+		const button = document.createElement("a");
+		button.classList.add(...GLOBAL_PRACTISE_BUTTON_ANCHOR.split(" "));
+		globalPractiseButtonContainer.appendChild(button);
+		button.appendChild(document.createElement("img"));
+		document.querySelector(TREE_OVERLAY_CONTAINER_SELECTOR)?.appendChild(globalPractiseButtonContainer) ?? (globalPractiseButtonContainer = null);
+	}
 	// Add button to toggle the focus mode, if is wanted
 	if (
 		options.focusModeButton
@@ -2547,6 +2566,12 @@ function applyFocusMode()
 		focusModeButton.querySelector(`img`).src = (options.focusMode) ? chrome.runtime.getURL("images/defocus.svg") : chrome.runtime.getURL("images/focus.svg");
 
 		globalPractiseButtonContainer.parentNode.appendChild(focusModeButton);
+
+		if (globalPractiseButtonContainer.firstChild.getAttribute("data-test") === null)
+		{
+			// We made this button above, let's delete it now.
+			globalPractiseButtonContainer.remove();
+		}
 	}
 }
 
@@ -3272,11 +3297,11 @@ function displayXPBreakdown()
 		languageLevelContainer.appendChild(currentLevelProgressElement);
 
 
-		const numDays = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
+		const predictionData = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
 		
-		if (numDays != -1 && options.XPPrediction)
+		if (predictionData.time >= 0 && options.XPPrediction)
 		{
-			const prediction = createPredictionElement("XPLevel", {time: numDays});
+			const prediction = createPredictionElement("XPLevel", predictionData);
 
 			XPBox.appendChild(prediction);
 		}
@@ -5578,7 +5603,7 @@ window.onunload = function()
 
 if (document.readyState === "complete" || document.readyState === "interactive")
 {
-	start()
+	start();
 }
 else
 {

@@ -149,6 +149,12 @@
 {
 	font-weight: bold;
 }
+.prediction span:first-of-type
+{
+	font-weight: inherit;
+	text-decoration: underline dashed #777;
+	text-underline-position: under;
+}
 
 .checkpointPrediction,
 .treeLevelPrediction
@@ -157,13 +163,6 @@
 	margin: 1em 1em 0;
 	text-align: center;
 	color: black !important;
-}
-.checkpointPrediction span:first-of-type,
-.treeLevelPrediction span:first-of-type
-{
-	font-weight: inherit;
-	text-decoration: underline dashed #777;
-	text-underline-position: under;
 }
 
 

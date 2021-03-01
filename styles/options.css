@@ -25,8 +25,8 @@ html
 	letter-spacing: 0.03rem;
 	color: var(--text);
 	background: var(--primary);
-	margin: auto;
 	overflow: hidden;
+	margin: auto;
 }
 
 *
@@ -42,12 +42,14 @@ html
 
 body
 {
+	width: 20rem;
 	height: 100%;
 	display: grid;
 	grid-template-rows: auto 1fr auto;
 	position: relative;
 	transition: left 0.5s ease-in;
 	font-family: "Fira Sans", arial, sans-serif;
+	font-size: 75%;
 }
 
 body[page="0"]
@@ -265,11 +267,11 @@ li.subsection:active > img
 }
 .dark img.arrow
 {
-	content: url("../images/arrow_dark.svg");
+	filter: none;
 }
 .light img.arrow
 {
-	content: url("../images/arrow_light.svg");
+	filter: brightness(1.118);
 }
 
 .sectionOptionsList > li

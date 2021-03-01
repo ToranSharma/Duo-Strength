@@ -90,7 +90,7 @@ async function getOptions()
 
 async function getDefaultOptions()
 {
-	const defaultOptions = await import("./defaultOptions.js").then(module => module.default);
+	const defaultOptions = await fetch("defaultOptions.json").then(response => response.json());
 	const cmp = compareOptions(defaultOptions, options);
 	options = {...defaultOptions};
 	return cmp;
@@ -99,7 +99,7 @@ async function getDefaultOptions()
 
 async function disableAllFeatures()
 {
-	const disabledOptions = await import("./disabledOptions.js").then(module => module.default);
+	const disabledOptions = await fetch("disabledOptions.json").then(response => response.json());
 	const enabledOptions = {...options};
 	options = {...options, ...disabledOptions};
 	return compareOptions(enabledOptions, options);

@@ -3,6 +3,11 @@ Changelog
 
 [Unreleased]
 ------------
+-
+
+[v2.0.0] - 2021-03-01
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.0)
 ### Added
 - Focus mode which hides the sidebar and makes the main section of the page
   full width.
@@ -13,6 +18,7 @@ Changelog
   bubble.
   - Options to toggle these buttons for the different lists.
 - Suboption to the Focus First Skills Option to set the priority order for which
+  of the lists at the top of the tree the focused link is from.
 - Option to make sidebar fixed when scrolling down the page, and hidden content
   scrollable.
 - Automatic clicking of new words in lessons to reveal their translations.
@@ -37,7 +43,6 @@ Changelog
   - Option to enable or disable this.
 - A second set of buttons at the bottom of tips pages.
   - Option to enable or disable this.
-  of the lists at the top of the tree is initially focused.
 - Option to hide the cartoon characters in lessons.
 - Sub option to toggle the adding of the practise button to crown 0 skills
 
@@ -1181,6 +1186,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.45...v2.0.0
 [v1.3.45]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.44...v1.3.45
 [v1.3.44]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.43...v1.3.44
 [v1.3.43]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.42...v1.3.43

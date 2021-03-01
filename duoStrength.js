@@ -895,7 +895,7 @@ function daysToNextXPLevel(history, XPLeft)
 	if (firstDate == currentDate && !metGoal)
 	{
 		// The only data from this language is for today and the goal has yet to me met.
-		return -1;
+		return {time: -1};
 	}
 
 	let lastDate;
@@ -922,7 +922,10 @@ function daysToNextXPLevel(history, XPLeft)
 
 	let XPRate = XPTotal/timePeriod; // in units of XP/day
 
-	return Math.ceil(XPLeft/XPRate);
+	return {
+		time: Math.ceil(XPLeft/XPRate),
+		rate: XPRate
+	};
 }
 
 function daysToNextTreeLevel()
@@ -1117,7 +1120,7 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	}
 
 	prediction.appendChild(
-		document.createTextNode(`At your `)
+		document.createTextNode("At your ")
 	);
 
 	prediction.appendChild(
@@ -1127,6 +1130,10 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	if (type !== "XPLevel")
 	{
 		prediction.lastChild.title = `${Number(rate).toFixed(2)} lessons/day with ${lessonsLeft} lesson to go`;
+	}
+	else
+	{
+		prediction.lastChild.title = `${Number(rate).toFixed(2)} XP/day`;
 	}
 
 	prediction.appendChild(
@@ -3290,11 +3297,11 @@ function displayXPBreakdown()
 		languageLevelContainer.appendChild(currentLevelProgressElement);
 
 
-		const numDays = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
+		const predictionData = daysToNextXPLevel(data.history, data.level_points-data.level_progress);
 		
-		if (numDays != -1 && options.XPPrediction)
+		if (predictionData.time >= 0 && options.XPPrediction)
 		{
-			const prediction = createPredictionElement("XPLevel", {time: numDays});
+			const prediction = createPredictionElement("XPLevel", predictionData);
 
 			XPBox.appendChild(prediction);
 		}

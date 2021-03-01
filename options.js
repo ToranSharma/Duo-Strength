@@ -125,7 +125,7 @@ function applyOptions(hideTransitions = false)
 			switch (typeof options[option])
 			{
 				case "boolean":
-					optionElement.checked = options[option];
+					optionElement.checked = optionElement.classList.contains("negative") ? !options[option] : options[option];
 					applyControlledOptionCollapsing(optionElement, optionElement.checked);
 					break;
 				case "string":

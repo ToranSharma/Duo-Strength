@@ -18,6 +18,7 @@ Changelog
   bubble.
   - Options to toggle these buttons for the different lists.
 - Suboption to the Focus First Skills Option to set the priority order for which
+  of the lists at the top of the tree the focused link is from.
 - Option to make sidebar fixed when scrolling down the page, and hidden content
   scrollable.
 - Automatic clicking of new words in lessons to reveal their translations.
@@ -42,7 +43,6 @@ Changelog
   - Option to enable or disable this.
 - A second set of buttons at the bottom of tips pages.
   - Option to enable or disable this.
-  of the lists at the top of the tree is initially focused.
 - Option to hide the cartoon characters in lessons.
 - Sub option to toggle the adding of the practise button to crown 0 skills
 

@@ -3,7 +3,7 @@ let options = {};
 let tabs = [];
 let optionsLoaded;
 
-let undoResetOptions = {};
+let priorOptions = {};
 
 const ordinalLabels = {
 	"0": "Primary",
@@ -51,48 +51,8 @@ async function init()
 			saveOptions(false);
 		}
 	);
-	document.querySelector("#reset").addEventListener("click",
-		async (event) =>
-		{
-			if (event.target.textContent !== "Undo")
-			{
-				undoResetOptions = {...options};
-
-				if (await getDefaultOptions() === false)
-				{
-					applyDarkMode();
-					applyOptions();
-					saveOptions();
-
-					event.target.textContent = "Undo";
-					setTimeout(
-						() =>
-						{
-							event.target.textContent = "Reset to Defaults";
-							undoResetOptions = {};
-						}
-						, 5000
-					);
-				}
-				else
-				{
-					undoResetOptions = {};
-				}
-			}
-			else
-			{
-				options = {...undoResetOptions};
-				undoResetOptions = {};
-
-				applyDarkMode();
-				applyOptions();
-				saveOptions();
-				event.target.textContent = "Reset to Defaults";
-			}
-
-
-		}
-	);
+	document.querySelector("#disableAll").addEventListener("click", modifyOptionsButtonHandler);
+	document.querySelector("#resetDefault").addEventListener("click", modifyOptionsButtonHandler);
 
 	await (optionsLoaded = getOptions());
 	applyDarkMode();
@@ -135,6 +95,14 @@ async function getDefaultOptions()
 	options = {...defaultOptions};
 	return cmp;
 
+}
+
+async function disableAllFeatures()
+{
+	const disabledOptions = await import("./disabledOptions.js").then(module => module.default);
+	const enabledOptions = {...options};
+	options = {...options, ...disabledOptions};
+	return compareOptions(enabledOptions, options);
 }
 
 function applyOptions()
@@ -230,6 +198,48 @@ async function saveOptions(sendToTabs = true)
 				}
 			);
 		}
+	}
+}
+
+async function modifyOptionsButtonHandler(event)
+{
+	if (event.target.textContent !== "Undo")
+	{
+		priorOptions = {...options};
+
+		if (
+			(event.target.id === "disableAll" && await disableAllFeatures() === false)
+			|| (event.target.id === "resetDefault" && await getDefaultOptions() === false)
+		)
+		{
+			applyDarkMode();
+			applyOptions();
+			saveOptions();
+
+			event.target.textContent = "Undo";
+			setTimeout(
+				() =>
+				{
+					event.target.textContent = event.target.id === "disableAll" ? "Disable All" : "Reset to Defaults";
+					priorOptions = {};
+				}
+				, 5000
+			);
+		}
+		else
+		{
+			priorOptions = {};
+		}
+	}
+	else
+	{
+		options = {...priorOptions};
+		priorOptions = {};
+
+		applyDarkMode();
+		applyOptions();
+		saveOptions();
+		event.target.textContent = event.target.id === "disableAll" ? "Disable All" : "Reset to Defaults";
 	}
 }
 

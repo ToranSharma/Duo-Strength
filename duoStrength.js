@@ -585,7 +585,7 @@ function removeTotalStrengthBox()
 
 function removeLanguagesInfo()
 {
-	document.getElementById("#languagesBox")?.remove();
+	document.querySelector("#languagesBox")?.remove();
 }
 
 function removePractiseButton()

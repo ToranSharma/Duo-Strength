@@ -111,15 +111,20 @@ footer
 {
 	height: 2rem;
 	display: grid;
-	grid-template-columns: 5fr [reset] 6fr [dark] 5fr;
+	grid-template-columns: [disableAll] 5fr [resetDefault] 8fr [dark] 5fr;
+	grid-gap: 0.5rem;
 	align-content: stretch;
 	justify-content: center;
 	padding: 0.5rem;
 	border-top: 0.1rem solid var(--secondary);
 }
-footer button#reset
+footer button#disableAll
 {
-	grid-column: reset;
+	grid-column: disableAll;
+}
+footer button#resetDefault
+{
+	grid-column: resetDefault;
 }
 footer label
 {
@@ -127,7 +132,6 @@ footer label
 	grid-row: 1;
 	justify-self: center;
 	align-self: center;
-	margin-left: 0.5rem;
 	padding-right: 1rem;
 	text-align: center;
 }

@@ -76,7 +76,7 @@ then
 		x
 	}" CHANGELOG.md
 else
-	sed -i -b "/\[Unreleased\].$/ {	
+	sed -i -b "/\[Unreleased\]$/ {	
 	n
 	a\
 		-$( echo '\n' )

@@ -8,6 +8,9 @@ Changelog
 [v2.0.1] - 2021-03-02
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.1)
+### Added
+- Option to keep border around question text and buttons when hiding cartoons.
+
 ### Changed
 - Focus Mode is no longer applied on pages other than the learn and tips pages.
 - Wording of the option that hides the leauge table to be in the positive sense.

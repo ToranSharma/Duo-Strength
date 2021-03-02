@@ -71,7 +71,7 @@ const LOCKED_SKILL_POPOUT_SELECTOR = "._1fMEX";
 const MOBILE_TIPS_PAGE_HEADER_SELECTOR = "._36P0W";
 const CARTOON_CONTAINER = "F2B9m"; // used only in styles/stylesheet.css
 const HINT_SENTENCE_CONTAINER = "_1Q4WV"; // used only in styles/stylesheet.css
-const HINT_SENTENCE_BUBBLE_ARROW = "_2nhmY"; // used only in styles/stylesheet.css
+const HINT_SENTENCE_BUBBLE_ARROW = "_3fuMA"; // used only in styles/stylesheet.css
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -5451,10 +5451,11 @@ async function init()
 			if (options.hideCartoons)
 			{
 				document.body.classList.add("hideCartoons");
+				document.body.classList[(options.keepQuestionBorders)? "add" : "remove"]("keepQuestionBorders");
 			}
 			else
 			{
-				document.body.classList.remove("hideCartoons");
+				document.body.classList.remove("hideCartoons", "keepQuestionBorders");
 			}
 
 			lastSkill = await retrieveLastSkill();

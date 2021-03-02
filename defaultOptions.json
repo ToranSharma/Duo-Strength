@@ -82,6 +82,7 @@
 		"revealHotkeyCode":							"Ctrl+Alt+H",
 	"revealNewWordTranslation":					true,
 	"hideCartoons":								false,
+	"keepQuestionBorders":						false,
 
 	"addTipsPagePractiseButton":				true,
 	"addTipsPageBottomButtons":					true,

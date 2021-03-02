@@ -252,7 +252,7 @@ function storeTreeLevel()
 									{
 										if (Object.entries(data).length !== 0)
 										{
-											resolve(
+											resolve2(
 												Object.keys(data.progress).filter(
 													(key) =>
 													{
@@ -267,7 +267,7 @@ function storeTreeLevel()
 												)
 											);
 										}
-										resolve();
+										resolve2({});
 									}
 								);
 							}

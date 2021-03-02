@@ -5160,6 +5160,10 @@ function childListMutationHandle(mutationsList, observer)
 			// Language list added, add the flag borders
 			addFlagBorders();
 		}
+
+		// One of the above may have triggered a re adding of an XP or Crowns Box.
+		// Make sure it is still in the right order.
+		arrangeSidebarBoxOrder();
 	}
 
 	if (lessonMainSectionContentsReplaced)

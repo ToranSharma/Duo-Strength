@@ -2514,7 +2514,9 @@ function addButtonsToTipsPage()
 function applyFocusMode()
 {
 	// Hide the sidebar if in focus mode.
-	if (options.focusMode && onMainPage)
+	if (
+		options.focusMode && ((new RegExp("/(learn|tips/?)")).test(window.location.pathname))
+	)
 	{
 		rootElem.classList.add("focusMode");
 	}
@@ -5170,15 +5172,15 @@ function classNameMutationHandle(mutationsList, observer)
 		// There has been a page change, either to or from the main page.
 
 
+		applyFocusMode();
+		applyFixedSidebar();
+
 		// check if we are now on the main page
 		if (window.location.pathname == "/learn")
 		{
 			// on main page
 			onMainPage = true;
 			
-			applyFocusMode();
-			applyFixedSidebar();
-
 			// check if language has been previously set as we only set it in init if we were on the main page
 			if (language != "")
 			{
@@ -5203,9 +5205,6 @@ function classNameMutationHandle(mutationsList, observer)
 			
 			// We may be on a tips page so try to add the buttons.
 			addButtonsToTipsPage();
-
-			// Don't want to be in focus mode if we aren't on the learn page
-			rootElem.classList.remove("focusMode");
 		}
 	}
 	if (questionCheckStatusChange)

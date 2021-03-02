@@ -3960,6 +3960,10 @@ function getSuggestion()
 		skillsByCrowns[skill.skill_progress.level].push(skill);
 	}
 
+	// Remove crown 2 grammar skills as these are at max level,
+	// so practising them will not contribute to getting to tree level 3.
+	skillsByCrowns[2] = skillsByCrowns[2].filter(skill => skill.category !== "grammar");
+
 	/*
 		0: Random
 		1: First
@@ -3977,12 +3981,6 @@ function getSuggestion()
 	}
 	else
 	{
-		if (treeLevel === 2)
-		{
-			// Remove crown 2 grammar skills as these are at max level,
-			// so practising them will not contribute to getting to tree level 3.
-			skillsByCrowns[treeLevel].filter(skill => skill.category !== "grammar");
-		}
 		const numSkillsAtTreeLevel = skillsByCrowns[treeLevel].length;
 		switch (options.skillSuggestionMethod)
 		{

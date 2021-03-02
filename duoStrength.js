@@ -2514,7 +2514,7 @@ function addButtonsToTipsPage()
 function applyFocusMode()
 {
 	// Hide the sidebar if in focus mode.
-	if (options.focusMode)
+	if (options.focusMode && onMainPage)
 	{
 		rootElem.classList.add("focusMode");
 	}
@@ -5203,6 +5203,9 @@ function classNameMutationHandle(mutationsList, observer)
 			
 			// We may be on a tips page so try to add the buttons.
 			addButtonsToTipsPage();
+
+			// Don't want to be in focus mode if we aren't on the learn page
+			rootElem.classList.remove("focusMode");
 		}
 	}
 	if (questionCheckStatusChange)

@@ -14,7 +14,7 @@ Changelog
 
 ### Changed
 - Focus Mode is no longer applied on pages other than the learn and tips pages.
-- Wording of the option that hides the leauge table to be in the positive sense.
+- Wording of the option that hides the league table to be in the positive sense.
 
 ### Fixed
 - Default options loading users with no saved options.

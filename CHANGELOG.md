@@ -10,6 +10,7 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.1)
 ### Changed
 - Focus Mode is no longer applied on pages other than the learn and tips pages.
+- Wording of the option that hides the leauge table to be in the positive sense.
 
 ### Fixed
 - Default options loading users with no saved options.

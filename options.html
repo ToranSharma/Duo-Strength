@@ -9,7 +9,7 @@
 <body page="0">
 	<header>
 		<h1>Duo Strength Options</h1>
-		<span id="version">v2.0.0</span>
+		<span id="version">v2.0.1</span>
 	</header>
 	<ul>
 		<li class="section">
@@ -29,11 +29,11 @@
 			<h3 class="sectionHeading">Mastered Skills</h3>
 			<ul class="sectionOptionsList">
 				<li class="checkboxOption">
-					<label for="ignoreMasteredSkills">Force Skills Marked as Matersted to 100% Strength</label>
+					<label for="ignoreMasteredSkills">Force Skills Marked as Mastered to 100% Strength</label>
 					<input class="option" id="ignoreMasteredSkills" type="checkbox" controlling='[false]:["#masteredButton"]' />
 				</li>
 				<li class="checkboxOption">
-					<label for="masteredButton">Add Button to Mark Skills as mastered in Skill Popouts</label>
+					<label for="masteredButton">Add Button to Mark Skills as Mastered in Skill Popouts</label>
 					<input class="option" id="masteredButton" type="checkbox" />
 				</li>
 				<li class="button">
@@ -74,23 +74,23 @@
 						</li>
 						<li class="section">
 							<h3 class="sectionHeading">Sorting Method</h3>
-							<ul class="sectionOptionsList multiPart" id="needsStrengtheningListSortOrder">
+							<ul class="sectionOptionsList multiPart" id="needsStrengtheningListSortOrder" furtherItemCutoff="4" maxParts="3">
 								<li class="selectOption">
 									<label for="needsStrengtheningListSortOrder0">Primary</label>
 									<select class="option" id="needsStrengtheningListSortOrder0">
-										<option value="0" selected="true">Tree Order</option>
-										<option value="1">Reverse Tree Order</option>
-										<option value="2">Alphabetical</option>
-										<option value="3">Reverse Alphabetical</option>
+										<option value="0" invalidNextValues="1">Tree Order</option>
+										<option value="1" invalidNextValues="1">Reverse Tree Order</option>
+										<option value="2" invalidNextValues="3">Alphabetical</option>
+										<option value="3" invalidNextValues="2">Reverse Alphabetical</option>
 										<option value="4">Random</option>
-										<option value="5">Strength Asc.</option>
-										<option value="6">Strength Desc.</option>
-										<option value="7">Crown Level Asc.</option>
-										<option value="8">Crown Level Desc.</option>
+										<option value="5" invalidNextValues="6">Strength Asc.</option>
+										<option value="6" invalidNextValues="5">Strength Desc.</option>
+										<option value="7" invalidNextValues="8">Crown Level Asc.</option>
+										<option value="8" invalidNextValues="7">Crown Level Desc.</option>
 									</select>
 								</li>
 								<li>
-									<span class="addSortList">Add another sorting criterion</span>
+									<span class="addPart">Add another sorting criterion</span>
 								</li>
 							</ul>
 						</li>
@@ -163,7 +163,7 @@
 									<input class="option"  id="hideSuggestionNonStrengthened" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
-									<label for="hideSuggestionWithCrackedSkills">Hide Suggestion When There Arre Cracked Skills</label>
+									<label for="hideSuggestionWithCrackedSkills">Hide Suggestion When There Are Cracked Skills</label>
 									<input class="option"  id="hideSuggestionWithCrackedSkills" type="checkbox" />
 								</li>
 								<li class="checkboxOption">
@@ -237,8 +237,8 @@
 					</ul>
 				</li>
 				<li class="checkboxOption">
-					<label for="showLeagues">Show League Table in Sidebar</label>
-					<input class="option" id="showLeagues" type="checkbox" />
+					<label for="showLeagues">Hide League Table in Sidebar</label>
+					<input class="option negative" id="showLeagues" type="checkbox" />
 				</li>
 				<li class="checkboxOption">
 					<label for="treeLevelBorder">Coloured Flag Border in Language List to Show Tree Level</label>
@@ -428,6 +428,29 @@
 			</ul>
 		</li>
 		<li class="section">
+			<h3 class="sectionHeading">Sidebar Box Sort Order</h3>
+			<ul class="sectionOptionsList multiPart" id="sidebarBoxOrder" furtherItemCutoff=" " maxParts="9">
+				<li class="selectOption">
+					<label>Top</label>
+					<select class="option" id="sidebarBoxOrder0">
+						<option value=" ">Unchanged</option>
+						<option value="leagues" invalidNextValues=" ">League Table</option>
+						<option value="XPBox" invalidNextValues=" ">Daily Goal (XP Info)</option>
+						<option value="languagesBox" invalidNextValues=" ">Languages Info</option>
+						<option value="totalStrengthBox" invalidNextValues=" ">Total Strength Box</option>
+						<option value="crownsBox" invalidNextValues=" ">Crowns Info</option>
+						<option value="ad" invalidNextValues=" ">Advert</option>
+						<option value="achievementBox" invalidNextValues=" ">Achievements</option>
+						<option value="friendsBox" invalidNextValues=" ">Friends</option>
+						<option value="socialButtonsBox" invalidNextValues=" ">Social Media Buttons</option>
+					</select>
+				</li>
+				<li>
+					<span class="addPart">Add another box to the sort order</span>
+				</li>
+			</ul>
+		</li>
+		<li class="section">
 			<h3 class="sectionHeading">Lessons Enhancements</h3>
 			<ul class="sectionOptionsList">
 				<li class="subsection">
@@ -480,7 +503,11 @@
 				</li>
 				<li class="checkboxOption">
 					<label for="hideCartoons">Hide Cartoon Characters in Lessons</label>
-					<input class="option" id="hideCartoons" type="checkbox" />
+					<input class="option" id="hideCartoons" type="checkbox" controlling='[false]:["#keepQuestionBorders"]' />
+				</li>
+				<li class="checkboxOption">
+					<label for="keepQuestionBorders">Keep Border Around Questions When Cartoons are Hidden</label>
+					<input class="option" id="keepQuestionBorders" type="checkbox" />
 				</li>
 			</ul>
 		</li>

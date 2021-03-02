@@ -5,6 +5,29 @@ Changelog
 ------------
 -
 
+[v2.0.1] - 2021-03-02
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.1)
+### Added
+- Multi part option to pick the order of boxes in the sidebar.
+- Option to keep border around question text and buttons when hiding cartoons.
+
+### Changed
+- Focus Mode is no longer applied on pages other than the learn and tips pages.
+- Wording of the option that hides the league table to be in the positive sense.
+- L0 bonus skills cannot have "PRACTISE" button added, due to issue where
+  duolingo still gives out crowns after practice sessions.
+
+### Fixed
+- Default options loading users with no saved options.
+- Typos in options list.
+- Flag borders tree level extraction from progress history.
+- Show only needs attention option from trying to be applied on pages other than
+  the learn page.
+- Removal of L2 grammar skills from the skill suggestion choices on L2 trees.
+
+
+
 [v2.0.0] - 2021-03-01
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.0)
@@ -1186,6 +1209,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.1]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.45...v2.0.0
 [v1.3.45]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.44...v1.3.45
 [v1.3.44]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.43...v1.3.44

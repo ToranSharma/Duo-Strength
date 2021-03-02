@@ -72,6 +72,10 @@ const MOBILE_TIPS_PAGE_HEADER_SELECTOR = "._36P0W";
 const CARTOON_CONTAINER = "F2B9m"; // used only in styles/stylesheet.css
 const HINT_SENTENCE_CONTAINER = "_1Q4WV"; // used only in styles/stylesheet.css
 const HINT_SENTENCE_BUBBLE_ARROW = "_3fuMA"; // used only in styles/stylesheet.css
+const AD = "_1UOwI _3bfsh";
+const ACHIEVEMENT_BOX = "Yth9H";
+const FRIENDS_TABLE_TITLE_SELECTOR = ".-AHpg";
+const SOCIAL_BUTTONS_HEADER_SELECTOR = "._3qTe3";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -3884,6 +3888,82 @@ function fixPopoutAlignment(skillPopout)
 	skillPopout.firstChild.lastChild.removeAttribute("style");
 }
 
+function arrangeSidebarBoxOrder()
+{
+	const sidebarBoxes = Array.from(document.querySelectorAll(`.${SIDEBAR} > div`)).map(element => ({element: element, type: getSidebarBoxType(element)}));
+	sidebarBoxes.sort(sortByOrderPreference);
+	sidebarBoxes.forEach((({element, type}) => element.parentElement.appendChild(element)));
+}
+
+function getSidebarBoxType(boxElement)
+{
+	if (boxElement.contains(document.querySelector(`.${LEAGUE_TABLE}`)))
+	{
+		return "leagues";
+	}
+	if (boxElement.classList.contains(DAILY_GOAL_SIDEBAR_CONTAINER))
+	{
+		return "XPBox";
+	}
+	else if (boxElement.id === "languagesBox")
+	{
+		return "languagesBox";
+	}
+	else if (boxElement.id === "totalStrengthBox")
+	{
+		return "totalStrengthBox";
+	}
+	else if (boxElement.id === "sidebarCrownsInfoContainer")
+	{
+		return "crownsBox";
+	}
+	else if (AD.split(" ").every((classPart) => boxElement.classList.contains(classPart)))
+	{
+		return "ad";
+	}
+	else if (boxElement.classList.contains(ACHIEVEMENT_BOX))
+	{
+		return "achievementBox";
+	}
+	else if (boxElement.contains(document.querySelector(FRIENDS_TABLE_TITLE_SELECTOR)))
+	{
+		return "friendsBox";
+	}
+	else if (boxElement.contains(document.querySelector(SOCIAL_BUTTONS_HEADER_SELECTOR)))
+	{
+		return "socialButtonsBox";
+	}
+	else
+	{
+		return "unknown";
+	}
+}
+
+function sortByOrderPreference(a, b)
+{
+	const priorityA = getPriorityOfSidebarBox(a);
+	const priorityB = getPriorityOfSidebarBox(b);
+
+	return priorityA - priorityB;
+}
+
+function getPriorityOfSidebarBox(box)
+{
+	let priority = options.sidebarBoxOrder.split(",").indexOf(box.type);
+	if (priority === -1)
+	{
+		const unsortedOrder = ["leagues","XPBox","languagesBox","totalStrengthBox","crownsBox","ad","achievementBox","friendsBox","socialButtonsBox"];
+		priority = 100 + unsortedOrder.indexOf(box.type);
+	}
+
+	if (priority === 99)
+	{
+		priority = 1000;
+	}
+
+	return priority;
+}
+
 function getStrengths()
 {
 	const strengths = [[],[]]; // first array holds strengths for normal skills, second for bonus skills
@@ -4138,6 +4218,11 @@ function addFeatures()
 		{
 			removeLanguagesInfo();
 		}
+	}
+
+	// Order the Sidebar Boxes
+	{
+		arrangeSidebarBoxOrder();
 	}
 
 	// Lists of skills that need attention next

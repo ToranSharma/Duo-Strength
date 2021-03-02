@@ -9,6 +9,7 @@ Changelog
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.1)
 ### Added
+- Multi part option to pick the order of boxes in the sidebar.
 - Option to keep border around question text and buttons when hiding cartoons.
 
 ### Changed

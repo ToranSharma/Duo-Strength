@@ -72,6 +72,8 @@
 		"languagesInfoSortOrder":					"0",
 	"totalStrengthBox":							true,
 
+	"sidebarBoxOrder":							" ",
+
 
 		"showTranslationText":						true,
 		"showToggleHidingTextButton":				true,

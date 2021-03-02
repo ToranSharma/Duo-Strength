@@ -74,23 +74,23 @@
 						</li>
 						<li class="section">
 							<h3 class="sectionHeading">Sorting Method</h3>
-							<ul class="sectionOptionsList multiPart" id="needsStrengtheningListSortOrder">
+							<ul class="sectionOptionsList multiPart" id="needsStrengtheningListSortOrder" furtherItemCutoff="4" maxParts="3">
 								<li class="selectOption">
 									<label for="needsStrengtheningListSortOrder0">Primary</label>
 									<select class="option" id="needsStrengtheningListSortOrder0">
-										<option value="0" selected="true">Tree Order</option>
-										<option value="1">Reverse Tree Order</option>
-										<option value="2">Alphabetical</option>
-										<option value="3">Reverse Alphabetical</option>
+										<option value="0" invalidNextValues="1">Tree Order</option>
+										<option value="1" invalidNextValues="1">Reverse Tree Order</option>
+										<option value="2" invalidNextValues="3">Alphabetical</option>
+										<option value="3" invalidNextValues="2">Reverse Alphabetical</option>
 										<option value="4">Random</option>
-										<option value="5">Strength Asc.</option>
-										<option value="6">Strength Desc.</option>
-										<option value="7">Crown Level Asc.</option>
-										<option value="8">Crown Level Desc.</option>
+										<option value="5" invalidNextValues="6">Strength Asc.</option>
+										<option value="6" invalidNextValues="5">Strength Desc.</option>
+										<option value="7" invalidNextValues="8">Crown Level Asc.</option>
+										<option value="8" invalidNextValues="7">Crown Level Desc.</option>
 									</select>
 								</li>
 								<li>
-									<span class="addSortList">Add another sorting criterion</span>
+									<span class="addPart">Add another sorting criterion</span>
 								</li>
 							</ul>
 						</li>
@@ -424,6 +424,29 @@
 				<li class="checkboxOption">
 					<label for="totalStrengthBox">Total Strength Box</label>
 					<input class="option" id="totalStrengthBox" type="checkbox" />
+				</li>
+			</ul>
+		</li>
+		<li class="section">
+			<h3 class="sectionHeading">Sidebar Box Sort Order</h3>
+			<ul class="sectionOptionsList multiPart" id="sidebarBoxOrder" furtherItemCutoff=" " maxParts="9">
+				<li class="selectOption">
+					<label>Top</label>
+					<select class="option" id="sidebarBoxOrder0">
+						<option value=" ">Unchanged</option>
+						<option value="leagues" invalidNextValues=" ">League Table</option>
+						<option value="XPBox" invalidNextValues=" ">Daily Goal (XP Info)</option>
+						<option value="languagesBox" invalidNextValues=" ">Languages Info</option>
+						<option value="totalStrengthBox" invalidNextValues=" ">Total Strength Box</option>
+						<option value="crownsBox" invalidNextValues=" ">Crowns Info</option>
+						<option value="ad" invalidNextValues=" ">Advert</option>
+						<option value="achievementBox" invalidNextValues=" ">Achievements</option>
+						<option value="friendsBox" invalidNextValues=" ">Friends</option>
+						<option value="socialButtonsBox" invalidNextValues=" ">Social Media Buttons</option>
+					</select>
+				</li>
+				<li>
+					<span class="addPart">Add another box to the sort order</span>
 				</li>
 			</ul>
 		</li>

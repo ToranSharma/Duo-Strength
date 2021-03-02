@@ -28,6 +28,8 @@
 		"languagesInfo":							false,
 	"totalStrengthBox":							false,
 
+	"sidebarBoxOrder":							" ",
+
 	
 		"showTranslationText":						true,
 		"showToggleHidingTextButton":				false,

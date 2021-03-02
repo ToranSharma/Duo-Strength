@@ -368,14 +368,14 @@ li.selectOption
 	align-items: center;
 }
 
-.addSortList
+.addPart
 {
 	display: block;
 	padding: 0.5rem;
 	cursor: pointer;
 	position: relative;
 }
-.addSortList::after
+.addPart::after
 {
 	content:"+";
 	position: absolute;
@@ -385,7 +385,7 @@ li.selectOption
 	font-size: 1.5rem;
 	color: var(--contrast);
 }
-.addSortList:active::after
+.addPart:active::after
 {
 	transform: translateY(-50%) scale(0.8);
 }

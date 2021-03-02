@@ -8,8 +8,18 @@ Changelog
 [v2.0.1] - 2021-03-02
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.1)
+### Changed
+- Focus Mode is no longer applied on pages other than the learn and tips pages.
+
 ### Fixed
+- Default options loading users with no saved options.
 - Typos in options list.
+- Flag borders tree level extraction from progress history.
+- Show only needs attention option from trying to be applied on pages other than
+  the learn page.
+- Removal of L2 grammar skills from the skill suggestion choices on L2 trees.
+
+
 
 [v2.0.0] - 2021-03-01
 -----------------

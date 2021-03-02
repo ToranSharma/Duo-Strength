@@ -2261,8 +2261,16 @@ function addPractiseButton(skillPopout)
 	const skillLevel = levelContainer.textContent.slice(-3,-2);
 	const maxLevel = levelContainer.textContent.slice(-1);
 	if (skillLevel === maxLevel || (skillLevel === "0" && !options.crownZeroPractiseButton))
-		return false; // Skill is at max level so only practising is possible
+	{
+		return false;
+	}
 
+	const skillObject = getSkillFromPopout(skillPopout);
+	if (skillObject.bonus)
+	{
+		// Issue with practising L0 bonus skill, crown can still be earned.
+		return false;
+	}
 	const startButton = document.querySelector(`[data-test="start-button"]`);
 	startButton.textContent = "START LESSON";
 
@@ -2271,7 +2279,8 @@ function addPractiseButton(skillPopout)
 	practiseButton.title = "Practising this skill will strengthen it, but will not contribute any progress towards earning the next crown.";
 	practiseButton.setAttribute("data-test", "practise-button");
 
-	const urlTitle = getSkillFromPopout(skillPopout).url_title;
+
+	const urlTitle = skillObject.url_title;
 	practiseButton.addEventListener("click", (event) => {
 		const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
 		const lastSkill = {

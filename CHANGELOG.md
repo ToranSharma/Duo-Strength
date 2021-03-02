@@ -15,6 +15,8 @@ Changelog
 ### Changed
 - Focus Mode is no longer applied on pages other than the learn and tips pages.
 - Wording of the option that hides the league table to be in the positive sense.
+- L0 bonus skills cannot have "PRACTISE" button added, due to issue where
+  duolingo still gives out crowns after practice sessions.
 
 ### Fixed
 - Default options loading users with no saved options.

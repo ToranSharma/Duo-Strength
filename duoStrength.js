@@ -125,7 +125,7 @@ const childListObserver = new MutationObserver(childListMutationHandle);
 
 async function retrieveDefaultOptions()
 {
-	return fetch(chrome.runtime.getURL("defaultOptions.json")).then(response => response.json);
+	return fetch(chrome.runtime.getURL("defaultOptions.json")).then(response => response.json());
 }
 
 function retrieveOptions()

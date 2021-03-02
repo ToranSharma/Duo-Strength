@@ -71,7 +71,11 @@ const LOCKED_SKILL_POPOUT_SELECTOR = "._1fMEX";
 const MOBILE_TIPS_PAGE_HEADER_SELECTOR = "._36P0W";
 const CARTOON_CONTAINER = "F2B9m"; // used only in styles/stylesheet.css
 const HINT_SENTENCE_CONTAINER = "_1Q4WV"; // used only in styles/stylesheet.css
-const HINT_SENTENCE_BUBBLE_ARROW = "_2nhmY"; // used only in styles/stylesheet.css
+const HINT_SENTENCE_BUBBLE_ARROW = "_3fuMA"; // used only in styles/stylesheet.css
+const AD = "_1UOwI _3bfsh";
+const ACHIEVEMENT_BOX = "Yth9H";
+const FRIENDS_TABLE_TITLE_SELECTOR = ".-AHpg";
+const SOCIAL_BUTTONS_HEADER_SELECTOR = "._3qTe3";
 
 const flagYOffsets = {
 	0:	"en", 32: "es", 64: "fr", 96: "de",
@@ -125,7 +129,7 @@ const childListObserver = new MutationObserver(childListMutationHandle);
 
 async function retrieveDefaultOptions()
 {
-	return fetch(chrome.runtime.getURL("defaultOptions.json")).then(response => response.json);
+	return fetch(chrome.runtime.getURL("defaultOptions.json")).then(response => response.json());
 }
 
 function retrieveOptions()
@@ -252,7 +256,7 @@ function storeTreeLevel()
 									{
 										if (Object.entries(data).length !== 0)
 										{
-											resolve(
+											resolve2(
 												Object.keys(data.progress).filter(
 													(key) =>
 													{
@@ -267,7 +271,7 @@ function storeTreeLevel()
 												)
 											);
 										}
-										resolve();
+										resolve2({});
 									}
 								);
 							}
@@ -2257,8 +2261,16 @@ function addPractiseButton(skillPopout)
 	const skillLevel = levelContainer.textContent.slice(-3,-2);
 	const maxLevel = levelContainer.textContent.slice(-1);
 	if (skillLevel === maxLevel || (skillLevel === "0" && !options.crownZeroPractiseButton))
-		return false; // Skill is at max level so only practising is possible
+	{
+		return false;
+	}
 
+	const skillObject = getSkillFromPopout(skillPopout);
+	if (skillObject.bonus)
+	{
+		// Issue with practising L0 bonus skill, crown can still be earned.
+		return false;
+	}
 	const startButton = document.querySelector(`[data-test="start-button"]`);
 	startButton.textContent = "START LESSON";
 
@@ -2267,7 +2279,8 @@ function addPractiseButton(skillPopout)
 	practiseButton.title = "Practising this skill will strengthen it, but will not contribute any progress towards earning the next crown.";
 	practiseButton.setAttribute("data-test", "practise-button");
 
-	const urlTitle = getSkillFromPopout(skillPopout).url_title;
+
+	const urlTitle = skillObject.url_title;
 	practiseButton.addEventListener("click", (event) => {
 		const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
 		const lastSkill = {
@@ -2514,7 +2527,9 @@ function addButtonsToTipsPage()
 function applyFocusMode()
 {
 	// Hide the sidebar if in focus mode.
-	if (options.focusMode)
+	if (
+		options.focusMode && ((new RegExp("/(learn|tips/?)")).test(window.location.pathname))
+	)
 	{
 		rootElem.classList.add("focusMode");
 	}
@@ -3685,6 +3700,10 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 function showOnlyNeededSkills()
 {
+	if (!onMainPage)
+	{
+		return false;
+	}
 	// Remove existing reveal button
 	document.querySelectorAll(`#revealHiddenSkillsButton`).forEach(button => button.remove());
 
@@ -3878,6 +3897,82 @@ function fixPopoutAlignment(skillPopout)
 	skillPopout.firstChild.lastChild.removeAttribute("style");
 }
 
+function arrangeSidebarBoxOrder()
+{
+	const sidebarBoxes = Array.from(document.querySelectorAll(`.${SIDEBAR} > div`)).map(element => ({element: element, type: getSidebarBoxType(element)}));
+	sidebarBoxes.sort(sortByOrderPreference);
+	sidebarBoxes.forEach((({element, type}) => element.parentElement.appendChild(element)));
+}
+
+function getSidebarBoxType(boxElement)
+{
+	if (boxElement.contains(document.querySelector(`.${LEAGUE_TABLE}`)))
+	{
+		return "leagues";
+	}
+	if (boxElement.classList.contains(DAILY_GOAL_SIDEBAR_CONTAINER))
+	{
+		return "XPBox";
+	}
+	else if (boxElement.id === "languagesBox")
+	{
+		return "languagesBox";
+	}
+	else if (boxElement.id === "totalStrengthBox")
+	{
+		return "totalStrengthBox";
+	}
+	else if (boxElement.id === "sidebarCrownsInfoContainer")
+	{
+		return "crownsBox";
+	}
+	else if (AD.split(" ").every((classPart) => boxElement.classList.contains(classPart)))
+	{
+		return "ad";
+	}
+	else if (boxElement.classList.contains(ACHIEVEMENT_BOX))
+	{
+		return "achievementBox";
+	}
+	else if (boxElement.contains(document.querySelector(FRIENDS_TABLE_TITLE_SELECTOR)))
+	{
+		return "friendsBox";
+	}
+	else if (boxElement.contains(document.querySelector(SOCIAL_BUTTONS_HEADER_SELECTOR)))
+	{
+		return "socialButtonsBox";
+	}
+	else
+	{
+		return "unknown";
+	}
+}
+
+function sortByOrderPreference(a, b)
+{
+	const priorityA = getPriorityOfSidebarBox(a);
+	const priorityB = getPriorityOfSidebarBox(b);
+
+	return priorityA - priorityB;
+}
+
+function getPriorityOfSidebarBox(box)
+{
+	let priority = options.sidebarBoxOrder.split(",").indexOf(box.type);
+	if (priority === -1)
+	{
+		const unsortedOrder = ["leagues","XPBox","languagesBox","totalStrengthBox","crownsBox","ad","achievementBox","friendsBox","socialButtonsBox"];
+		priority = 100 + unsortedOrder.indexOf(box.type);
+	}
+
+	if (priority === 99)
+	{
+		priority = 1000;
+	}
+
+	return priority;
+}
+
 function getStrengths()
 {
 	const strengths = [[],[]]; // first array holds strengths for normal skills, second for bonus skills
@@ -3954,6 +4049,10 @@ function getSuggestion()
 		skillsByCrowns[skill.skill_progress.level].push(skill);
 	}
 
+	// Remove crown 2 grammar skills as these are at max level,
+	// so practising them will not contribute to getting to tree level 3.
+	skillsByCrowns[2] = skillsByCrowns[2].filter(skill => skill.category !== "grammar");
+
 	/*
 		0: Random
 		1: First
@@ -3971,12 +4070,6 @@ function getSuggestion()
 	}
 	else
 	{
-		if (treeLevel === 2)
-		{
-			// Remove crown 2 grammar skills as these are at max level,
-			// so practising them will not contribute to getting to tree level 3.
-			skillsByCrowns[treeLevel].filter(skill => skill.category !== "grammar");
-		}
 		const numSkillsAtTreeLevel = skillsByCrowns[treeLevel].length;
 		switch (options.skillSuggestionMethod)
 		{
@@ -4134,6 +4227,11 @@ function addFeatures()
 		{
 			removeLanguagesInfo();
 		}
+	}
+
+	// Order the Sidebar Boxes
+	{
+		arrangeSidebarBoxOrder();
 	}
 
 	// Lists of skills that need attention next
@@ -5071,6 +5169,10 @@ function childListMutationHandle(mutationsList, observer)
 			// Language list added, add the flag borders
 			addFlagBorders();
 		}
+
+		// One of the above may have triggered a re adding of an XP or Crowns Box.
+		// Make sure it is still in the right order.
+		arrangeSidebarBoxOrder();
 	}
 
 	if (lessonMainSectionContentsReplaced)
@@ -5170,15 +5272,15 @@ function classNameMutationHandle(mutationsList, observer)
 		// There has been a page change, either to or from the main page.
 
 
+		applyFocusMode();
+		applyFixedSidebar();
+
 		// check if we are now on the main page
 		if (window.location.pathname == "/learn")
 		{
 			// on main page
 			onMainPage = true;
 			
-			applyFocusMode();
-			applyFixedSidebar();
-
 			// check if language has been previously set as we only set it in init if we were on the main page
 			if (language != "")
 			{
@@ -5447,10 +5549,11 @@ async function init()
 			if (options.hideCartoons)
 			{
 				document.body.classList.add("hideCartoons");
+				document.body.classList[(options.keepQuestionBorders)? "add" : "remove"]("keepQuestionBorders");
 			}
 			else
 			{
-				document.body.classList.remove("hideCartoons");
+				document.body.classList.remove("hideCartoons", "keepQuestionBorders");
 			}
 
 			lastSkill = await retrieveLastSkill();

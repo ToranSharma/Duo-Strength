@@ -120,7 +120,7 @@ function applyOptions(hideTransitions = false)
 			// Option not found in page, might be an old option, let's remove it and save the options at the end
 			delete options[option];
 		}
-		else if (option !== "needsStrengtheningListSortOrder")
+		else if (!optionElement.classList.contains("multiPart"))
 		{
 			switch (typeof options[option])
 			{
@@ -136,36 +136,39 @@ function applyOptions(hideTransitions = false)
 		}
 		else
 		{
-			// needsStrengtheningListOrder is a multi part option, encoded in one string with comma seperated values
-			const sortingCriteria = options[option].split(",");
-			const addButton = optionElement.querySelector(".addSortList");
+			// Multi part option, encoded in one string with comma seperated values
+			const parts = options[option].split(",");
+			const addButton = optionElement.querySelector(".addPart");
 
-			addButton.removeEventListener("click", addSortListButtonClickHandler);
-			addButton.addEventListener("click", addSortListButtonClickHandler);
+			addButton.removeEventListener("click", addPartButtonClickHandler);
+			addButton.addEventListener("click", addPartButtonClickHandler);
 
 			// Make sure there is only one part initially
 			removePartsAfter(document.querySelector(`#${option} .option`));
-			sortingCriteria.forEach(
-				(criterion, index) =>
+
+			parts.forEach(
+				(partValue, index) =>
 				{
 					const selectElement = document.querySelector(`#${option+index}`);
-					selectElement.value = criterion;
+					selectElement.value = partValue;
 
-					if (criterion > "4")
+					const furtherItemCutoffIndex = Array.from(selectElement.children).indexOf(selectElement.querySelector(`option[value="${optionElement.getAttribute("furtherItemCutoff")}"]`));
+
+					if (selectElement.selectedIndex > furtherItemCutoffIndex)
 					{
-						// some further sorting can be done
-						if (index !== sortingCriteria.length - 1)
+						// some further parts can be added
+						if (index !== parts.length - 1)
 						{
-							// not the last criterion
+							// not the last part
 							// need to add another list
 							const listItem = selectElement.parentNode;
 							const newList = newSortList(listItem);
-							listItem.parentNode.insertBefore(newList, listItem.nextSibling);
+							listItem.parentNode.insertBefore(newList, addButton.parentNode);
 						}
-						else if (index === 2)
+						else if (index === Number(optionElement.getAttribute("maxParts")) - 1)
 						{
-							// last saved criterion and last possible criterion
-							// no more ambiguity in the list
+							// last saved part and last possible part
+							// nothing more left tha can be added
 							// hide the button to add another drop down list
 							addButton.parentNode.classList.add("hidden");
 						}
@@ -173,7 +176,7 @@ function applyOptions(hideTransitions = false)
 					}
 					else
 					{
-						// no further sorting can be done
+						// no further parts can be added
 						// hide the button to add another drop down list
 						addButton.parentNode.classList.add("hidden");
 					}
@@ -414,27 +417,30 @@ function removePartsAfter(lastWantedPart)
 
 function multiPartChangeHandler()
 {
+	const optionElement = this.parentNode.parentNode;
 	const partIndex = this.id.slice(-1)[0];
 
 	// Any existing subsequent parts are no longer valid.
 	removePartsAfter(this);
 	
-	if (partIndex < 2 && this.value > 4)
+	const furtherItemCutoffIndex = Array.from(this.children).indexOf(this.querySelector(`option[value="${optionElement.getAttribute("furtherItemCutoff")}"]`));
+	const maxParts = Number(this.parentNode.parentNode.getAttribute("maxParts"));
+	if (partIndex < maxParts -1  && this.selectedIndex > furtherItemCutoffIndex)
 	{
 		// Can sort further.
 		// make button to add further criterion visible
-		this.parentNode.parentNode.querySelector(".addSortList").parentNode.classList.remove("hidden");
+		optionElement.querySelector(".addPart").parentNode.classList.remove("hidden");
 	}
 	else
 	{
 		// Can't sort further.
 		// remove the add further criterion button
-		this.parentNode.parentNode.querySelector(".addSortList").parentNode.classList.add("hidden");
+		optionElement.querySelector(".addPart").parentNode.classList.add("hidden");
 	}
 
 
-	const option = this.parentNode.parentNode.id;
-	options[option] = Array.from(this.parentNode.parentNode.querySelectorAll(".option")).map(part => part.value).join(",");
+	const option = optionElement.id;
+	options[option] = Array.from(optionElement.querySelectorAll(".option")).map(part => part.value).join(",");
 	saveOptions();
 }
 
@@ -465,14 +471,21 @@ function applyControlledOptionCollapsing(optionElement, optionState)
 	}
 }
 
-function addSortListButtonClickHandler()
+function addPartButtonClickHandler()
 {
-	const lastList = this.parentNode.previousElementSibling;
-	const newList = newSortList(lastList);
-	lastList.parentNode.insertBefore(newList, lastList.nextSibling);
-	this.parentNode.classList.add("hidden");
+	const lastListItem = this.parentNode.previousElementSibling;
+	const newListItem = newSortList(lastListItem);
+	lastListItem.parentNode.insertBefore(newListItem, lastListItem.nextSibling);
 
-	const option = lastList.parentNode.id;
+	const newSelect = newListItem.querySelector(".option");
+
+	const furtherItemCutoffIndex = Array.from(newSelect.children).indexOf(newSelect.querySelector(`option[value="${newListItem.parentNode.getAttribute("furtherItemCutoff")}"]`));
+	if (newSelect.selectedIndex < furtherItemCutoffIndex)
+	{
+		this.parentNode.classList.add("hidden");
+	}
+
+	const option = lastListItem.parentNode.id;
 	options[option] = Array.from(document.querySelectorAll(`#${option} .option`)).map(option => option.value).join(",");
 
 	saveOptions();
@@ -481,26 +494,35 @@ function addSortListButtonClickHandler()
 function newSortList(previousListItem)
 {
 	const previousListSelect = previousListItem.querySelector("select.option");
-	const criterion = previousListSelect.value;
-	const invalidValues = [criterion, (criterion %2) ? (`${1 + +criterion}`) : (`${-1 + +criterion}`)];
-	const newList = previousListItem.cloneNode(true);
-	newList.querySelector("select.option").value = "0";
+	const partValue = previousListSelect.value;
+	const previousListSelectOption = previousListSelect.querySelector(`option[value="${partValue}"]`);
+	const invalidValues = [partValue, ...previousListSelectOption.getAttribute("invalidNextValues")?.split(",") ?? []];
+	const newListItem = previousListItem.cloneNode(true);
 
 	invalidValues.forEach(
 		(value) => {
-			newList.querySelectorAll(`option[value="${value}"]`).forEach((invalidOption) => invalidOption.remove());
+			newListItem.querySelectorAll(`option[value="${value}"]`).forEach((invalidOption) => invalidOption.remove());
 		}
 	);
 	
-	const previousIndex = previousListSelect.id.slice(-1);
-	const optionId = previousListSelect.id.slice(0,-1);
-	const currentIndex = 1 + +previousIndex;
-	newList.querySelector("label").textContent = ordinalLabels[currentIndex];
-	newList.querySelector(".option").id = `${optionId}${currentIndex}`;
+	const {previousIndex, optionId} = previousListSelect.id.match(/(?<optionId>[A-Za-z]+)(?<previousIndex>[0-9]+)$/).groups;
+	const newIndex = 1 + +previousIndex;
 
-	newList.querySelector(".option").addEventListener("change", multiPartChangeHandler);
+	if (optionId === "needsStrengtheningListSortOrder")
+	{
+		newListItem.querySelector("label").textContent = ordinalLabels[newIndex];
+	}
+	else
+	{
+		newListItem.querySelector("label").textContent = `${newIndex+1}${newIndex < 3 ? ((["st","nd","rd"])[newIndex]): "th"}`;
 
-	newList.querySelectorAll(".removeSortCriterion").forEach((cross) => cross.remove());
+	}
+
+	newListItem.querySelector(".option").id = `${optionId}${newIndex}`;
+	newListItem.querySelector(".option").value = newListItem.querySelector(".option").firstElementChild.value;
+	newListItem.querySelector(".option").addEventListener("change", multiPartChangeHandler);
+
+	newListItem.querySelector(".removeSortCriterion")?.remove();
 
 	const removeButton = document.createElement("div");
 	removeButton.className = "removeSortCriterion";
@@ -508,20 +530,25 @@ function newSortList(previousListItem)
 	removeButton.addEventListener("click",
 		(e) =>
 		{
-			for (let i = currentIndex; i < 3; ++i)
-			{
-				const selectToBeRemoved = document.querySelector(`#${optionId}${i}`)?.parentNode.remove();
-			}
 
-			previousListItem.parentNode.querySelector(".addSortList").parentNode.classList.remove("hidden");
+			Array.from(document.querySelectorAll(`#${optionId} .option`))
+				.slice(newIndex)
+				.forEach(
+				(selectToBeRemoved) =>
+				{
+					selectToBeRemoved.parentNode.remove();
+				}
+			);
+
+			previousListItem.parentNode.querySelector(".addPart").parentNode.classList.remove("hidden");
 
 			options[optionId] = Array.from(document.querySelectorAll(`#${optionId} .option`)).map(option => option.value).join(",");
 			saveOptions();
 		}
 	);
-	newList.appendChild(removeButton);
+	newListItem.appendChild(removeButton);
 
-	return newList;
+	return newListItem;
 }
 
 function clearMasteredSkills(event)

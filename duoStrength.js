@@ -3687,6 +3687,10 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 function showOnlyNeededSkills()
 {
+	if (!onMainPage)
+	{
+		return false;
+	}
 	// Remove existing reveal button
 	document.querySelectorAll(`#revealHiddenSkillsButton`).forEach(button => button.remove());
 

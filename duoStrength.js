@@ -601,33 +601,18 @@ function removePractiseButton()
 
 function removeGrammarSkillTestOutButton()
 {
-	const grammarSkillTestOutButton = document.querySelector("#grammarSkillTestOutButton");
-	if (grammarSkillTestOutButton !== null)
-	{
-		grammarSkillTestOutButton.parentNode.setAttribute("numChildren", --grammarSkillTestOutButton.parentNode.childElementCount);
-		grammarSkillTestOutButton.remove();
-	}
+	document.querySelector("#grammarSkillTestOutButton")?.remove();
 }
 
 function removeWordsButton()
 {
-	const wordsButton = document.querySelector(`[data-test="words-button"]`);
-	if (wordsButton !== null)
-	{
-		wordsButton.parentNode.setAttribute("numChildren", --wordsButton.parentNode.childElementCount);
-		wordsButton.remove();
-	}
-	document.querySelector(`#wordsListBubble`)?.remove();
+	document.querySelector(`[data-test="words-button"]`)?.remove();
+	document.querySelector("#wordsListBubble")?.remove();
 }
 
-function removeMasterdSkillButton()
+function removeMasteredSkillButton()
 {
-	const masteredButton = document.querySelector(`[data-test="mastered-button"]`);
-	if (masteredButton !== null)
-	{
-		masteredButton.parentNode.setAttribute("numChildren", --masteredButton.parentNode.childElementCount);
-		masteredButton.remove();
-	}
+	document.querySelector(`[data-test="mastered-button"]`)?.remove();
 }
 
 function removeCheckpointButtons()
@@ -638,8 +623,8 @@ function removeCheckpointButtons()
 		redoTestButton.parentNode.removeAttribute("style");
 		redoTestButton.remove();
 	}
-
-	document.querySelector(`[data-test="test-out-button"]`)?.remove();
+	
+	document.querySelector(`[data-test="checkpoint-test-out-button"]`)?.remove();
 }
 
 function removeFocusModeButton()
@@ -688,16 +673,19 @@ function hasMetGoal()
 	const goal = userData.daily_goal;
 	const currentDate = (new Date()).setHours(0,0,0,0);
 	const lessonsToday = userData.calendar.filter(
-		(entry) => {
+		(entry) =>
+		{
 			const day = (new Date(entry.datetime)).setHours(0,0,0,0);
 			return day == currentDate;
 		}
 	);
 	
 	const XPToday = lessonsToday.reduce(
-		(total, lesson) => {
+		(total, lesson) =>
+		{
 			return total + lesson.improvement;
-		}, 0)
+		}, 0
+	);
 
 	return XPToday >= goal;
 }
@@ -721,13 +709,15 @@ function currentProgress()
 function nextCheckpointIndex()
 {
 	const checkpoints = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR));
-	const firstLockedIndexReducer = (value, element, index) => {
+	const firstLockedIndexReducer = (value, element, index) =>
+	{
 		const locked = element.querySelectorAll(`[src$="locked.svg"]`).length != 0;
 		if (value == -1 && locked)
 			return index;
 		else
 			return value;
-	}
+	};
+
 	return checkpoints.reduce(firstLockedIndexReducer, -1);
 }
 
@@ -735,7 +725,9 @@ function lessonsToNextCheckpoint()
 {
 	let index = nextCheckpointIndex();
 	if (index == -1)
+	{
 		return -1;
+	}
 	const nextCheckpoint = document.querySelectorAll(CHECKPOINT_SELECTOR)[index];
 	const skillsAndCheckpoints = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}, ${CHECKPOINT_SELECTOR}`));
 	
@@ -754,17 +746,19 @@ function lessonsToNextCheckpoint()
 		}
 	);
 	const level0SkillsBeforeCheckpoint = skillsBeforeCheckpoint.filter(
-		(element) => {
+		(element) =>
+		{
 			return element.querySelectorAll(`[data-test="level-crown"]`).length == 0;
 		}
 	);
 	return level0SkillsBeforeCheckpoint.reduce(
-		(total, element) => {
+		(total, element) =>
+		{
 			const skillTitle = element.querySelector(SKILL_NAME_SELECTOR).textContent;
 			const lessons = userData.language_data[languageCode].skills.find(skill => skill.short == skillTitle).missing_lessons;
 			return total + lessons;
-		}
-	, 0);
+		}, 0
+	);
 }
 
 function progressEnds()
@@ -878,7 +872,7 @@ function currentTreeLevel()
 
 function currentLanguageHistory()
 {
-	return calendar = userData.language_data[languageCode].calendar.filter(
+	return userData.language_data[languageCode].calendar.filter(
 		(lesson) => {
 			return userData.language_data[languageCode].skills.find(skill => skill.id == lesson.skill_id) != null;
 		}
@@ -936,7 +930,7 @@ function daysToNextTreeLevel()
 {
 	const {startIndex, endIndex, numDays} = progressEnds();
 	
-	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
+	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays; // in lessons per day
 
 	const lessonsLeft = currentProgress();
 	
@@ -1009,7 +1003,7 @@ function daysToNextTreeLevelByCalendar()
 			time: Math.ceil(lessonsToNextTreeLevel/lessonRate), // in days
 			rate: lessonRate,
 			lessonsLeft: lessonsToNextTreeLevel
-		}
+		};
 	}
 }
 
@@ -1017,7 +1011,7 @@ function daysToNextCheckpoint()
 {
 	const {startIndex, endIndex, numDays} = progressEnds();
 
-	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
+	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays; // in lessons per day
 
 	const lessonsLeft = lessonsToNextCheckpoint();
 	
@@ -2170,7 +2164,6 @@ function createWordsListBubble(words, button, container, isLocked)
 
 	const arrow = document.createElement("div");
 	const arrowOffset = button.offsetLeft + 0.5*button.offsetWidth;
-	arrow.style.transform = `translateX(calc(-50% + ${arrowOffset}px)) rotate(45deg)`;
 	bubble.appendChild(arrow);
 
 	const list = document.createElement("ul");
@@ -2205,7 +2198,6 @@ function addSmallButtonToPopout(skillPopout, div = false)
 	newButton.classList.add(...SMALL_BUTTON.split(" "));
 	smallButtonsContainer.insertBefore(newButton, smallButtonsContainer.firstChild);
 
-	smallButtonsContainer.setAttribute("numChildren", `${smallButtonsContainer.childElementCount}`);
 
 	return newButton;
 }
@@ -2352,7 +2344,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 
 		const testOutButton = practiceCheckpointButton.cloneNode(true);
 		testOutButton.textContent = "RETRY CROWN 1 TEST OUT";
-		testOutButton.setAttribute("data-test", "test-out-button");
+		testOutButton.setAttribute("data-test", "checkpoint-test-out-button");
 
 		popoutContent.appendChild(testOutButton);
 		testOutButton.addEventListener("click",
@@ -2391,7 +2383,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 
 		const testOutButton = redoTestButton.cloneNode(true);
 		testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
-		testOutButton.setAttribute("data-test", "test-out-button");
+		testOutButton.setAttribute("data-test", "checkpoint-test-out-button");
 
 		testOutButton.addEventListener("click",
 			(event) =>
@@ -4308,7 +4300,7 @@ function addFeatures()
 			removePractiseButton();
 			removeGrammarSkillTestOutButton();
 			removeWordsButton();
-			removeMasterdSkillButton();
+			removeMasteredSkillButton();
 
 			if (options.practiseButton)
 			{

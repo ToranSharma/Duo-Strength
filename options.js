@@ -522,7 +522,8 @@ function newSortList(previousListItem)
 		}
 	);
 	
-	const {previousIndex, optionId} = previousListSelect.id.match(/(?<optionId>[A-Za-z]+)(?<previousIndex>[0-9]+)$/).groups;
+	const previousIndex = previousListSelect.id.match(/[0-9]+$/);
+	const optionId = previousListSelect.id.match(/^[A-Za-z]+/);
 	const newIndex = 1 + +previousIndex;
 
 	if (optionId === "needsStrengtheningListSortOrder")

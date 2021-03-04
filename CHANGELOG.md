@@ -11,6 +11,10 @@ Changelog
 ### Changed
 - Styling of small skill popout buttons to not squash the test out key button.
 
+### Removed
+- Newer javascript features for compatibility with old browser versions. Namely
+  nullish coalescing and optional chaining operators and named RegExp groups.
+
 [v2.0.1] - 2021-03-02
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.1)

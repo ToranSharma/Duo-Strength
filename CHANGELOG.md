@@ -11,6 +11,10 @@ Changelog
 ### Changed
 - Styling of small skill popout buttons to not squash the test out key button.
 
+### Fixed
+- Tree level calculation to include L1 and L0 grammar skills, but ignore L2 (max
+  level) grammar skills.
+
 ### Removed
 - Newer javascript features for compatibility with old browser versions. Namely
   nullish coalescing and optional chaining operators and named RegExp groups.

@@ -16,6 +16,8 @@ Changelog
   level) grammar skills.
 - Checkpoint and tree level predictions using the calendar with data only from
   the current day before the XP goal has been met.
+- Handling of skills with a url title with characters that become encoded when
+  finding a skill based on part of an anchor tags href.
 
 ### Removed
 - Newer javascript features for compatibility with old browser versions. Namely

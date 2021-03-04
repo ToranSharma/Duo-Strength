@@ -1836,7 +1836,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		if (event.target.getAttribute("href") !== "#")
 		{
 
-			const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
+			const urlTitle = decodeURIComponent(event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1]);
 			const button = createOpenPopoutButton(urlTitle);
 			button.id = (cracked) ? "crackedPopoutButton" : "needsStrengtheningPopoutButton";
 
@@ -2018,7 +2018,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 	const firstSkillLink = strengthenBox.querySelector("a");
 
-	const firstSkillUrlTitle = firstSkillLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
+	const firstSkillUrlTitle = decodeURIComponent(firstSkillLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1]);
 
 	const button = createOpenPopoutButton(firstSkillUrlTitle);
 	button.id = (cracked) ? "crackedPopoutButton" : "needsStrengtheningPopoutButton";
@@ -2448,7 +2448,7 @@ function addButtonsToTipsPage()
 			removeTipsPageButtons();
 
 			// Find the skill for the current tips page
-			const skillUrlTitle = window.location.pathname.match(new RegExp(`/${languageCode}/(.*)/tips`))[1];
+			const skillUrlTitle = decodeURIComponent(window.location.pathname.match(new RegExp(`/${languageCode}/(.*)/tips`))[1]);
 
 			const skillObject = [...userData.language_data[languageCode].skills, ...userData.language_data[languageCode].bonus_skills]
 								.find(skill => skill.url_title === skillUrlTitle);
@@ -3592,7 +3592,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			if (event.target.getAttribute("href") !== "/practice")
 			{
 				const isCheckpoint = /checkpoint/.test(event.target.href);
-				const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
+				const urlTitle = decodeURIComponent(event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1]);
 				const button = createOpenPopoutButton(isCheckpoint ? `checkpoint/${urlTitle}`: urlTitle);
 				button.id = "suggestionPopoutButton";
 
@@ -3697,7 +3697,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	{
 		// Add button that opens up the suggested skill's popout
 		const isCheckpoint = /checkpoint/.test(suggestionLink.href);
-		const suggestionUrlTitle = suggestionLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
+		const suggestionUrlTitle = decodeURIComponent(suggestionLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1]);
 		const button = createOpenPopoutButton(isCheckpoint ? `checkpoint/${suggestionUrlTitle}` : suggestionUrlTitle);
 		button.id = "suggestionPopoutButton";
 		container.querySelector(`p`).appendChild(button);

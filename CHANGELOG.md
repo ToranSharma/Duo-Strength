@@ -5,6 +5,24 @@ Changelog
 ------------
 -
 
+[v2.0.2] - 2021-03-03
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.2)
+### Changed
+- Styling of small skill popout buttons to not squash the test out key button.
+
+### Fixed
+- Tree level calculation to include L1 and L0 grammar skills, but ignore L2 (max
+  level) grammar skills.
+- Checkpoint and tree level predictions using the calendar with data only from
+  the current day before the XP goal has been met.
+- Handling of skills with a url title with characters that become encoded when
+  finding a skill based on part of an anchor tags href.
+
+### Removed
+- Newer javascript features for compatibility with old browser versions. Namely
+  nullish coalescing and optional chaining operators and named RegExp groups.
+
 [v2.0.1] - 2021-03-02
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.1)
@@ -1209,6 +1227,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.2]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.1...v2.0.2
 [v2.0.1]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.45...v2.0.0
 [v1.3.45]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.44...v1.3.45

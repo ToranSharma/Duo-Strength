@@ -479,24 +479,37 @@ function resetLanguageFlags()
 	languageChangesPending = 0;
 }
 
+function removeFeatureElement(element, ...otherElements)
+{
+	[element, ...otherElements].forEach(
+		(elem) =>
+		{
+			if (elem !== null && elem !== undefined)
+			{
+				elem.remove();
+			}
+		}
+	);
+}
+
 function removeStrengthBars()
 {
-	document.querySelectorAll(".strengthBarHolder").forEach(bar => bar.remove());
+	removeFeatureElement(...document.querySelectorAll(".strengthBarHolder"));
 }
 
 function removeNeedsStrengtheningBox()
 {
-	document.querySelector("#strengthenBox")?.remove();
+	removeFeatureElement(document.querySelector("#strengthenBox"));
 }
 
 function removeCrackedSkillsList()
 {
-	document.querySelector("#crackedBox")?.remove();
+	removeFeatureElement(document.querySelector("#crackedBox"));
 }
 
 function removeSuggestion()
 {
-	document.querySelector("#skillSuggestionMessageContainer")?.remove();
+	removeFeatureElement(document.querySelector("#skillSuggestionMessageContainer"));
 }
 
 function removeFlagBorders()
@@ -507,7 +520,7 @@ function removeFlagBorders()
 			flag.removeAttribute("style");
 			flag.classList.remove("borderedFlag");
 			flag.removeAttribute("tree-level");
-			flag.querySelectorAll("img").forEach(img => img.remove());
+			removeFeatureElement(...flag.querySelectorAll("img"));
 		}
 	);
 }
@@ -521,7 +534,7 @@ function deleteElementsByClassesAndIds({classList = [], idList = []})
 			...idList.map(id => `#${id}`)
 		].join(", ");
 
-	document.querySelectorAll(deleteSelector).forEach(element => element.remove());
+	removeFeatureElement(...document.querySelectorAll(deleteSelector));
 }
 
 function removeClassesAndIds({classList = [], idList = []})
@@ -586,48 +599,33 @@ function removeXPBoxes()
 
 function removeTotalStrengthBox()
 {
-	document.querySelector("#totalStrengthBox")?.remove();
+	removeFeatureElement(document.querySelector("#totalStrengthBox"));
 }
 
 function removeLanguagesInfo()
 {
-	document.querySelector("#languagesBox")?.remove();
+	removeFeatureElement(document.querySelector("#languagesBox"));
 }
 
 function removePractiseButton()
 {
-	document.querySelector(`[data-test="practise-button"]`)?.remove();
+	removeFeatureElement(document.querySelector(`[data-test="practise-button"]`));
 }
 
 function removeGrammarSkillTestOutButton()
 {
-	const grammarSkillTestOutButton = document.querySelector("#grammarSkillTestOutButton");
-	if (grammarSkillTestOutButton !== null)
-	{
-		grammarSkillTestOutButton.parentNode.setAttribute("numChildren", --grammarSkillTestOutButton.parentNode.childElementCount);
-		grammarSkillTestOutButton.remove();
-	}
+	removeFeatureElement(document.querySelector("#grammarSkillTestOutButton"));
 }
 
 function removeWordsButton()
 {
-	const wordsButton = document.querySelector(`[data-test="words-button"]`);
-	if (wordsButton !== null)
-	{
-		wordsButton.parentNode.setAttribute("numChildren", --wordsButton.parentNode.childElementCount);
-		wordsButton.remove();
-	}
-	document.querySelector(`#wordsListBubble`)?.remove();
+	removeFeatureElement(document.querySelector(`[data-test="words-button"]`));
+	removeFeatureElement(document.querySelector("#wordsListBubble"));
 }
 
-function removeMasterdSkillButton()
+function removeMasteredSkillButton()
 {
-	const masteredButton = document.querySelector(`[data-test="mastered-button"]`);
-	if (masteredButton !== null)
-	{
-		masteredButton.parentNode.setAttribute("numChildren", --masteredButton.parentNode.childElementCount);
-		masteredButton.remove();
-	}
+	removeFeatureElement(document.querySelector(`[data-test="mastered-button"]`));
 }
 
 function removeCheckpointButtons()
@@ -638,49 +636,38 @@ function removeCheckpointButtons()
 		redoTestButton.parentNode.removeAttribute("style");
 		redoTestButton.remove();
 	}
-
-	document.querySelector(`[data-test="test-out-button"]`)?.remove();
+	
+	removeFeatureElement(document.querySelector(`[data-test="checkpoint-test-out-button"]`));
 }
 
 function removeFocusModeButton()
 {
-	document.querySelector(`#focusModeButton`)?.remove();
+	removeFeatureElement(document.querySelector(`#focusModeButton`));
 }
 
 function removeTipsPageButtons()
 {
-	const buttonContainersToRemove = Array.from(document.querySelectorAll(`[data-test="start-lesson"]`)).slice(1).map(elem=>elem.parentNode);
-	buttonContainersToRemove.forEach(
-		(container) =>
-		{
-			container.remove();
-		}
-	);
+  	removeFeatureElement(...Array.from(document.querySelectorAll(`[data-test="start-lesson"]`)).slice(1).map(elem=>elem.parentNode));
 
-	const buttonsToRemove = Array.from(document.querySelectorAll(`[data-test="start-lesson"], [data-test="practise-button"]`))
-								.slice(1);
-	buttonsToRemove.forEach(
-		(button) =>
-		{
-			button.remove();
-		}
+	removeFeatureElement(
+		...Array.from(document.querySelectorAll(`[data-test="start-lesson"], [data-test="practise-button"]`))
+				.slice(1)
 	);
-
 }
 
 function removeNeedsStrengtheningPopoutButton()
 {
-	document.querySelector(`#needsStrengtheningPopoutButton`)?.remove();
+	removeFeatureElement(document.querySelector(`#needsStrengtheningPopoutButton`));
 }
 
 function removeCrackedPopoutButton()
 {
-	document.querySelector(`#crackedPopoutButton`)?.remove();
+	removeFeatureElement(document.querySelector(`#crackedPopoutButton`));
 }
 
 function removeSuggestionPopoutButton()
 {
-	document.querySelector(`#suggestionPopoutButton`)?.remove();
+	removeFeatureElement(document.querySelector(`#suggestionPopoutButton`));
 }
 
 function hasMetGoal()
@@ -688,16 +675,19 @@ function hasMetGoal()
 	const goal = userData.daily_goal;
 	const currentDate = (new Date()).setHours(0,0,0,0);
 	const lessonsToday = userData.calendar.filter(
-		(entry) => {
+		(entry) =>
+		{
 			const day = (new Date(entry.datetime)).setHours(0,0,0,0);
 			return day == currentDate;
 		}
 	);
 	
 	const XPToday = lessonsToday.reduce(
-		(total, lesson) => {
+		(total, lesson) =>
+		{
 			return total + lesson.improvement;
-		}, 0)
+		}, 0
+	);
 
 	return XPToday >= goal;
 }
@@ -721,13 +711,15 @@ function currentProgress()
 function nextCheckpointIndex()
 {
 	const checkpoints = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR));
-	const firstLockedIndexReducer = (value, element, index) => {
+	const firstLockedIndexReducer = (value, element, index) =>
+	{
 		const locked = element.querySelectorAll(`[src$="locked.svg"]`).length != 0;
 		if (value == -1 && locked)
 			return index;
 		else
 			return value;
-	}
+	};
+
 	return checkpoints.reduce(firstLockedIndexReducer, -1);
 }
 
@@ -735,7 +727,9 @@ function lessonsToNextCheckpoint()
 {
 	let index = nextCheckpointIndex();
 	if (index == -1)
+	{
 		return -1;
+	}
 	const nextCheckpoint = document.querySelectorAll(CHECKPOINT_SELECTOR)[index];
 	const skillsAndCheckpoints = Array.from(document.querySelectorAll(`${SKILL_SELECTOR}, ${CHECKPOINT_SELECTOR}`));
 	
@@ -754,17 +748,19 @@ function lessonsToNextCheckpoint()
 		}
 	);
 	const level0SkillsBeforeCheckpoint = skillsBeforeCheckpoint.filter(
-		(element) => {
+		(element) =>
+		{
 			return element.querySelectorAll(`[data-test="level-crown"]`).length == 0;
 		}
 	);
 	return level0SkillsBeforeCheckpoint.reduce(
-		(total, element) => {
+		(total, element) =>
+		{
 			const skillTitle = element.querySelector(SKILL_NAME_SELECTOR).textContent;
 			const lessons = userData.language_data[languageCode].skills.find(skill => skill.short == skillTitle).missing_lessons;
 			return total + lessons;
-		}
-	, 0);
+		}, 0
+	);
 }
 
 function progressEnds()
@@ -856,21 +852,22 @@ function progressMadeBetweenPoints(startIndex, endIndex)
 
 function currentTreeLevel()
 {
-	const skills = userData.language_data[languageCode].skills.filter(skill => skill.category !== "grammar");
-
 	const skillsByCrowns = [[],[],[],[],[],[]];
 
-	for (let skill of skills)
-	{
-		skillsByCrowns[skill.skill_progress.level].push(skill);
-	}
+	userData.language_data[languageCode].skills.forEach(
+		(skill) =>
+		{
+			skillsByCrowns[skill.skill_progress.level].push(skill);
+		}
+	);
+
+	// Remove grammar skills from L2 skills array as they are at max level so should not hold the tree level back.
+	skillsByCrowns[2] = skillsByCrowns[2].filter(skill => skill.category !== "grammar");
 
 	let treeLevel = 0;
-	let i = 0;
-	while (skillsByCrowns[i].length == 0 && i < 6)
+	while (skillsByCrowns[treeLevel].length === 0 && treeLevel < 6)
 	{
 		treeLevel++;
-		i++;
 	}
 
 	return treeLevel;
@@ -878,7 +875,7 @@ function currentTreeLevel()
 
 function currentLanguageHistory()
 {
-	return calendar = userData.language_data[languageCode].calendar.filter(
+	return userData.language_data[languageCode].calendar.filter(
 		(lesson) => {
 			return userData.language_data[languageCode].skills.find(skill => skill.id == lesson.skill_id) != null;
 		}
@@ -936,7 +933,7 @@ function daysToNextTreeLevel()
 {
 	const {startIndex, endIndex, numDays} = progressEnds();
 	
-	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
+	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays; // in lessons per day
 
 	const lessonsLeft = currentProgress();
 	
@@ -976,7 +973,16 @@ function daysToNextTreeLevelByCalendar()
 	if (!hasMetGoal())
 	{
 		// Not met the goal today so don't use data from today.
-		practiceTimes = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+		const practiceTimesNotToday = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+		if (practiceTimesNotToday.length !== 0)
+		{
+			practiceTimes = practiceTimesNotToday;
+		}
+		else
+		{
+			// possible if only calendar entries for this language are from today, and we have't met our goal
+			// In this case will just use todays data so we have something to say.
+		}
 	}
 
 	const numLessons = practiceTimes.length;
@@ -1009,7 +1015,7 @@ function daysToNextTreeLevelByCalendar()
 			time: Math.ceil(lessonsToNextTreeLevel/lessonRate), // in days
 			rate: lessonRate,
 			lessonsLeft: lessonsToNextTreeLevel
-		}
+		};
 	}
 }
 
@@ -1017,7 +1023,7 @@ function daysToNextCheckpoint()
 {
 	const {startIndex, endIndex, numDays} = progressEnds();
 
-	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays // in lessons per day
+	const progressRate = progressMadeBetweenPoints(startIndex, endIndex) / numDays; // in lessons per day
 
 	const lessonsLeft = lessonsToNextCheckpoint();
 	
@@ -1052,25 +1058,24 @@ function daysToNextCheckpointByCalendar()
 		}
 	);
 
+
 	if (!hasMetGoal())
 	{
 		// Not met the goal today so don't use data from today.
-		practiceTimes = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+		const practiceTimesNotToday = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+		if (practiceTimesNotToday.length !== 0)
+		{
+			practiceTimes = practiceTimesNotToday;
+		}
+		else
+		{
+			// possible if only calendar entries for this language are from today, and we have't met our goal
+			// In this case will just use todays data so we have something to say.
+		}
 	}
 
 	const numLessons = practiceTimes.length;
-
 	const lessonsLeft = lessonsToNextCheckpoint();
-
-
-	if (numLessons == 0) // possible if only calendar entries for this language are from today, and we have't met our goal
-	{
-		return {
-			time: 0,
-			rate: lessonRate,
-			lessonsLeft: lessonsLeft
-		};
-	}
 
 	const firstDay = practiceTimes[0];
 	let lastDay = practiceTimes[numLessons - 1];
@@ -1831,7 +1836,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		if (event.target.getAttribute("href") !== "#")
 		{
 
-			const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
+			const urlTitle = decodeURIComponent(event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1]);
 			const button = createOpenPopoutButton(urlTitle);
 			button.id = (cracked) ? "crackedPopoutButton" : "needsStrengtheningPopoutButton";
 
@@ -2013,7 +2018,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 	const firstSkillLink = strengthenBox.querySelector("a");
 
-	const firstSkillUrlTitle = firstSkillLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
+	const firstSkillUrlTitle = decodeURIComponent(firstSkillLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1]);
 
 	const button = createOpenPopoutButton(firstSkillUrlTitle);
 	button.id = (cracked) ? "crackedPopoutButton" : "needsStrengtheningPopoutButton";
@@ -2170,7 +2175,6 @@ function createWordsListBubble(words, button, container, isLocked)
 
 	const arrow = document.createElement("div");
 	const arrowOffset = button.offsetLeft + 0.5*button.offsetWidth;
-	arrow.style.transform = `translateX(calc(-50% + ${arrowOffset}px)) rotate(45deg)`;
 	bubble.appendChild(arrow);
 
 	const list = document.createElement("ul");
@@ -2205,7 +2209,6 @@ function addSmallButtonToPopout(skillPopout, div = false)
 	newButton.classList.add(...SMALL_BUTTON.split(" "));
 	smallButtonsContainer.insertBefore(newButton, smallButtonsContainer.firstChild);
 
-	smallButtonsContainer.setAttribute("numChildren", `${smallButtonsContainer.childElementCount}`);
 
 	return newButton;
 }
@@ -2352,7 +2355,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 
 		const testOutButton = practiceCheckpointButton.cloneNode(true);
 		testOutButton.textContent = "RETRY CROWN 1 TEST OUT";
-		testOutButton.setAttribute("data-test", "test-out-button");
+		testOutButton.setAttribute("data-test", "checkpoint-test-out-button");
 
 		popoutContent.appendChild(testOutButton);
 		testOutButton.addEventListener("click",
@@ -2391,7 +2394,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 
 		const testOutButton = redoTestButton.cloneNode(true);
 		testOutButton.textContent = "RETRY CROWN LEVEL 1 TEST OUT";
-		testOutButton.setAttribute("data-test", "test-out-button");
+		testOutButton.setAttribute("data-test", "checkpoint-test-out-button");
 
 		testOutButton.addEventListener("click",
 			(event) =>
@@ -2445,7 +2448,7 @@ function addButtonsToTipsPage()
 			removeTipsPageButtons();
 
 			// Find the skill for the current tips page
-			const skillUrlTitle = window.location.pathname.match(new RegExp(`/${languageCode}/(.*)/tips`))[1];
+			const skillUrlTitle = decodeURIComponent(window.location.pathname.match(new RegExp(`/${languageCode}/(.*)/tips`))[1]);
 
 			const skillObject = [...userData.language_data[languageCode].skills, ...userData.language_data[languageCode].bonus_skills]
 								.find(skill => skill.url_title === skillUrlTitle);
@@ -2549,7 +2552,15 @@ function applyFocusMode()
 		button.classList.add(...GLOBAL_PRACTISE_BUTTON_ANCHOR.split(" "));
 		globalPractiseButtonContainer.appendChild(button);
 		button.appendChild(document.createElement("img"));
-		document.querySelector(TREE_OVERLAY_CONTAINER_SELECTOR)?.appendChild(globalPractiseButtonContainer) ?? (globalPractiseButtonContainer = null);
+		const treeOverlay = document.querySelector(TREE_OVERLAY_CONTAINER_SELECTOR);
+		if (treeOverlay !== null)
+		{
+			treeOverlay.appendChild(globalPractiseButtonContainer)
+		}
+		else
+		{
+			globalPractiseButtonContainer = null;
+		}
 	}
 	// Add button to toggle the focus mode, if is wanted
 	if (
@@ -2614,7 +2625,8 @@ function getCrackedSkills()
 	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY_SELECTOR));
 	const crackedSkills = Object.fromEntries(
 		crackedSkillElements.map(
-			(crackedSkill) => {
+			(crackedSkill) =>
+			{
 				const skillIcon = crackedSkill.parentNode.parentNode;
 				const skillContainer = skillIcon.parentNode.parentNode.parentNode;
 				const skillNameElement = skillContainer.querySelector(SKILL_NAME_SELECTOR);
@@ -3580,7 +3592,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			if (event.target.getAttribute("href") !== "/practice")
 			{
 				const isCheckpoint = /checkpoint/.test(event.target.href);
-				const urlTitle = event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
+				const urlTitle = decodeURIComponent(event.target.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1]);
 				const button = createOpenPopoutButton(isCheckpoint ? `checkpoint/${urlTitle}`: urlTitle);
 				button.id = "suggestionPopoutButton";
 
@@ -3685,7 +3697,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 	{
 		// Add button that opens up the suggested skill's popout
 		const isCheckpoint = /checkpoint/.test(suggestionLink.href);
-		const suggestionUrlTitle = suggestionLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1];
+		const suggestionUrlTitle = decodeURIComponent(suggestionLink.href.match(new RegExp(`/${languageCode}/([^/]*)`))[1]);
 		const button = createOpenPopoutButton(isCheckpoint ? `checkpoint/${suggestionUrlTitle}` : suggestionUrlTitle);
 		button.id = "suggestionPopoutButton";
 		container.querySelector(`p`).appendChild(button);
@@ -4242,12 +4254,12 @@ function addFeatures()
 		const fullyStrengthened = (
 			needsStrengthening[0].length +
 			((options.showBonusSkillsInNeedsStrengtheningList) ? needsStrengthening[1].length : 0)
-		) == 0;
+		) === 0;
 
 		const noCrackedSkills = (
 			crackedSkills[0].length +
 			((options.showBonusSkillsInCrackedSkillsList) ? crackedSkills[1].length : 0)
-		) == 0;
+		) === 0;
 
 		if (options.needsStrengtheningList && !fullyStrengthened)
 		{
@@ -4308,7 +4320,7 @@ function addFeatures()
 			removePractiseButton();
 			removeGrammarSkillTestOutButton();
 			removeWordsButton();
-			removeMasterdSkillButton();
+			removeMasteredSkillButton();
 
 			if (options.practiseButton)
 			{

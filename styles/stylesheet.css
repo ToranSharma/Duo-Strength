@@ -542,20 +542,14 @@
 .smallButtonsContainer
 {
 	position: relative;
-	display: flex;
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: minmax(48px, auto);
+	grid-gap: 8px;
+	align-items: center;
+	justify-items: stretch;
 	justify-content: flex-end;
-}
-.smallButtonsContainer[numChildren="1"]
-{
-	width: calc(65% * 1 / 3);
-}
-.smallButtonsContainer[numChildren="2"]
-{
-	width: calc(65% * 2 / 3);
-}
-.smallButtonsContainer[numChildren="3"]
-{
-	width: calc(65% * 3 / 3);
+	width: 172px; /* = calc(48px + 8px + 60px + 8px + 48px) */
 }
 
 .smallButtonsContainer button
@@ -563,14 +557,20 @@
 	text-transform: capitalize;
 	width: auto;
 	padding: 0em 0.3em !important;
+	margin: 0;
+}
+.smallButtonsContainer button[data-test="words-button"]
+{
+	width: 60px;
 }
 
 #wordsListBubble
 {
+	width: 268px;
 	background-color: white;
 	font-weight: bold;
 	position: absolute;
-	left: 0;
+	right: 0;
 	top: calc(100% + 0.5em);
 	z-index: 1;
 	border-radius: 1em;
@@ -582,21 +582,6 @@
 	background-color: darkgrey;
 	color: white;
 }
-.smallButtonsContainer[numChildren="1"] #wordsListBubble 
-{
-	width: calc(100% * (100 * 3  / (65 * 1)));
-	transform: translateX(calc(-100% + (65% * 1 / 3)));
-}
-.smallButtonsContainer[numChildren="2"] #wordsListBubble
-{
-	width: calc(100% * (100 * 3  / (65 * 2)));
-	transform: translateX(calc(-100% + (65% * 2 / 3)));
-}
-.smallButtonsContainer[numChildren="3"] #wordsListBubble
-{
-	width: calc(100% * (100 * 3  / (65 * 3)));
-	transform: translateX(calc(-100% + (65% * 3 / 3)));
-}
 
 #wordsListBubble div
 {
@@ -605,23 +590,21 @@
 	width: 0.5em;
 	height: 0.5em;
 	top: -0.25em;
+	transform: rotate(45deg);
+	right: calc(48px + 8px + 0.5 * 3em);
 }
+#wordsListBubble:nth-last-child(2) div
+{
+	/*
+		Just the words button,
+		no need to acount for the checkout button
+	*/
+	right: calc(0.5 * 3em);
+}
+
 ._1fMEX/*Locked Skill Popout*/ #wordsListBubble div
 {
 	background-color: darkgrey;
-}
-.smallButtonsContainer[numChildren="1"] #wordsListBubble div
-{
-	left: calc(100% - 65% * 1 / 3);
-}
-.smallButtonsContainer[numChildren="2"] #wordsListBubble div
-{
-	left: calc(100% - 65% * 2 / 3);
-}
-.smallButtonsContainer[numChildren="3"] #wordsListBubble div
-{
-	left: calc(100% - 65% * 3 / 3);
-	transform: translate(calc(-50% + ${arrowOffset}px), 0) rotate(45deg);
 }
 
 #wordsListBubble ul

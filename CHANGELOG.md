@@ -14,6 +14,8 @@ Changelog
 ### Fixed
 - Tree level calculation to include L1 and L0 grammar skills, but ignore L2 (max
   level) grammar skills.
+- Checkpoint and tree level predictions using the calendar with data only from
+  the current day before the XP goal has been met.
 
 ### Removed
 - Newer javascript features for compatibility with old browser versions. Namely

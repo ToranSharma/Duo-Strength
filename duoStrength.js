@@ -973,7 +973,16 @@ function daysToNextTreeLevelByCalendar()
 	if (!hasMetGoal())
 	{
 		// Not met the goal today so don't use data from today.
-		practiceTimes = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+		const practiceTimesNotToday = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+		if (practiceTimesNotToday.length !== 0)
+		{
+			practiceTimes = practiceTimesNotToday;
+		}
+		else
+		{
+			// possible if only calendar entries for this language are from today, and we have't met our goal
+			// In this case will just use todays data so we have something to say.
+		}
 	}
 
 	const numLessons = practiceTimes.length;
@@ -1049,25 +1058,24 @@ function daysToNextCheckpointByCalendar()
 		}
 	);
 
+
 	if (!hasMetGoal())
 	{
 		// Not met the goal today so don't use data from today.
-		practiceTimes = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+		const practiceTimesNotToday = practiceTimes.filter(lessonDay => lessonDay != currentDay);
+		if (practiceTimesNotToday.length !== 0)
+		{
+			practiceTimes = practiceTimesNotToday;
+		}
+		else
+		{
+			// possible if only calendar entries for this language are from today, and we have't met our goal
+			// In this case will just use todays data so we have something to say.
+		}
 	}
 
 	const numLessons = practiceTimes.length;
-
 	const lessonsLeft = lessonsToNextCheckpoint();
-
-
-	if (numLessons == 0) // possible if only calendar entries for this language are from today, and we have't met our goal
-	{
-		return {
-			time: 0,
-			rate: lessonRate,
-			lessonsLeft: lessonsLeft
-		};
-	}
 
 	const firstDay = practiceTimes[0];
 	let lastDay = practiceTimes[numLessons - 1];

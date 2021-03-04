@@ -1,7 +1,7 @@
 let oldOptions = {};
 let options = {};
 let tabs = [];
-let optionsLoaded;
+let optionsLoaded = null;
 
 let priorOptions = {};
 
@@ -23,6 +23,7 @@ window.onload = () =>
 			}
 		}
 	);
+	saveOptions();
 	init();
 }
 
@@ -193,7 +194,10 @@ function applyOptions(hideTransitions = false)
 
 async function saveOptions(sendToTabs = true)
 {
-	await (optionsLoaded ?? getOptions());
+	if ((await optionsLoaded) === null)
+	{
+		await getOptions();
+	}
 
 	if (compareOptions(oldOptions, options) === false)
 	{
@@ -446,7 +450,12 @@ function multiPartChangeHandler()
 
 function applyControlledOptionCollapsing(optionElement, optionState)
 {
-	let [displayStates, controlledSelectors] = optionElement.getAttribute("controlling")?.split(":").map(str => JSON.parse(str)) ?? [null, []];
+	const controllingAttr = optionElement.getAttribute("controlling");
+	let [displayStates, controlledSelectors] = [null, []];
+	if (controllingAttr !== null)
+	{
+		[displayStates, controlledSelectors] = controllingAttr.split(":").map(str => JSON.parse(str));
+	}
 	if (displayStates !== null)
 	{
 		const controlledSelector = controlledSelectors.join(", ")
@@ -496,7 +505,15 @@ function newSortList(previousListItem)
 	const previousListSelect = previousListItem.querySelector("select.option");
 	const partValue = previousListSelect.value;
 	const previousListSelectOption = previousListSelect.querySelector(`option[value="${partValue}"]`);
-	const invalidValues = [partValue, ...previousListSelectOption.getAttribute("invalidNextValues")?.split(",") ?? []];
+	const invalidValues =
+		[
+			partValue,
+			...(
+				previousListSelectOption.getAttribute("invalidNextValues") !== null
+				? previousListSelectOption.getAttribute("invalidNextValues").split(",")
+				: []
+			)
+		];
 	const newListItem = previousListItem.cloneNode(true);
 
 	invalidValues.forEach(
@@ -522,7 +539,11 @@ function newSortList(previousListItem)
 	newListItem.querySelector(".option").value = newListItem.querySelector(".option").firstElementChild.value;
 	newListItem.querySelector(".option").addEventListener("change", multiPartChangeHandler);
 
-	newListItem.querySelector(".removeSortCriterion")?.remove();
+	const existingRemoveButton = newListItem.querySelector(".removeSortCriterion");
+	if (existingRemoveButton !== null)
+	{
+		existingRemoveButton.remove();
+	}
 
 	const removeButton = document.createElement("div");
 	removeButton.className = "removeSortCriterion";

@@ -479,24 +479,37 @@ function resetLanguageFlags()
 	languageChangesPending = 0;
 }
 
+function removeFeatureElement(element, ...otherElements)
+{
+	[element, ...otherElements].forEach(
+		(elem) =>
+		{
+			if (elem !== null && elem !== undefined)
+			{
+				elem.remove();
+			}
+		}
+	);
+}
+
 function removeStrengthBars()
 {
-	document.querySelectorAll(".strengthBarHolder").forEach(bar => bar.remove());
+	removeFeatureElement(...document.querySelectorAll(".strengthBarHolder"));
 }
 
 function removeNeedsStrengtheningBox()
 {
-	document.querySelector("#strengthenBox")?.remove();
+	removeFeatureElement(document.querySelector("#strengthenBox"));
 }
 
 function removeCrackedSkillsList()
 {
-	document.querySelector("#crackedBox")?.remove();
+	removeFeatureElement(document.querySelector("#crackedBox"));
 }
 
 function removeSuggestion()
 {
-	document.querySelector("#skillSuggestionMessageContainer")?.remove();
+	removeFeatureElement(document.querySelector("#skillSuggestionMessageContainer"));
 }
 
 function removeFlagBorders()
@@ -507,7 +520,7 @@ function removeFlagBorders()
 			flag.removeAttribute("style");
 			flag.classList.remove("borderedFlag");
 			flag.removeAttribute("tree-level");
-			flag.querySelectorAll("img").forEach(img => img.remove());
+			removeFeatureElement(...flag.querySelectorAll("img"));
 		}
 	);
 }
@@ -521,7 +534,7 @@ function deleteElementsByClassesAndIds({classList = [], idList = []})
 			...idList.map(id => `#${id}`)
 		].join(", ");
 
-	document.querySelectorAll(deleteSelector).forEach(element => element.remove());
+	removeFeatureElement(...document.querySelectorAll(deleteSelector));
 }
 
 function removeClassesAndIds({classList = [], idList = []})
@@ -586,33 +599,33 @@ function removeXPBoxes()
 
 function removeTotalStrengthBox()
 {
-	document.querySelector("#totalStrengthBox")?.remove();
+	removeFeatureElement(document.querySelector("#totalStrengthBox"));
 }
 
 function removeLanguagesInfo()
 {
-	document.querySelector("#languagesBox")?.remove();
+	removeFeatureElement(document.querySelector("#languagesBox"));
 }
 
 function removePractiseButton()
 {
-	document.querySelector(`[data-test="practise-button"]`)?.remove();
+	removeFeatureElement(document.querySelector(`[data-test="practise-button"]`));
 }
 
 function removeGrammarSkillTestOutButton()
 {
-	document.querySelector("#grammarSkillTestOutButton")?.remove();
+	removeFeatureElement(document.querySelector("#grammarSkillTestOutButton"));
 }
 
 function removeWordsButton()
 {
-	document.querySelector(`[data-test="words-button"]`)?.remove();
-	document.querySelector("#wordsListBubble")?.remove();
+	removeFeatureElement(document.querySelector(`[data-test="words-button"]`));
+	removeFeatureElement(document.querySelector("#wordsListBubble"));
 }
 
 function removeMasteredSkillButton()
 {
-	document.querySelector(`[data-test="mastered-button"]`)?.remove();
+	removeFeatureElement(document.querySelector(`[data-test="mastered-button"]`));
 }
 
 function removeCheckpointButtons()
@@ -624,48 +637,37 @@ function removeCheckpointButtons()
 		redoTestButton.remove();
 	}
 	
-	document.querySelector(`[data-test="checkpoint-test-out-button"]`)?.remove();
+	removeFeatureElement(document.querySelector(`[data-test="checkpoint-test-out-button"]`));
 }
 
 function removeFocusModeButton()
 {
-	document.querySelector(`#focusModeButton`)?.remove();
+	removeFeatureElement(document.querySelector(`#focusModeButton`));
 }
 
 function removeTipsPageButtons()
 {
-	const buttonContainersToRemove = Array.from(document.querySelectorAll(`[data-test="start-lesson"]`)).slice(1).map(elem=>elem.parentNode);
-	buttonContainersToRemove.forEach(
-		(container) =>
-		{
-			container.remove();
-		}
-	);
+  	removeFeatureElement(...Array.from(document.querySelectorAll(`[data-test="start-lesson"]`)).slice(1).map(elem=>elem.parentNode));
 
-	const buttonsToRemove = Array.from(document.querySelectorAll(`[data-test="start-lesson"], [data-test="practise-button"]`))
-								.slice(1);
-	buttonsToRemove.forEach(
-		(button) =>
-		{
-			button.remove();
-		}
+	removeFeatureElement(
+		...Array.from(document.querySelectorAll(`[data-test="start-lesson"], [data-test="practise-button"]`))
+				.slice(1)
 	);
-
 }
 
 function removeNeedsStrengtheningPopoutButton()
 {
-	document.querySelector(`#needsStrengtheningPopoutButton`)?.remove();
+	removeFeatureElement(document.querySelector(`#needsStrengtheningPopoutButton`));
 }
 
 function removeCrackedPopoutButton()
 {
-	document.querySelector(`#crackedPopoutButton`)?.remove();
+	removeFeatureElement(document.querySelector(`#crackedPopoutButton`));
 }
 
 function removeSuggestionPopoutButton()
 {
-	document.querySelector(`#suggestionPopoutButton`)?.remove();
+	removeFeatureElement(document.querySelector(`#suggestionPopoutButton`));
 }
 
 function hasMetGoal()
@@ -2541,7 +2543,15 @@ function applyFocusMode()
 		button.classList.add(...GLOBAL_PRACTISE_BUTTON_ANCHOR.split(" "));
 		globalPractiseButtonContainer.appendChild(button);
 		button.appendChild(document.createElement("img"));
-		document.querySelector(TREE_OVERLAY_CONTAINER_SELECTOR)?.appendChild(globalPractiseButtonContainer) ?? (globalPractiseButtonContainer = null);
+		const treeOverlay = document.querySelector(TREE_OVERLAY_CONTAINER_SELECTOR);
+		if (treeOverlay !== null)
+		{
+			treeOverlay.appendChild(globalPractiseButtonContainer)
+		}
+		else
+		{
+			globalPractiseButtonContainer = null;
+		}
 	}
 	// Add button to toggle the focus mode, if is wanted
 	if (
@@ -2606,7 +2616,8 @@ function getCrackedSkills()
 	const crackedSkillElements = Array.from(document.querySelectorAll(CRACKED_SKILL_OVERLAY_SELECTOR));
 	const crackedSkills = Object.fromEntries(
 		crackedSkillElements.map(
-			(crackedSkill) => {
+			(crackedSkill) =>
+			{
 				const skillIcon = crackedSkill.parentNode.parentNode;
 				const skillContainer = skillIcon.parentNode.parentNode.parentNode;
 				const skillNameElement = skillContainer.querySelector(SKILL_NAME_SELECTOR);
@@ -4234,12 +4245,12 @@ function addFeatures()
 		const fullyStrengthened = (
 			needsStrengthening[0].length +
 			((options.showBonusSkillsInNeedsStrengtheningList) ? needsStrengthening[1].length : 0)
-		) == 0;
+		) === 0;
 
 		const noCrackedSkills = (
 			crackedSkills[0].length +
 			((options.showBonusSkillsInCrackedSkillsList) ? crackedSkills[1].length : 0)
-		) == 0;
+		) === 0;
 
 		if (options.needsStrengtheningList && !fullyStrengthened)
 		{

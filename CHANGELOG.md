@@ -5,13 +5,6 @@ Changelog
 ------------
 -
 
-[v2.0.3] - 2021-03-29
------------------
-[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.3)
-### Fixed
-- Selectors for top and bottom navigation bars and their buttons.
-- Flag borders to properly add border around changed flag elements.
-
 [v2.0.2] - 2021-03-03
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.2)
@@ -1234,7 +1227,6 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
-[v2.0.3]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.2...v2.0.3
 [v2.0.2]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.1...v2.0.2
 [v2.0.1]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/ToranSharma/Duo-Strength/compare/v1.3.45...v2.0.0

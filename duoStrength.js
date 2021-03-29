@@ -16,22 +16,22 @@ const TOP_OF_TREE_WITH_IN_BETA = "_1q00o _3_JLW";
 const TOP_OF_TREE = "RviFd";
 const TRY_PLUS_BUTTON_SELECTOR = `[data-test="try-plus-badge"], ._-7YNG`;
 const IN_BETA_LABEL = "_2UV5Z"; // container of div with IN BETA textContent. Will be sibling of needsStrengtheningContainer etc.
-const CROWNS_POPUP_CONTAINER_SELECTOR = "._37JAM.j1W0k"; // parent of Crown logo container and crown description container, shares one class with the lingots popout container
-const CROWN_LOGO_CONTAINER = "_3KWyk";
-const CROWN_DESCRIPTION_CONTAINER = "_37Yk2";
-const CROWN_TOTAL_CONTAINER = "yrLrI";
+const CROWNS_POPUP_CONTAINER_SELECTOR = "._2WrB_._2uf-t"; // parent of Crown logo container and crown description container, shares one class with the lingots popout container
+const CROWN_LOGO_CONTAINER = "_1I6F9";
+const CROWN_DESCRIPTION_CONTAINER = "yccDx";
+const CROWN_TOTAL_CONTAINER = "H_XA0";
 const DAILY_GOAL_POPUP_CONTAINER = "_20sV-"; // parent of streak flame and description, and the 7 small flames
 const DAILY_GOAL_SIDEBAR_CONTAINER = "_2O43A";
 const SIDEBAR = "_1YfQ8";
 const WHITE_SIDEBAR_BOX_CONTAINER = "_3ZuGY";
 const ZERO_CROWNS_CONTAINER = "bAsar"; // class applied to container of crown info that makes text inside the grey crown white
-const POPUP_ICON = "_1b3yx _1I4lY _2wC9B";
-const GOLD_CROWN = "_2QHSw";
+const POPUP_ICON = "_3_CAz _2QyqO _3jIW4"; // parent of image for flag, crown flame lingot and profile pic
+const GOLD_CROWN = "_1YGGe";
 const LIT_FLAME = "_1DS_0";
 const BLUE_FLAME = "_3Ecgs";
 const GREY_FLAME = "_1S8Vz";
-const TOP_BAR = "eFS_r";
-const NAVIGATION_BUTTON = "tCGvL";
+const TOP_BAR = "_1bdcY";
+const NAVIGATION_BUTTON = "_2fX2D"; // class for container of icon images of nav buttons
 const QUESTION_CONTAINER = "_863KE";
 const LOGIN_PAGE = "_2F5q9";
 const LESSON = "iLgf- _1Xlh1";
@@ -48,7 +48,7 @@ const CHECKPOINT_CONTAINER_SELECTOR = "._1lAog";
 const CHECKPOINT_POPOUT_SELECTOR = `${CHECKPOINT_CONTAINER_SELECTOR} ._2EYUQ._25WXl`;
 const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
 const CHECKPOINT_SECTION_SELECTOR = "._2tZPV";
-const LANGUAGES_LIST_SELECTOR = "._2rd3I";
+const LANGUAGES_LIST_SELECTOR = "._3fZ_2";
 const SMALL_BUTTONS_CONTAINER = "_1cv-y";
 const SMALL_BUTTON = "_3nfx7 _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt";
 const TEST_OUT_ICON = "_20ZkV";
@@ -61,8 +61,8 @@ const MAIN_SECTION_SELECTOR = "._33Mo9";
 const TREE_OVERLAY_CONTAINER_SELECTOR = "._1fnwn";
 const GLOBAL_PRACTISE_BUTTON_ANCHOR = "_3_B9a _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
 const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0.np6Tv";
-const BOTTOM_NAV_SELECTOR = "._3oP45";
-const CROWN_TOTAL_SELECTOR = "._1HHlZ._3F5mM, ._12yJ8._3F5mM";
+const BOTTOM_NAV_SELECTOR = "._37erx";
+const CROWN_TOTAL_SELECTOR = "._3nYQm._1B0kf";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 const SKILL_ROW_SELECTOR = "._3f9ou";
 const SKILL_TREE_SELECTOR = "._3YEom";
@@ -77,21 +77,23 @@ const ACHIEVEMENT_BOX = "Yth9H";
 const FRIENDS_TABLE_TITLE_SELECTOR = ".-AHpg";
 const SOCIAL_BUTTONS_HEADER_SELECTOR = "._3qTe3";
 
-const flagYOffsets = {
-	0:	"en", 32: "es", 64: "fr", 96: "de",
-	128: "ja", 160: "it", 193: "ko", 225: "zh",
-	257: "ru", 289: "pt", 321: "tr", 354: "nl",
-	386: "sv", 418: "ga", 450: "el", 482: "he",
-	515: "pl", 547: "no", 579: "da", 611: "hv",
-	643: "vi", 676: "ro", 708: "sw", 740: "eo",
-	772: "hu", 804: "cy", 837: "uk", 869: "kl",
-	901: "cs", 933: "hi", 965: "id", 998: "ha",
-	1030: "nv", 1062: "ar", 1094: "ca", 1126: "th",
-	1159: "gn",
-	// 1191: "ambassador", 1223: "duolingo",
-	// 1255: "troubleshooting", 1287: "teachers",
-	1320: "la", 1352: "gd", 1384: "fi",
-};
+const flagYValues =
+{
+    0: "en", 66: "es", 132: "fr", 198: "de",
+    264: "ja", 330: "it", 396: "ko", 462: "zh",
+    528: "ru", 594: "pt", 660: "tr", 726: "nl",
+    792: "sv", 858: "ga", 924: "el", 990: "he",
+    1056: "pl", 1122: "no", 1188: "vi", 1254: "da",
+    1320: "hv", 1386: "ro", 1452: "sw", 1518: "eo",
+    1584: "hu", 1650: "cy", 1716: "uk", 1782: "kl",
+    1848: "cs", 1914: "hi", 1980: "id", 2046: "ha",
+    2112: "nv", 2178: "ar", 2244: "ca", 2310: "th",
+    2376: "gn",
+    // 2442: "ambassador", 2508: "duolingo",
+    // 2574: "troubleshooting", 2640: "teachers",
+    2706: "la", 2772: "gd", 2838: "fi",
+    // 2904: "Yiddish"
+}
 
 let languageCode = "";
 let UICode = "";
@@ -514,13 +516,18 @@ function removeSuggestion()
 
 function removeFlagBorders()
 {
-	const flags = document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span>span:first-child`);
+	const flags = document.querySelectorAll(`${LANGUAGES_LIST_SELECTOR}>div>span>:first-child`);
 	flags.forEach(
 		(flag) => {
-			flag.removeAttribute("style");
 			flag.classList.remove("borderedFlag");
-			flag.removeAttribute("tree-level");
-			removeFeatureElement(...flag.querySelectorAll("img"));
+			flag.removeAttribute("data-tree-level");
+            if (flag.getAttribute("data-original-viewBox") !== null)
+            {
+                flag.setAttribute("viewBox", flag.getAttribute("data-original-viewBox"));
+                flag.removeAttribute("data-original-viewBox");
+            }
+			removeFeatureElement(...flag.parentNode.querySelectorAll(":scope > img"));
+            flag.parentNode.classList.remove("flagContainer");
 		}
 	);
 }
@@ -1390,38 +1397,32 @@ function addFlagBorders()
 						const flag1 = container.firstChild;
 						const flag2 = flag1.nextElementSibling;
 
-						if (
-							flag1.getAttribute("style") !== null
-							|| flag1.classList.contains("borderedFlag")
-						)
+						if (flag1.classList.contains("borderedFlag"))
 						{
 							// In the unlikely case where we have already added the borders and are trying to again
 							return false;
 						}
 						
-						// As the flags are all stored in one sprite sheet we determine which is displayed by the background positions.
-						const backgroundPosition1 = window.getComputedStyle(flag1).backgroundPosition.split(" ");
-						const backgroundPosition2 = window.getComputedStyle(flag2).backgroundPosition.split(" ");
+						// As the flags are all stored in one sprite sheet we determine which is displayed by the viewBox of the svg.
+						const viewBox1 = flag1.getAttribute("viewBox").split(" ");
+						const viewBox2 = flag2.getAttribute("viewBox").split(" ");
 						
 
 						// Background offsets in px as strings
-						const x1 = backgroundPosition1[0];
-						const y1 = backgroundPosition1[1];
+						const x1 = viewBox1[0];
+						const y1 = viewBox1[1];
+						const width1 = viewBox1[2];
+						const height1 = viewBox1[3];
 
-						const y2 = backgroundPosition2[1];
+						const x2 = viewBox2[0];
+						const y2 = viewBox2[1];
+						const width2 = viewBox2[2];
+						const height2 = viewBox2[3];
 						
-						// trim off px and make positive
-						const yOffset1 = Math.abs(parseInt(y1.slice(0,-2), 10));
-						const yOffset2 = Math.abs(parseInt(y2.slice(0,-2), 10));
-
 						// find the language code associated with those offsets
-						const code1 = flagYOffsets[yOffset1];
-						const code2 = flagYOffsets[yOffset2];
+						const code1 = flagYValues[y1];
+						const code2 = flagYValues[y2];
 
-						// height and width will need to be adjusted to account for the border that is to be added, so we save the original values
-						const height1 = window.getComputedStyle(flag1).height.slice(0,-2);
-						const width1 = window.getComputedStyle(flag1).width.slice(0,-2);
-				
 						let treeLevel = (data.treeLevels !== undefined) ? data.treeLevels[`${userId}:${code2}->${code1}`]: undefined;
 
 						if (treeLevel === undefined)
@@ -1431,19 +1432,15 @@ function addFlagBorders()
 
 
 						flag1.classList.add("borderedFlag");
-						flag1.setAttribute("tree-level", treeLevel);
-						flag1.style =
-						`
-							--bgPosX: ${parseFloat(x1) - 2}px;
-							--bgPosY: ${parseFloat(y1) - 2}px;
-							--height: ${+height1 + 4}px;
-							--width: ${+width1 + 4}px;
-						`;
+						flag1.setAttribute("data-tree-level", treeLevel);
+                        flag1.setAttribute("data-original-viewBox", `${x1} ${y1} ${width1} ${height1}`);
+                        flag1.setAttribute("viewBox", `${+x1 + 5} ${+y1 + 5} ${+width1 - 10} ${+height1 - 10}`);
 						if (treeLevel == 5)
 						{
 							const crown = document.createElement("IMG");
 							crown.src = imgSrcBaseUrl+"/juicy-crown.svg";
-							flag1.appendChild(crown);
+                            flag1.parentNode.classList.add("flagContainer")
+							flag1.parentNode.appendChild(crown);
 						}
 					}
 				);
@@ -2914,7 +2911,7 @@ function displayCrownsBreakdown()
 	placesToAdd.forEach(
 		(place) => 
 		{
-			crownsInfoContainer = place;
+			const crownsInfoContainer = place;
 
 			const crownLogoContainer = crownsInfoContainer.querySelector(`.${CROWN_LOGO_CONTAINER}`);
 			const crownCountImg = crownLogoContainer.querySelector(`:scope > img`);
@@ -3354,7 +3351,7 @@ function displayXPBreakdown()
 		
 		if(!inMobileLayout)
 		{
-			XPBox.parentNode.classList.add("XPBoxOverflowContainer");
+			XPBox.parentNode.parentNode.classList.add("XPBoxOverflowContainer");
 		}
 		else
 		{
@@ -5143,7 +5140,7 @@ function childListMutationHandle(mutationsList, observer)
 			return false;
 		}
 
-		if (popupIcon.getElementsByClassName(GOLD_CROWN).length != 0) // Grey crown doesn't seem to have its own class now, it has the same as gold.
+		if (popupIcon.querySelector(`.${GOLD_CROWN}`) !== null) // Grey crown doesn't seem to have its own class now, it has the same as gold.
 		{
 			// Crowns has had the change.
 			if (options.crownsInfo && popupIcon.lastChild.nodeName == 'DIV')

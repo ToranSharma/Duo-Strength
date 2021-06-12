@@ -10,6 +10,8 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.4)
 ### Added
 - Option to show checkpoints when only showing skills that need attention.
+- Sorting options for Progress Quiz box and Duolingo Score Box shown for PLUS
+  members.
 
 ### Fixed
 - Blurring of headings in popover hints with text hiding enabled.

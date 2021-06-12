@@ -74,6 +74,8 @@ const HINT_SENTENCE_CONTAINER = "_1Q4WV"; // used only in styles/stylesheet.css
 const HINT_SENTENCE_BUBBLE_ARROW = "_3fuMA"; // used only in styles/stylesheet.css
 const AD = "_1UOwI _3bfsh";
 const ACHIEVEMENT_BOX = "Yth9H";
+const PROGRESS_QUIZ_BOX = "_9GzaQ";
+const DUOLINGO_SCORE_BOX = "_37iXd";
 const FRIENDS_TABLE_TITLE_SELECTOR = ".-AHpg";
 const SOCIAL_BUTTONS_HEADER_SELECTOR = "._3qTe3";
 
@@ -3964,6 +3966,14 @@ function getSidebarBoxType(boxElement)
 	else if (boxElement.contains(document.querySelector(SOCIAL_BUTTONS_HEADER_SELECTOR)))
 	{
 		return "socialButtonsBox";
+	}
+	else if (boxElement.classList.conatains(PROGRESS_QUIZ_BOX))
+	{
+		return "progressQuizBox";
+	}
+	else if (boxElement.classList.conatains(DUOLINGO_SCORE_BOX))
+	{
+		return "duolingoScoreBox";
 	}
 	else
 	{

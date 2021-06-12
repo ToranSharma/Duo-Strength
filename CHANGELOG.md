@@ -5,6 +5,26 @@ Changelog
 ------------
 -
 
+[v2.0.4] - 2021-06-12
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.4)
+### Added
+- Option to show checkpoints when only showing skills that need attention.
+- Sorting options for Progress Quiz box and Duolingo Score Box shown for PLUS
+  members.
+
+### Fixed
+- Blurring of headings in popover hints with text hiding enabled.
+- Width of small buttons container in locked skill popout boxes.
+- Crowns Breakdown to no show grammar skills breakdown section if current tree
+  has no grammar skills.
+- Sentence hiding issue where it was still enabled for next question if feature
+  turned on after previous question has been marked.
+
+### Changed
+- Custom html attributes in options page now have "data-" prefix.
+- Made tree level sentence above Crowns Breakdown bold.
+
 [v2.0.3] - 2021-03-29
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.3)
@@ -1234,6 +1254,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.4]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.3...v2.0.4
 [v2.0.3]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.2...v2.0.3
 [v2.0.2]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.1...v2.0.2
 [v2.0.1]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.0...v2.0.1

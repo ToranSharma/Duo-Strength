@@ -559,6 +559,11 @@
 	width: 172px; /* = calc(48px + 8px + 60px + 8px + 48px) */
 }
 
+._1fMEX/*LOCKED_SKILL_POPOUT*/ .smallButtonsContainer
+{
+	width: auto;
+}
+
 .smallButtonsContainer button
 {
 	text-transform: capitalize;
@@ -584,7 +589,7 @@
 	box-shadow: 0.25em 0.25em rgba(0,0,0,0.2);
 	padding: 0.5em;
 }
-._1fMEX/*Locked Skill Popout*/ #wordsListBubble
+._1fMEX/*LOCKED_SKILL_POPOUT*/ #wordsListBubble
 {
 	background-color: darkgrey;
 	color: white;
@@ -609,7 +614,7 @@
 	right: calc(0.5 * 3em);
 }
 
-._1fMEX/*Locked Skill Popout*/ #wordsListBubble div
+._1fMEX/*LOCKED_SKILL_POPOUT*/ #wordsListBubble div
 {
 	background-color: darkgrey;
 }

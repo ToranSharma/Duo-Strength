@@ -3803,29 +3803,34 @@ function showOnlyNeededSkills()
 	}
 
 	let numHiddenSkills = skillElements.length;
+
 	needsAttention.forEach(
 		(skill) =>
 		{
+			// For each skill that needs attention, find all the elements that are labelled with the same short name as the desired skill.
 			const sameNamedSkills = skillElements.filter(element => element.querySelector(SKILL_NAME_SELECTOR).textContent === skill.short);
 			let index = 0;
 			if (sameNamedSkills.length !== 1)
 			{
+				// There are multiple elements that match the short name.
+				// To get the right one we see what index the skill object is in the filtered list of skills that share the same short name.
 				index = allSkills.filter(skillObject => skillObject.short === skill.short).findIndex(skillObject => skillObject.url_title === skill.url_title);
 			}
 
-			const skillToShow = sameNamedSkills[index];
+			const skillToShow = sameNamedSkills[index]; // This is then the correct skill element that we want to show to the user.
 
+			if (!elementsToShow.includes(skillToShow))
+			{
+				--numHiddenSkills; // If we haven't already, decrement the count of hidden skills.
+			}
+
+			// Get an array of all the containers of this skill so we can unhide those too.
 			const containers = Array.from(document.querySelectorAll(`${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}`)).filter(
 				(container) =>
 				{
 					return container.contains(skillToShow);
 				}
 			);
-
-			if (!elementsToShow.includes(skillToShow))
-			{
-				--numHiddenSkills;
-			}
 
 			elementsToShow.push(skillToShow, ...containers);
 
@@ -3838,6 +3843,15 @@ function showOnlyNeededSkills()
 			}
 		}
 	);
+
+	// Show completed and first unlocked checkpoint if options enabled
+	if (options.showCompletedCheckpointsWithSkillsThatNeedAttention)
+	{
+		const checkpointSections = Array.from(document.querySelectorAll(`${CHECKPOINT_SECTION_SELECTOR}`));
+		const completedCheckpoints = checkpointSections.filter(section => section.querySelector(`[data-test="checkpoint-badge"] img[src$="complete.svg"]`) !== null);
+		const firstUnlockedCheckpoint = checkpointSections.filter(section => section.querySelector(`[data-test="checkpoint-badge"] img[src$="unlocked.svg"]`) !== null).slice(0, 1);
+		elementsToShow.push(...completedCheckpoints, ...firstUnlockedCheckpoint);
+	}
 
 	// Now we hide everything.
 	document.querySelectorAll(`${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}`).forEach(

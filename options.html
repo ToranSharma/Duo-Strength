@@ -208,7 +208,11 @@
 			<ul class="sectionOptionsList">
 				<li class="checkboxOption">
 					<label for="showOnlyNeededSkills">Show Only the Skills that Need Attention</label>
-					<input class="option" id="showOnlyNeededSkills" type="checkbox" />
+					<input class="option" id="showOnlyNeededSkills" type="checkbox" data-controlling='[false]:["#showCompletedCheckpointsWithSkillsThatNeedAttention"]' />
+				</li>
+				<li class="checkboxOption">
+					<label for="showCompletedCheckpointsWithSkillsThatNeedAttention">Show Completed and Next Checkpoints with Skills that Need Attention</label>
+					<input class="option" id="showCompletedCheckpointsWithSkillsThatNeedAttention" type="checkbox" />
 				</li>
 				<li class="checkboxOption">
 					<label for="fixedSidebar">Scroll Sidebar Independently to the Tree</label>

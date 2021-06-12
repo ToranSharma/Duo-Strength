@@ -782,7 +782,8 @@
 /* Sentence Hiding */
 
 .blurringSentence [data-test="hint-sentence"],
-.blurringSentence [data-test="hint-popover"] td
+.blurringSentence [data-test="hint-popover"] td,
+.blurringSentence [data-test="hint-popover"] th
 {
 	filter: blur(0.3em);
 }

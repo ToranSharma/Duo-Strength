@@ -8,6 +8,9 @@ Changelog
 [v2.0.4] - 2021-06-12
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.4)
+### Fixed
+- Blurring of headings in popover hints with text hiding enabled.
+
 ### Changed
 - Custom html attributes in options page now have "data-" prefix.
 

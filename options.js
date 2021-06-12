@@ -153,7 +153,7 @@ function applyOptions(hideTransitions = false)
 					const selectElement = document.querySelector(`#${option+index}`);
 					selectElement.value = partValue;
 
-					const furtherItemCutoffIndex = Array.from(selectElement.children).indexOf(selectElement.querySelector(`option[value="${optionElement.getAttribute("furtherItemCutoff")}"]`));
+					const furtherItemCutoffIndex = Array.from(selectElement.children).indexOf(selectElement.querySelector(`option[value="${optionElement.getAttribute("data-furtherItemCutoff")}"]`));
 
 					if (selectElement.selectedIndex > furtherItemCutoffIndex)
 					{
@@ -166,7 +166,7 @@ function applyOptions(hideTransitions = false)
 							const newList = newSortList(listItem);
 							listItem.parentNode.insertBefore(newList, addButton.parentNode);
 						}
-						else if (index === Number(optionElement.getAttribute("maxParts")) - 1)
+						else if (index === Number(optionElement.getAttribute("data-maxParts")) - 1)
 						{
 							// last saved part and last possible part
 							// nothing more left tha can be added
@@ -427,8 +427,8 @@ function multiPartChangeHandler()
 	// Any existing subsequent parts are no longer valid.
 	removePartsAfter(this);
 	
-	const furtherItemCutoffIndex = Array.from(this.children).indexOf(this.querySelector(`option[value="${optionElement.getAttribute("furtherItemCutoff")}"]`));
-	const maxParts = Number(this.parentNode.parentNode.getAttribute("maxParts"));
+	const furtherItemCutoffIndex = Array.from(this.children).indexOf(this.querySelector(`option[value="${optionElement.getAttribute("data-furtherItemCutoff")}"]`));
+	const maxParts = Number(this.parentNode.parentNode.getAttribute("data-maxParts"));
 	if (partIndex < maxParts -1  && this.selectedIndex > furtherItemCutoffIndex)
 	{
 		// Can sort further.
@@ -450,7 +450,7 @@ function multiPartChangeHandler()
 
 function applyControlledOptionCollapsing(optionElement, optionState)
 {
-	const controllingAttr = optionElement.getAttribute("controlling");
+	const controllingAttr = optionElement.getAttribute("data-controlling");
 	let [displayStates, controlledSelectors] = [null, []];
 	if (controllingAttr !== null)
 	{
@@ -488,7 +488,7 @@ function addPartButtonClickHandler()
 
 	const newSelect = newListItem.querySelector(".option");
 
-	const furtherItemCutoffIndex = Array.from(newSelect.children).indexOf(newSelect.querySelector(`option[value="${newListItem.parentNode.getAttribute("furtherItemCutoff")}"]`));
+	const furtherItemCutoffIndex = Array.from(newSelect.children).indexOf(newSelect.querySelector(`option[value="${newListItem.parentNode.getAttribute("data-furtherItemCutoff")}"]`));
 	if (newSelect.selectedIndex < furtherItemCutoffIndex)
 	{
 		this.parentNode.classList.add("hidden");
@@ -509,8 +509,8 @@ function newSortList(previousListItem)
 		[
 			partValue,
 			...(
-				previousListSelectOption.getAttribute("invalidNextValues") !== null
-				? previousListSelectOption.getAttribute("invalidNextValues").split(",")
+				previousListSelectOption.getAttribute("data-invalidNextValues") !== null
+				? previousListSelectOption.getAttribute("data-invalidNextValues").split(",")
 				: []
 			)
 		];

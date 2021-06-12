@@ -251,6 +251,7 @@
 	text-align: center;
 	color: black !important;
 	margin: 0 0 1em 0 !important;
+	font-weight: bold;
 }
 
 .treeLevel
@@ -444,7 +445,7 @@
 {
 	margin-bottom: 0;
 }
-._3uC-w.inView ~ ._3uC-w.inView /*TREE_SECTION*/
+.inView ~ ._3uC-w.inView /*TREE_SECTION*/
 {
 	margin-top: 0;
 }
@@ -559,6 +560,11 @@
 	width: 172px; /* = calc(48px + 8px + 60px + 8px + 48px) */
 }
 
+._1fMEX/*LOCKED_SKILL_POPOUT*/ .smallButtonsContainer
+{
+	width: auto;
+}
+
 .smallButtonsContainer button
 {
 	text-transform: capitalize;
@@ -584,7 +590,7 @@
 	box-shadow: 0.25em 0.25em rgba(0,0,0,0.2);
 	padding: 0.5em;
 }
-._1fMEX/*Locked Skill Popout*/ #wordsListBubble
+._1fMEX/*LOCKED_SKILL_POPOUT*/ #wordsListBubble
 {
 	background-color: darkgrey;
 	color: white;
@@ -609,7 +615,7 @@
 	right: calc(0.5 * 3em);
 }
 
-._1fMEX/*Locked Skill Popout*/ #wordsListBubble div
+._1fMEX/*LOCKED_SKILL_POPOUT*/ #wordsListBubble div
 {
 	background-color: darkgrey;
 }
@@ -782,7 +788,8 @@
 /* Sentence Hiding */
 
 .blurringSentence [data-test="hint-sentence"],
-.blurringSentence [data-test="hint-popover"] td
+.blurringSentence [data-test="hint-popover"] td,
+.blurringSentence [data-test="hint-popover"] th
 {
 	filter: blur(0.3em);
 }

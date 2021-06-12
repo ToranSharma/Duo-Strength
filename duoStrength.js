@@ -67,13 +67,15 @@ const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 const SKILL_ROW_SELECTOR = "._3f9ou";
 const SKILL_TREE_SELECTOR = "._3YEom";
 const TIPS_PAGE_BODY_SELECTOR = "._1yyg2";
-const LOCKED_SKILL_POPOUT_SELECTOR = "._1fMEX";
 const MOBILE_TIPS_PAGE_HEADER_SELECTOR = "._36P0W";
+const LOCKED_SKILL_POPOUT = "_1fMEX"; // used only in styles/stylesheet.css
 const CARTOON_CONTAINER = "F2B9m"; // used only in styles/stylesheet.css
 const HINT_SENTENCE_CONTAINER = "_1Q4WV"; // used only in styles/stylesheet.css
 const HINT_SENTENCE_BUBBLE_ARROW = "_3fuMA"; // used only in styles/stylesheet.css
 const AD = "_1UOwI _3bfsh";
 const ACHIEVEMENT_BOX = "Yth9H";
+const PROGRESS_QUIZ_BOX = "_9GzaQ";
+const DUOLINGO_SCORE_BOX = "_37iXd";
 const FRIENDS_TABLE_TITLE_SELECTOR = ".-AHpg";
 const SOCIAL_BUTTONS_HEADER_SELECTOR = "._3qTe3";
 
@@ -3132,10 +3134,10 @@ function displayCrownsBreakdown()
 				crownLevelCount[0][2] += crownLevelCount[2][2];
 
 				// Remove the grammar skills count as it is not needed now.
-				crownLevelCount[2].length = 0;
+				crownLevelCount[2].length = 2;
 			}
 
-			if (!options.grammarSkillsBreakdown)
+			if (!options.grammarSkillsBreakdown || grammarSkills.length === 0)
 			{
 				// Remove the grammar skills count as we don't want to display it
 				crownLevelCount[2].length = 0;
@@ -3803,29 +3805,34 @@ function showOnlyNeededSkills()
 	}
 
 	let numHiddenSkills = skillElements.length;
+
 	needsAttention.forEach(
 		(skill) =>
 		{
+			// For each skill that needs attention, find all the elements that are labelled with the same short name as the desired skill.
 			const sameNamedSkills = skillElements.filter(element => element.querySelector(SKILL_NAME_SELECTOR).textContent === skill.short);
 			let index = 0;
 			if (sameNamedSkills.length !== 1)
 			{
+				// There are multiple elements that match the short name.
+				// To get the right one we see what index the skill object is in the filtered list of skills that share the same short name.
 				index = allSkills.filter(skillObject => skillObject.short === skill.short).findIndex(skillObject => skillObject.url_title === skill.url_title);
 			}
 
-			const skillToShow = sameNamedSkills[index];
+			const skillToShow = sameNamedSkills[index]; // This is then the correct skill element that we want to show to the user.
 
+			if (!elementsToShow.includes(skillToShow))
+			{
+				--numHiddenSkills; // If we haven't already, decrement the count of hidden skills.
+			}
+
+			// Get an array of all the containers of this skill so we can unhide those too.
 			const containers = Array.from(document.querySelectorAll(`${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}`)).filter(
 				(container) =>
 				{
 					return container.contains(skillToShow);
 				}
 			);
-
-			if (!elementsToShow.includes(skillToShow))
-			{
-				--numHiddenSkills;
-			}
 
 			elementsToShow.push(skillToShow, ...containers);
 
@@ -3838,6 +3845,15 @@ function showOnlyNeededSkills()
 			}
 		}
 	);
+
+	// Show completed and first unlocked checkpoint if options enabled
+	if (options.showCompletedCheckpointsWithSkillsThatNeedAttention)
+	{
+		const checkpointSections = Array.from(document.querySelectorAll(`${CHECKPOINT_SECTION_SELECTOR}`));
+		const completedCheckpoints = checkpointSections.filter(section => section.querySelector(`[data-test="checkpoint-badge"] img[src$="complete.svg"]`) !== null);
+		const firstUnlockedCheckpoint = checkpointSections.filter(section => section.querySelector(`[data-test="checkpoint-badge"] img[src$="unlocked.svg"]`) !== null).slice(0, 1);
+		elementsToShow.push(...completedCheckpoints, ...firstUnlockedCheckpoint);
+	}
 
 	// Now we hide everything.
 	document.querySelectorAll(`${SKILL_ROW_SELECTOR}, ${TREE_SECTION_SELECTOR}, ${CHECKPOINT_SECTION_SELECTOR}, ${BONUS_SKILL_DIVIDER_SELECTOR}`).forEach(
@@ -3950,6 +3966,14 @@ function getSidebarBoxType(boxElement)
 	else if (boxElement.contains(document.querySelector(SOCIAL_BUTTONS_HEADER_SELECTOR)))
 	{
 		return "socialButtonsBox";
+	}
+	else if (boxElement.classList.conatains(PROGRESS_QUIZ_BOX))
+	{
+		return "progressQuizBox";
+	}
+	else if (boxElement.classList.conatains(DUOLINGO_SCORE_BOX))
+	{
+		return "duolingoScoreBox";
 	}
 	else
 	{
@@ -4874,7 +4898,10 @@ function hideTranslationText(reveal = false, setupObserver = true)
 		}
 		else
 		{
-			// No speaker button so we are translating from native to target language
+			// No speaker button so we are translating from native to target language.
+			// Remove blurring sentence class to make sure that the sentence is show.
+			// If the sentence bluring was enabled after the last question was marked, the class is still there
+			document.body.classList.remove("blurringSentence");
 		}
 	}
 	return false;

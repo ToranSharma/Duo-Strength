@@ -34,6 +34,7 @@
 	"lessonThreshold":							"4",
 
 	"showOnlyNeededSkills":						false,
+	"showCompletedCheckpointsWithSkillsThatNeedAttention":false,
 	"fixedSidebar":								false,
 
 		"focusMode":								false,

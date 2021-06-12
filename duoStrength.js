@@ -3134,10 +3134,10 @@ function displayCrownsBreakdown()
 				crownLevelCount[0][2] += crownLevelCount[2][2];
 
 				// Remove the grammar skills count as it is not needed now.
-				crownLevelCount[2].length = 0;
+				crownLevelCount[2].length = 2;
 			}
 
-			if (!options.grammarSkillsBreakdown)
+			if (!options.grammarSkillsBreakdown || grammarSkills.length === 0)
 			{
 				// Remove the grammar skills count as we don't want to display it
 				crownLevelCount[2].length = 0;

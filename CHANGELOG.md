@@ -16,6 +16,8 @@ Changelog
 ### Fixed
 - Blurring of headings in popover hints with text hiding enabled.
 - Width of small buttons container in locked skill popout boxes.
+- Crowns Breakdown to no show grammar skills breakdown section if current tree
+  has no grammar skills.
 
 ### Changed
 - Custom html attributes in options page now have "data-" prefix.

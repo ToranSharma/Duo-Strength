@@ -17,6 +17,7 @@ Changelog
 
 ### Changed
 - Custom html attributes in options page now have "data-" prefix.
+- Made tree level sentence above Crowns Breakdown bold.
 
 [v2.0.3] - 2021-03-29
 -----------------

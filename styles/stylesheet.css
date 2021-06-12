@@ -445,7 +445,7 @@
 {
 	margin-bottom: 0;
 }
-._3uC-w.inView ~ ._3uC-w.inView /*TREE_SECTION*/
+.inView ~ ._3uC-w.inView /*TREE_SECTION*/
 {
 	margin-top: 0;
 }

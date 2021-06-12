@@ -18,6 +18,8 @@ Changelog
 - Width of small buttons container in locked skill popout boxes.
 - Crowns Breakdown to no show grammar skills breakdown section if current tree
   has no grammar skills.
+- Sentence hiding issue where it was still enabled for next question if feature
+  turned on after previous question has been marked.
 
 ### Changed
 - Custom html attributes in options page now have "data-" prefix.

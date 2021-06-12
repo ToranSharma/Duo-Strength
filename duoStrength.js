@@ -4898,7 +4898,10 @@ function hideTranslationText(reveal = false, setupObserver = true)
 		}
 		else
 		{
-			// No speaker button so we are translating from native to target language
+			// No speaker button so we are translating from native to target language.
+			// Remove blurring sentence class to make sure that the sentence is show.
+			// If the sentence bluring was enabled after the last question was marked, the class is still there
+			document.body.classList.remove("blurringSentence");
 		}
 	}
 	return false;

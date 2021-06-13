@@ -659,8 +659,7 @@ function removeTipsPageButtons()
   	removeFeatureElement(...Array.from(document.querySelectorAll(`[data-test="start-lesson"]`)).slice(1).map(elem=>elem.parentNode));
 
 	removeFeatureElement(
-		...Array.from(document.querySelectorAll(`[data-test="start-lesson"], [data-test="practise-button"]`))
-				.slice(1)
+		...Array.from(document.querySelectorAll(`[data-test="start-lesson"], [data-test="practise-button"]`)).slice(1)
 	);
 }
 
@@ -1261,7 +1260,7 @@ function graphSVG(data, ratio=1.5)
 			(new Date(
 					(new Date()).getTime() - (6-i)*1000*60*60*24
 				)
-			 )
+			)
 			.toLocaleDateString(undefined,
 				{
 					weekday: "narrow"
@@ -1707,7 +1706,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 	if (needsSorting)
 	{
-		for (criterion of sortingCriteria.reverse())
+		for (let criterion of sortingCriteria.reverse())
 		{
 			switch (criterion)
 			{
@@ -1967,8 +1966,8 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 
 		// Add a clickable element to show more skills in the list.
 		// We are going to add on another needsStrengtheningListLength number of skills to the list, but as we are going to change this amount to lengthen the list, we need to original saved in storage.
-	 	chrome.storage.sync.get("options", function (data)
-	 	{
+		chrome.storage.sync.get("options", function (data)
+		{
 			let numExtraSkillsOnShowMore = Math.min(numSkillsLeft, (!cracked)?data.options.needsStrengtheningListLength:data.options.crackedSkillsListLength);
 			
 			let showMore = document.getElementById(`showMore${(!cracked)?"ToStrengthen":"ToRepair"}`);
@@ -3967,11 +3966,11 @@ function getSidebarBoxType(boxElement)
 	{
 		return "socialButtonsBox";
 	}
-	else if (boxElement.classList.conatains(PROGRESS_QUIZ_BOX))
+	else if (boxElement.classList.contains(PROGRESS_QUIZ_BOX))
 	{
 		return "progressQuizBox";
 	}
-	else if (boxElement.classList.conatains(DUOLINGO_SCORE_BOX))
+	else if (boxElement.classList.contains(DUOLINGO_SCORE_BOX))
 	{
 		return "duolingoScoreBox";
 	}
@@ -3994,7 +3993,7 @@ function getPriorityOfSidebarBox(box)
 	let priority = options.sidebarBoxOrder.split(",").indexOf(box.type);
 	if (priority === -1)
 	{
-		const unsortedOrder = ["leagues","XPBox","languagesBox","totalStrengthBox","crownsBox","ad","achievementBox","friendsBox","socialButtonsBox"];
+		const unsortedOrder = ["leagues","duolingoScoreBox","XPBox","languagesBox","totalStrengthBox","crownsBox","progressQuizBox","ad","achievementBox","friendsBox","socialButtonsBox"];
 		priority = 100 + unsortedOrder.indexOf(box.type);
 	}
 
@@ -5254,7 +5253,7 @@ function childListMutationHandle(mutationsList, observer)
 	{
 		if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);
 	}
-};
+}
 
 function classNameMutationHandle(mutationsList, observer)
 {
@@ -5364,7 +5363,7 @@ function classNameMutationHandle(mutationsList, observer)
 			}
 		}
 	}
-};
+}
 
 function setUpObservers()
 {
@@ -5479,12 +5478,12 @@ async function init()
 
 	rootChild = rootElem.childNodes[0];
 	childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
-	
+
 	if (rootChild.querySelector(`:scope > [data-focus-guard]`) != null)
 	{
 		// The golden owl message is being displayed.
 		// This means that the mainBodyCointainer is just before these new elements as the second child of rootChild
-		mainBodyCointainer = rootChild.querySelector(`:scope > [data-focus-guard]`).previousElementSibling;
+		mainBodyContainer = rootChild.querySelector(`:scope > [data-focus-guard]`).previousElementSibling;
 	}
 	else if((/^\/courses/).test(window.location.pathname))
 	{
@@ -5733,7 +5732,7 @@ function start()
 		}
 	);
 	init();
-}; // call function to start display sequence on first load
+} // call function to start display sequence on first load
 
 window.onunload = function()
 {

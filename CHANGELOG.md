@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v2.0.5] - 2021-06-13
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.5)
+### Fixed
+- Error when sorting side bar boxes.
+- Unsorted order of Progress Quiz and Duolingo Score side bar boxes.
+
 [v2.0.4] - 2021-06-12
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.4)
@@ -1254,6 +1261,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.5]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.4...v2.0.5
 [v2.0.4]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.3...v2.0.4
 [v2.0.3]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.2...v2.0.3
 [v2.0.2]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.1...v2.0.2

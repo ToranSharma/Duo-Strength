@@ -45,7 +45,7 @@ const LEAGUE_TABLE = "_1_p4S";
 const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = "._1m77f";
 const SKILL_NAME_SELECTOR = "._2OhdT._3PSt5";
 const CHECKPOINT_CONTAINER_SELECTOR = "._1lAog";
-const CHECKPOINT_POPOUT_SELECTOR = `${CHECKPOINT_CONTAINER_SELECTOR} ._2EYUQ._25WXl`;
+const CHECKPOINT_POPOUT_SELECTOR = `${CHECKPOINT_CONTAINER_SELECTOR} ._3uS_y.eIZ_c`;
 const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
 const CHECKPOINT_SECTION_SELECTOR = "._2tZPV";
 const LANGUAGES_LIST_SELECTOR = "._3fZ_2";
@@ -5852,9 +5852,9 @@ The structure of page is as follows:
 															</div>
 														</div>
 													########################## Only Added if checkpoint is clicked on #######################################
-													#	<div class="_2WTbQ _3woYR">                                          <-- Checkpoint popout container
-													#		<div class="_3tWnW _3_Gei _1W3aa _2ShHS">
-													#			<div class="_1b8Ja BnUip _3Gx6D">                            <-- Checkpoint popout content
+													#	<div class="_3uS_y eIZ_c" style="--margin:10px;">                    <-- Checkpoint popout container
+													#		<div class="_2O14B _2XlFZ _1v2Gj WCcVn" style="z-index: 1;">
+													#			<div class="_1KUxv BnUip _3Gx6D">                            <-- Checkpoint popout content
 													#				<div class="_1peXy">Checkpoint Complete!</div>
 													#				<div class="_32Tdp">DESCRIPTION</div>                    <-- Checkpoint blurb
 													#				<button 

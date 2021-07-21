@@ -5,6 +5,14 @@ Changelog
 ------------
 -
 
+[v2.0.7] - 2021-07-21
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.7)
+### Removed
+- Checking of old key format for progress history storage. All instances of
+  this should have already been caught and updated to the new user id based
+  format.
+
 [v2.0.6] - 2021-07-04
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.6)
@@ -1267,6 +1275,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.7]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.6...v2.0.7
 [v2.0.6]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.5...v2.0.6
 [v2.0.5]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.4...v2.0.5
 [v2.0.4]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.3...v2.0.4

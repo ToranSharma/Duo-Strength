@@ -172,7 +172,6 @@ function retrieveProgressHistory()
 		chrome.storage.sync.get("progress", function (data)
 		{
 			const key = `${userId}:${UICode}->${languageCode}`;
-			const oldFormatKey = username + languageCode + UICode;
 			if (Object.entries(data).length === 0)
 			{
 				// No progress data
@@ -182,14 +181,6 @@ function retrieveProgressHistory()
 			{
 				// There is some data for the current user+tree combination
 				progress = data.progress[key];
-			}
-			else if (data.progress.hasOwnProperty(oldFormatKey))
-			{
-				// There is data in the old format, we will use this data but remove the old format
-				progress = [...data.progress[oldFormatKey]]; // Copy the data as we are going to delete it
-				data.progress[key] = progress;
-				delete data.progress[oldFormatKey];
-				chrome.storage.sync.set({"progress": data.progress});
 			}
 			else
 			{

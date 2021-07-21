@@ -4894,6 +4894,11 @@ function hideTranslationText(reveal = false, setupObserver = true)
 			document.body.classList.remove("blurringSentence");
 		}
 	}
+	else
+	{
+		// Not a translating type question of any sort, so make sure the text is displaying if there is any.
+		document.body.classList.remove("blurringSentence");
+	}
 	return false;
 }
 

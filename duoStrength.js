@@ -43,7 +43,7 @@ const CRACKED_SKILL_OVERLAY_SELECTOR = "._1SXlx, ._1x_0f, ._2ZUHwm, ._1m7gz"; //
 const NEW_WORD_SELECTOR = "._1bkpY";
 const LEAGUE_TABLE = "_1_p4S";
 const SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR = "._1m77f";
-const SKILL_NAME_SELECTOR = "._2OhdT._3PSt5";
+const SKILL_NAME_SELECTOR = "._2OhdT";
 const CHECKPOINT_CONTAINER_SELECTOR = "._1lAog";
 const CHECKPOINT_POPOUT_SELECTOR = `${CHECKPOINT_CONTAINER_SELECTOR} ._3uS_y.eIZ_c`;
 const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
@@ -5786,7 +5786,7 @@ The structure of page is as follows:
 																	</div>
 																</div>
 																#######################################                      <-- Strength Bar inserted here
-																<div class="Mr3if _2OhdT _1V15X _3PSt5">SKILL NAME</div>     <-- Skill name element
+																<div class="Mr3if _2OhdT">SKILL NAME</div>                   <-- Skill name element
 															</div>
 														</div>
 													######## Only after clicking a skill ###################################################################

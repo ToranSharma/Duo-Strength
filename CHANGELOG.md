@@ -5,6 +5,14 @@ Changelog
 ------------
 -
 
+[v2.0.9] - 2021-08-12
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.9)
+### Fixed
+- Skill selector to stop including skill popout elements. This was causing
+  issues when adding strength bars.
+- Mobile/desktop layout switch detection if page loaded on tips page.
+
 [v2.0.8] - 2021-08-03
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.8)
@@ -1281,6 +1289,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.9]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.8...v2.0.9
 [v2.0.8]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.7...v2.0.8
 [v2.0.7]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.6...v2.0.7
 [v2.0.6]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.5...v2.0.6

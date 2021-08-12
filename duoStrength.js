@@ -2423,7 +2423,7 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 
 function addButtonsToTipsPage()
 {
-	if ((new RegExp("/tips/?")).test(window.location.pathname))
+	if ((new RegExp("/tips/?")).test(window.location.pathname) && document.querySelector(`[data-test="start-lesson"]`) != null)
 	{
 		const desiredNumButtons = (1 + options.addTipsPagePractiseButton) * (options.addTipsPageBottomButtons? 2 : 1 )
 

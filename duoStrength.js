@@ -54,7 +54,8 @@ const SMALL_BUTTON = "_3nfx7 _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25
 const TEST_OUT_ICON = "_20ZkV";
 const GOLDEN_OWL_CHECKPOINT_SELECTOR = ".lIg1v";
 const TREE_SECTION_SELECTOR = "._3uC-w ";
-const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], [data-test="tree-section"] a[href], ${TREE_SECTION_SELECTOR} [data-test="skill"]`;
+const SKILL_ROW_SELECTOR = "._3f9ou";
+const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], ${SKILL_ROW_SELECTOR}>a[href], ${TREE_SECTION_SELECTOR} [data-test="skill"]`;
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 const MAIN_SECTION_SELECTOR = "._33Mo9";
@@ -64,7 +65,6 @@ const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0.np6Tv";
 const BOTTOM_NAV_SELECTOR = "._37erx";
 const CROWN_TOTAL_SELECTOR = "._3nYQm._1B0kf";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
-const SKILL_ROW_SELECTOR = "._3f9ou";
 const SKILL_TREE_SELECTOR = "._3YEom";
 const TIPS_PAGE_BODY_SELECTOR = "._1yyg2";
 const MOBILE_TIPS_PAGE_HEADER_SELECTOR = "._36P0W";
@@ -1546,7 +1546,7 @@ function addStrengthBars(strengths)
 		const display = (skills[i][3]) ? "" : "none";
 		const name = skills[i][4];
 		
-		if(document.getElementsByClassName("strengthBarHolder").length == numBarsAdded) // if we have only the number of bars added this time round, keep adding new ones.
+		if(document.querySelectorAll(".strengthBarHolder").length === numBarsAdded) // if we have only the number of bars added this time round, keep adding new ones.
 		{
 			const strengthBarHolder = document.createElement("div");
 			strengthBarHolder.classList.add("strengthBarHolder")

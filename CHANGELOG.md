@@ -11,6 +11,7 @@ Changelog
 ### Fixed
 - Skill selector to stop including skill popout elements. This was causing
   issues when adding strength bars.
+- Mobile/desktop layout switch detection if page loaded on tips page.
 
 [v2.0.8] - 2021-08-03
 -----------------

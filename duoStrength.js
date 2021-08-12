@@ -5503,7 +5503,10 @@ async function init()
 	if (mainBody == null)
 		return false;
 	
-	if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null || document.querySelector(MOBILE_TIPS_PAGE_HEADER_SELECTOR) !== null)
+	if (
+		document.querySelector(BOTTOM_NAV_SELECTOR) !== null // There is a bottom nav which only happens in mobile layout.
+		|| ((new RegExp("/tips/?")).test(window.location.pathname) && document.querySelector(`.${TOP_BAR}`) === null) // We are on a tips page and there is no top bar, so we are in mobile layout.
+	)
 	{
 		inMobileLayout = true;
 		rootElem.classList.add("mobileLayout");

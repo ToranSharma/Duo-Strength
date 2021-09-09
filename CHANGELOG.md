@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v2.0.10] - 2021-09-09
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.10)
+### Fixed
+- Layout and styling of skill popout words and mastered buttons.
+
 [v2.0.9] - 2021-08-12
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.9)
@@ -1289,6 +1295,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.10]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.9...v2.0.10
 [v2.0.9]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.8...v2.0.9
 [v2.0.8]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.7...v2.0.8
 [v2.0.7]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.6...v2.0.7

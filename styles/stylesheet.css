@@ -537,7 +537,7 @@
 
 /* Buttons in Skill Popouts */
 
-.skillPopout
+.skillPopout > div > div
 {
 	overflow: visible;
 }
@@ -550,26 +550,23 @@
 .smallButtonsContainer
 {
 	position: relative;
-	display: grid;
-	grid-auto-flow: column;
-	grid-auto-columns: minmax(48px, auto);
-	grid-gap: 8px;
-	align-items: center;
-	justify-items: stretch;
+    display: flex;
+    flex-direction: row;
+    column-gap: 8px;
+    align-items: stretch;
 	justify-content: flex-end;
-	width: 172px; /* = calc(48px + 8px + 60px + 8px + 48px) */
 }
 
 ._1fMEX/*LOCKED_SKILL_POPOUT*/ .smallButtonsContainer
 {
 	width: auto;
+	height: 48px;
 }
 
-.smallButtonsContainer button
+.smallButtonsContainer > *
 {
 	text-transform: capitalize;
 	width: auto;
-	padding: 0em 0.3em !important;
 	margin: 0;
 }
 .smallButtonsContainer button[data-test="words-button"]
@@ -606,7 +603,7 @@
 	transform: rotate(45deg);
 	right: calc(48px + 8px + 0.5 * 3em);
 }
-#wordsListBubble:nth-last-child(2) div
+#wordsListBubble:last-child div
 {
 	/*
 		Just the words button,

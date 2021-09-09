@@ -50,7 +50,7 @@ const CHECKPOINT_BLURB_SELECTOR = "._32Tdp";
 const CHECKPOINT_SECTION_SELECTOR = "._2tZPV";
 const LANGUAGES_LIST_SELECTOR = "._3fZ_2";
 const SMALL_BUTTONS_CONTAINER = "_1cv-y";
-const SMALL_BUTTON = "_3nfx7 _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt";
+const SMALL_BUTTON = "_3zRHo WOZnx _275sd _1ZefG _3nfx7";
 const TEST_OUT_ICON = "_20ZkV";
 const GOLDEN_OWL_CHECKPOINT_SELECTOR = ".lIg1v";
 const TREE_SECTION_SELECTOR = "._3uC-w ";
@@ -2108,8 +2108,6 @@ function addWordsButton(skillPopout)
 {
 	if (skillPopout === null) return false;
 
-	skillPopout.classList.add("skillPopout");
-
 	const skillData = getSkillFromPopout(skillPopout);
 
 	// Grammar skills words list are not currently helpful, so don't add the button.
@@ -2132,10 +2130,11 @@ function addWordsButton(skillPopout)
 
 	wordsButton.addEventListener("click",
 		(event) => {
+			skillPopout.classList.add("skillPopout"); // Do again as classes get reset after appearing
 			const smallButtonsContainer = event.target.parentNode;
 			const wordsListBubble = smallButtonsContainer.querySelector("#wordsListBubble");
 			if (wordsListBubble === null)
-				smallButtonsContainer.appendChild(createWordsListBubble(words, wordsButton, smallButtonsContainer, isLocked));
+				smallButtonsContainer.insertBefore(createWordsListBubble(words, wordsButton, smallButtonsContainer, isLocked), wordsButton.nextElementSibling);
 			else
 				wordsListBubble.remove();
 			event.stopPropagation();

@@ -567,7 +567,7 @@
 {
 	text-transform: capitalize;
 	width: auto;
-	margin: 0;
+	margin: 0 !important;
 }
 .smallButtonsContainer button[data-test="words-button"]
 {

@@ -2269,20 +2269,24 @@ function addPractiseButton(skillPopout)
 	practiseButton.textContent = "Practise";
 	practiseButton.title = "Practising this skill will strengthen it, but will not contribute any progress towards earning the next crown.";
 	practiseButton.setAttribute("data-test", "practise-button");
-
+	practiseButton.removeAttribute("href");
 
 	const urlTitle = skillObject.url_title;
-	practiseButton.addEventListener("click", (event) => {
-		const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
-		const lastSkill = {
-			skillName: skillName,
-			urlTitle: urlTitle
-		};
+	practiseButton.addEventListener("click",
+		(event) =>
+		{
+			event.preventDefault();
+			const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
+			const lastSkill = {
+				skillName: skillName,
+				urlTitle: urlTitle
+			};
 
-		chrome.storage.sync.set({lastSkill: lastSkill});
+			chrome.storage.sync.set({lastSkill: lastSkill});
 
-		window.location = `/skill/${languageCode}/${urlTitle}/practice`;
-	});
+			window.location = `/skill/${languageCode}/${urlTitle}/practice`;
+		}
+	);
 
 	startButton.parentNode.insertBefore(practiseButton, startButton.nextSibling);
 

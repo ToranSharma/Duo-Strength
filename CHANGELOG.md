@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v2.0.11] - 2021-09-10
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.11)
+### Fixed
+- Practise button click behaviour not taking the user into a practice session.
+
 [v2.0.10] - 2021-09-09
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.10)
@@ -1295,6 +1301,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.11]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.10...v2.0.11
 [v2.0.10]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.9...v2.0.10
 [v2.0.9]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.8...v2.0.9
 [v2.0.8]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.7...v2.0.8

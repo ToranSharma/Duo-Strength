@@ -5059,18 +5059,18 @@ function childListMutationHandle(mutationsList, observer)
 	else if (rootChildContentsReplaced)
 	{
 		// Check if there is both the topbar and the main page elem.
-		if (rootChild.childElementCount === 2)
-		{
-			// not just changed into a lesson
-			languageChanged = false;
-			init();
-		}
-		else if (rootChild.childElementCount === 1)
+		languageChanged = false;
+		if (rootChild.childElementCount === 1)
 		{
 			// Entered a lesson in the normal way, through the skill tree.
 			// Don't need to do anything here as when the lesson will be loading first.
 			// When it has finished loading the mainBody is replaced with the lesson sections.
 			// We are already observing for that change and will handle it.
+		}
+		else
+		{
+			// not just changed into a lesson
+			init();
 		}
 	}
 	else if (mainBodyReplaced)

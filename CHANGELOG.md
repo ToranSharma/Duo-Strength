@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v2.0.12] - 2021-09-11
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.12)
+### Fixed
+- Page change handling of going back to learn page from a lesson that was
+  entered in the normal way (without page reload).
+
 [v2.0.11] - 2021-09-10
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.11)
@@ -1301,6 +1308,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.12]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.11...v2.0.12
 [v2.0.11]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.10...v2.0.11
 [v2.0.10]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.9...v2.0.10
 [v2.0.9]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.8...v2.0.9

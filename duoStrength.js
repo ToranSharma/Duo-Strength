@@ -853,7 +853,7 @@ function progressMadeBetweenPoints(startIndex, endIndex)
 
 function currentTreeLevel()
 {
-	const skillsByCrowns = Array(7).fill([]);
+	const skillsByCrowns = Array(7).fill(null).map(item => []);
 
 	userData.language_data[languageCode].skills.forEach(
 		(skill) =>
@@ -862,8 +862,8 @@ function currentTreeLevel()
 		}
 	);
 
-	// Remove grammar skills from L2 skills array as they are at max level so should not hold the tree level back.
-	skillsByCrowns[2] = skillsByCrowns[2].filter(skill => skill.category !== "grammar");
+	// Remove grammar skills from L3 skills array as they are at max level so should not hold the tree level back.
+	skillsByCrowns[3] = skillsByCrowns[3].filter(skill => skill.category !== "grammar");
 
 	let treeLevel = 0;
 	while (skillsByCrowns[treeLevel].length === 0 && treeLevel < skillsByCrowns.length)
@@ -4096,7 +4096,7 @@ function getSuggestion()
 
 	const skills = userData.language_data[languageCode].skills;
 	const treeLevel = currentTreeLevel();
-	let skillsByCrowns = Array(7).fill([]);
+	let skillsByCrowns = Array(7).fill(null).map(item => []);
 
 	for (let skill of skills)
 	{

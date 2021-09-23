@@ -18,6 +18,9 @@ Changelog
   - Maximum crown count calculation updated to account for legendary skills.
   - Crowns breakdown table now includes legendary level.
   - Test out button being added to L2 grammar skills.
+  - Maximum value for lesson threshold option to 5.
+    - With this option set to 5, L5 skill links in at the top of the tree will
+      practice and not point to the legendary test (the default behaviour).
 
 ### Added
 - New flag border colour and legendary crown logo for L6 trees.

@@ -37,6 +37,7 @@
 	"hideCartoons":								false,
 
 	"addTipsPagePractiseButton":				false,
+	"legendaryTipsPageButton":					false,
 	"addTipsPageBottomButtons":					false,
 
 	"practiseButton":							false,

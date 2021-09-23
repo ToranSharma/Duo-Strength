@@ -5,6 +5,29 @@ Changelog
 ------------
 -
 
+[v2.0.13] - 2021-09-23
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.13)
+### Fixed
+- Issues with new legendary skills.
+  - Skill list links point to practice if skill is legendary.
+    - L5 normal skills, L2 grammar skills and L1 bonus skill links point to the
+      legendary test.
+  - Practise button adding handles new crown level option.
+  - Tips page practice button adding.
+  - Maximum crown count calculation updated to account for legendary skills.
+  - Crowns breakdown table now includes legendary level.
+  - Test out button being added to L2 grammar skills.
+  - Maximum value for lesson threshold option to 5.
+    - With this option set to 5, L5 skill links in at the top of the tree will
+      practice and not point to the legendary test (the default behaviour).
+
+### Added
+- New flag border colour and legendary crown logo for L6 trees.
+- Option to add a legendary button to the top the tips page of skills of the
+  correct level.
+  - Enabled by default.
+
 [v2.0.12] - 2021-09-11
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.12)
@@ -1308,6 +1331,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.13]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.12...v2.0.13
 [v2.0.12]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.11...v2.0.12
 [v2.0.11]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.10...v2.0.11
 [v2.0.10]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.9...v2.0.10

@@ -5,6 +5,16 @@ Changelog
 ------------
 -
 
+[v2.0.13] - 2021-09-23
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.13)
+### Fixed
+- Issues with new legendary skills.
+  - Skill list links point to practice if skill is >= L5.
+  - Practise button adding handles new crown level option.
+  - Maximum crown count calculation updated to account for legendary skills.
+  - Crowns breakdown table now includes legendary level.
+
 [v2.0.12] - 2021-09-11
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.12)
@@ -1308,6 +1318,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.13]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.12...v2.0.13
 [v2.0.12]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.11...v2.0.12
 [v2.0.11]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.10...v2.0.11
 [v2.0.10]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.9...v2.0.10

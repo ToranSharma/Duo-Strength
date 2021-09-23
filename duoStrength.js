@@ -851,7 +851,7 @@ function progressMadeBetweenPoints(startIndex, endIndex)
 
 function currentTreeLevel()
 {
-	const skillsByCrowns = [[],[],[],[],[],[]];
+	const skillsByCrowns = Array(7).fill([]);
 
 	userData.language_data[languageCode].skills.forEach(
 		(skill) =>
@@ -864,7 +864,7 @@ function currentTreeLevel()
 	skillsByCrowns[2] = skillsByCrowns[2].filter(skill => skill.category !== "grammar");
 
 	let treeLevel = 0;
-	while (skillsByCrowns[treeLevel].length === 0 && treeLevel < 6)
+	while (skillsByCrowns[treeLevel].length === 0 && treeLevel < skillsByCrowns.length)
 	{
 		treeLevel++;
 	}
@@ -1852,10 +1852,10 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[0][i];
 
 			const toPractise =
-				skill.skill_progress.level === 5
+				skill.skill_progress.level >= 5
 				|| options.practiceType === "1"
 				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-				|| (skill.category === "grammar" && skill.skill_progress.level === 2);
+				|| (skill.category === "grammar" && skill.skill_progress.level >= 2);
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
@@ -1865,7 +1865,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			let bonusSkillIndex = i - needsStrengthening[0].length;
 			const skill = needsStrengthening[1][bonusSkillIndex];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level === 1)? "/practice":""}`;
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level >= 1)? "/practice":""}`;
 			skillLink.textContent = skill.short;
 		}
 
@@ -1909,10 +1909,10 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[0][needsStrengthening[0].length -1];
 
 			const toPractise =
-				skill.skill_progress.level === 5
+				skill.skill_progress.level >= 5
 				|| options.practiceType === "1"
 				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-				|| (skill.category === "grammar" && skill.skill_progress.level === 2);
+				|| (skill.category === "grammar" && skill.skill_progress.level >= 2);
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
@@ -1934,10 +1934,10 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[0][lastIndexToBeShown];
 
 			const toPractise =
-				skill.skill_progress.level === 5
+				skill.skill_progress.level >= 6
 				|| options.practiceType === "1"
 				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-				|| (skill.category === "grammar" && skill.skill_progress.level === 2);
+				|| (skill.category === "grammar" && skill.skill_progress.level >= 2);
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
@@ -1947,7 +1947,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			let bonusSkillIndex = lastIndexToBeShown - needsStrengthening[0].length;
 			const skill = needsStrengthening[1][bonusSkillIndex];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level === 1)? "/practice":""}`;
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level >= 1)? "/practice":""}`;
 			skillLink.textContent = skill.short;
 		}
 		strengthenBox.appendChild(skillLink);
@@ -2247,12 +2247,21 @@ function addPractiseButton(skillPopout)
 	
 	const levelContainer = document.querySelector(SKILL_POPOUT_LEVEL_CONTAINER_SELECTOR);
 	if (levelContainer === null)
-		return false; // Locked skill so don't do anything
+		return false; // Locked skill so don't do anything.
 
-	const skillLevel = levelContainer.textContent.slice(-3,-2);
-	const maxLevel = levelContainer.textContent.slice(-1);
-	if (skillLevel === maxLevel || (skillLevel === "0" && !options.crownZeroPractiseButton))
+	if (levelContainer.textContent.slice(-2,-1) === "/")
 	{
+		// Skill is <= L4.
+		const skillLevel = levelContainer.textContent.slice(-3,-2);
+		const maxLevel = levelContainer.textContent.slice(-1);
+		if (skillLevel === maxLevel || (skillLevel === "0" && !options.crownZeroPractiseButton))
+		{
+			return false;
+		}
+	}
+	else
+	{
+		// Skill is L5 or L6 and so there is already a "practice" button.
 		return false;
 	}
 
@@ -2446,13 +2455,13 @@ function addButtonsToTipsPage()
 								.find(skill => skill.url_title === skillUrlTitle);
 
 			// See if this skill is at max crown level so the start-lesson button will be point to a practice sesison.
-			const toPractise = skillObject.skill_progress.level === 5
+			const toPractise = skillObject.skill_progress.level >= 5
 							|| (
 								skillObject.category === "grammar"
 								&& skillObject.skill_progress.level === 2
 							)
 							|| (
-								skillObject.bonus && skillObject.skill_progress.level === 1
+								skillObject.bonus && skillObject.skill_progress.level >= 1
 							);
 
 			const startLessonButton = startLessonButtons[0];
@@ -2815,7 +2824,7 @@ function displayCrownsBreakdown()
 	const bonusSkills = userData.language_data[languageCode].bonus_skills;
 	const grammarSkills = userData.language_data[languageCode].skills.filter(skill => skill.category === "grammar");
 
-	let crownLevelCount = [Array(6).fill(0),Array(2).fill(0),Array(3).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
+	let crownLevelCount = [Array(7).fill(0), Array(3).fill(0), Array(4).fill(0)]; // will hold number skills at each crown level, index 0 : crown 0 (not finished), index 1 : crown 1, etc.
 	// crownLevelCount[0] normal skills
 	// crownLevelCount[1] bonus skills
 	// crownLevelCount[2] grammar skills
@@ -2835,7 +2844,7 @@ function displayCrownsBreakdown()
 		crownLevelCount[2][grammarSkill.skill_progress.level]++;
 	}
 
-	const maxCrownCount = 5*skills.length + 2*grammarSkills.length + bonusSkills.length;
+	const maxCrownCount = 6*skills.length + 2*bonusSkills.length + 3*grammarSkills.length;
 
 	const treeLevel = currentTreeLevel();
 
@@ -3163,8 +3172,18 @@ function displayCrownsBreakdown()
 
 					const crownCount = skillCount * crownLevel;
 				
-					imgContainer.lastChild.classList.add("crownLevel" + crownLevel + "Count");
-					imgContainer.lastChild.textContent = crownLevel;
+					imgContainer.lastChild.classList.remove(`crownLevel${(crownLevel-1) % (crownLevelCount[skillType].length)}Count`);
+					imgContainer.lastChild.classList.add(`crownLevel${crownLevel}Count`);
+					if (crownLevel < crownLevelCount[skillType].length - 1)
+					{
+						imgContainer.lastChild.textContent = crownLevel;
+						imgContainer.firstChild.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
+					}
+					else
+					{
+						imgContainer.lastChild.textContent = "";
+						imgContainer.firstChild.src = `${imgSrcBaseUrl}/crowns/dc4851466463c85bbfcaaaaae18e1925.svg`;
+					}
 
 					let breakdownListItem = document.createElement("li");
 					breakdownListItem.classList.add("crownLevelItem");
@@ -3212,7 +3231,7 @@ function displayCrownsBreakdown()
 			}
 
 			// Tree Level prediction
-			if (treeLevel != 5 && options.treeLevelPrediction)
+			if (treeLevel != 6 && options.treeLevelPrediction)
 			{
 				const predictionData = (progress.length > 5) ? daysToNextTreeLevel() : daysToNextTreeLevelByCalendar();
 
@@ -3223,7 +3242,7 @@ function displayCrownsBreakdown()
 				}
 			}
 			
-			if (treeLevel === 5)
+			if (treeLevel === 6)
 			{
 				const maxLevelMessage = document.createElement("p");
 				maxLevelMessage.classList.add("treeLevelPrediction");
@@ -3571,7 +3590,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 		if (suggestedSkill !== null)
 		{
-			const toPractise = treeLevel === 5 || (suggestedSkill.category === "grammar" && suggestedSkill.skill_progress.level === 2);
+			const toPractise = treeLevel >= 5 || (suggestedSkill.category === "grammar" && suggestedSkill.skill_progress.level >= 2);
 
 			link.href = `/skill/${languageCode}/${suggestedSkill.url_title}${toPractise ? "/practice/" : "/"}`;
 			link.textContent = suggestedSkill.short;
@@ -3599,13 +3618,13 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		link.addEventListener("mouseenter", focus);
 		
 		const suggestionMessage = document.createElement("p");
-		if (treeLevel === 5)
+		if (treeLevel === 6)
 		{
 			let messageText = `Your ${language} tree is `;
 			if (fullyStrengthened)
 				messageText += "fully strengthened and ";
 			
-			messageText += "at Level 5";
+			messageText += "at Level 6";
 
 			if (noCrackedSkills)
 				messageText += " with no cracked skills";
@@ -3659,7 +3678,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 		}
 		else
 		{
-			// Not level 5 or level 0 so we will use the suggestion based on the users options.
+			// Not level 6 or level 0 so we will use the suggestion based on the users options.
 			if (fullyStrengthened && noCrackedSkills)
 				suggestionMessage.textContent = `Your ${language} tree is fully strengthened, and there are no cracked cracked skills. `;
 			else if (fullyStrengthened)
@@ -4068,7 +4087,7 @@ function getSuggestion()
 
 	const skills = userData.language_data[languageCode].skills;
 	const treeLevel = currentTreeLevel();
-	let skillsByCrowns = [[],[],[],[],[],[]];
+	let skillsByCrowns = Array(7).fill([]);
 
 	for (let skill of skills)
 	{
@@ -4090,7 +4109,7 @@ function getSuggestion()
 		// Tree isn't finished, so we will just suggest the first skill
 		suggestedSkill = skillsByCrowns[0][0];
 	}
-	else if (treeLevel === 5)
+	else if (treeLevel === 6)
 	{
 		suggestedSkill = null;
 	}

@@ -40,6 +40,7 @@
 	"addTipsPageBottomButtons":					false,
 
 	"practiseButton":							false,
+	"removeLegendaryCost":						false,
 	"wordsButton":								false,
 	"grammarSkillsTestButton":					false,
 

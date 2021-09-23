@@ -10,7 +10,9 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.13)
 ### Fixed
 - Issues with new legendary skills.
-  - Skill list links point to practice if skill is >= L5.
+  - Skill list links point to practice if skill is legendary.
+    - L5 normal skills, L2 grammar skills and L1 bonus skill links point to the
+      legendary test. The lingot cost is ignored.
   - Practise button adding handles new crown level option.
   - Tips page practice button adding.
   - Maximum crown count calculation updated to account for legendary skills.
@@ -19,6 +21,7 @@ Changelog
 
 ### Added
 - New flag border colour and legendary crown logo for L6 trees.
+- Option to remove the lingot cost of the legendary button in skill popouts.
 
 [v2.0.12] - 2021-09-11
 -----------------

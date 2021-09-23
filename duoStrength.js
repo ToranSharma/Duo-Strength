@@ -1861,10 +1861,10 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[0][i];
 
 			const toPractise =
-				skill.skill_progress.level >= 5
+				skill.skill_progress.level === 6
 				|| options.practiceType === "1"
-				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-				|| (skill.category === "grammar" && skill.skill_progress.level >= 2);
+				|| (options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+				|| (skill.category === "grammar" && skill.skill_progress.level === 3);
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
@@ -1874,7 +1874,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			let bonusSkillIndex = i - needsStrengthening[0].length;
 			const skill = needsStrengthening[1][bonusSkillIndex];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level >= 1)? "/practice":""}`;
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level == 2)? "/practice":""}`;
 			skillLink.textContent = skill.short;
 		}
 
@@ -1910,7 +1910,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// last skill to be displayed is a bonus skill
 			const skill = needsStrengthening[1][needsStrengthening[1].length -1];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level === 1)? "/practice":""}`;
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level === 2)? "/practice":""}`;
 			skillLink.textContent = skill.short;
 		} else
 		{
@@ -1918,10 +1918,10 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[0][needsStrengthening[0].length -1];
 
 			const toPractise =
-				skill.skill_progress.level >= 5
+				skill.skill_progress.level === 6
 				|| options.practiceType === "1"
 				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-				|| (skill.category === "grammar" && skill.skill_progress.level >= 2);
+				|| (skill.category === "grammar" && skill.skill_progress.level === 3);
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
@@ -1943,10 +1943,10 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			const skill = needsStrengthening[0][lastIndexToBeShown];
 
 			const toPractise =
-				skill.skill_progress.level >= 6
+				skill.skill_progress.level === 6
 				|| options.practiceType === "1"
 				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-				|| (skill.category === "grammar" && skill.skill_progress.level >= 2);
+				|| (skill.category === "grammar" && skill.skill_progress.level === 3);
 
 			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
@@ -1956,7 +1956,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			let bonusSkillIndex = lastIndexToBeShown - needsStrengthening[0].length;
 			const skill = needsStrengthening[1][bonusSkillIndex];
 
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level >= 1)? "/practice":""}`;
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${(skill.skill_progress.level === 2)? "/practice":""}`;
 			skillLink.textContent = skill.short;
 		}
 		strengthenBox.appendChild(skillLink);
@@ -2311,6 +2311,42 @@ function addPractiseButton(skillPopout)
 	skillPopout.scrollIntoView({block: "center"});
 }
 
+function modifyLegendaryButton(skillPopout)
+{
+	if (skillPopout === null)
+		return false;
+
+	let legendaryButton = skillPopout.querySelector(`[data-test="final-button"]`);
+	if (legendaryButton === null)
+	{
+		return false;
+	}
+	
+	const skillObject = getSkillFromPopout(skillPopout);
+	const urlTitle = skillObject.url_title;
+
+	// replace the button with a custom clone.
+	const clone = legendaryButton.cloneNode(true);
+	legendaryButton.replaceWith(clone);
+	legendaryButton = clone;
+
+	legendaryButton.addEventListener("click",
+		(event) =>
+		{
+			event.preventDefault();
+			const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
+			const lastSkill = {
+				skillName: skillName,
+				urlTitle: urlTitle
+			};
+
+			chrome.storage.sync.set({lastSkill: lastSkill});
+
+			window.location = `/skill/${languageCode}/${urlTitle}`;
+		}
+	);
+}
+
 function addCheckpointButtons(checkpointPopout, completedMessage = false)
 {
 	// Check popout is still there
@@ -2464,13 +2500,13 @@ function addButtonsToTipsPage()
 								.find(skill => skill.url_title === skillUrlTitle);
 
 			// See if this skill is at max crown level so the start-lesson button will be point to a practice sesison.
-			const toPractise = skillObject.skill_progress.level >= 5
+			const toPractise = skillObject.skill_progress.level === 6
 							|| (
 								skillObject.category === "grammar"
-								&& skillObject.skill_progress.level >= 2
+								&& skillObject.skill_progress.level === 3
 							)
 							|| (
-								skillObject.bonus && skillObject.skill_progress.level >= 1
+								skillObject.bonus && skillObject.skill_progress.level === 2
 							);
 
 			const startLessonButton = startLessonButtons[0];
@@ -3599,7 +3635,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 
 		if (suggestedSkill !== null)
 		{
-			const toPractise = treeLevel >= 5 || (suggestedSkill.category === "grammar" && suggestedSkill.skill_progress.level >= 2);
+			const toPractise = treeLevel === 6 || (suggestedSkill.category === "grammar" && suggestedSkill.skill_progress.level === 3);
 
 			link.href = `/skill/${languageCode}/${suggestedSkill.url_title}${toPractise ? "/practice/" : "/"}`;
 			link.textContent = suggestedSkill.short;
@@ -4364,14 +4400,15 @@ function addFeatures()
 			removeWordsButton();
 			removeMasteredSkillButton();
 
-			if (options.practiseButton)
+			if (options.practiseButton || options.removeLegendaryCost)
 			{
 				// Want practise button and there isn't one.
 				const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
 				if (introLesson === null || !introLesson.contains(skillPopout))
 				{
 					// No introduction lesson, or if there is this skillPopout isn't from that skill
-					addPractiseButton(skillPopout);
+					if (options.practiseButton) addPractiseButton(skillPopout);
+					if (options.removeLegendaryCost) modifyLegendaryButton(skillPopout);
 				}
 			}
 
@@ -5282,6 +5319,7 @@ function childListMutationHandle(mutationsList, observer)
 		{
 			// No introduction lesson, or if there is this skillPopout isn't from that skill
 			if (options.practiseButton) addPractiseButton(skillPopout);
+			if (options.removeLegendaryCost) modifyLegendaryButton(skillPopout);
 		}
 
 		if (options.grammarSkillsTestButton) addGrammarSkillTestOutButton(skillPopout);

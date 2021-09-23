@@ -93,7 +93,6 @@
 
 	"practiseButton":							true,
 	"crownZeroPractiseButton":					false,
-	"removeLegendaryCost":						true,
 	"wordsButton":								true,
 	"grammarSkillsTestButton":					true,
 

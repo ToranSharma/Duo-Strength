@@ -2311,42 +2311,6 @@ function addPractiseButton(skillPopout)
 	skillPopout.scrollIntoView({block: "center"});
 }
 
-function modifyLegendaryButton(skillPopout)
-{
-	if (skillPopout === null)
-		return false;
-
-	let legendaryButton = skillPopout.querySelector(`[data-test="final-button"]`);
-	if (legendaryButton === null)
-	{
-		return false;
-	}
-	
-	const skillObject = getSkillFromPopout(skillPopout);
-	const urlTitle = skillObject.url_title;
-
-	// replace the button with a custom clone.
-	const clone = legendaryButton.cloneNode(true);
-	legendaryButton.replaceWith(clone);
-	legendaryButton = clone;
-
-	legendaryButton.addEventListener("click",
-		(event) =>
-		{
-			event.preventDefault();
-			const skillName = skillPopout.parentNode.querySelector(SKILL_NAME_SELECTOR).textContent;
-			const lastSkill = {
-				skillName: skillName,
-				urlTitle: urlTitle
-			};
-
-			chrome.storage.sync.set({lastSkill: lastSkill});
-
-			window.location = `/skill/${languageCode}/${urlTitle}`;
-		}
-	);
-}
-
 function addCheckpointButtons(checkpointPopout, completedMessage = false)
 {
 	// Check popout is still there
@@ -4444,15 +4408,14 @@ function addFeatures()
 			removeWordsButton();
 			removeMasteredSkillButton();
 
-			if (options.practiseButton || options.removeLegendaryCost)
+			if (options.practiseButton)
 			{
 				// Want practise button and there isn't one.
 				const introLesson = document.querySelector(`[data-test="intro-lesson"]`);
 				if (introLesson === null || !introLesson.contains(skillPopout))
 				{
 					// No introduction lesson, or if there is this skillPopout isn't from that skill
-					if (options.practiseButton) addPractiseButton(skillPopout);
-					if (options.removeLegendaryCost) modifyLegendaryButton(skillPopout);
+					addPractiseButton(skillPopout);
 				}
 			}
 
@@ -5363,7 +5326,6 @@ function childListMutationHandle(mutationsList, observer)
 		{
 			// No introduction lesson, or if there is this skillPopout isn't from that skill
 			if (options.practiseButton) addPractiseButton(skillPopout);
-			if (options.removeLegendaryCost) modifyLegendaryButton(skillPopout);
 		}
 
 		if (options.grammarSkillsTestButton) addGrammarSkillTestOutButton(skillPopout);

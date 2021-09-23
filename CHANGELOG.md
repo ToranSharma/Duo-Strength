@@ -12,7 +12,7 @@ Changelog
 - Issues with new legendary skills.
   - Skill list links point to practice if skill is legendary.
     - L5 normal skills, L2 grammar skills and L1 bonus skill links point to the
-      legendary test. The lingot cost is ignored.
+      legendary test.
   - Practise button adding handles new crown level option.
   - Tips page practice button adding.
   - Maximum crown count calculation updated to account for legendary skills.
@@ -21,8 +21,6 @@ Changelog
 
 ### Added
 - New flag border colour and legendary crown logo for L6 trees.
-- Option to remove the lingot cost of the legendary button in skill popouts.
-  - Enabled by default.
 - Option to add a legendary button to the top the tips page of skills of the
   correct level.
   - Enabled by default.

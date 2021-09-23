@@ -775,8 +775,18 @@
 {
 	margin-left: 1em;
 }
+.tipsPageButtonContainer [data-test="final-button"]
+{
+	color: var(--legendary-purple);
+}
+.tipsPageButtonContainer [data-test="final-button"] .legendaryCrownImg
+{
+	width: 34px;
+	margin: -8px 0.5em -34px 0;
+	transform: translateY(-50%);
+}
 
-#tipsPageTopContainer *:first-child
+#tipsPageTopContainer > *:first-child
 {
 	margin-right: auto;
 }

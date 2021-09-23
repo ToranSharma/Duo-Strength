@@ -22,6 +22,10 @@ Changelog
 ### Added
 - New flag border colour and legendary crown logo for L6 trees.
 - Option to remove the lingot cost of the legendary button in skill popouts.
+  - Enabled by default.
+- Option to add a legendary button to the top the tips page of skills of the
+  correct level.
+  - Enabled by default.
 
 [v2.0.12] - 2021-09-11
 -----------------

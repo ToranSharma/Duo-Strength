@@ -2508,12 +2508,36 @@ function addButtonsToTipsPage()
 							|| (
 								skillObject.bonus && skillObject.skill_progress.level === 2
 							);
+			
+			const legendaryNext = skillObject.skill_progress.level === 5
+							|| (
+								skillObject.category === "grammar"
+								&& skillObject.skill_progress.level === 2
+							)
+							|| (
+								skillObject.bonus && skillObject.skill_progress.level === 1
+							);
 
 			const startLessonButton = startLessonButtons[0];
 			startLessonButton.parentNode.classList.add("tipsPageButtonContainer");
 			startLessonButton.parentNode.id = "tipsPageTopContainer";
+
+			if (options.legendaryTipsPageButton && legendaryNext)
+			{
+				// The start button is actually a practise button, but there could be a legendary button.
+				// Let's change this button into a legendary button.
+				// The click handler will be added after we have the correct number of buttons.
+				startLessonButton.setAttribute("data-test", "final-button");
+				startLessonButton.textContent = "legendary";
+				const legendaryCrownImg = document.createElement("img");
+				legendaryCrownImg.src = `${imgSrcBaseUrl}/${legendaryCrownPath}.svg`;
+				legendaryCrownImg.classList.add("legendaryCrownImg");
+				startLessonButton.insertBefore(legendaryCrownImg, startLessonButton.firstChild);
+			}
+
 			// Add the practise button at the top if it is wanted.
-			if (options.addTipsPagePractiseButton && !toPractise)
+			
+			if (options.addTipsPagePractiseButton && !(toPractise || (legendaryNext && !options.legendaryTipsPageButton)))
 			{
 				const practiseButton = startLessonButton.cloneNode(true);
 				practiseButton.setAttribute("data-test", "practise-button");
@@ -2539,31 +2563,51 @@ function addButtonsToTipsPage()
 				);
 			}
 
-			// Add click handler to practise buttons
+			// Add click handler to practise buttons.
 			document.querySelectorAll(`[data-test="practise-button"]`).forEach(
 				(practiseButton) =>
 				{
+					practiseButton.href = `/skill/${languageCode}/${skillUrlTitle}/practice`;
 					practiseButton.addEventListener("click",
 						(event) =>
 						{
+							event.preventDefault();
 							window.location.pathname = `/skill/${languageCode}/${skillUrlTitle}/practice`;
 						}
 					);
 				}
 			);
 
-			// click handler to second start-lesson button
+			// Add click handler for legendary buttons.
+			Array.from(document.querySelectorAll(`[data-test="final-button"]`)).forEach(
+				(legendaryButton) =>
+				{
+					legendaryButton.href = `/skill/${languageCode}/${skillUrlTitle}`;
+					legendaryButton.addEventListener("click",
+						(event)=>
+						{
+							event.preventDefault();
+							window.location.pathname = `/skill/${languageCode}/${skillUrlTitle}`;
+						}
+					);
+				}
+			);
+
+			// Add click handler to button start-lesson button.
 			Array.from(document.querySelectorAll(`[data-test="start-lesson"]`)).slice(1).forEach(
 				(startButton) =>
 				{
+					startButton.href = `/skill/${languageCode}/${skillUrlTitle}${toPractise ? "/practice" : ""}`;
 					startButton.addEventListener("click",
 						(event)=>
 						{
+							event.preventDefault();
 							window.location.pathname = `/skill/${languageCode}/${skillUrlTitle}${toPractise ? "/practice" : ""}`;
 						}
 					);
 				}
 			);
+
 		}
 	}
 	else

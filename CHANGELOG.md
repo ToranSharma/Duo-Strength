@@ -12,8 +12,10 @@ Changelog
 - Issues with new legendary skills.
   - Skill list links point to practice if skill is >= L5.
   - Practise button adding handles new crown level option.
+  - Tips page practice button adding.
   - Maximum crown count calculation updated to account for legendary skills.
   - Crowns breakdown table now includes legendary level.
+  - Test out button being added to L2 grammar skills.
 
 [v2.0.12] - 2021-09-11
 -----------------

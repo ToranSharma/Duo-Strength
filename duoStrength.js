@@ -2075,9 +2075,9 @@ function addGrammarSkillTestOutButton(skillPopout)
 
 	// Skill popout is a grammar skill and there isn't a test out button
 
-	if (skillData.skill_progress.level === skillData.num_levels) return false;
+	if (skillData.skill_progress.level >= 2) return false;
 
-	// Not at max level so can test out.
+	// At a level for which you can test out to the next one.
 
 	const testOutButton = addSmallButtonToPopout(skillPopout, true);
 	testOutButton.setAttribute("data-test", "test-out-button");
@@ -2458,7 +2458,7 @@ function addButtonsToTipsPage()
 			const toPractise = skillObject.skill_progress.level >= 5
 							|| (
 								skillObject.category === "grammar"
-								&& skillObject.skill_progress.level === 2
+								&& skillObject.skill_progress.level >= 2
 							)
 							|| (
 								skillObject.bonus && skillObject.skill_progress.level >= 1

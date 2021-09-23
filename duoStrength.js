@@ -5817,25 +5817,50 @@ The structure of page is as follows:
 															</div>
 														</div>
 													######## Only after clicking a skill ###################################################################
-													#	<div class="_33-99" data-test="skill-popout">                        <-- Popout container
-													#		<div class="_3tWnW _3_Gei _1W3aa _1kf1N">
-													#			<div class="_1b8Ja _1GJUD _3lagd SSzTP _1JPPG">
-													#				<div class="_1cv-y">                                     <-- Small buttons container
+													#	<div class="_3uS_y eIZ_c" data-test="skill-popout">                  <-- Popout container
+													#		<div class="_2O14B _2XlFZ _1v2Gj WCcVn" style="z-index: 1;">
+													#			<div class="_1KUxv _1GJUD _3lagd _2FApd">
+													#				<div class="_34eBb _1kWrO">                              <-- Crowns progress graphic holder
+													#					<div class="_2-dXY">								 <-- Crown image holder
+													#						<img alt="crown" class="_18sNN"                  <-- Crown image
+													#							 src="....../crowns/f2e84728e922b45ed79761f3f5002166.svg"
+													#							 style="height: 38px; width: 38px;">
+													#						<div class="GkDDe" data-test="level-crown">1</div>
+													#					</div>
+													#					<div class="_2-dXY">...</div>
+													#					<div class="_2-dXY">...</div>
+													#					<div class="_2-dXY">...</div>
+													#					<div class="_2-dXY">...</div>
+													#					<div class="_2-dXY">								 <-- Crown image holder
+													#						<img alt="crown" class="_18sNN"                  <-- Legendary Crown image
+													#							 src="....../crowns/00ef38a541ef4b6a08f1108991ecfd92.svg"
+													#							 style="height: 38px; width: 38px;">
+													#					</div>
+													#				</div>
+													#				<div class="_1cv-y smallButtonsContainer">               <-- Small buttons container
+													#					######################################               <-- Mastered skill button goes here
 													#					######################################               <-- Words list button goes here
-													#					<button>...</button>                                 <-- Test out button
+													#					<a class="_3zRHo WOZnx _275sd _1ZefG _3nfx7"
+													#					   data-test="test-out-button"
+													#					   href="/skill/${languageCode}/${skill.url_title}/test">...</a> <-- Test out button
 													#				</div>
-													#				<div class="_1cv-y"></div>
-													#				<div class="QowCP">
-													#					<div class="_1m77f">Level x/5</div>
-													#					<div class="_3L5UX">Lesson y / z</div>
-													#				</div>
+													#				<div class="_1m77f">Level x/6</div>
+													#				<div class="RXDIm">Lesson y/z</div>
 													#				<div class="_2I_Id">
-													#					<button class="_2aoiN _1HSlC _2C1GY _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _226dU _1figt" data-test="tips-button">Tips</button>
-													#					<button class="twkSI _25Mqa whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN UCrz7 yTpGk" data-test="start-button">Start Lesson</button>
+													#					<a class="_3zRHo WOZnx _275sd _1ZefG _2aoiN _1eyFy" data-test="tips-button" href="/skill/${languageCode}/${skill.url_title}/tips">Tips</a>
+													#					<a class="twkSI _1eyFy _25Mqa whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN UCrz7 yTpGk" data-test="start-button" href="/skill/es/Intro/1">START LESSON</a>
+													#					#####################################                <-- Practise Button goes here
+													#				####### If skill is level 5 ##############################################################
+													#				#	<button class="_3HhhB _2NolF _275sd _1ZefG _26hHl _1eyFy _26QYy" data-test="final-button">
+													#				#		<img class="eoQRg _13HXc" src="....../crowns/dc4851466463c85bbfcaaaaae18e1925.svg">
+													#				#		<span class="_13HXc">Legendary</span>
+													#				#	</button>
+													#				##########################################################################################
 													#				</div>
-													#				#####################################                    <-- Practise Button goes here
+													#			</div>                                                       <-- Popout bubble arrow
+													#			<div class="ite_X">
+													#				<div class="_3p5e9 _3lagd _2FApd"></div>
 													#			</div>
-													#			<div class="_37dAC">...</div>                                <-- Popout bubble arrow
 													#		</div>
 													#	</div>
 													########################################################################################################

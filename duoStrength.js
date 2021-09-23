@@ -7,8 +7,10 @@ const PURPLE = "rgb(206, 130, 255)";
 const GREY = "rgb(229, 229, 229)";
 const DARK_BLUE = "rgb(24, 153, 214)";
 const LIGHT_BLUE = "rgb(28, 176, 246)";
+const LEGENDARY_PURPLE = "rgb(169, 161, 255)";
 
 const imgSrcBaseUrl = "//d35aaqx5ub95lt.cloudfront.net/images";
+const legendaryCrownPath = "crowns/dc4851466463c85bbfcaaaaae18e1925";
 
 // Duolingo class names:
 const BONUS_SKILL_DIVIDER_SELECTOR = "._3Sis0";
@@ -1430,7 +1432,14 @@ function addFlagBorders()
 						if (treeLevel === 5)
 						{
 							const crown = document.createElement("IMG");
-							crown.src = imgSrcBaseUrl+"/juicy-crown.svg";
+							crown.src = `${imgSrcBaseUrl}/juicy-crown.svg`;
+                            flag1.parentNode.classList.add("flagContainer")
+							flag1.parentNode.appendChild(crown);
+						}
+						if (treeLevel === 6)
+						{
+							const crown = document.createElement("IMG");
+							crown.src = `${imgSrcBaseUrl}/${legendaryCrownPath}.svg`;
                             flag1.parentNode.classList.add("flagContainer")
 							flag1.parentNode.appendChild(crown);
 						}
@@ -3182,7 +3191,7 @@ function displayCrownsBreakdown()
 					else
 					{
 						imgContainer.lastChild.textContent = "";
-						imgContainer.firstChild.src = `${imgSrcBaseUrl}/crowns/dc4851466463c85bbfcaaaaae18e1925.svg`;
+						imgContainer.firstChild.src = `${imgSrcBaseUrl}/${legendaryCrownPath}.svg`;
 					}
 
 					let breakdownListItem = document.createElement("li");

@@ -17,6 +17,9 @@ Changelog
   - Crowns breakdown table now includes legendary level.
   - Test out button being added to L2 grammar skills.
 
+### Added
+- New flag border colour and legendary crown logo for L6 trees.
+
 [v2.0.12] - 2021-09-11
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.12)

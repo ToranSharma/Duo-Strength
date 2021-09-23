@@ -88,6 +88,7 @@
 	"keepQuestionBorders":						false,
 
 	"addTipsPagePractiseButton":				true,
+	"legendaryTipsPageButton":					true,
 	"addTipsPageBottomButtons":					true,
 
 	"practiseButton":							true,

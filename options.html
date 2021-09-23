@@ -9,7 +9,7 @@
 <body page="0">
 	<header>
 		<h1>Duo Strength Options</h1>
-		<span id="version">v2.0.12</span>
+		<span id="version">v2.0.13</span>
 	</header>
 	<ul>
 		<li class="section">
@@ -199,7 +199,7 @@
 				</li>
 				<li class="numberOption">
 					<label for="lessonThreshold" class="greaterThan">Practice on Skills with Crown Level <span>&ge;</span></label>
-					<input class="option" id="lessonThreshold" type="number" value="4" min="1" max="4" />
+					<input class="option" id="lessonThreshold" type="number" value="4" min="1" max="5" />
 				</li>
 			</ul>
 		</li>
@@ -525,6 +525,10 @@
 					<input class="option" id="addTipsPagePractiseButton" type="checkbox" />
 				</li>
 				<li class="checkboxOption">
+					<label for="legendaryTipsPageButton">Add Legendary Button at the Top Of the Tips if Skill is the Correct Level</label>
+					<input class="option" id="legendaryTipsPageButton" type="checkbox" />
+				</li>
+				<li class="checkboxOption">
 					<label for="addTipsPageBottomButtons">Add Second Set of Buttons at the Bottom of the Tips</label>
 					<input class="option" id="addTipsPageBottomButtons" type="checkbox" />
 				</li>
@@ -540,6 +544,10 @@
 				<li class="checkboxOption">
 					<label for="crownZeroPractiseButton">Practise Button on Crown 0 Skills</label>
 					<input class="option" id="crownZeroPractiseButton" type="checkbox" />
+				</li>
+				<li class="checkboxOption">
+					<label for="removeLegendaryCost">Remove Lingot Cost from Legendary Button</label>
+					<input class="option" id="removeLegendaryCost" type="checkbox" />
 				</li>
 				<li class="checkboxOption">
 					<input class="option" id="wordsButton" type="checkbox" />

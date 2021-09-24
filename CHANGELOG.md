@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v2.0.14] - 2021-09-24
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.14)
+### Fixed
+- Suggestion if a checkpoint is required to unlock the next new skill.
+
 [v2.0.13] - 2021-09-23
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.13)
@@ -1331,6 +1337,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.14]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.13...v2.0.14
 [v2.0.13]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.12...v2.0.13
 [v2.0.12]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.11...v2.0.12
 [v2.0.11]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.10...v2.0.11

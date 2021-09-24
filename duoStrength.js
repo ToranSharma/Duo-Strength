@@ -711,17 +711,12 @@ function currentProgress()
 
 function nextCheckpointIndex()
 {
-	const checkpoints = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR));
-	const firstLockedIndexReducer = (value, element, index) =>
-	{
-		const locked = element.querySelectorAll(`[src$="locked.svg"]`).length != 0;
-		if (value === -1 && locked)
-			return index;
-		else
-			return value;
-	};
-
-	return checkpoints.reduce(firstLockedIndexReducer, -1);
+	return Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR)).findIndex(
+		(checkpoint) =>
+		{
+			return checkpoint.querySelector(`img[src$="unlocked.svg"]`) !== null;
+		}
+	);
 }
 
 function lessonsToNextCheckpoint()
@@ -3708,14 +3703,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
 			if (suggestedSkill.locked)
 			{
 				// The next skill is locked, so a checkpoint test is needed.
-				let checkpointNumber;
-				const checkpoints = document.querySelectorAll(CHECKPOINT_SELECTOR);
-				checkpoints.forEach(
-					(checkpoint, index) => {
-						if (checkpointNumber === null && checkpoint.querySelector(`img`).src.includes(`unlocked`))
-							checkpointNumber = index;
-					}
-				);
+				const checkpointNumber = nextCheckpointIndex();
 				link.href = `/checkpoint/${languageCode}/${checkpointNumber}/`;
 				link.textContent = `Checkpoint ${checkpointNumber +1}`;
 
@@ -3818,7 +3806,10 @@ function showOnlyNeededSkills()
 
 	if (showSuggestion)
 	{
-		// Nothing needs strengthening or is cracked, so a suggest something to give attention to.
+		// The suggestion is to be show, even if it is not enabled in the top of tree list.
+		// This is either because nothing needs strengthening or is cracked,
+		// or the user want the suggestion to be shown anyway.
+
 		let suggestedSkill = document.querySelector(`#skillSuggestionMessageContainer a`);
 		if (suggestedSkill !== null && suggestedSkill.getAttribute("href") !== "/practice")
 		{
@@ -3853,14 +3844,9 @@ function showOnlyNeededSkills()
 			// This happens if there is no existing suggestion message, so we are using the raw getSuggestion response.
 			// Next skill is locked so we need to do the checkpoint before it.
 			// We will keep the needsAttention empty, but manually add the checkpoint element and section to elementsToShow.
-			const nextCheckpoint = Array.from(document.querySelectorAll(CHECKPOINT_SELECTOR)).find(
-				(checkpoint) => 
-				{
-					return checkpoint.querySelector(`img`).src.includes(`unlocked`);
-				}
-			);
+			const nextCheckpoint = document.querySelectorAll(CHECKPOINT_SELECTOR)[nextCheckpointIndex()];
 			const nextCheckpointSection = Array.from(document.querySelectorAll(CHECKPOINT_SECTION_SELECTOR)).find(section => section.contains(nextCheckpoint));
-			elementsToShow.push(nextCheckpoint);
+			elementsToShow.push(nextCheckpoint, nextCheckpointSection);
 		}
 		else
 		{

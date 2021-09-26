@@ -1843,6 +1843,16 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 		}
 	};
 
+	const toPractise = (skill) =>
+	{
+		return skill.skill_progress.level === 6
+				|| options.practiceType === "1"
+				|| (options.practiceType === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
+				|| (skill.category === "grammar" && skill.skill_progress.level === 3)
+				|| (cracked && options.practiseL5CrackedSkills)
+				|| (!cracked && options.practiseL5NeedsStrengtheningSkills);
+	};
+
 	let numSkillsToShow = Math.min(numSkillsToBeStrengthened, (!cracked)?options.needsStrengtheningListLength:options.crackedSkillsListLength);
 	for (let i = 0; i < numSkillsToShow - 1; i++)
 	{
@@ -1855,13 +1865,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// index is in normal skill range
 			const skill = needsStrengthening[0][i];
 
-			const toPractise =
-				skill.skill_progress.level === 6
-				|| options.practiceType === "1"
-				|| (options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-				|| (skill.category === "grammar" && skill.skill_progress.level === 3);
-
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise(skill) ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
 		} else
 		{
@@ -1912,13 +1916,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// last skill to be displayed is a normal skill
 			const skill = needsStrengthening[0][needsStrengthening[0].length -1];
 
-			const toPractise =
-				skill.skill_progress.level === 6
-				|| options.practiceType === "1"
-				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-				|| (skill.category === "grammar" && skill.skill_progress.level === 3);
-
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise(skill) ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
 		}
 		
@@ -1937,13 +1935,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
 			// index is in normal skill range
 			const skill = needsStrengthening[0][lastIndexToBeShown];
 
-			const toPractise =
-				skill.skill_progress.level === 6
-				|| options.practiceType === "1"
-				|| ( options.practice === "2" && skill.skill_progress.level.toString() >= options.lessonThreshold)
-				|| (skill.category === "grammar" && skill.skill_progress.level === 3);
-
-			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise ? "/practice" : ""}`;
+			skillLink.href = `/skill/${languageCode}/${skill.url_title}${toPractise(skill) ? "/practice" : ""}`;
 			skillLink.textContent = skill.short;
 		} else
 		{

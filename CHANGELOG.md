@@ -5,6 +5,18 @@ Changelog
 ------------
 -
 
+[v2.0.15] - 2021-09-26
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.15)
+### Fixed
+- Focus mode button click behaviour.
+- Link session type threshold option.
+
+### Added
+- Options to control the link behaviour of L5 skills in the Needs Strengthening
+  List and Cracked Skills separately. By default this option is disabled
+  meaning links point to legendary tests rather than practice sessions.
+
 [v2.0.14] - 2021-09-24
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.14)
@@ -1337,6 +1349,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.15]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.14...v2.0.15
 [v2.0.14]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.13...v2.0.14
 [v2.0.13]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.12...v2.0.13
 [v2.0.12]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.11...v2.0.12

@@ -2618,7 +2618,6 @@ function applyFocusMode()
 		&& globalPractiseButtonContainer !== null 
 	)
 	{
-
 		const focusModeButton = globalPractiseButtonContainer.cloneNode(true);
 		focusModeButton.id = "focusModeButton";
 

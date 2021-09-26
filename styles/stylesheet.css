@@ -745,13 +745,7 @@
 {
 	margin-left: auto;
 	margin-right: 0;
-	height: 0;
 }
-[data-test="focusModeButton"]
-{
-	transform: translateY(-100%);
-}
-
 
 /* Fixed Sidebar */
 

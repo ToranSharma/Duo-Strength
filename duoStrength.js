@@ -77,6 +77,7 @@ const AD = "_1UOwI _3bfsh";
 const ACHIEVEMENT_BOX = "Yth9H";
 const PROGRESS_QUIZ_BOX = "_9GzaQ";
 const DUOLINGO_SCORE_BOX = "_37iXd";
+const ASSIGNMENTS_BOX = "_1f3LS";
 const FRIENDS_TABLE_TITLE_SELECTOR = ".-AHpg";
 const SOCIAL_BUTTONS_HEADER_SELECTOR = "._3qTe3";
 const NAVS_CONTAINER_SELECTOR = "._3ejvc";
@@ -329,11 +330,29 @@ function retrieveMasteredSkills()
 							mastered = data.mastered[`${userId}:${UICode}->${languageCode}`];
 						}
 					}
+					cleanMasteredSkills();
 					resolve();
 				}
 			);
 		}
 	);
+}
+
+function cleanMasteredSkills()
+{
+	const languageData = userData.language_data[languageCode];
+	const skills = [...languageData.skills, ...languageData.bonus_skills];
+	const skillIds = skills.map(skill => skill.id);
+
+	const numOldMastered = mastered.length;
+	// Filter out all the ids in the mastered list for which there is no skill in the userData
+	mastered = mastered.filter(id => skillIds.includes(id));
+
+	if (numOldMastered !== mastered.length)
+	{
+		// Some old skills have been cleared out so let's store the new list
+		storeMasteredSkills();
+	}
 }
 
 function clearMasteredSkills()
@@ -2230,7 +2249,6 @@ function addMasteredSkillButton(skillPopout)
 			masteredButton.title = `${(skillIsMastered) ? "Unm" : "M"}ark Skill as Mastered`;
 			storeMasteredSkills();
 
-
 			addFeatures();
 		}
 	);
@@ -4017,6 +4035,10 @@ function getSidebarBoxType(boxElement)
 	{
 		return "duolingoScoreBox";
 	}
+	else if (boxElement.classList.contains(ASSIGNMENTS_BOX))
+	{
+		return "assignmentsBox";
+	}
 	else
 	{
 		return "unknown";
@@ -4036,7 +4058,8 @@ function getPriorityOfSidebarBox(box)
 	let priority = options.sidebarBoxOrder.split(",").indexOf(box.type);
 	if (priority === -1)
 	{
-		const unsortedOrder = ["leagues","duolingoScoreBox","XPBox","languagesBox","totalStrengthBox","crownsBox","progressQuizBox","ad","achievementBox","friendsBox","socialButtonsBox"];
+		const unsortedOrder = ["leagues","duolingoScoreBox","XPBox","languagesBox","totalStrengthBox","crownsBox","assignmentsBox","progressQuizBox","ad","achievementBox","friendsBox","socialButtonsBox"];
+		// Duolingo boxes      ######### ################## #######                                               ################ ################# #### ################ ############ ##################
 		priority = 100 + unsortedOrder.indexOf(box.type);
 	}
 

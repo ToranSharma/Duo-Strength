@@ -77,6 +77,7 @@ const AD = "_1UOwI _3bfsh";
 const ACHIEVEMENT_BOX = "Yth9H";
 const PROGRESS_QUIZ_BOX = "_9GzaQ";
 const DUOLINGO_SCORE_BOX = "_37iXd";
+const ASSIGNMENTS_BOX = "_1f3LS";
 const FRIENDS_TABLE_TITLE_SELECTOR = ".-AHpg";
 const SOCIAL_BUTTONS_HEADER_SELECTOR = "._3qTe3";
 const NAVS_CONTAINER_SELECTOR = "._3ejvc";
@@ -4017,6 +4018,10 @@ function getSidebarBoxType(boxElement)
 	{
 		return "duolingoScoreBox";
 	}
+	else if (boxElement.classList.contains(ASSIGNMENTS_BOX))
+	{
+		return "assignmentsBox";
+	}
 	else
 	{
 		return "unknown";
@@ -4036,7 +4041,8 @@ function getPriorityOfSidebarBox(box)
 	let priority = options.sidebarBoxOrder.split(",").indexOf(box.type);
 	if (priority === -1)
 	{
-		const unsortedOrder = ["leagues","duolingoScoreBox","XPBox","languagesBox","totalStrengthBox","crownsBox","progressQuizBox","ad","achievementBox","friendsBox","socialButtonsBox"];
+		const unsortedOrder = ["leagues","duolingoScoreBox","XPBox","languagesBox","totalStrengthBox","crownsBox","assignmentsBox","progressQuizBox","ad","achievementBox","friendsBox","socialButtonsBox"];
+		// Duolingo boxes      ######### ################## #######                                               ################ ################# #### ################ ############ ##################
 		priority = 100 + unsortedOrder.indexOf(box.type);
 	}
 

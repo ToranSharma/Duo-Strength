@@ -330,11 +330,29 @@ function retrieveMasteredSkills()
 							mastered = data.mastered[`${userId}:${UICode}->${languageCode}`];
 						}
 					}
+					cleanMasteredSkills();
 					resolve();
 				}
 			);
 		}
 	);
+}
+
+function cleanMasteredSkills()
+{
+	const languageData = userData.language_data[languageCode];
+	const skills = [...languageData.skills, ...languageData.bonus_skills];
+	const skillIds = skills.map(skill => skill.id);
+
+	const numOldMastered = mastered.length;
+	// Filter out all the ids in the mastered list for which there is no skill in the userData
+	mastered = mastered.filter(id => skillIds.includes(id));
+
+	if (numOldMastered !== mastered.length)
+	{
+		// Some old skills have been cleared out so let's store the new list
+		storeMasteredSkills();
+	}
 }
 
 function clearMasteredSkills()
@@ -2230,7 +2248,6 @@ function addMasteredSkillButton(skillPopout)
 			masteredButton.textContent = (skillIsMastered) ? "\u2718" : "\u2714";
 			masteredButton.title = `${(skillIsMastered) ? "Unm" : "M"}ark Skill as Mastered`;
 			storeMasteredSkills();
-
 
 			addFeatures();
 		}

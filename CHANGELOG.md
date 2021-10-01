@@ -9,10 +9,10 @@ Changelog
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.16)
 ### Fixed
-- My Assigments sidebar box order handling.
+- My Assignments sidebar box order handling.
 
 ### Added
-- Automatic cleaning of masterd skills list, removing skill IDs that are not
+- Automatic cleaning of mastered skills list, removing skill IDs that are not
   found in current userData.
 
 [v2.0.15] - 2021-09-26

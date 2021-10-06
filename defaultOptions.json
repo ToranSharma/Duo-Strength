@@ -52,6 +52,7 @@
 		"crownsMaximum":							true,
 		"crownsPercentage":							true,
 		"crownsGraph":								true,
+		"goldenTreePercentage":						false,
 
 			"crownsBreakdown":							true,
 			"crownsBreakdownShowZerosRows":				true,

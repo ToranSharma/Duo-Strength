@@ -3158,6 +3158,31 @@ function displayCrownsBreakdown()
 
 			breakdownContainer.appendChild(treeLevelSentence);
 
+			// Golden Tree Percentage Indication
+			if (options.goldenTreePercentage)
+			{
+				const nonLegendaryCrownCount =
+					crownLevelCount[0][1]
+					+ crownLevelCount[0][2] * 2
+					+ crownLevelCount[0][3] * 3
+					+ crownLevelCount[0][4] * 4
+					+ crownLevelCount[0][5] * 5
+					+ crownLevelCount[0][6] * 5 // The extra crown from being legendary is not counted.
+					+ crownLevelCount[2][1]
+					+ crownLevelCount[2][2] * 2
+					+ crownLevelCount[2][3] * 2 // The extra crown from being legendary is not counted.
+
+				const goldenTreePercentage = (100*nonLegendaryCrownCount/goldenTreeRequiredCrownCount).toFixed(1);
+
+				const goldenTreePercentageSentence = document.createElement("p");
+				goldenTreePercentageSentence.classList.add("goldenTreePercentageSentence");
+				goldenTreePercentageSentence.textContent = `You are ${goldenTreePercentage}% of the way to a Golden Tree`;
+				if (goldenTreePercentage < 100)
+				{
+					breakdownContainer.appendChild(goldenTreePercentageSentence);
+				}
+			}
+
 			const breakdownList = document.createElement("ul");
 			breakdownList.classList.add("breakdownList");
 			

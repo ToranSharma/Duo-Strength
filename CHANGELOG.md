@@ -5,6 +5,16 @@ Changelog
 ------------
 -
 
+[v2.0.17] - 2021-10-06
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.17)
+### Added
+- Option to add percentage indication of progress towards a golden tree.
+  - This is the number of total crowns earned on non bonus skills subtracting
+    the number of legendary skills (L5 normal, L3 grammar), divided by the
+	minimum number of crowns a golden tree can have (5\*number of normal skills
+	\+ 2\*number of grammar skills).
+
 [v2.0.16] - 2021-10-01
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.16)
@@ -1359,6 +1369,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.17]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.16...v2.0.17
 [v2.0.16]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.15...v2.0.16
 [v2.0.15]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.14...v2.0.15
 [v2.0.14]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.13...v2.0.14

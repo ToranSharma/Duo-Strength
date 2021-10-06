@@ -29,15 +29,28 @@
 			<h3 class="sectionHeading">Mastered Skills</h3>
 			<ul class="sectionOptionsList">
 				<li class="checkboxOption">
-					<label for="ignoreMasteredSkills">Force Skills Marked as Mastered to 100% Strength</label>
+					<label for="ignoreMasteredSkills">Force Skills Mastered Skills to 100% Strength</label>
 					<input class="option" id="ignoreMasteredSkills" type="checkbox" data-controlling='[false]:["#masteredButton"]' />
 				</li>
 				<li class="checkboxOption">
 					<label for="masteredButton">Add Button to Mark Skills as Mastered in Skill Popouts</label>
 					<input class="option" id="masteredButton" type="checkbox" />
 				</li>
+				<li class="selectOption">
+					<label for="masteredCriterion">Criterion for Mastered Skills</label>
+					<select class="option" id="masteredCriterion" data-controlling='["markedOnly", "upToLastMarked", "aboveTreeLevel"]:["#masteredThreshold"]'>
+						<option value="markedOnly">Marked Skills Only</option>
+						<option value="upToLastMarked">All Skills Up To and Including Last Marked Skill</option>
+						<option value="aboveTreeLevel">Marked Skills and Skills Above Tree Level</option>
+						<option value="threshold">Marked Skills and Skills Above Threshold</option>
+					</select>
+				</li>
+				<li class="numberOption">
+					<label for="masteredThreshold" class="greaterThan">Considered Mastered if Skill's Crown Level <span>&ge;</span></label>
+					<input class="option" id="masteredThreshold" type="number" value="5" min="1" max="6" />
+				</li>
 				<li class="button">
-					<button id="clearMasteredSkills">Clear Mastered List for Current Tree</button>
+					<button id="clearMasteredSkills">Clear Marked as Mastered for Current Tree</button>
 				</li>
 			</ul>
 		</li>

@@ -9,6 +9,8 @@
 
 	"ignoreMasteredSkills":						true,
 	"masteredButton":							true,
+	"masteredCriterion":						"markedOnly",
+	"masteredThreshold":						"5",
 
 
 		"needsStrengtheningList":					true,

@@ -15,6 +15,14 @@ Changelog
 	minimum number of crowns a golden tree can have (5\*number of normal skills
 	\+ 2\*number of grammar skills).
   - This option is disabled by default.
+- New mastered suboptions to choose which skills are considered mastered. The
+  new options are:
+  - Marked Only. Default as this is the previous behaviour.
+  - All Skills Up To and Including the Last Marked Skill.
+  - Marked Skills and Skills Above Tree Level.
+  - Marked Skills and Skills Above Threshold.
+    - Suboption to set threshold.
+
 
 [v2.0.16] - 2021-10-01
 -----------------

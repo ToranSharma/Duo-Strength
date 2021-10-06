@@ -4261,8 +4261,12 @@ function processUserData()
 	skills.sort(sortByTreePosition);
 	bonusSkills.sort(sortByTreePosition);
 
+	const lastMarkedSkill = skills.filter(skill => mastered.includes(skill.id)).slice(-1)[0];
+	const lastMarkedSkillIndex = skills.indexOf(lastMarkedSkill);
+	const treeLevel = currentTreeLevel();
+
 	[...skills, ...bonusSkills].forEach(
-		(skill) =>
+		(skill, index) =>
 		{
 			if (skill.originalStrength === undefined)
 			{
@@ -4271,14 +4275,27 @@ function processUserData()
 
 			if (options.ignoreMasteredSkills)
 			{
-				// We will force all the skills that are marked as mastered to have strength 1.0.
+				// We will force all the skills that are mastered to have strength 1.0.
 				if (mastered.includes(skill.id))
 				{
+					// A skill is always mastered if it has been marked and so in the mastered list.
 					skill.strength = 1.0;
 				}
 				else
 				{
-					skill.strength = skill.originalStrength;
+					// There are a few other ways a skill can be mastered depending on the options.
+					if (
+						options.masteredCriterion === "upToLastMarked" && index < lastMarkedSkillIndex
+						|| options.masteredCriterion === "aboveTreeLevel" && skill.skill_progress.level > treeLevel
+						|| options.masteredCriterion === "threshold" && skill.skill_progress.level.toString() >= options.masteredThreshold
+					)
+					{
+						skill.strength = 1.0;
+					}
+					else
+					{
+						skill.strength = skill.originalStrength;
+					}
 				}
 			}
 			else

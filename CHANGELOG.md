@@ -14,6 +14,7 @@ Changelog
     the number of legendary skills (L5 normal, L3 grammar), divided by the
 	minimum number of crowns a golden tree can have (5\*number of normal skills
 	\+ 2\*number of grammar skills).
+  - This option is disabled by default.
 
 [v2.0.16] - 2021-10-01
 -----------------

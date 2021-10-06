@@ -2902,6 +2902,7 @@ function displayCrownsBreakdown()
 	}
 
 	const maxCrownCount = 6*skills.length + 2*bonusSkills.length + 3*grammarSkills.length;
+	const goldenTreeRequiredCrownCount = 5*skills.length + 2*grammarSkills.length;
 
 	const treeLevel = currentTreeLevel();
 
@@ -3150,18 +3151,12 @@ function displayCrownsBreakdown()
 			const breakdownContainer = document.createElement("div");
 			breakdownContainer.classList.add("crownLevelBreakdownContainer");
 
-
-			const treeLevelContainer = document.createElement("div");
-			treeLevelContainer.classList.add("treeLevel");
-			treeLevelContainer.textContent = treeLevel;
-
+			// Tree Level Indicaiton
 			const treeLevelSentence = document.createElement("p");
 			treeLevelSentence.classList.add("treeLevelSentence");
-			treeLevelSentence.textContent = "Your tree is at Level\xA0";
-			treeLevelSentence.appendChild(treeLevelContainer);
+			treeLevelSentence.textContent = `Your tree is at Level\xA0${treeLevel}`;
 
 			breakdownContainer.appendChild(treeLevelSentence);
-
 
 			const breakdownList = document.createElement("ul");
 			breakdownList.classList.add("breakdownList");

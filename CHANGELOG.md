@@ -22,6 +22,8 @@ Changelog
   - Marked Skills and Skills Above Tree Level.
   - Marked Skills and Skills Above Threshold.
     - Suboption to set threshold.
+	- Suboption to toggle a separate threshold for grammar skills.
+	  - Suboption to set grammar skill threshold.
 
 
 [v2.0.16] - 2021-10-01

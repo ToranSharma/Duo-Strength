@@ -11,6 +11,8 @@
 	"masteredButton":							true,
 	"masteredCriterion":						"markedOnly",
 	"masteredThreshold":						"5",
+	"separateGrammarSkillMasteredThreshold":	false,
+	"grammarMasteredThreshold":					"2",
 
 
 		"needsStrengtheningList":					true,

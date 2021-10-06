@@ -335,6 +335,7 @@ li.numberOption label.greaterThan
 {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	padding-right: 2.7rem;
 }
 

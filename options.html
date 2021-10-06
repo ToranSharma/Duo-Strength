@@ -30,7 +30,7 @@
 			<ul class="sectionOptionsList">
 				<li class="checkboxOption">
 					<label for="ignoreMasteredSkills">Force Skills Mastered Skills to 100% Strength</label>
-					<input class="option" id="ignoreMasteredSkills" type="checkbox" data-controlling='[false]:["#masteredButton"]' />
+					<input class="option" id="ignoreMasteredSkills" type="checkbox" data-controlling='[false]:["#masteredButton", "#masteredCriterion"]' />
 				</li>
 				<li class="checkboxOption">
 					<label for="masteredButton">Add Button to Mark Skills as Mastered in Skill Popouts</label>
@@ -38,7 +38,7 @@
 				</li>
 				<li class="selectOption">
 					<label for="masteredCriterion">Criterion for Mastered Skills</label>
-					<select class="option" id="masteredCriterion" data-controlling='["markedOnly", "upToLastMarked", "aboveTreeLevel"]:["#masteredThreshold"]'>
+					<select class="option" id="masteredCriterion" data-controlling='["markedOnly", "upToLastMarked", "aboveTreeLevel"]:["#masteredThreshold", "#separateGrammarSkillMasteredThreshold"]'>
 						<option value="markedOnly">Marked Skills Only</option>
 						<option value="upToLastMarked">All Skills Up To and Including Last Marked Skill</option>
 						<option value="aboveTreeLevel">Marked Skills and Skills Above Tree Level</option>
@@ -46,8 +46,16 @@
 					</select>
 				</li>
 				<li class="numberOption">
-					<label for="masteredThreshold" class="greaterThan">Considered Mastered if Skill's Crown Level <span>&ge;</span></label>
+					<label for="masteredThreshold" class="greaterThan">Considered Mastered if Skill's Crown Level<span>&ge;</span></label>
 					<input class="option" id="masteredThreshold" type="number" value="5" min="1" max="6" />
+				</li>
+				<li class="checkboxOption">
+					<label for="separateGrammarSkillMasteredThreshold">Separate Grammar Skill Threshold</label>
+					<input class="option" id="separateGrammarSkillMasteredThreshold" type="checkbox" data-controlling='[false]:["#grammarMasteredThreshold"]' />
+				</li>
+				<li class="numberOption">
+					<label for="grammarMasteredThreshold" class="greaterThan">Considered Mastered if Grammar Skill's Crown Level<span>&ge;</span></label>
+					<input class="option" id="grammarMasteredThreshold" type="number" value="2" min="1" max="3" />
 				</li>
 				<li class="button">
 					<button id="clearMasteredSkills">Clear Marked as Mastered for Current Tree</button>

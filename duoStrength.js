@@ -4287,7 +4287,19 @@ function processUserData()
 					if (
 						options.masteredCriterion === "upToLastMarked" && index < lastMarkedSkillIndex
 						|| options.masteredCriterion === "aboveTreeLevel" && skill.skill_progress.level > treeLevel
-						|| options.masteredCriterion === "threshold" && skill.skill_progress.level.toString() >= options.masteredThreshold
+						|| (
+							options.masteredCriterion === "threshold"
+							&& (
+								skill.category !== "grammar" && skill.skill_progress.level.toString() >= options.masteredThreshold
+								|| (
+									skill.category === "grammar"
+									&& (
+										options.separateGrammarSkillMasteredThreshold && skill.skill_progress.level.toString() >= options.grammarMasteredThreshold
+										|| !options.separateGrammarSkillMasteredThreshold && skill.skill_progress.level.toString() >= options.masteredThreshold
+									)
+								)
+							)
+						)
 					)
 					{
 						skill.strength = 1.0;

@@ -9,6 +9,10 @@
 
 	"ignoreMasteredSkills":						true,
 	"masteredButton":							true,
+	"masteredCriterion":						"markedOnly",
+	"masteredThreshold":						"5",
+	"separateGrammarSkillMasteredThreshold":	false,
+	"grammarMasteredThreshold":					"2",
 
 
 		"needsStrengtheningList":					true,
@@ -52,6 +56,7 @@
 		"crownsMaximum":							true,
 		"crownsPercentage":							true,
 		"crownsGraph":								true,
+		"goldenTreePercentage":						false,
 
 			"crownsBreakdown":							true,
 			"crownsBreakdownShowZerosRows":				true,

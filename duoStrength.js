@@ -2902,6 +2902,7 @@ function displayCrownsBreakdown()
 	}
 
 	const maxCrownCount = 6*skills.length + 2*bonusSkills.length + 3*grammarSkills.length;
+	const goldenTreeRequiredCrownCount = 5*skills.length + 2*grammarSkills.length;
 
 	const treeLevel = currentTreeLevel();
 
@@ -3150,18 +3151,37 @@ function displayCrownsBreakdown()
 			const breakdownContainer = document.createElement("div");
 			breakdownContainer.classList.add("crownLevelBreakdownContainer");
 
-
-			const treeLevelContainer = document.createElement("div");
-			treeLevelContainer.classList.add("treeLevel");
-			treeLevelContainer.textContent = treeLevel;
-
+			// Tree Level Indicaiton
 			const treeLevelSentence = document.createElement("p");
 			treeLevelSentence.classList.add("treeLevelSentence");
-			treeLevelSentence.textContent = "Your tree is at Level\xA0";
-			treeLevelSentence.appendChild(treeLevelContainer);
+			treeLevelSentence.textContent = `Your tree is at Level\xA0${treeLevel}`;
 
 			breakdownContainer.appendChild(treeLevelSentence);
 
+			// Golden Tree Percentage Indication
+			if (options.goldenTreePercentage)
+			{
+				const nonLegendaryCrownCount =
+					crownLevelCount[0][1]
+					+ crownLevelCount[0][2] * 2
+					+ crownLevelCount[0][3] * 3
+					+ crownLevelCount[0][4] * 4
+					+ crownLevelCount[0][5] * 5
+					+ crownLevelCount[0][6] * 5 // The extra crown from being legendary is not counted.
+					+ crownLevelCount[2][1]
+					+ crownLevelCount[2][2] * 2
+					+ crownLevelCount[2][3] * 2 // The extra crown from being legendary is not counted.
+
+				const goldenTreePercentage = (100*nonLegendaryCrownCount/goldenTreeRequiredCrownCount).toFixed(1);
+
+				const goldenTreePercentageSentence = document.createElement("p");
+				goldenTreePercentageSentence.classList.add("goldenTreePercentageSentence");
+				goldenTreePercentageSentence.textContent = `You are ${goldenTreePercentage}% of the way to a Golden Tree`;
+				if (goldenTreePercentage < 100)
+				{
+					breakdownContainer.appendChild(goldenTreePercentageSentence);
+				}
+			}
 
 			const breakdownList = document.createElement("ul");
 			breakdownList.classList.add("breakdownList");
@@ -4241,8 +4261,12 @@ function processUserData()
 	skills.sort(sortByTreePosition);
 	bonusSkills.sort(sortByTreePosition);
 
+	const lastMarkedSkill = skills.filter(skill => mastered.includes(skill.id)).slice(-1)[0];
+	const lastMarkedSkillIndex = skills.indexOf(lastMarkedSkill);
+	const treeLevel = currentTreeLevel();
+
 	[...skills, ...bonusSkills].forEach(
-		(skill) =>
+		(skill, index) =>
 		{
 			if (skill.originalStrength === undefined)
 			{
@@ -4251,14 +4275,39 @@ function processUserData()
 
 			if (options.ignoreMasteredSkills)
 			{
-				// We will force all the skills that are marked as mastered to have strength 1.0.
+				// We will force all the skills that are mastered to have strength 1.0.
 				if (mastered.includes(skill.id))
 				{
+					// A skill is always mastered if it has been marked and so in the mastered list.
 					skill.strength = 1.0;
 				}
 				else
 				{
-					skill.strength = skill.originalStrength;
+					// There are a few other ways a skill can be mastered depending on the options.
+					if (
+						options.masteredCriterion === "upToLastMarked" && index < lastMarkedSkillIndex
+						|| options.masteredCriterion === "aboveTreeLevel" && skill.skill_progress.level > treeLevel
+						|| (
+							options.masteredCriterion === "threshold"
+							&& (
+								skill.category !== "grammar" && skill.skill_progress.level.toString() >= options.masteredThreshold
+								|| (
+									skill.category === "grammar"
+									&& (
+										options.separateGrammarSkillMasteredThreshold && skill.skill_progress.level.toString() >= options.grammarMasteredThreshold
+										|| !options.separateGrammarSkillMasteredThreshold && skill.skill_progress.level.toString() >= options.masteredThreshold
+									)
+								)
+							)
+						)
+					)
+					{
+						skill.strength = 1.0;
+					}
+					else
+					{
+						skill.strength = skill.originalStrength;
+					}
 				}
 			}
 			else

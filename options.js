@@ -123,16 +123,23 @@ function applyOptions(hideTransitions = false)
 		}
 		else if (!optionElement.classList.contains("multiPart"))
 		{
+			let optionState;
 			switch (typeof options[option])
 			{
 				case "boolean":
 					optionElement.checked = optionElement.classList.contains("negative") ? !options[option] : options[option];
-					applyControlledOptionCollapsing(optionElement, optionElement.checked);
+					optionState = optionElement.checked;
 					break;
 				case "string":
 					optionElement.value = options[option];
-					applyControlledOptionCollapsing(optionElement, optionElement.value);
+					optionState = optionElement.value;
 					break;
+			}
+
+			if (!optionElement.parentElement.classList.contains("collapsed"))
+			{
+				// If not already collapsed, then apply collapsing to the controlled options.
+				applyControlledOptionCollapsing(optionElement, optionState);
 			}
 		}
 		else
@@ -448,35 +455,34 @@ function multiPartChangeHandler()
 	saveOptions();
 }
 
-function applyControlledOptionCollapsing(optionElement, optionState)
+function applyControlledOptionCollapsing(optionElement, optionState, forceCollapse = false)
 {
 	const controllingAttr = optionElement.getAttribute("data-controlling");
-	let [displayStates, controlledSelectors] = [null, []];
+	let [collapseStates, controlledSelectors] = [null, []];
 	if (controllingAttr !== null)
 	{
-		[displayStates, controlledSelectors] = controllingAttr.split(":").map(str => JSON.parse(str));
-	}
-	if (displayStates !== null)
-	{
+		[collapseStates, controlledSelectors] = controllingAttr.split(":").map(str => JSON.parse(str));
+
 		const controlledSelector = controlledSelectors.join(", ")
-		if (displayStates.includes(optionState))
-		{
-			document.querySelectorAll(controlledSelector).forEach(
-				(controlledOption) =>
+		document.querySelectorAll(controlledSelector).forEach(
+			(controlledOption) =>
+			{
+				const controlledOptionState = controlledOption.type === "checkbox" ? controlledOption.checked : controlledOption.value;
+
+				if (collapseStates.includes(optionState) || forceCollapse)
 				{
+					// In a state listed in the controlling attr, so we collapse this option.
 					controlledOption.parentNode.classList.add("collapsed");
+					applyControlledOptionCollapsing(controlledOption, controlledOptionState, true);
 				}
-			);
-		}
-		else
-		{
-			document.querySelectorAll(controlledSelector).forEach(
-				(controlledOption) =>
+				else
 				{
 					controlledOption.parentNode.classList.remove("collapsed");
+					applyControlledOptionCollapsing(controlledOption, controlledOptionState);
 				}
-			);
-		}
+
+			}
+		);
 	}
 }
 

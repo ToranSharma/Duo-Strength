@@ -5,7 +5,7 @@ Changelog
 ------------
 -
 
-[v2.0.17] - 2021-10-06
+[v2.0.17] - 2021-10-07
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.17)
 ### Added

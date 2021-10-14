@@ -3211,9 +3211,10 @@ function displayCrownsBreakdown()
 				crownLevelCount[0][0] += crownLevelCount[2][0];
 				crownLevelCount[0][1] += crownLevelCount[2][1];
 				crownLevelCount[0][2] += crownLevelCount[2][2];
+				crownLevelCount[0][3] += crownLevelCount[2][3];
 
 				// Remove the grammar skills count as it is not needed now.
-				crownLevelCount[2].length = 2;
+				crownLevelCount[2].length = 0;
 			}
 
 			if (!options.grammarSkillsBreakdown || grammarSkills.length === 0)
@@ -4078,8 +4079,8 @@ function getPriorityOfSidebarBox(box)
 	let priority = options.sidebarBoxOrder.split(",").indexOf(box.type);
 	if (priority === -1)
 	{
-		const unsortedOrder = ["leagues","duolingoScoreBox","XPBox","languagesBox","totalStrengthBox","crownsBox","assignmentsBox","progressQuizBox","ad","achievementBox","friendsBox","socialButtonsBox"];
-		// Duolingo boxes      ######### ################## #######                                               ################ ################# #### ################ ############ ##################
+		const unsortedOrder = ["assignmentsBox","leagues","duolingoScoreBox","XPBox","languagesBox","totalStrengthBox","crownsBox","progressQuizBox","ad","achievementBox","friendsBox","socialButtonsBox"];
+		// Duolingo boxes      ################ ######### ################## #######                                               ################# #### ################ ############ ##################
 		priority = 100 + unsortedOrder.indexOf(box.type);
 	}
 

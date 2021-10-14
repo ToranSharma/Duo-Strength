@@ -10,6 +10,7 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.18)
 ### Fixed
 - Default position of My Assignments side bar box.
+- Option to separate grammar skills in crowns breakdown table.
 
 [v2.0.17] - 2021-10-07
 -----------------

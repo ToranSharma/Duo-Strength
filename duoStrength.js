@@ -4078,8 +4078,8 @@ function getPriorityOfSidebarBox(box)
 	let priority = options.sidebarBoxOrder.split(",").indexOf(box.type);
 	if (priority === -1)
 	{
-		const unsortedOrder = ["leagues","duolingoScoreBox","XPBox","languagesBox","totalStrengthBox","crownsBox","assignmentsBox","progressQuizBox","ad","achievementBox","friendsBox","socialButtonsBox"];
-		// Duolingo boxes      ######### ################## #######                                               ################ ################# #### ################ ############ ##################
+		const unsortedOrder = ["assignmentsBox","leagues","duolingoScoreBox","XPBox","languagesBox","totalStrengthBox","crownsBox","progressQuizBox","ad","achievementBox","friendsBox","socialButtonsBox"];
+		// Duolingo boxes      ################ ######### ################## #######                                               ################# #### ################ ############ ##################
 		priority = 100 + unsortedOrder.indexOf(box.type);
 	}
 

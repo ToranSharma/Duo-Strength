@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v2.0.18] - 2021-10-14
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.18)
+### Fixed
+- Default position of My Assignments side bar box.
+
 [v2.0.17] - 2021-10-07
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.17)
@@ -1380,6 +1386,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.18]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.17...v2.0.18
 [v2.0.17]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.16...v2.0.17
 [v2.0.16]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.15...v2.0.16
 [v2.0.15]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.14...v2.0.15

@@ -12,6 +12,9 @@ const LEGENDARY_PURPLE = "rgb(169, 161, 255)";
 const imgSrcBaseUrl = "//d35aaqx5ub95lt.cloudfront.net/images";
 const legendaryCrownPath = "crowns/dc4851466463c85bbfcaaaaae18e1925";
 
+const svgns = "http://www.w3.org/2000/svg";
+const xmlns = "http://www.w3.org/2000/xmlns/";
+
 // Duolingo class names:
 const BONUS_SKILL_DIVIDER_SELECTOR = "._3Sis0";
 const TOP_OF_TREE_WITH_IN_BETA = "_1q00o _3_JLW";
@@ -58,6 +61,7 @@ const GOLDEN_OWL_CHECKPOINT_SELECTOR = ".lIg1v";
 const TREE_SECTION_SELECTOR = "._3uC-w ";
 const SKILL_ROW_SELECTOR = "._3f9ou";
 const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], ${SKILL_ROW_SELECTOR}>a[href], ${TREE_SECTION_SELECTOR} [data-test="skill"]`;
+const UNLOADED_SKILL_SELECTOR = ".QS3B0";
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 const MAIN_SECTION_SELECTOR = "._33Mo9";
@@ -1174,6 +1178,65 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	return prediction;
 }
 
+function addLoadingAnimation(parentElement)
+{
+    if (document.querySelector("#loadingAnimationContainer") !== null)
+    {
+        return false;
+    }
+    else
+    {
+        const container = document.createElement("div");
+        container.id = "loadingAnimationContainer";
+        container.setAttribute("data-create-time", (new Date()).getTime());
+        const animation = document.createElement("img");
+        animation.src = chrome.runtime.getURL("images/loading.svg");
+        container.append(animation);
+
+        const loadingMessage = document.createElement("p");
+        loadingMessage.textContent = "Loading Duo Strength..."
+        container.append(loadingMessage);
+
+        parentElement.insertBefore(container, parentElement.firstElementChild);
+        setTimeout(
+            () =>
+            {
+                if (document.querySelector("#loadingAnimationContainer") !== null)
+                {
+                    // Been more than 5 seconds of the animation being on screen.
+                    // Something might have gone wrong, give the user the option
+                    // to maually remove the animation
+                    loadingMessage.textContent = "Something is being slow.";
+                    const button = document.createElement("button");
+                    button.textContent = "Show Tree";
+                    button.addEventListener("click", removeLoadingAnimation);
+                    container.append(button);
+                }
+            }
+            , 5000
+        );
+    }
+}
+
+function removeLoadingAnimation()
+{
+    const animationContainer = document.querySelector("#loadingAnimationContainer");
+    if (animationContainer !== null)
+    {
+        const timeNow = (new Date()).getTime();
+        const createTime = animationContainer.getAttribute("data-create-time");
+        const diff = timeNow - createTime;
+        if (diff < 1000)
+        {
+            setTimeout(removeLoadingAnimation, 1000-diff);
+        }
+        else
+        {
+            animationContainer.remove();
+        }
+    }
+}
+
 function graphSVG(data, ratio=1.5)
 {
 	// Generates an svg of a graph with the data passed in.
@@ -1181,12 +1244,10 @@ function graphSVG(data, ratio=1.5)
 	
 	// max is the next multiple of 4 equal to or above the largest value
 	// in data, with a minimum value of 4.
-	let max = Math.max(4, Math.ceil(Math.max(...data)/4) * 4);
-	let height = 100/ratio;
+	const max = Math.max(4, Math.ceil(Math.max(...data)/4) * 4);
+	const height = 100/ratio;
 	
-	let svgns = "http://www.w3.org/2000/svg";
-	let xmlns = "http://www.w3.org/2000/xmlns/";
-	let graph = document.createElementNS(svgns,"svg");
+	const graph = document.createElementNS(svgns, "svg");
 	graph.setAttributeNS(xmlns, "xmlns", svgns);
 	graph.setAttributeNS(null, "id", "graph");
 	graph.setAttributeNS(null, "width", "100%");
@@ -1200,15 +1261,15 @@ function graphSVG(data, ratio=1.5)
 
 	/* Draw horizontal grid lines */
 
-	let gridLines = document.createElementNS(svgns, "g");
+	const gridLines = document.createElementNS(svgns, "g");
 	gridLines.setAttributeNS(null, "id", "gridLines");
 	gridLines.setAttributeNS(null, "stroke", "lightgrey");
 	gridLines.setAttributeNS(null, "stroke-width", "0.5");
 
 	for (let i = 0; i < 5; i++)
 	{
-		let y = String(i*(height*0.80)/4 + 0.05*height);
-		let line = document.createElementNS(svgns, "line");
+		const y = String(i*(height*0.80)/4 + 0.05*height);
+		const line = document.createElementNS(svgns, "line");
 		line.setAttributeNS(null, "x1", "15");
 		line.setAttributeNS(null, "y1", y);
 		line.setAttributeNS(null, "x2", "95");
@@ -1220,26 +1281,26 @@ function graphSVG(data, ratio=1.5)
 
 	/* Draw Axis labels */
 
-	let labels = document.createElementNS(svgns, "g");
+	const labels = document.createElementNS(svgns, "g");
 	labels.setAttributeNS(null, "id", "labels");
 	const fontSize = String(Math.min(6,0.1*height));
 	labels.setAttributeNS(null, "font-size", fontSize);
 	labels.setAttributeNS(null, "font-family", "sans-serif");
 	
-	let yLabels = document.createElementNS(svgns, "g");
+	const yLabels = document.createElementNS(svgns, "g");
 	yLabels.setAttributeNS(null, "id", "yLabels");
 	yLabels.setAttributeNS(null, "text-anchor", "end");
 
-	let xLabels = document.createElementNS(svgns, "g");
+	const xLabels = document.createElementNS(svgns, "g");
 	xLabels.setAttributeNS(null, "id", "xLabels");
 	xLabels.setAttributeNS(null, "text-anchor", "middle");
 
 
 	for (let i = 0; i < 5; i++)
 	{
-		let y = String(i*(height*0.8)/4 + 0.05*height);
+		const y = String(i*(height*0.8)/4 + 0.05*height);
 
-		let label = document.createElementNS(svgns, "text");
+		const label = document.createElementNS(svgns, "text");
 		label.textContent = max - i*max/4;
 		label.setAttributeNS(null, "x", "10");
 		label.setAttributeNS(null, "y", y);
@@ -1248,7 +1309,7 @@ function graphSVG(data, ratio=1.5)
 		yLabels.appendChild(label);
 	}
 
-	let yTitle = document.createElementNS(svgns, "text");
+	const yTitle = document.createElementNS(svgns, "text");
 	yTitle.textContent = "# Lessons Towards Next Level";
 	yTitle.setAttributeNS(null, "id", "yTitle");
 	yTitle.setAttributeNS(null, "x", "0");
@@ -1260,9 +1321,9 @@ function graphSVG(data, ratio=1.5)
 
 	for (let i = 0; i < 7; i++)
 	{
-		let x = String(i*(100-20)/6 + 15);
+		const x = String(i*(100-20)/6 + 15);
 
-		let label = document.createElementNS(svgns, "text");
+		const label = document.createElementNS(svgns, "text");
 		label.textContent = 
 			(new Date(
 					(new Date()).getTime() - (6-i)*1000*60*60*24
@@ -1285,7 +1346,7 @@ function graphSVG(data, ratio=1.5)
 
 	/* Draw area under points */
 
-	let area = document.createElementNS(svgns, "polygon");
+	const area = document.createElementNS(svgns, "polygon");
 	area.setAttributeNS(null, "id", "area");
 	area.setAttributeNS(null, "fill", "orange");
 	area.setAttributeNS(null, "fill-opacity", "0.1");
@@ -1295,8 +1356,8 @@ function graphSVG(data, ratio=1.5)
 
 	for (let i = 0; i < 7; i++)
 	{	
-		let x = String(i*(100-20)/6 + 15);
-		let y = String((height*0.8)*(1 - data[i]/max) + 0.05*height);
+		const x = String(i*(100-20)/6 + 15);
+		const y = String((height*0.8)*(1 - data[i]/max) + 0.05*height);
 		pointCoords += `${x},${y} `;
 	}
 	area.setAttributeNS(null, "points", `${pointCoords} 95,${0.85*height} 15,${0.85*height}`);
@@ -1305,7 +1366,7 @@ function graphSVG(data, ratio=1.5)
 
 	/* Draw line between points*/
 
-	let line = document.createElementNS(svgns, "polyline");
+	const line = document.createElementNS(svgns, "polyline");
 	line.setAttributeNS(null, "id", "line");
 	line.setAttributeNS(null, "stroke", "orange");
 	line.setAttributeNS(null, "stroke-width", "0.5");
@@ -1317,7 +1378,7 @@ function graphSVG(data, ratio=1.5)
 
 	/* Plot Points */
 
-	let points = document.createElementNS(svgns, "g");
+	const points = document.createElementNS(svgns, "g");
 	points.setAttributeNS(null, "id", "points");
 	points.setAttributeNS(null, "stroke", "orange");
 	points.setAttributeNS(null, "stroke-width", "0.75");
@@ -1325,14 +1386,14 @@ function graphSVG(data, ratio=1.5)
 
 	for (let i = 0; i < 7; i++)
 	{
-		let coords = pointCoords.split(" ")[i].split(",");
+		const coords = pointCoords.split(" ")[i].split(",");
 
-		let point = document.createElementNS(svgns, "circle");
+		const point = document.createElementNS(svgns, "circle");
 		point.setAttributeNS(null, "cx", coords[0]);
 		point.setAttributeNS(null, "cy", coords[1]);
 		point.setAttributeNS(null, "r", "1.25");
 		
-		let title = document.createElementNS(svgns, "title");
+		const title = document.createElementNS(svgns, "title");
 		title.textContent = `${data[i]} tree level contributing lesson${data[i]!=1?"s":""}`;
 
 		if (data[i] === 0)
@@ -4320,10 +4381,65 @@ function processUserData()
 
 }
 
-function addFeatures()
+async function forceLoadAllSkills()
+{
+    /*
+    There are some unloaded skills for which
+    we are not able to get the cracked status of.
+
+    To force all the skills to load we will briefly
+    scale down the skill tree so that it all fits on screen.
+
+    This should trigger the skills to be loaded by duolingo's react code.
+    */
+    let loadResolve;
+    const allLoaded = new Promise(
+        (resolve, reject) =>
+        {
+            loadResolve = resolve;
+        }
+    );
+    const loadChecker =
+        (mutationList) =>
+        {
+            const numUnloadedSkills = document.querySelectorAll(UNLOADED_SKILL_SELECTOR).length;
+            if (numUnloadedSkills === 0)
+            {
+                loadResolve();
+            }
+        };
+
+    const skillLoadObserver = new MutationObserver(loadChecker);
+
+    const unloadedSkills = Array.from(document.querySelectorAll(UNLOADED_SKILL_SELECTOR));
+
+    if (unloadedSkills.length !== 0)
+    {
+        // Add loading animation overlay to hide strange effects of forcing the load.
+        addLoadingAnimation(document.querySelector(`[data-test="skill-tree"]`).parentElement);
+
+        const lastUnloadedSkill = unloadedSkills.slice(-1)[0];
+        skillLoadObserver.observe(lastUnloadedSkill, {attributes: true});
+
+        const skillTree = document.querySelector(SKILL_TREE_SELECTOR);
+        skillTree.classList.add("squished");
+
+        await allLoaded;
+
+        skillTree.classList.remove("squished");
+        return true;
+    }
+}
+
+async function addFeatures()
 {
 	// Main function that calls all the subfunctions responsible for adding features to the page.
-	
+
+    // Force Load all skills
+    {
+        await forceLoadAllSkills();
+    }
+
 	// First we need to prepare the retrieved userData for use.
 	processUserData();
 
@@ -4336,7 +4452,6 @@ function addFeatures()
 		else
 			removeStrengthBars();
 	}
-
 	// XP Info
 	{
 		if (options.XPInfo)
@@ -4563,6 +4678,8 @@ function addFeatures()
 	{
 		addButtonsToTipsPage();
 	}
+
+    removeLoadingAnimation();
 }
 
 function httpGetAsync(url, responseHandler)
@@ -4751,6 +4868,7 @@ async function handleDataResponse(responseText)
 function requestData()
 {
 	// requests data for actively logged in user.
+
 	return new Promise(function (resolve, reject)
 	{
 		if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
@@ -5444,7 +5562,6 @@ function classNameMutationHandle(mutationsList, observer)
 	{
 		// There has been a page change, either to or from the main page.
 
-
 		applyFocusMode();
 		applyFixedSidebar();
 
@@ -5842,15 +5959,29 @@ async function init()
 				// Fixed sidebar
 				applyFixedSidebar();
 
+                // Add loading animation
+                addLoadingAnimation(document.querySelector(`[data-test="skill-tree"]`).parentElement);
+
+                // Force Load all skills
+                {
+                    await forceLoadAllSkills();
+                }
+
 				await openLastSkillPopout();
 
 				const popout = document.querySelector(`[data-test="skill-popout"], ${CHECKPOINT_POPOUT_SELECTOR}`);
 
 				if (popout !== null)
+                {
 					popout.scrollIntoView({block: "center"});
+                }
+
+                
 
 				// Done all the prep we need, let's get some data to process
-				requestData();
+
+				await requestData();
+                removeLoadingAnimation();
 			}
 		}
 	}

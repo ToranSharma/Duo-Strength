@@ -12,6 +12,37 @@
 	--legendary-purple: rgb(169, 161, 255);
 }
 
+/* Force Skill Loading */
+.squished
+{
+    transform-origin: top;
+    transform: scaleY(0);
+    position: fixed;
+    top: 50vh;
+}
+
+/* Loading Animation */
+#loadingAnimationContainer
+{
+    width: 100%;
+    height: 20em;
+    margin-bottom: 500vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 3em;
+}
+#loadingAnimationContainer ~ *
+{
+    visibility: hidden;
+}
+#loadingAnimationContainer img
+{
+    width: 20%;
+    margin-bottom: 2em;
+}
 
 /* Strength Bars */
 

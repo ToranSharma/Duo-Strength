@@ -1,0 +1,16 @@
+<svg width="24" height="24" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+	<g stroke="#78c800" stroke-width="4" stroke-linecap="round" fill="none" >
+        <line x1="2" y1="2" x2="2" y2="22">
+            <animate attributeName="y1" values="2;8;2" dur="2s" repeatCount="indefinite" begin="-1s" />
+            <animate attributeName="y2" values="22;16;22" dur="2s" repeatCount="indefinite" begin="-1s" />
+        </line>
+        <line x1="12" y1="2" x2="12" y2="22">
+            <animate attributeName="y1" values="2;8;2" dur="2s" repeatCount="indefinite" begin="-0.5s" />
+            <animate attributeName="y2" values="22;16;22" dur="2s" repeatCount="indefinite" begin="-0.5s" />
+        </line>
+        <line x1="22" y1="2" x2="22" y2="22">
+            <animate attributeName="y1" values="2;8;2" dur="2s" repeatCount="indefinite" begin="0s"/>
+            <animate attributeName="y2" values="22;16;22" dur="2s" repeatCount="indefinite" begin="0s"/>
+        </line>
+	</g>
+</svg>

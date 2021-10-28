@@ -1,7 +1,7 @@
 {
 	"name"				:	"Duo Strength",
 	"description"		:	"Adds individual skill strengths back into the duolingo webpage, similar to data on duome.eu",
-	"version"			:	"2.0.19",
+	"version"			:	"2.0.20",
 	"manifest_version"	:	2,
 	
 	"icons"				: 	{
@@ -41,6 +41,7 @@
 		"images/focus.svg",
 		"images/defocus.svg",
 		"images/popout.svg",
+        "images/loading.svg",
 		"styles/stylesheet.css",
 		"defaultOptions.json",
 		"disabledOptions.json"

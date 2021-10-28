@@ -9,8 +9,8 @@ Changelog
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.20)
 ### Fixed
-- Detectiong of unloaded skills on page. If any are found, they are forced to
-  be loaded by scaling the tree so that it is all on screen. The rest of the
+- Detection of unloaded skills on page. If any are found, they are forced to be
+  loaded by scaling the tree so that it is all on screen. The rest of the
   features can then work with the fully loaded tree.
 
 ### Added

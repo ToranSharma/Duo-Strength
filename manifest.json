@@ -41,6 +41,7 @@
 		"images/focus.svg",
 		"images/defocus.svg",
 		"images/popout.svg",
+        "images/loading.svg",
 		"styles/stylesheet.css",
 		"defaultOptions.json",
 		"disabledOptions.json"

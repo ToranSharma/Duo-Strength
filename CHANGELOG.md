@@ -13,6 +13,10 @@ Changelog
   be loaded by scaling the tree so that it is all on screen. The rest of the
   features can then work with the fully loaded tree.
 
+### Added
+- Loading animation that covers the visual effects of the forced skill loading,
+  as well as showing that Duo Strength is requesting the data needed to
+  function.
 
 [v2.0.19] - 2021-10-28
 -----------------

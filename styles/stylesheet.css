@@ -19,6 +19,27 @@
     transform: scaleY(0);
 }
 
+/* Loading Animation */
+#loadingAnimationContainer
+{
+    width: 100%;
+    height: 20em;
+    margin-bottom: -20em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#loadingAnimationContainer ~ *
+{
+    visibility: hidden;
+}
+#loadingAnimationContainer object
+{
+    width: 20%;
+    margin-bottom: 2em;
+}
+
 /* Strength Bars */
 
 .strengthBarBackground

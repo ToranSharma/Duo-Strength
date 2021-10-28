@@ -12,6 +12,9 @@ const LEGENDARY_PURPLE = "rgb(169, 161, 255)";
 const imgSrcBaseUrl = "//d35aaqx5ub95lt.cloudfront.net/images";
 const legendaryCrownPath = "crowns/dc4851466463c85bbfcaaaaae18e1925";
 
+const svgns = "http://www.w3.org/2000/svg";
+const xmlns = "http://www.w3.org/2000/xmlns/";
+
 // Duolingo class names:
 const BONUS_SKILL_DIVIDER_SELECTOR = "._3Sis0";
 const TOP_OF_TREE_WITH_IN_BETA = "_1q00o _3_JLW";
@@ -1175,6 +1178,27 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 	return prediction;
 }
 
+function addLoadingAnimation(parentElement)
+{
+    const container = document.createElement("div");
+    container.id = "loadingAnimationContainer";
+    const animation = document.createElement("object");
+    animation.setAttribute("type", "image/svg+xml");
+    animation.setAttribute("data", chrome.runtime.getURL("images/loading.svg"));
+    container.append(animation);
+
+    const loadingMessage = document.createElement("p");
+    loadingMessage.textContent = "Loading Duo Strength..."
+    container.append(loadingMessage);
+
+    parentElement.insertBefore(container, parentElement.firstElementChild);
+}
+
+function removeLoadingAnimation()
+{
+    document.querySelectorAll("#loadingAnimationContainer").forEach(elem => elem.remove());
+}
+
 function graphSVG(data, ratio=1.5)
 {
 	// Generates an svg of a graph with the data passed in.
@@ -1182,12 +1206,10 @@ function graphSVG(data, ratio=1.5)
 	
 	// max is the next multiple of 4 equal to or above the largest value
 	// in data, with a minimum value of 4.
-	let max = Math.max(4, Math.ceil(Math.max(...data)/4) * 4);
-	let height = 100/ratio;
+	const max = Math.max(4, Math.ceil(Math.max(...data)/4) * 4);
+	const height = 100/ratio;
 	
-	let svgns = "http://www.w3.org/2000/svg";
-	let xmlns = "http://www.w3.org/2000/xmlns/";
-	let graph = document.createElementNS(svgns,"svg");
+	const graph = document.createElementNS(svgns, "svg");
 	graph.setAttributeNS(xmlns, "xmlns", svgns);
 	graph.setAttributeNS(null, "id", "graph");
 	graph.setAttributeNS(null, "width", "100%");
@@ -1201,15 +1223,15 @@ function graphSVG(data, ratio=1.5)
 
 	/* Draw horizontal grid lines */
 
-	let gridLines = document.createElementNS(svgns, "g");
+	const gridLines = document.createElementNS(svgns, "g");
 	gridLines.setAttributeNS(null, "id", "gridLines");
 	gridLines.setAttributeNS(null, "stroke", "lightgrey");
 	gridLines.setAttributeNS(null, "stroke-width", "0.5");
 
 	for (let i = 0; i < 5; i++)
 	{
-		let y = String(i*(height*0.80)/4 + 0.05*height);
-		let line = document.createElementNS(svgns, "line");
+		const y = String(i*(height*0.80)/4 + 0.05*height);
+		const line = document.createElementNS(svgns, "line");
 		line.setAttributeNS(null, "x1", "15");
 		line.setAttributeNS(null, "y1", y);
 		line.setAttributeNS(null, "x2", "95");
@@ -1221,26 +1243,26 @@ function graphSVG(data, ratio=1.5)
 
 	/* Draw Axis labels */
 
-	let labels = document.createElementNS(svgns, "g");
+	const labels = document.createElementNS(svgns, "g");
 	labels.setAttributeNS(null, "id", "labels");
 	const fontSize = String(Math.min(6,0.1*height));
 	labels.setAttributeNS(null, "font-size", fontSize);
 	labels.setAttributeNS(null, "font-family", "sans-serif");
 	
-	let yLabels = document.createElementNS(svgns, "g");
+	const yLabels = document.createElementNS(svgns, "g");
 	yLabels.setAttributeNS(null, "id", "yLabels");
 	yLabels.setAttributeNS(null, "text-anchor", "end");
 
-	let xLabels = document.createElementNS(svgns, "g");
+	const xLabels = document.createElementNS(svgns, "g");
 	xLabels.setAttributeNS(null, "id", "xLabels");
 	xLabels.setAttributeNS(null, "text-anchor", "middle");
 
 
 	for (let i = 0; i < 5; i++)
 	{
-		let y = String(i*(height*0.8)/4 + 0.05*height);
+		const y = String(i*(height*0.8)/4 + 0.05*height);
 
-		let label = document.createElementNS(svgns, "text");
+		const label = document.createElementNS(svgns, "text");
 		label.textContent = max - i*max/4;
 		label.setAttributeNS(null, "x", "10");
 		label.setAttributeNS(null, "y", y);
@@ -1249,7 +1271,7 @@ function graphSVG(data, ratio=1.5)
 		yLabels.appendChild(label);
 	}
 
-	let yTitle = document.createElementNS(svgns, "text");
+	const yTitle = document.createElementNS(svgns, "text");
 	yTitle.textContent = "# Lessons Towards Next Level";
 	yTitle.setAttributeNS(null, "id", "yTitle");
 	yTitle.setAttributeNS(null, "x", "0");
@@ -1261,9 +1283,9 @@ function graphSVG(data, ratio=1.5)
 
 	for (let i = 0; i < 7; i++)
 	{
-		let x = String(i*(100-20)/6 + 15);
+		const x = String(i*(100-20)/6 + 15);
 
-		let label = document.createElementNS(svgns, "text");
+		const label = document.createElementNS(svgns, "text");
 		label.textContent = 
 			(new Date(
 					(new Date()).getTime() - (6-i)*1000*60*60*24
@@ -1286,7 +1308,7 @@ function graphSVG(data, ratio=1.5)
 
 	/* Draw area under points */
 
-	let area = document.createElementNS(svgns, "polygon");
+	const area = document.createElementNS(svgns, "polygon");
 	area.setAttributeNS(null, "id", "area");
 	area.setAttributeNS(null, "fill", "orange");
 	area.setAttributeNS(null, "fill-opacity", "0.1");
@@ -1296,8 +1318,8 @@ function graphSVG(data, ratio=1.5)
 
 	for (let i = 0; i < 7; i++)
 	{	
-		let x = String(i*(100-20)/6 + 15);
-		let y = String((height*0.8)*(1 - data[i]/max) + 0.05*height);
+		const x = String(i*(100-20)/6 + 15);
+		const y = String((height*0.8)*(1 - data[i]/max) + 0.05*height);
 		pointCoords += `${x},${y} `;
 	}
 	area.setAttributeNS(null, "points", `${pointCoords} 95,${0.85*height} 15,${0.85*height}`);
@@ -1306,7 +1328,7 @@ function graphSVG(data, ratio=1.5)
 
 	/* Draw line between points*/
 
-	let line = document.createElementNS(svgns, "polyline");
+	const line = document.createElementNS(svgns, "polyline");
 	line.setAttributeNS(null, "id", "line");
 	line.setAttributeNS(null, "stroke", "orange");
 	line.setAttributeNS(null, "stroke-width", "0.5");
@@ -1318,7 +1340,7 @@ function graphSVG(data, ratio=1.5)
 
 	/* Plot Points */
 
-	let points = document.createElementNS(svgns, "g");
+	const points = document.createElementNS(svgns, "g");
 	points.setAttributeNS(null, "id", "points");
 	points.setAttributeNS(null, "stroke", "orange");
 	points.setAttributeNS(null, "stroke-width", "0.75");
@@ -1326,14 +1348,14 @@ function graphSVG(data, ratio=1.5)
 
 	for (let i = 0; i < 7; i++)
 	{
-		let coords = pointCoords.split(" ")[i].split(",");
+		const coords = pointCoords.split(" ")[i].split(",");
 
-		let point = document.createElementNS(svgns, "circle");
+		const point = document.createElementNS(svgns, "circle");
 		point.setAttributeNS(null, "cx", coords[0]);
 		point.setAttributeNS(null, "cy", coords[1]);
 		point.setAttributeNS(null, "r", "1.25");
 		
-		let title = document.createElementNS(svgns, "title");
+		const title = document.createElementNS(svgns, "title");
 		title.textContent = `${data[i]} tree level contributing lesson${data[i]!=1?"s":""}`;
 
 		if (data[i] === 0)
@@ -4355,8 +4377,6 @@ async function forceLoadAllSkills()
 
     if (unloadedSkills.length !== 0)
     {
-        console.error(`${unloadedSkills.length} UNLOADED SKILLS`);
-
         const lastUnloadedSkill = unloadedSkills.slice(-1)[0];
         skillLoadObserver.observe(lastUnloadedSkill, {attributes: true});
 
@@ -5897,6 +5917,8 @@ async function init()
                     // First check if there are any unloaded skills.
                     if (document.querySelectorAll(UNLOADED_SKILL_SELECTOR).length !== 0)
                     {
+                        // Add loading animation overlay to hide strange effects of forcing the load.
+                        addLoadingAnimation(document.querySelector(`[data-test="skill-tree"]`).parentElement);
                         forceLoadAllSkills();
                     }
                 }
@@ -5914,7 +5936,8 @@ async function init()
 
 				// Done all the prep we need, let's get some data to process
 
-				requestData();
+				await requestData();
+                removeLoadingAnimation();
 			}
 		}
 	}

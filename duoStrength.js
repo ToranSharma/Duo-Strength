@@ -1180,23 +1180,61 @@ function createPredictionElement(type, {time: numDays, rate, lessonsLeft})
 
 function addLoadingAnimation(parentElement)
 {
-    const container = document.createElement("div");
-    container.id = "loadingAnimationContainer";
-    const animation = document.createElement("object");
-    animation.setAttribute("type", "image/svg+xml");
-    animation.setAttribute("data", chrome.runtime.getURL("images/loading.svg"));
-    container.append(animation);
+    if (document.querySelector("#loadingAnimationContainer") !== null)
+    {
+        return false;
+    }
+    else
+    {
+        const container = document.createElement("div");
+        container.id = "loadingAnimationContainer";
+        container.setAttribute("data-create-time", (new Date()).getTime());
+        const animation = document.createElement("img");
+        animation.src = chrome.runtime.getURL("images/loading.svg");
+        container.append(animation);
 
-    const loadingMessage = document.createElement("p");
-    loadingMessage.textContent = "Loading Duo Strength..."
-    container.append(loadingMessage);
+        const loadingMessage = document.createElement("p");
+        loadingMessage.textContent = "Loading Duo Strength..."
+        container.append(loadingMessage);
 
-    parentElement.insertBefore(container, parentElement.firstElementChild);
+        parentElement.insertBefore(container, parentElement.firstElementChild);
+        setTimeout(
+            () =>
+            {
+                if (document.querySelector("#loadingAnimationContainer") !== null)
+                {
+                    // Been more than 5 seconds of the animation being on screen.
+                    // Something might have gone wrong, give the user the option
+                    // to maually remove the animation
+                    loadingMessage.textContent = "Something is being slow.";
+                    const button = document.createElement("button");
+                    button.textContent = "Show Tree";
+                    button.addEventListener("click", removeLoadingAnimation);
+                    container.append(button);
+                }
+            }
+            , 5000
+        );
+    }
 }
 
 function removeLoadingAnimation()
 {
-    document.querySelectorAll("#loadingAnimationContainer").forEach(elem => elem.remove());
+    const animationContainer = document.querySelector("#loadingAnimationContainer");
+    if (animationContainer !== null)
+    {
+        const timeNow = (new Date()).getTime();
+        const createTime = animationContainer.getAttribute("data-create-time");
+        const diff = timeNow - createTime;
+        if (diff < 1000)
+        {
+            setTimeout(removeLoadingAnimation, 1000-diff);
+        }
+        else
+        {
+            animationContainer.remove();
+        }
+    }
 }
 
 function graphSVG(data, ratio=1.5)
@@ -4377,6 +4415,9 @@ async function forceLoadAllSkills()
 
     if (unloadedSkills.length !== 0)
     {
+        // Add loading animation overlay to hide strange effects of forcing the load.
+        addLoadingAnimation(document.querySelector(`[data-test="skill-tree"]`).parentElement);
+
         const lastUnloadedSkill = unloadedSkills.slice(-1)[0];
         skillLoadObserver.observe(lastUnloadedSkill, {attributes: true});
 
@@ -4390,10 +4431,15 @@ async function forceLoadAllSkills()
     }
 }
 
-function addFeatures()
+async function addFeatures()
 {
 	// Main function that calls all the subfunctions responsible for adding features to the page.
-	
+
+    // Force Load all skills
+    {
+        await forceLoadAllSkills();
+    }
+
 	// First we need to prepare the retrieved userData for use.
 	processUserData();
 
@@ -4406,7 +4452,6 @@ function addFeatures()
 		else
 			removeStrengthBars();
 	}
-
 	// XP Info
 	{
 		if (options.XPInfo)
@@ -4633,6 +4678,8 @@ function addFeatures()
 	{
 		addButtonsToTipsPage();
 	}
+
+    removeLoadingAnimation();
 }
 
 function httpGetAsync(url, responseHandler)
@@ -4821,6 +4868,7 @@ async function handleDataResponse(responseText)
 function requestData()
 {
 	// requests data for actively logged in user.
+
 	return new Promise(function (resolve, reject)
 	{
 		if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
@@ -5514,7 +5562,6 @@ function classNameMutationHandle(mutationsList, observer)
 	{
 		// There has been a page change, either to or from the main page.
 
-
 		applyFocusMode();
 		applyFixedSidebar();
 
@@ -5912,15 +5959,12 @@ async function init()
 				// Fixed sidebar
 				applyFixedSidebar();
 
+                // Add loading animation
+                addLoadingAnimation(document.querySelector(`[data-test="skill-tree"]`).parentElement);
+
                 // Force Load all skills
                 {
-                    // First check if there are any unloaded skills.
-                    if (document.querySelectorAll(UNLOADED_SKILL_SELECTOR).length !== 0)
-                    {
-                        // Add loading animation overlay to hide strange effects of forcing the load.
-                        addLoadingAnimation(document.querySelector(`[data-test="skill-tree"]`).parentElement);
-                        forceLoadAllSkills();
-                    }
+                    await forceLoadAllSkills();
                 }
 
 				await openLastSkillPopout();

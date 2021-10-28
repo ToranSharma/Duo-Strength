@@ -5528,6 +5528,7 @@ function setUpObservers()
 		let numNavButtons = topBarDiv.querySelectorAll(`.${NAVIGATION_BUTTON}`).length;
 		// if numNavButtons = 4 then there is no stories button.
 		// if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
+		// if numNavButtons = 6 then there is a stories button and characters button.
 
 		homeNav = topBarDiv.childNodes[0];
 
@@ -5541,6 +5542,15 @@ function setUpObservers()
 			languageLogo = topBarDiv.childNodes[10];
 			crownNav = topBarDiv.childNodes[11];
 			streakNav = topBarDiv.childNodes[12];
+		}
+		// Languages with characters and stories (e.g. Japanese)
+		else if (numNavButtons === 6)
+        { 
+			storiesNav = topBarDiv.childNodes[4];
+			shopNav = topBarDiv.childNodes[8];
+			languageLogo = topBarDiv.childNodes[12];
+			crownNav = topBarDiv.childNodes[13];
+			streakNav = topBarDiv.childNodes[14];
 		}
 		else
 		{

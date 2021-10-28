@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v2.0.19] - 2021-10-28
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.19)
+### Fixed
+- Support for new Japanese stories which adds an additional nav button.
+
 [v2.0.18] - 2021-10-14
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.18)
@@ -1387,6 +1393,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.19]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.18...v2.0.19
 [v2.0.18]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.17...v2.0.18
 [v2.0.17]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.16...v2.0.17
 [v2.0.16]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.15...v2.0.16

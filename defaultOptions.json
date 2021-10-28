@@ -9,19 +9,25 @@
 
 	"ignoreMasteredSkills":						true,
 	"masteredButton":							true,
+	"masteredCriterion":						"markedOnly",
+	"masteredThreshold":						"5",
+	"separateGrammarSkillMasteredThreshold":	false,
+	"grammarMasteredThreshold":					"2",
 
 
 		"needsStrengtheningList":					true,
 		"needsStrengtheningListLength":				"10",
-		"needsStrengtheningListSortOrder":			"0",
 		"showBonusSkillsInNeedsStrengtheningList":	true,
 		"needsStrengtheningPopoutButton":			true,
+		"practiseL5NeedsStrengtheningSkills":		false,
+		"needsStrengtheningListSortOrder":			"0",
 
 		"crackedSkillsList":						true,
 		"crackedSkillsListLength":					"10",
-		"crackedSkillsListSortOrder":				"0",
 		"showBonusSkillsInCrackedSkillsList":		true,
 		"crackedPopoutButton":						true,
+		"crackedSkillsListSortOrder":				"0",
+		"practiseL5CrackedSkills":					false,
 
 		"skillSuggestion":							true,
 		"skillSuggestionMethod":					"0",
@@ -50,6 +56,7 @@
 		"crownsMaximum":							true,
 		"crownsPercentage":							true,
 		"crownsGraph":								true,
+		"goldenTreePercentage":						false,
 
 			"crownsBreakdown":							true,
 			"crownsBreakdownShowZerosRows":				true,
@@ -88,6 +95,7 @@
 	"keepQuestionBorders":						false,
 
 	"addTipsPagePractiseButton":				true,
+	"legendaryTipsPageButton":					true,
 	"addTipsPageBottomButtons":					true,
 
 	"practiseButton":							true,

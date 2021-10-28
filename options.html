@@ -9,7 +9,7 @@
 <body page="0">
 	<header>
 		<h1>Duo Strength Options</h1>
-		<span id="version">v2.0.6</span>
+		<span id="version">v2.0.19</span>
 	</header>
 	<ul>
 		<li class="section">
@@ -29,15 +29,36 @@
 			<h3 class="sectionHeading">Mastered Skills</h3>
 			<ul class="sectionOptionsList">
 				<li class="checkboxOption">
-					<label for="ignoreMasteredSkills">Force Skills Marked as Mastered to 100% Strength</label>
-					<input class="option" id="ignoreMasteredSkills" type="checkbox" data-controlling='[false]:["#masteredButton"]' />
+					<label for="ignoreMasteredSkills">Force Skills Mastered Skills to 100% Strength</label>
+					<input class="option" id="ignoreMasteredSkills" type="checkbox" data-controlling='[false]:["#masteredButton", "#masteredCriterion"]' />
 				</li>
 				<li class="checkboxOption">
 					<label for="masteredButton">Add Button to Mark Skills as Mastered in Skill Popouts</label>
 					<input class="option" id="masteredButton" type="checkbox" />
 				</li>
+				<li class="selectOption">
+					<label for="masteredCriterion">Criterion for Mastered Skills</label>
+					<select class="option" id="masteredCriterion" data-controlling='["markedOnly", "upToLastMarked", "aboveTreeLevel"]:["#masteredThreshold", "#separateGrammarSkillMasteredThreshold"]'>
+						<option value="markedOnly">Marked Skills Only</option>
+						<option value="upToLastMarked">All Skills Up To and Including Last Marked Skill</option>
+						<option value="aboveTreeLevel">Marked Skills and Skills Above Tree Level</option>
+						<option value="threshold">Marked Skills and Skills Above Threshold</option>
+					</select>
+				</li>
+				<li class="numberOption">
+					<label for="masteredThreshold" class="greaterThan">Considered Mastered if Skill's Crown Level<span>&ge;</span></label>
+					<input class="option" id="masteredThreshold" type="number" value="5" min="1" max="6" />
+				</li>
+				<li class="checkboxOption">
+					<label for="separateGrammarSkillMasteredThreshold">Separate Grammar Skill Threshold</label>
+					<input class="option" id="separateGrammarSkillMasteredThreshold" type="checkbox" data-controlling='[false]:["#grammarMasteredThreshold"]' />
+				</li>
+				<li class="numberOption">
+					<label for="grammarMasteredThreshold" class="greaterThan">Considered Mastered if Grammar Skill's Crown Level<span>&ge;</span></label>
+					<input class="option" id="grammarMasteredThreshold" type="number" value="2" min="1" max="3" />
+				</li>
 				<li class="button">
-					<button id="clearMasteredSkills">Clear Mastered List for Current Tree</button>
+					<button id="clearMasteredSkills">Clear Marked as Mastered for Current Tree</button>
 				</li>
 			</ul>
 		</li>
@@ -69,6 +90,10 @@
 								<li class="checkboxOption">
 									<label for="needsStrengtheningPopoutButton">Skill Popout Button for Links</label>
 									<input class="option"  id="needsStrengtheningPopoutButton" type="checkbox" />
+								</li>
+								<li class="checkboxOption">
+									<label for="practiseL5NeedsStrengtheningSkills">Link to Practice Session for L5 Skills</label>
+									<input class="option"  id="practiseL5NeedsStrengtheningSkills" type="checkbox" />
 								</li>
 							</ul>
 						</li>
@@ -131,6 +156,10 @@
 										<option value="3">Reverse Alphabetical</option>
 										<option value="4">Random</option>
 									</select>
+								</li>
+								<li class="checkboxOption">
+									<label for="practiseL5CrackedSkills">Link to Practice Session for L5 Skills</label>
+									<input class="option"  id="practiseL5CrackedSkills" type="checkbox" />
 								</li>
 							</ul>
 						</li>
@@ -199,7 +228,7 @@
 				</li>
 				<li class="numberOption">
 					<label for="lessonThreshold" class="greaterThan">Practice on Skills with Crown Level <span>&ge;</span></label>
-					<input class="option" id="lessonThreshold" type="number" value="4" min="1" max="4" />
+					<input class="option" id="lessonThreshold" type="number" value="4" min="1" max="5" />
 				</li>
 			</ul>
 		</li>
@@ -291,6 +320,10 @@
 								<li class="checkboxOption">
 									<label for="crownsGraph">Add Graph of Tree Level Progress</label>
 									<input class="option" id="crownsGraph" type="checkbox" />
+								</li>
+								<li class="checkboxOption">
+									<label for="goldenTreePercentage">Show Percentage of Progress to a Golden Tree</label>
+									<input class="option" id="goldenTreePercentage" type="checkbox" />
 								</li>
 								<li class="subsection">
 									<label>Crowns Breakdown Table</label>
@@ -443,6 +476,7 @@
 						<option value="languagesBox" data-invalidNextValues=" ">Languages Info</option>
 						<option value="totalStrengthBox" data-invalidNextValues=" ">Total Strength Box</option>
 						<option value="crownsBox" data-invalidNextValues=" ">Crowns Info</option>
+						<option value="assignmentsBox" data-invalidNextValues=" ">My Assignments</option>
 						<option value="ad" data-invalidNextValues=" ">Advert</option>
 						<option value="achievementBox" data-invalidNextValues=" ">Achievements</option>
 						<option value="friendsBox" data-invalidNextValues=" ">Friends</option>
@@ -525,6 +559,10 @@
 					<input class="option" id="addTipsPagePractiseButton" type="checkbox" />
 				</li>
 				<li class="checkboxOption">
+					<label for="legendaryTipsPageButton">Add Legendary Button at the Top Of the Tips if Skill is the Correct Level</label>
+					<input class="option" id="legendaryTipsPageButton" type="checkbox" />
+				</li>
+				<li class="checkboxOption">
 					<label for="addTipsPageBottomButtons">Add Second Set of Buttons at the Bottom of the Tips</label>
 					<input class="option" id="addTipsPageBottomButtons" type="checkbox" />
 				</li>
@@ -540,6 +578,10 @@
 				<li class="checkboxOption">
 					<label for="crownZeroPractiseButton">Practise Button on Crown 0 Skills</label>
 					<input class="option" id="crownZeroPractiseButton" type="checkbox" />
+				</li>
+				<li class="checkboxOption">
+					<label for="removeLegendaryCost">Remove Lingot Cost from Legendary Button</label>
+					<input class="option" id="removeLegendaryCost" type="checkbox" />
 				</li>
 				<li class="checkboxOption">
 					<input class="option" id="wordsButton" type="checkbox" />

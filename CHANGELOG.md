@@ -5,6 +5,132 @@ Changelog
 ------------
 -
 
+[v2.0.19] - 2021-10-28
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.19)
+### Fixed
+- Support for new Japanese stories which adds an additional nav button.
+
+[v2.0.18] - 2021-10-14
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.18)
+### Fixed
+- Default position of My Assignments side bar box.
+- Option to separate grammar skills in crowns breakdown table.
+
+[v2.0.17] - 2021-10-07
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.17)
+### Added
+- Option to add percentage indication of progress towards a golden tree.
+  - This is the number of total crowns earned on non bonus skills subtracting
+    the number of legendary skills (L5 normal, L3 grammar), divided by the
+	minimum number of crowns a golden tree can have (5\*number of normal skills
+	\+ 2\*number of grammar skills).
+  - This option is disabled by default.
+- New mastered suboptions to choose which skills are considered mastered. The
+  new options are:
+  - Marked Only. Default as this is the previous behaviour.
+  - All Skills Up To and Including the Last Marked Skill.
+  - Marked Skills and Skills Above Tree Level.
+  - Marked Skills and Skills Above Threshold.
+    - Suboption to set threshold.
+	- Suboption to toggle a separate threshold for grammar skills.
+	  - Suboption to set grammar skill threshold.
+
+
+[v2.0.16] - 2021-10-01
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.16)
+### Fixed
+- My Assignments sidebar box order handling.
+
+### Added
+- Automatic cleaning of mastered skills list, removing skill IDs that are not
+  found in current userData.
+
+[v2.0.15] - 2021-09-26
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.15)
+### Fixed
+- Focus mode button click behaviour.
+- Link session type threshold option.
+
+### Added
+- Options to control the link behaviour of L5 skills in the Needs Strengthening
+  List and Cracked Skills separately. By default this option is disabled
+  meaning links point to legendary tests rather than practice sessions.
+
+[v2.0.14] - 2021-09-24
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.14)
+### Fixed
+- Suggestion if a checkpoint is required to unlock the next new skill.
+
+[v2.0.13] - 2021-09-23
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.13)
+### Fixed
+- Issues with new legendary skills.
+  - Skill list links point to practice if skill is legendary.
+    - L5 normal skills, L2 grammar skills and L1 bonus skill links point to the
+      legendary test.
+  - Practise button adding handles new crown level option.
+  - Tips page practice button adding.
+  - Maximum crown count calculation updated to account for legendary skills.
+  - Crowns breakdown table now includes legendary level.
+  - Test out button being added to L2 grammar skills.
+  - Maximum value for lesson threshold option to 5.
+    - With this option set to 5, L5 skill links in at the top of the tree will
+      practice and not point to the legendary test (the default behaviour).
+
+### Added
+- New flag border colour and legendary crown logo for L6 trees.
+- Option to add a legendary button to the top the tips page of skills of the
+  correct level.
+  - Enabled by default.
+
+[v2.0.12] - 2021-09-11
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.12)
+### Fixed
+- Page change handling of going back to learn page from a lesson that was
+  entered in the normal way (without page reload).
+
+[v2.0.11] - 2021-09-10
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.11)
+### Fixed
+- Practise button click behaviour not taking the user into a practice session.
+
+[v2.0.10] - 2021-09-09
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.10)
+### Fixed
+- Layout and styling of skill popout words and mastered buttons.
+
+[v2.0.9] - 2021-08-12
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.9)
+### Fixed
+- Skill selector to stop including skill popout elements. This was causing
+  issues when adding strength bars.
+- Mobile/desktop layout switch detection if page loaded on tips page.
+
+[v2.0.8] - 2021-08-03
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.8)
+### Fixed
+- Skill name selector to only use one class name.
+
+[v2.0.7] - 2021-07-21
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.7)
+### Removed
+- Checking of old key format for progress history storage. All instances of
+  this should have already been caught and updated to the new user id based
+  format.
+
 [v2.0.6] - 2021-07-04
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.6)
@@ -1267,6 +1393,19 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.19]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.18...v2.0.19
+[v2.0.18]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.17...v2.0.18
+[v2.0.17]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.16...v2.0.17
+[v2.0.16]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.15...v2.0.16
+[v2.0.15]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.14...v2.0.15
+[v2.0.14]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.13...v2.0.14
+[v2.0.13]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.12...v2.0.13
+[v2.0.12]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.11...v2.0.12
+[v2.0.11]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.10...v2.0.11
+[v2.0.10]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.9...v2.0.10
+[v2.0.9]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.8...v2.0.9
+[v2.0.8]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.7...v2.0.8
+[v2.0.7]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.6...v2.0.7
 [v2.0.6]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.5...v2.0.6
 [v2.0.5]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.4...v2.0.5
 [v2.0.4]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.3...v2.0.4

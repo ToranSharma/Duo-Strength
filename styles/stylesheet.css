@@ -12,6 +12,12 @@
 	--legendary-purple: rgb(169, 161, 255);
 }
 
+/* Force Skill Loading */
+.squished
+{
+    transform-origin: top;
+    transform: scaleY(0);
+}
 
 /* Strength Bars */
 

@@ -58,6 +58,7 @@ const GOLDEN_OWL_CHECKPOINT_SELECTOR = ".lIg1v";
 const TREE_SECTION_SELECTOR = "._3uC-w ";
 const SKILL_ROW_SELECTOR = "._3f9ou";
 const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-test="intro-lesson"], ${SKILL_ROW_SELECTOR}>a[href], ${TREE_SECTION_SELECTOR} [data-test="skill"]`;
+const UNLOADED_SKILL_SELECTOR = ".QS3B0";
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
 const MAIN_SECTION_SELECTOR = "._33Mo9";
@@ -4320,6 +4321,55 @@ function processUserData()
 
 }
 
+async function forceLoadAllSkills()
+{
+    /*
+    There are some unloaded skills for which
+    we are not able to get the cracked status of.
+
+    To force all the skills to load we will briefly
+    scale down the skill tree so that it all fits on screen.
+
+    This should trigger the skills to be loaded by duolingo's react code.
+    */
+    let loadResolve;
+    const allLoaded = new Promise(
+        (resolve, reject) =>
+        {
+            loadResolve = resolve;
+        }
+    );
+    const loadChecker =
+        (mutationList) =>
+        {
+            const numUnloadedSkills = document.querySelectorAll(UNLOADED_SKILL_SELECTOR).length;
+            if (numUnloadedSkills === 0)
+            {
+                loadResolve();
+            }
+        };
+
+    const skillLoadObserver = new MutationObserver(loadChecker);
+
+    const unloadedSkills = Array.from(document.querySelectorAll(UNLOADED_SKILL_SELECTOR));
+
+    if (unloadedSkills.length !== 0)
+    {
+        console.error(`${unloadedSkills.length} UNLOADED SKILLS`);
+
+        const lastUnloadedSkill = unloadedSkills.slice(-1)[0];
+        skillLoadObserver.observe(lastUnloadedSkill, {attributes: true});
+
+        const skillTree = document.querySelector(SKILL_TREE_SELECTOR);
+        skillTree.classList.add("squished");
+
+        await allLoaded;
+
+        skillTree.classList.remove("squished");
+        return true;
+    }
+}
+
 function addFeatures()
 {
 	// Main function that calls all the subfunctions responsible for adding features to the page.
@@ -5842,14 +5892,28 @@ async function init()
 				// Fixed sidebar
 				applyFixedSidebar();
 
+                // Force Load all skills
+                {
+                    // First check if there are any unloaded skills.
+                    if (document.querySelectorAll(UNLOADED_SKILL_SELECTOR).length !== 0)
+                    {
+                        forceLoadAllSkills();
+                    }
+                }
+
 				await openLastSkillPopout();
 
 				const popout = document.querySelector(`[data-test="skill-popout"], ${CHECKPOINT_POPOUT_SELECTOR}`);
 
 				if (popout !== null)
+                {
 					popout.scrollIntoView({block: "center"});
+                }
+
+                
 
 				// Done all the prep we need, let's get some data to process
+
 				requestData();
 			}
 		}

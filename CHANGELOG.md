@@ -5,6 +5,15 @@ Changelog
 ------------
 -
 
+[v2.0.20] - 2021-10-28
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.20)
+### Fixed
+- Detectiong of unloaded skills on page. If any are found, they are forced to
+  be loaded by scaling the tree so that it is all on screen. The rest of the
+  features can then work with the fully loaded tree.
+
+
 [v2.0.19] - 2021-10-28
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.19)
@@ -1393,6 +1402,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.20]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.19...v2.0.20
 [v2.0.19]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.18...v2.0.19
 [v2.0.18]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.17...v2.0.18
 [v2.0.17]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.16...v2.0.17

@@ -5542,6 +5542,14 @@ function setUpObservers()
 			crownNav = topBarDiv.childNodes[11];
 			streakNav = topBarDiv.childNodes[12];
 		}
+		// Languages with characters and stories (e.g. Japanese)
+		else if (numNavButtons === 6) { 
+			storiesNav = topBarDiv.childNodes[4];
+			shopNav = topBarDiv.childNodes[8];
+			languageLogo = topBarDiv.childNodes[12];
+			crownNav = topBarDiv.childNodes[13];
+			streakNav = topBarDiv.childNodes[14];
+		}
 		else
 		{
 			/* unused/unusable

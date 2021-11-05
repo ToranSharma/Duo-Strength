@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v2.0.21] - 2021-11-05
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.21)
+### Removed
+- Option to remove lingot cost of legendary button. This option was added in
+  error and had no corresponding functionality in the content script.
+
 [v2.0.20] - 2021-10-28
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.20)
@@ -1406,6 +1413,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.21]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.20...v2.0.21
 [v2.0.20]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.19...v2.0.20
 [v2.0.19]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.18...v2.0.19
 [v2.0.18]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.17...v2.0.18

@@ -820,7 +820,7 @@
 
 /* Sentence Hiding */
 
-.blurringSentence [data-test="hint-sentence"],
+.blurringSentence [data-test="hint-token"],
 .blurringSentence [data-test="hint-popover"] td,
 .blurringSentence [data-test="hint-popover"] th
 {
@@ -877,11 +877,11 @@
 	visibility: hidden !important;
 }
 
-.hideCartoons:not(.keepQuestionBorders) [data-test~="challenge"] ._1Q4WV /* HINT_SENTENCE_CONTAINER */
+.hideCartoons:not(.keepQuestionBorders) [data-test~="challenge"] ._1KUxv /* HINT_SENTENCE_CONTAINER */
 {
 	border: none !important;
 }
-.hideCartoons [data-test~="challenge"] ._3fuMA /* HINT_SENTENCE_BUBBLE_ARROW*/
+.hideCartoons [data-test~="challenge"] .ite_X /* HINT_SENTENCE_BUBBLE_ARROW*/
 {
 	display: none;
 }

@@ -75,8 +75,8 @@ const SKILL_TREE_SELECTOR = "._3YEom";
 const TIPS_PAGE_BODY_SELECTOR = "._1yyg2";
 const LOCKED_SKILL_POPOUT = "_1fMEX"; // used only in styles/stylesheet.css
 const CARTOON_CONTAINER = "F2B9m"; // used only in styles/stylesheet.css
-const HINT_SENTENCE_CONTAINER = "_1Q4WV"; // used only in styles/stylesheet.css
-const HINT_SENTENCE_BUBBLE_ARROW = "_3fuMA"; // used only in styles/stylesheet.css
+const HINT_SENTENCE_CONTAINER = "._1KUxv";
+const HINT_SENTENCE_BUBBLE_ARROW = "ite_X"; // used only in styles/stylesheet.css
 const AD = "_1UOwI _3bfsh";
 const ACHIEVEMENT_BOX = "Yth9H";
 const PROGRESS_QUIZ_BOX = "_9GzaQ";
@@ -4998,28 +4998,28 @@ function revealNewWord()
 
 function hideTranslationText(reveal = false, setupObserver = true)
 {
-	if (document.getElementsByClassName(QUESTION_CONTAINER).length === 0)
-		return false;
-	
 	const questionContainer = document.querySelector(`.${QUESTION_CONTAINER}`);
 
-	if (questionContainer.firstChild === null)
-		return false; // Duo ecouragement message, no question box, do nothing.
-
+	if (questionContainer === null || questionContainer.firstChild === null)
+    {
+        // Either no question on screen yet or it is the Duo ecouragement message, no question box, do nothing.
+        return false;
+    }
+	
 	const questionTypeString = questionContainer.firstChild.getAttribute("data-test");
 
 	if (questionTypeString !== null && questionTypeString.includes("translate"))
 	{
 		// Translate type question
-		const challengeTranslatePrompt = questionContainer.querySelector('[data-test="challenge-translate-prompt"]');
+        const hintSentenceContainer = questionContainer.querySelector(HINT_SENTENCE_CONTAINER);
 		
-		if (challengeTranslatePrompt.querySelectorAll("BUTTON").length !== 0)
+		if (hintSentenceContainer.querySelector("BUTTON") !== null)
 		{
 			// There is an svg in the question sentence which is the speaker button so we are translating from the target to the native language
 			const questionArea = questionContainer.firstChild.firstChild;
 			if (setupObserver) childListObserver.observe(questionArea, {childList: true});
 			
-			const hintSentence = challengeTranslatePrompt.querySelector('[data-test="hint-sentence"]');
+			const hintSentence = hintSentenceContainer.firstChild.lastChild;
 			
 			if (options.showNewWords && hintSentence.querySelectorAll(NEW_WORD_SELECTOR).length !== 0)
 			{
@@ -5050,24 +5050,26 @@ function hideTranslationText(reveal = false, setupObserver = true)
 
 				if (options.revealHotkey)
 				{
-					hintSentence.tile += " or Press " + options.revealHotkeyCode;
-					document.onkeydown = (e) =>
-					{
-						const hotkeyList = options.revealHotkeyCode.split("+");
-						const numKeys = hotkeyList.length;
-						if (
-							e.key.toUpperCase() === hotkeyList[numKeys-1]
-							&& ( (hotkeyList.includes("Ctrl") && e.ctrlKey) || !hotkeyList.includes("Ctrl") )
-							&& ( (hotkeyList.includes("Shift") && e.shiftKey) || !hotkeyList.includes("Shift") )
-							&& ( (hotkeyList.includes("Meta") && e.metaKey) || !hotkeyList.includes("Meta") )
-							&& ( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
-						)
-						{
-							// Reveal hokey has been hit,
-							// show the question text
-							hideTranslationText(true, false);
-						}
-					};
+					hintSentence.title += " or Press " + options.revealHotkeyCode;
+					document.body.addEventListener("keyDown",
+                        (event) =>
+                        {
+                            const hotkeyList = options.revealHotkeyCode.split("+");
+                            const numKeys = hotkeyList.length;
+                            if (
+                                event.key.toUpperCase() === hotkeyList[numKeys-1]
+                                && ( (hotkeyList.includes("Ctrl") && e.ctrlKey) || !hotkeyList.includes("Ctrl") )
+                                && ( (hotkeyList.includes("Shift") && e.shiftKey) || !hotkeyList.includes("Shift") )
+                                && ( (hotkeyList.includes("Meta") && e.metaKey) || !hotkeyList.includes("Meta") )
+                                && ( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
+                            )
+                            {
+                                // Reveal hokey has been hit,
+                                // show the question text
+                                hideTranslationText(true, false);
+                            }
+                        }
+                    );
 				}
 			}
 			else
@@ -5076,7 +5078,7 @@ function hideTranslationText(reveal = false, setupObserver = true)
 				hintSentence.title = "";
 			}
 
-			let enableDisableButton = questionContainer.getElementsByClassName("hideTextEnableDisable");
+			let enableDisableButton = questionContainer.querySelectorAll(".hideTextEnableDisable");
 
 			if (enableDisableButton.length === 0)
 			{

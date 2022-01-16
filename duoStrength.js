@@ -180,7 +180,7 @@ function retrieveOptions()
 			// Set options to default settings
 			options = await retrieveDefaultOptions();
 
-			if (Object.entries(data).length === 0)
+			if (!data || Object.entries(data).length === 0)
 			{
 				// First time using version with options so nothing is set in storage.
 			}
@@ -207,7 +207,7 @@ function retrieveProgressHistory()
 		chrome.storage.sync.get("progress", function (data)
 		{
 			const key = `${userId}:${UICode}->${languageCode}`;
-			if (Object.entries(data).length === 0)
+			if (!data || Object.entries(data).length === 0)
 			{
 				// No progress data
 				updateProgress();
@@ -233,7 +233,7 @@ function storeProgressHistory()
 	{
 		chrome.storage.sync.get("progress", function (data)
 		{
-			if (Object.entries(data).length === 0)
+			if (!data || Object.entries(data).length === 0)
 				data.progress = {};
 			// Cull inactive trees
 			const trees = Object.entries(data.progress);
@@ -271,8 +271,12 @@ function storeTreeLevel()
 		(resolve, reject) =>
 		{
 			chrome.storage.sync.get("treeLevels",
-				async (data)=>
+				async (data) =>
 				{
+                    if (!data)
+                    {
+                        data = {};
+                    }
 					if (Object.entries(data).length === 0)
 					{
 						data.treeLevels = {};
@@ -282,12 +286,12 @@ function storeTreeLevel()
 							(resolve2, reject2) =>
 							{
 								chrome.storage.sync.get("progress",
-									(data) =>
+									(data2) =>
 									{
-										if (Object.entries(data).length !== 0)
+										if (!data2 || Object.entries(data2).length !== 0)
 										{
 											resolve2(
-												Object.keys(data.progress).filter(
+												Object.keys(data2.progress).filter(
 													(key) =>
 													{
 														return /^[0-9]+:[a-z]{2}->[a-z]{2}/.test(key);
@@ -295,7 +299,7 @@ function storeTreeLevel()
 												).reduce(
 													(res, key) =>
 													{
-														res[key] = data.progress[key];
+														res[key] = data2.progress[key];
 														return res;
 													}, {}
 												)

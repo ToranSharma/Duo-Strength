@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v2.0.23] - 2022-01-16
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.23)
+### Added
+- Debug info dump button to bottom of options page. The debug info is copied to
+  the clipboard.
+
 [v2.0.22] - 2021-12-08
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.22)
@@ -1420,6 +1427,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.23]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.22...v2.0.23
 [v2.0.22]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.21...v2.0.22
 [v2.0.21]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.20...v2.0.21
 [v2.0.20]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.19...v2.0.20

@@ -138,6 +138,34 @@ let questionNumber = 1;
 const classNameObserver = new MutationObserver(classNameMutationHandle);
 const childListObserver = new MutationObserver(childListMutationHandle);
 
+async function getDebugInfo()
+{
+    const responseObject = {};
+    const addToResponse = ([variable, globalVarName]) => {responseObject[globalVarName] = variable};
+    const variables = [
+        [username, "username"],
+        [userId, "userId"],
+        [UICode, "UICode"],
+        [languageCode, "languageCode"],
+        [language, "language"],
+        [mastered, "mastered"],
+        [requestId, "requestId"],
+        [requestsPending, "requestsPending"],
+        [onMainPage, "onMainPage"],
+        [onLoginPage, "onLoginPage"],
+        [inMobileLayout, "inMobileLayout"],
+        [progress, "progress"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse(null, numBytes => resolve(`There are ${numBytes}B/${chrome.storage.sync.QUOTA_BYTES}B (${(100*numBytes/chrome.storage.sync.QUOTA_BYTES).toFixed(1)}%) being used in total`))), "Total Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("progress", numBytes => resolve(`There are ${numBytes}B/${chrome.storage.sync.QUOTA_BYTES_PER_ITEM}B (${(100*numBytes/chrome.storage.sync.QUOTA_BYTES_PER_ITEM).toFixed(1)}%) being used in a single entry`))), "progress Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("mastered", numBytes => resolve(`There are ${numBytes}B/${chrome.storage.sync.QUOTA_BYTES_PER_ITEM}B (${(100*numBytes/chrome.storage.sync.QUOTA_BYTES_PER_ITEM).toFixed(1)}%) being used in a single entry`))), "mastered Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("options", numBytes => resolve(`There are ${numBytes}B/${chrome.storage.sync.QUOTA_BYTES_PER_ITEM}B (${(100*numBytes/chrome.storage.sync.QUOTA_BYTES_PER_ITEM).toFixed(1)}%) being used in a single entry`))), "options Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("treeLevels", numBytes => resolve(`There are ${numBytes}B/${chrome.storage.sync.QUOTA_BYTES_PER_ITEM}B (${(100*numBytes/chrome.storage.sync.QUOTA_BYTES_PER_ITEM).toFixed(1)}%) being used in a single entry`))), "treeLevels Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.get(null, resolve)), "chrome.storage.sync"],
+    ];
+    variables.forEach(addToResponse);
+    return JSON.parse(JSON.stringify(responseObject));
+}
+
 async function retrieveDefaultOptions()
 {
 	return fetch(chrome.runtime.getURL("defaultOptions.json")).then(response => response.json());
@@ -364,23 +392,30 @@ function clearMasteredSkills()
 	return new Promise(
 		(resolve, reject) =>
 		{
-			chrome.storage.sync.get("mastered",
-				(data) =>
-				{
-					if (data.mastered !== undefined)
-					{
-						const currentTreeKey = `${userId}:${UICode}->${languageCode}`;
-						if (data.mastered[currentTreeKey] !== undefined)
-						{
-							delete data.mastered[currentTreeKey];
-							mastered = [];
-						}
+            if (userId !== "" && UICode !== "" && languageCode !== "")
+            {
+                chrome.storage.sync.get("mastered",
+                    (data) =>
+                    {
+                        if (data.mastered !== undefined)
+                        {
+                            const currentTreeKey = `${userId}:${UICode}->${languageCode}`;
+                            if (data.mastered[currentTreeKey] !== undefined)
+                            {
+                                delete data.mastered[currentTreeKey];
+                                mastered = [];
+                            }
 
-						chrome.storage.sync.set({"mastered": data.mastered});
-					}
-					resolve();
-				}
-			);
+                            chrome.storage.sync.set({"mastered": data.mastered});
+                        }
+                        resolve({"cleared": true});
+                    }
+                );
+            }
+            else
+            {
+                resolve({"cleared": false})
+            }
 		}
 	);
 }
@@ -3191,7 +3226,7 @@ function displayCrownsBreakdown()
 					day = day - msInDay;
 				}
 
-				while (treeLevelProgressInWeek.length != 7)
+				while (treeLevelProgressInWeek.length !== 7)
 				{
 					// If we ran out of progress entries for a whole week
 					// we will fill the rest with zeros.
@@ -5994,29 +6029,37 @@ function start()
 {
 	chrome.runtime.sendMessage({type: "showPageAction"});
 	chrome.runtime.onMessage.addListener(
-		(message, sender, sendResponse) => {
+		(message, sender, sendResponse) =>
+        {
 			if (message.type === "optionsChanged")
 			{
 				init();
+                return false;
 			}
 			if (message.type === "clearMasteredSkills")
 			{
-				if (userId !== "" && UICode !== "" && languageCode !== "")
-				{
-					clearMasteredSkills()
-					.then(() => 
-						{
-							sendResponse({"cleared": true});
-							addFeatures();
-						}
-					);
-					return true; // needs to return tru as response is asynchronous
-				}
-				else
-				{
-					sendResponse({"cleared": false});
-				}
+                clearMasteredSkills()
+                    .then(
+                        (response) => 
+                        {
+                            addFeatures();
+                            sendResponse(response);
+                        }
+                    );
+                return true;
 			}
+            if (message.type === "getDebugInfo")
+            {
+                getDebugInfo()
+                    .then(
+                        (response) =>
+                        {
+                            sendResponse(response);
+                        }
+                    );
+                return true;
+            }
+            return false;
 		}
 	);
 	init();

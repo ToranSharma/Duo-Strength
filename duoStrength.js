@@ -117,7 +117,7 @@ let mastered = [];
 let username = "";
 let userId = "";
 let userData = {};
-let requestID = 0;
+let requestId = 0;
 let requestsPending = 0;
 let usingOldData;
 
@@ -4712,16 +4712,16 @@ function httpGetAsync(url, responseHandler)
 				{
 					if (xmlHttp.status === 200)
 					{
-						document.getElementById('userData${requestID}').textContent = "//" + xmlHttp.responseText;		
+						document.getElementById('userData${requestId}').textContent = "//" + xmlHttp.responseText;
 					}
 					else
 					{
 						// The request had an error, or possibly some unexpected accepted code.
-						document.getElementById('userData${requestID}').textContent = "//ERROR " + xmlHttp.status;
+						document.getElementById('userData${requestId}').textContent = "//ERROR " + xmlHttp.status;
 					}
 				}
 			};
-			xmlHttp.open('GET', '${url+'&DuoStrengthRequestId='+requestID}', true);
+			xmlHttp.open('GET', '${url+'&DuoStrengthRequestId='+requestId}', true);
 			xmlHttp.send(null);
 		})()`;
 
@@ -4729,17 +4729,17 @@ function httpGetAsync(url, responseHandler)
 
 	let requestResponseObserver = new MutationObserver(requestResponseHelper);
 	let data = document.createElement('script');
-	data.id = 'userData' + requestID;
+	data.id = 'userData' + requestId;
 
 	let xhrScript = document.createElement("script");
-	xhrScript.id = 'xhrScript' + requestID;
+	xhrScript.id = 'xhrScript' + requestId;
 	xhrScript.textContent = code;
 
 	document.body.appendChild(data);
 	requestResponseObserver.observe(data, {childList: true});
 	document.body.appendChild(xhrScript);
 	++requestsPending;
-	++requestID;
+	++requestId;
 }
 
 function requestResponseMutationHandle(mutationsList, url, responseHandler)
@@ -4747,7 +4747,7 @@ function requestResponseMutationHandle(mutationsList, url, responseHandler)
 	for (let mutation of mutationsList)
 	{
 		const dataElem = mutation.target;
-		const id = dataElem.id.slice("userData".length);
+		const id = Number(dataElem.id.slice("userData".length));
 
 		--requestsPending; // We have recieved some sort of response for this request.
 
@@ -4880,9 +4880,9 @@ function requestData()
 
 		httpGetAsync( // asks for data and async calls handle function when ready.
 			encodeURI(window.location.origin+"/api/1/users/show?id="+userId),
-			function (responseText, responseID)
+			function (responseText, responseId)
 			{
-				if (responseID != requestID - 1)
+				if (responseId !== requestId - 1)
 				{
 					// More than one changes took place before we could handle the data.
 					// Ordering of responses is not always the same as the ordering of the request,

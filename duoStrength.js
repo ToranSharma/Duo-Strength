@@ -6040,6 +6040,11 @@ function start()
 				init();
                 return false;
 			}
+            if (message.type === "ping")
+            {
+                sendResponse({"type": "pong"});
+                return false;
+            }
 			if (message.type === "clearMasteredSkills")
 			{
                 clearMasteredSkills()
@@ -6069,9 +6074,9 @@ function start()
 	init();
 } // call function to start display sequence on first load
 
-window.onunload = function()
+window.onunload = function ()
 {
-	chrome.runtime.sendMessage({type: "pageClosed"});
+    chrome.runtime.sendMessage({type: "pageClosed"});
 }
 
 if (document.readyState === "complete" || document.readyState === "interactive")

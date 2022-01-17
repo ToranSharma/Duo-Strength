@@ -20,18 +20,22 @@ window.onload = () =>
 
 async function getOpenTabs()
 {
-	chrome.runtime.sendMessage({type: "tabsRequest"},
-		(response) =>
-		{
-			tabs = response.openedTabs;
-			if (tabs.length === 0)
-			{
-				document.querySelectorAll("#clearMasteredSkills, #debugInfoButton").forEach((elem)=> elem.disabled = true);
-			}
-            return tabs;
-		}
-	);
-
+	return new Promise(
+        (resolve, reject) =>
+        {
+            chrome.runtime.sendMessage({type: "tabsRequest"},
+                (response) =>
+                {
+                    tabs = response.openedTabs;
+                    if (tabs.length === 0)
+                    {
+                        document.querySelectorAll("#clearMasteredSkills, #debugInfoButton").forEach((elem)=> elem.disabled = true);
+                    }
+                    resolve(tabs);
+                }
+            );
+        }
+    );
 }
 
 async function init()

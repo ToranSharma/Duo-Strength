@@ -10,6 +10,7 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.23)
 ### Fixed
 - Overlapping top of tree lists with New Year's promotion and mistakes button.
+- Tab close detection.
 
 ### Added
 - Debug info dump button to bottom of options page. The debug info is copied to

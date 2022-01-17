@@ -117,7 +117,7 @@ let mastered = [];
 let username = "";
 let userId = "";
 let userData = {};
-let requestID = 0;
+let requestId = 0;
 let requestsPending = 0;
 let usingOldData;
 
@@ -138,6 +138,34 @@ let questionNumber = 1;
 const classNameObserver = new MutationObserver(classNameMutationHandle);
 const childListObserver = new MutationObserver(childListMutationHandle);
 
+async function getDebugInfo()
+{
+    const responseObject = {};
+    const addToResponse = ([variable, globalVarName]) => {responseObject[globalVarName] = variable};
+    const variables = [
+        [username, "username"],
+        [userId, "userId"],
+        [UICode, "UICode"],
+        [languageCode, "languageCode"],
+        [language, "language"],
+        [mastered, "mastered"],
+        [requestId, "requestId"],
+        [requestsPending, "requestsPending"],
+        [onMainPage, "onMainPage"],
+        [onLoginPage, "onLoginPage"],
+        [inMobileLayout, "inMobileLayout"],
+        [progress, "progress"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse(null, numBytes => resolve(`There are ${numBytes}B/102400B (${(100*numBytes/102400).toFixed(1)}%) being used in total`))), "Total Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("progress", numBytes => resolve(`There are ${numBytes}B/8192B (${(100*numBytes/8192).toFixed(1)}%) being used in a single entry`))), "progress Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("mastered", numBytes => resolve(`There are ${numBytes}B/8192B (${(100*numBytes/8192).toFixed(1)}%) being used in a single entry`))), "mastered Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("options", numBytes => resolve(`There are ${numBytes}B/8192B (${(100*numBytes/8192).toFixed(1)}%) being used in a single entry`))), "options Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("treeLevels", numBytes => resolve(`There are ${numBytes}B/8192B (${(100*numBytes/8192).toFixed(1)}%) being used in a single entry`))), "treeLevels Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.get(null, resolve)), "chrome.storage.sync"],
+    ];
+    variables.forEach(addToResponse);
+    return JSON.parse(JSON.stringify(responseObject));
+}
+
 async function retrieveDefaultOptions()
 {
 	return fetch(chrome.runtime.getURL("defaultOptions.json")).then(response => response.json());
@@ -152,7 +180,7 @@ function retrieveOptions()
 			// Set options to default settings
 			options = await retrieveDefaultOptions();
 
-			if (Object.entries(data).length === 0)
+			if (!data || Object.entries(data).length === 0)
 			{
 				// First time using version with options so nothing is set in storage.
 			}
@@ -179,7 +207,7 @@ function retrieveProgressHistory()
 		chrome.storage.sync.get("progress", function (data)
 		{
 			const key = `${userId}:${UICode}->${languageCode}`;
-			if (Object.entries(data).length === 0)
+			if (!data || Object.entries(data).length === 0)
 			{
 				// No progress data
 				updateProgress();
@@ -205,7 +233,7 @@ function storeProgressHistory()
 	{
 		chrome.storage.sync.get("progress", function (data)
 		{
-			if (Object.entries(data).length === 0)
+			if (!data || Object.entries(data).length === 0)
 				data.progress = {};
 			// Cull inactive trees
 			const trees = Object.entries(data.progress);
@@ -243,8 +271,12 @@ function storeTreeLevel()
 		(resolve, reject) =>
 		{
 			chrome.storage.sync.get("treeLevels",
-				async (data)=>
+				async (data) =>
 				{
+                    if (!data)
+                    {
+                        data = {};
+                    }
 					if (Object.entries(data).length === 0)
 					{
 						data.treeLevels = {};
@@ -254,12 +286,12 @@ function storeTreeLevel()
 							(resolve2, reject2) =>
 							{
 								chrome.storage.sync.get("progress",
-									(data) =>
+									(data2) =>
 									{
-										if (Object.entries(data).length !== 0)
+										if (!data2 || Object.entries(data2).length !== 0)
 										{
 											resolve2(
-												Object.keys(data.progress).filter(
+												Object.keys(data2.progress).filter(
 													(key) =>
 													{
 														return /^[0-9]+:[a-z]{2}->[a-z]{2}/.test(key);
@@ -267,7 +299,7 @@ function storeTreeLevel()
 												).reduce(
 													(res, key) =>
 													{
-														res[key] = data.progress[key];
+														res[key] = data2.progress[key];
 														return res;
 													}, {}
 												)
@@ -364,23 +396,30 @@ function clearMasteredSkills()
 	return new Promise(
 		(resolve, reject) =>
 		{
-			chrome.storage.sync.get("mastered",
-				(data) =>
-				{
-					if (data.mastered !== undefined)
-					{
-						const currentTreeKey = `${userId}:${UICode}->${languageCode}`;
-						if (data.mastered[currentTreeKey] !== undefined)
-						{
-							delete data.mastered[currentTreeKey];
-							mastered = [];
-						}
+            if (userId !== "" && UICode !== "" && languageCode !== "")
+            {
+                chrome.storage.sync.get("mastered",
+                    (data) =>
+                    {
+                        if (data.mastered !== undefined)
+                        {
+                            const currentTreeKey = `${userId}:${UICode}->${languageCode}`;
+                            if (data.mastered[currentTreeKey] !== undefined)
+                            {
+                                delete data.mastered[currentTreeKey];
+                                mastered = [];
+                            }
 
-						chrome.storage.sync.set({"mastered": data.mastered});
-					}
-					resolve();
-				}
-			);
+                            chrome.storage.sync.set({"mastered": data.mastered});
+                        }
+                        resolve({"cleared": true});
+                    }
+                );
+            }
+            else
+            {
+                resolve({"cleared": false})
+            }
 		}
 	);
 }
@@ -3191,7 +3230,7 @@ function displayCrownsBreakdown()
 					day = day - msInDay;
 				}
 
-				while (treeLevelProgressInWeek.length != 7)
+				while (treeLevelProgressInWeek.length !== 7)
 				{
 					// If we ran out of progress entries for a whole week
 					// we will fill the rest with zeros.
@@ -4712,16 +4751,16 @@ function httpGetAsync(url, responseHandler)
 				{
 					if (xmlHttp.status === 200)
 					{
-						document.getElementById('userData${requestID}').textContent = "//" + xmlHttp.responseText;		
+						document.getElementById('userData${requestId}').textContent = "//" + xmlHttp.responseText;
 					}
 					else
 					{
 						// The request had an error, or possibly some unexpected accepted code.
-						document.getElementById('userData${requestID}').textContent = "//ERROR " + xmlHttp.status;
+						document.getElementById('userData${requestId}').textContent = "//ERROR " + xmlHttp.status;
 					}
 				}
 			};
-			xmlHttp.open('GET', '${url+'&DuoStrengthRequestId='+requestID}', true);
+			xmlHttp.open('GET', '${url+'&DuoStrengthRequestId='+requestId}', true);
 			xmlHttp.send(null);
 		})()`;
 
@@ -4729,17 +4768,17 @@ function httpGetAsync(url, responseHandler)
 
 	let requestResponseObserver = new MutationObserver(requestResponseHelper);
 	let data = document.createElement('script');
-	data.id = 'userData' + requestID;
+	data.id = 'userData' + requestId;
 
 	let xhrScript = document.createElement("script");
-	xhrScript.id = 'xhrScript' + requestID;
+	xhrScript.id = 'xhrScript' + requestId;
 	xhrScript.textContent = code;
 
 	document.body.appendChild(data);
 	requestResponseObserver.observe(data, {childList: true});
 	document.body.appendChild(xhrScript);
 	++requestsPending;
-	++requestID;
+	++requestId;
 }
 
 function requestResponseMutationHandle(mutationsList, url, responseHandler)
@@ -4747,7 +4786,7 @@ function requestResponseMutationHandle(mutationsList, url, responseHandler)
 	for (let mutation of mutationsList)
 	{
 		const dataElem = mutation.target;
-		const id = dataElem.id.slice("userData".length);
+		const id = Number(dataElem.id.slice("userData".length));
 
 		--requestsPending; // We have recieved some sort of response for this request.
 
@@ -4880,9 +4919,9 @@ function requestData()
 
 		httpGetAsync( // asks for data and async calls handle function when ready.
 			encodeURI(window.location.origin+"/api/1/users/show?id="+userId),
-			function (responseText, responseID)
+			function (responseText, responseId)
 			{
-				if (responseID != requestID - 1)
+				if (responseId !== requestId - 1)
 				{
 					// More than one changes took place before we could handle the data.
 					// Ordering of responses is not always the same as the ordering of the request,
@@ -5994,37 +6033,50 @@ function start()
 {
 	chrome.runtime.sendMessage({type: "showPageAction"});
 	chrome.runtime.onMessage.addListener(
-		(message, sender, sendResponse) => {
+		(message, sender, sendResponse) =>
+        {
 			if (message.type === "optionsChanged")
 			{
 				init();
+                return false;
 			}
+            if (message.type === "ping")
+            {
+                sendResponse({"type": "pong"});
+                return false;
+            }
 			if (message.type === "clearMasteredSkills")
 			{
-				if (userId !== "" && UICode !== "" && languageCode !== "")
-				{
-					clearMasteredSkills()
-					.then(() => 
-						{
-							sendResponse({"cleared": true});
-							addFeatures();
-						}
-					);
-					return true; // needs to return tru as response is asynchronous
-				}
-				else
-				{
-					sendResponse({"cleared": false});
-				}
+                clearMasteredSkills()
+                    .then(
+                        (response) => 
+                        {
+                            addFeatures();
+                            sendResponse(response);
+                        }
+                    );
+                return true;
 			}
+            if (message.type === "getDebugInfo")
+            {
+                getDebugInfo()
+                    .then(
+                        (response) =>
+                        {
+                            sendResponse(response);
+                        }
+                    );
+                return true;
+            }
+            return false;
 		}
 	);
 	init();
 } // call function to start display sequence on first load
 
-window.onunload = function()
+window.onunload = function ()
 {
-	chrome.runtime.sendMessage({type: "pageClosed"});
+    chrome.runtime.sendMessage({type: "pageClosed"});
 }
 
 if (document.readyState === "complete" || document.readyState === "interactive")

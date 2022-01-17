@@ -13,18 +13,29 @@ const ordinalLabels = {
 
 window.onload = () =>
 {
-	chrome.runtime.sendMessage({type: "tabsRequest"},
-		(response) =>
-		{
-			tabs = response.openedTabs;
-			if (tabs.length === 0)
-			{
-				document.querySelector("#clearMasteredSkills").disabled = true;
-			}
-		}
-	);
+    getOpenTabs();
 	saveOptions();
 	init();
+}
+
+async function getOpenTabs()
+{
+	return new Promise(
+        (resolve, reject) =>
+        {
+            chrome.runtime.sendMessage({type: "tabsRequest"},
+                (response) =>
+                {
+                    tabs = response.openedTabs;
+                    if (tabs.length === 0)
+                    {
+                        document.querySelectorAll("#clearMasteredSkills, #debugInfoButton").forEach((elem)=> elem.disabled = true);
+                    }
+                    resolve(tabs);
+                }
+            );
+        }
+    );
 }
 
 async function init()
@@ -44,6 +55,7 @@ async function init()
 		}
 	);
 	document.querySelector("#clearMasteredSkills").addEventListener("click", clearMasteredSkills);
+    document.querySelector("#debugInfoButton").addEventListener("click", copyDebugInfo);
 	document.querySelector("#darkOptions").addEventListener("change",
 		(event) =>
 		{
@@ -592,7 +604,8 @@ function clearMasteredSkills(event)
 			(id) =>
 			{
 				chrome.tabs.sendMessage(id, {type: "clearMasteredSkills"},
-					(response) => {
+					(response) =>
+                    {
 						if (response.cleared)
 						{
 							event.target.disabled = true;
@@ -603,12 +616,12 @@ function clearMasteredSkills(event)
 							event.target.disabled = true;
 							event.target.textContent = "Error Clearing, Try Again";
 						}
-						setTimeout(() =>
+						setTimeout(
+                            () =>
 							{
 								event.target.disabled = false;
 								event.target.textContent = "Clear Mastered List for Current Tree"
-							}
-							, 3000
+							}, 3000
 						);
 					}
 				);
@@ -655,3 +668,60 @@ function compareOptions(optionsA, optionsB)
 	return JSON.stringify(aSorted) === JSON.stringify(bSorted)
 }
 
+async function getDebugInfo()
+{
+    await getOpenTabs();
+    const responses = tabs.map(
+        (tabId) =>
+        {
+            return new Promise(
+                (resolve, reject) =>
+                {
+                    chrome.tabs.sendMessage(tabId, {type: "getDebugInfo"},
+                        (debugInfo) =>
+                        {
+                            const tabDebugObject = {};
+                            tabDebugObject[`Debug Info from Tab ${tabId}`] = debugInfo;
+                            resolve(tabDebugObject);
+                        }
+                    );
+                }
+            );
+        }
+    );
+    return await Promise.all(responses)
+        .then(
+            (infoArray) =>
+            {
+                return Object.assign({}, ...infoArray);
+            }
+        );
+}
+
+function copyDebugInfo(event)
+{
+    getDebugInfo().then(
+        (debugInfo) =>
+        {
+            if (Object.entries(debugInfo).length === 0)
+            {
+                event.target.textContent = "Duo Strength not loaded on any tab";
+            }
+            else
+            {
+                const debugString = JSON.stringify(debugInfo, null, 4);
+                navigator.clipboard.writeText(debugString).then(
+                    () =>
+                    {
+                        event.target.textContent = "Debug Info Copied to Clipboard";
+                    },
+                    () =>
+                    {
+                        event.target.textContent = "Info could not be copied to clipboard";
+                    }
+                );
+            }
+            setTimeout(() => event.target.textContent = "Get Debug Info", 5000);
+        }
+    );
+}

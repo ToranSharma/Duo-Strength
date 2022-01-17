@@ -155,11 +155,11 @@ async function getDebugInfo()
         [onLoginPage, "onLoginPage"],
         [inMobileLayout, "inMobileLayout"],
         [progress, "progress"],
-        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse(null, numBytes => resolve(`There are ${numBytes}B/${chrome.storage.sync.QUOTA_BYTES}B (${(100*numBytes/chrome.storage.sync.QUOTA_BYTES).toFixed(1)}%) being used in total`))), "Total Storage Usage"],
-        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("progress", numBytes => resolve(`There are ${numBytes}B/${chrome.storage.sync.QUOTA_BYTES_PER_ITEM}B (${(100*numBytes/chrome.storage.sync.QUOTA_BYTES_PER_ITEM).toFixed(1)}%) being used in a single entry`))), "progress Storage Usage"],
-        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("mastered", numBytes => resolve(`There are ${numBytes}B/${chrome.storage.sync.QUOTA_BYTES_PER_ITEM}B (${(100*numBytes/chrome.storage.sync.QUOTA_BYTES_PER_ITEM).toFixed(1)}%) being used in a single entry`))), "mastered Storage Usage"],
-        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("options", numBytes => resolve(`There are ${numBytes}B/${chrome.storage.sync.QUOTA_BYTES_PER_ITEM}B (${(100*numBytes/chrome.storage.sync.QUOTA_BYTES_PER_ITEM).toFixed(1)}%) being used in a single entry`))), "options Storage Usage"],
-        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("treeLevels", numBytes => resolve(`There are ${numBytes}B/${chrome.storage.sync.QUOTA_BYTES_PER_ITEM}B (${(100*numBytes/chrome.storage.sync.QUOTA_BYTES_PER_ITEM).toFixed(1)}%) being used in a single entry`))), "treeLevels Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse(null, numBytes => resolve(`There are ${numBytes}B/102400B (${(100*numBytes/102400).toFixed(1)}%) being used in total`))), "Total Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("progress", numBytes => resolve(`There are ${numBytes}B/8192B (${(100*numBytes/8192).toFixed(1)}%) being used in a single entry`))), "progress Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("mastered", numBytes => resolve(`There are ${numBytes}B/8192B (${(100*numBytes/8192).toFixed(1)}%) being used in a single entry`))), "mastered Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("options", numBytes => resolve(`There are ${numBytes}B/8192B (${(100*numBytes/8192).toFixed(1)}%) being used in a single entry`))), "options Storage Usage"],
+        [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("treeLevels", numBytes => resolve(`There are ${numBytes}B/8192B (${(100*numBytes/8192).toFixed(1)}%) being used in a single entry`))), "treeLevels Storage Usage"],
         [await new Promise((resolve, reject) => chrome.storage.sync.get(null, resolve)), "chrome.storage.sync"],
     ];
     variables.forEach(addToResponse);

@@ -202,67 +202,78 @@ function retrieveOptions()
 
 function retrieveProgressHistory()
 {
-	return new Promise(function (resolve, reject)
-	{
-		chrome.storage.sync.get("progress", function (data)
-		{
-			const key = `${userId}:${UICode}->${languageCode}`;
-			if (!data || Object.entries(data).length === 0)
-			{
-				// No progress data
-				updateProgress();
-			}
-			else if (data.progress.hasOwnProperty(key))
-			{
-				// There is some data for the current user+tree combination
-				progress = data.progress[key];
-			}
-			else
-			{
-				// No data for the current user+tree combination
-				updateProgress();
-			}
-			resolve();
-		});
-	});
+	return new Promise(
+        (resolve, reject) =>
+        {
+            chrome.storage.sync.get("progress",
+                (data) =>
+                {
+                    const key = `${userId}:${UICode}->${languageCode}`;
+                    if (Object.entries(data).length === 0)
+                    {
+                        // No progress data
+                        updateProgress();
+                    }
+                    else if (data.progress.hasOwnProperty(key))
+                    {
+                        // There is some data for the current user+tree combination
+                        progress = data.progress[key];
+                    }
+                    else
+                    {
+                        // No data for the current user+tree combination
+                        updateProgress();
+                    }
+                    resolve();
+                }
+            );
+        }
+    );
 }
 
 function storeProgressHistory()
 {
-	return new Promise(function (resolve, reject)
-	{
-		chrome.storage.sync.get("progress", function (data)
-		{
-			if (!data || Object.entries(data).length === 0)
-				data.progress = {};
-			// Cull inactive trees
-			const trees = Object.entries(data.progress);
+	return new Promise(
+        (resolve, reject) =>
+        {
+            chrome.storage.sync.get("progress",
+                (data) =>
+                {
+                    if (Object.entries(data).length === 0)
+                    {
+                        // Note that storage.storageLocation.get always returns an object, even if nothing found.
+                        data.progress = {};
+                    }
+                    // Cull inactive trees
+                    const trees = Object.entries(data.progress);
 
-			const inactiveTrees = trees.filter(
-				([key, progressHistory]) =>
-				{
-					const numEntries = progressHistory.length;
-					const lastEntryTime = progressHistory[numEntries -1][0];
-					const today = (new Date()).setHours(0,0,0,0);
+                    const inactiveTrees = trees.filter(
+                        ([key, progressHistory]) =>
+                        {
+                            const numEntries = progressHistory.length;
+                            const lastEntryTime = progressHistory[numEntries -1][0];
+                            const today = (new Date()).setHours(0,0,0,0);
 
-					// A tree is inative if the last entry is from more than 3 months ago.
-					return today - lastEntryTime > (3*30*24*60*60*1000);
-				}
-			);
+                            // A tree is inative if the last entry is from more than 3 months ago.
+                            return (today - lastEntryTime) > 3*30*24*60*60*1000;
+                        }
+                    );
 
-			inactiveTrees.forEach(
-				([key, progressHistory]) =>
-				{
-					delete data.progress[key];
-				}
-			);
+                    inactiveTrees.forEach(
+                        ([key, progressHistory]) =>
+                        {
+                            delete data.progress[key];
+                        }
+                    );
 
-			data.progress[`${userId}:${UICode}->${languageCode}`] = progress;
+                    data.progress[`${userId}:${UICode}->${languageCode}`] = progress;
 
-			chrome.storage.sync.set({"progress": data.progress});
-			resolve();
-		});
-	});
+                    chrome.storage.sync.set({"progress": data.progress});
+                    resolve();
+                }
+            );
+        }
+    );
 }
 
 function storeTreeLevel()
@@ -440,7 +451,7 @@ function updateProgress()
 
 		if (progress.length === 1)
 		{
-			// We have just today added the first every entry.
+			// We have just today added the first ever entry.
 			// If we have made any progress since then add that entry.
 			if (progress[0][1] !== entry[1] || progress[0][2] !== entry[2])
 			{
@@ -486,22 +497,26 @@ function updateProgress()
 	// Trim down progress to only keep 7 most recent improvements
 	let numImprovements = 0;
 	let index = progress.length - 1;
-	let treeLevel = progress[index][1];
-	let lastProgress = progress[index--][2];
+    let [lastTreeLevel, lastProgress] = progress[index].slice(1);
+    index--;
 	while (numImprovements < 7 && index >= 0)
 	{
-		if (progress[index][2] > lastProgress)
-		{
-			++numImprovements;
-		}
-		else if (progress[index][1] < treeLevel)
-		{
-			++numImprovements;
-		}
+        // Compare the next oldest pair of entries to see an improvment was made.
+        // If the tree level increases, progress has definitely been made.
+        // If the tree level decreases, that is backwards progress.
+        // If the tree level is the same, progress has only been made if the number of lessons left drops.
+        if (lastTreeLevel > progress[index][1])
+        {
+            numImprovements++;
+        }
+        else if(lastTreeLevel === progress[index][1] && lastProgress < progress[index][2])
+        {
+            numImprovements++;
+        }
 
-		lastProgress = progress[index][2];
-		treeLevel = progress[index][1];
-		--index;
+        // Replace the last entry with the one we just compared it to and go back in time another entry.
+		[lastTreeLevel, lastProgress] = progress[index].slice(1);
+		index--;
 	}
 
 	progress = progress.slice(++index);
@@ -758,15 +773,15 @@ function hasMetGoal()
 function currentProgress()
 {
 	const skills = userData.language_data[languageCode].skills;
-	let treeLevel = currentTreeLevel();
+	const treeLevel = currentTreeLevel();
 	let lessonsToNextTreeLevel = 0;
-	for (let skill of skills)
-	{
-		if (skill.skill_progress.level === treeLevel)
-		{
-			lessonsToNextTreeLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
-		}
-	}
+    skills.filter(skill => skill.skill_progress.level === treeLevel)
+        .forEach(
+            (skill) =>
+            {
+                lessonsToNextTreeLevel += skill.num_sessions_for_level - skill.level_sessions_finished;
+            }
+        );
 
 	return lessonsToNextTreeLevel;
 }
@@ -3109,7 +3124,7 @@ function displayCrownsBreakdown()
 			// Add crowns progress graph
 			if (options.crownsGraph && currentTreeLevel() != 5)
 			{
-				let treeLevelProgressInWeek = [];
+				const treeLevelProgressInWeek = [];
 				// will hold number of tree level progressing lessons done each day for seven days
 				// treeLevelProgressInWeek[0] : week ago;
 				// treeLevelProgressInWeek[6] : today;

@@ -254,7 +254,7 @@ function storeProgressHistory()
                             const lastEntryTime = progressHistory[numEntries -1][0];
                             const today = (new Date()).setHours(0,0,0,0);
 
-                            // A tree is inative if the last entry is from more than 3 months ago.
+                            // A tree is inactive if the last entry is from more than 3 months ago.
                             return (today - lastEntryTime) > 3*30*24*60*60*1000;
                         }
                     );
@@ -3193,11 +3193,12 @@ function displayCrownsBreakdown()
 									if (progressAddedFromCurrentDay)
 									{
 										// Already added some progress from this day,
-										// so lets just add the extra to the existing.
-										treeLevelProgressInWeek[0] = treeLevelProgressInWeek[0] + progressFromThisEntry;
+										// so let's just add the extra to the existing.
+										treeLevelProgressInWeek[0] += progressFromThisEntry;
 									}
 									else
 									{
+										// Not added anything from this current day yet so let's add this now
 										treeLevelProgressInWeek.unshift(progressFromThisEntry);
 										progressAddedFromCurrentDay = true;
 									}
@@ -3220,13 +3221,12 @@ function displayCrownsBreakdown()
 									if (progressAddedFromCurrentDay)
 									{
 										// Already added some progress from this day,
-										// so lets just add the extra to the existing.
-										treeLevelProgressInWeek[0] = treeLevelProgressInWeek[0] + progress[i-1][2];
+										// so let's just add the extra to the existing.
+										treeLevelProgressInWeek[0] += progress[i-1][2];
 									}
 									else
 									{
-										// Not added anything from this current day yet so lets add this now
-
+										// Not added anything from this current day yet so let's add this now
 										treeLevelProgressInWeek.unshift(progress[i-1][2]);
 										progressAddedFromCurrentDay = true;
 									}
@@ -4827,7 +4827,7 @@ function requestResponseMutationHandle(mutationsList, url, responseHandler)
 
 async function handleDataResponse(responseText)
 {
-	const newUserData = JSON.parse(responseText); // store response text as JSON object.
+	const newUserData = JSON.parse(responseText); // parse JSON response text as an object.
 	const newDataLanguageCode = newUserData.learning_language;
 	const newDataUICode = newUserData.ui_language;
 	const newDataLanguageString = newUserData.language_data[newDataLanguageCode].language_string;
@@ -4896,7 +4896,7 @@ async function handleDataResponse(responseText)
 	else
 	{
 		// No language change
-		if (newDataLanguageCode + newDataUICode != languageCode + UICode)
+		if (newDataLanguageCode + newDataUICode !== languageCode + UICode)
 		{
 			// But the language string data has changed, this may be a response from an older but slower request
 			if (requestsPending === 0)

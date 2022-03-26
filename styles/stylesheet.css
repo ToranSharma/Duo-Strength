@@ -117,6 +117,10 @@
 	z-index: 3;
 	margin: auto;
 }
+.noStrengthValues.strengthValue
+{
+	visibility: hidden;
+}
 
 
 /* XP Info  */

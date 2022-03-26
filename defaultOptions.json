@@ -1,107 +1,107 @@
 {
 
-	"darkOptions": true,
+    "darkOptions": true,
 
 
 
-	"strengthBars":								true,
-	"strengthBarBackgrounds":					true, 
+    "strengthBars":								true,
+    "strengthBarBackgrounds":					true, 
 
-	"ignoreMasteredSkills":						true,
-	"masteredButton":							true,
-	"masteredCriterion":						"markedOnly",
-	"masteredThreshold":						"5",
-	"separateGrammarSkillMasteredThreshold":	false,
-	"grammarMasteredThreshold":					"2",
-
-
-		"needsStrengtheningList":					true,
-		"needsStrengtheningListLength":				"10",
-		"showBonusSkillsInNeedsStrengtheningList":	true,
-		"needsStrengtheningPopoutButton":			true,
-		"practiseL5NeedsStrengtheningSkills":		false,
-		"needsStrengtheningListSortOrder":			"0",
-
-		"crackedSkillsList":						true,
-		"crackedSkillsListLength":					"10",
-		"showBonusSkillsInCrackedSkillsList":		true,
-		"crackedPopoutButton":						true,
-		"crackedSkillsListSortOrder":				"0",
-		"practiseL5CrackedSkills":					false,
-
-		"skillSuggestion":							true,
-		"skillSuggestionMethod":					"0",
-		"hideSuggestionNonStrengthened":			true,
-		"hideSuggestionWithCrackedSkills":			true,
-		"suggestionPopoutButton":					true,
-	"focusFirstSkill":							true,
-	"focusPriorities":							"ncs",
-	"practiceType":								"0",
-	"lessonThreshold":							"4",
-
-	"showOnlyNeededSkills":						false,
-	"showCompletedCheckpointsWithSkillsThatNeedAttention":false,
-	"fixedSidebar":								false,
-
-		"focusMode":								false,
-		"focusModeButton":							true,
-	"showLeagues":								true,
-	"treeLevelBorder":							true,
-
-		"crownsInfo":								true,
-
-		"crownsInfoInSidebar":						false,
-		"crownsInfoInPopup":						true,
-
-		"crownsMaximum":							true,
-		"crownsPercentage":							true,
-		"crownsGraph":								true,
-		"goldenTreePercentage":						false,
-
-			"crownsBreakdown":							true,
-			"crownsBreakdownShowZerosRows":				true,
-			"bonusSkillsBreakdown":						true,
-			"separateGrammarSkillsInBreakdown":			true,
-			"grammarSkillsBreakdown":					true,
-
-		"checkpointPrediction":						true,
-		"treeLevelPrediction":						true,
-
-		"XPInfo":									true,
-
-		"XPInfoInSidebar":							true,
-		"XPInfoInPopup":							false,
-
-		"XPBreakdown":								true,
-
-		"XPPrediction":								true,
-
-		"languagesInfo":							true,
-		"languagesInfoSortOrder":					"0",
-	"totalStrengthBox":							true,
-
-	"sidebarBoxOrder":							" ",
+    "ignoreMasteredSkills":						true,
+    "masteredButton":							true,
+    "masteredCriterion":						"markedOnly",
+    "masteredThreshold":						"5",
+    "separateGrammarSkillMasteredThreshold":	false,
+    "grammarMasteredThreshold":					"2",
 
 
-		"showTranslationText":						true,
-		"showToggleHidingTextButton":				true,
+        "needsStrengtheningList":					true,
+        "needsStrengtheningListLength":				"10",
+        "showBonusSkillsInNeedsStrengtheningList":	true,
+        "needsStrengtheningPopoutButton":			true,
+        "practiseL5NeedsStrengtheningSkills":		false,
+        "needsStrengtheningListSortOrder":			"0",
 
-		"showNewWords":								true,
+        "crackedSkillsList":						true,
+        "crackedSkillsListLength":					"10",
+        "showBonusSkillsInCrackedSkillsList":		true,
+        "crackedPopoutButton":						true,
+        "crackedSkillsListSortOrder":				"0",
+        "practiseL5CrackedSkills":					false,
 
-		"revealHotkey":								true,
-		"revealHotkeyCode":							"Ctrl+Alt+H",
-	"revealNewWordTranslation":					true,
-	"hideCartoons":								false,
-	"keepQuestionBorders":						false,
+        "skillSuggestion":							true,
+        "skillSuggestionMethod":					"0",
+        "hideSuggestionNonStrengthened":			true,
+        "hideSuggestionWithCrackedSkills":			true,
+        "suggestionPopoutButton":					true,
+    "focusFirstSkill":							true,
+    "focusPriorities":							"ncs",
+    "practiceType":								"0",
+    "lessonThreshold":							"4",
 
-	"addTipsPagePractiseButton":				true,
-	"legendaryTipsPageButton":					true,
-	"addTipsPageBottomButtons":					true,
+    "showOnlyNeededSkills":						false,
+    "showCompletedCheckpointsWithSkillsThatNeedAttention":false,
+    "fixedSidebar":								false,
 
-	"practiseButton":							true,
-	"crownZeroPractiseButton":					false,
-	"wordsButton":								true,
-	"grammarSkillsTestButton":					true,
+        "focusMode":								false,
+        "focusModeButton":							true,
+    "showLeagues":								true,
+    "treeLevelBorder":							true,
 
-	"checkpointButtons":						true
+        "crownsInfo":								true,
+
+        "crownsInfoInSidebar":						false,
+        "crownsInfoInPopup":						true,
+
+        "crownsMaximum":							true,
+        "crownsPercentage":							true,
+        "crownsGraph":								true,
+        "goldenTreePercentage":						false,
+
+            "crownsBreakdown":							true,
+            "crownsBreakdownShowZerosRows":				true,
+            "bonusSkillsBreakdown":						true,
+            "separateGrammarSkillsInBreakdown":			true,
+            "grammarSkillsBreakdown":					true,
+
+        "checkpointPrediction":						true,
+        "treeLevelPrediction":						true,
+
+        "XPInfo":									true,
+
+        "XPInfoInSidebar":							true,
+        "XPInfoInPopup":							false,
+
+        "XPBreakdown":								true,
+
+        "XPPrediction":								true,
+
+        "languagesInfo":							true,
+        "languagesInfoSortOrder":					"0",
+    "totalStrengthBox":							true,
+
+    "sidebarBoxOrder":							" ",
+
+
+        "showTranslationText":						true,
+        "showToggleHidingTextButton":				true,
+
+        "showNewWords":								true,
+
+        "revealHotkey":								true,
+        "revealHotkeyCode":							"Ctrl+Alt+H",
+    "revealNewWordTranslation":					true,
+    "hideCartoons":								false,
+    "keepQuestionBorders":						false,
+
+    "addTipsPagePractiseButton":				true,
+    "legendaryTipsPageButton":					true,
+    "addTipsPageBottomButtons":					true,
+
+    "practiseButton":							true,
+    "crownZeroPractiseButton":					false,
+    "wordsButton":								true,
+    "grammarSkillsTestButton":					true,
+
+    "checkpointButtons":						true
 }

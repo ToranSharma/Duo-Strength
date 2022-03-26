@@ -1,48 +1,48 @@
 {
 
-	"strengthBars":								false,
+    "strengthBars":								false,
 
-	"ignoreMasteredSkills":						false,
-	"masteredButton":							false,
+    "ignoreMasteredSkills":						false,
+    "masteredButton":							false,
 
-	
-		"needsStrengtheningList":					false,
-	
-		"crackedSkillsList":						false,
-	
-		"skillSuggestion":							false,
-	"focusFirstSkill":							false,
+    
+        "needsStrengtheningList":					false,
+    
+        "crackedSkillsList":						false,
+    
+        "skillSuggestion":							false,
+    "focusFirstSkill":							false,
 
-	"showOnlyNeededSkills":						false,
-	"fixedSidebar":								false,
-	
-		"focusMode":								false,
-		"focusModeButton":							false,
-	"showLeagues":								true,
-	"treeLevelBorder":							false,
-	
-		"crownsInfo":								false,
-	
-		"XPInfo":									false,
-	
-		"languagesInfo":							false,
-	"totalStrengthBox":							false,
+    "showOnlyNeededSkills":						false,
+    "fixedSidebar":								false,
+    
+        "focusMode":								false,
+        "focusModeButton":							false,
+    "showLeagues":								true,
+    "treeLevelBorder":							false,
+    
+        "crownsInfo":								false,
+    
+        "XPInfo":									false,
+    
+        "languagesInfo":							false,
+    "totalStrengthBox":							false,
 
-	"sidebarBoxOrder":							" ",
+    "sidebarBoxOrder":							" ",
 
-	
-		"showTranslationText":						true,
-		"showToggleHidingTextButton":				false,
-	"revealNewWordTranslation":					false,
-	"hideCartoons":								false,
+    
+        "showTranslationText":						true,
+        "showToggleHidingTextButton":				false,
+    "revealNewWordTranslation":					false,
+    "hideCartoons":								false,
 
-	"addTipsPagePractiseButton":				false,
-	"legendaryTipsPageButton":					false,
-	"addTipsPageBottomButtons":					false,
+    "addTipsPagePractiseButton":				false,
+    "legendaryTipsPageButton":					false,
+    "addTipsPageBottomButtons":					false,
 
-	"practiseButton":							false,
-	"wordsButton":								false,
-	"grammarSkillsTestButton":					false,
+    "practiseButton":							false,
+    "wordsButton":								false,
+    "grammarSkillsTestButton":					false,
 
-	"checkpointButtons":						false
+    "checkpointButtons":						false
 }

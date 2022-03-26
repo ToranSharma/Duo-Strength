@@ -1,20 +1,20 @@
 const pages = {
-	openedTabs: []
+    openedTabs: []
 };
 
 chrome.runtime.onMessage.addListener(
-	(message, sender, sendResponse) =>
+    (message, sender, sendResponse) =>
     {
-		if (message.type === "showPageAction")
-		{
-			chrome.pageAction.show(sender.tab.id);
-			if (!pages.openedTabs.includes(sender.tab.id))
+        if (message.type === "showPageAction")
+        {
+            chrome.pageAction.show(sender.tab.id);
+            if (!pages.openedTabs.includes(sender.tab.id))
             {
-				pages.openedTabs.push(sender.tab.id);
+                pages.openedTabs.push(sender.tab.id);
             }
-		}
-		if (message.type === "pageClosed")
-		{
+        }
+        if (message.type === "pageClosed")
+        {
             let closedTabId = -1;
             pages.openedTabs.forEach(
                 (tabId) =>
@@ -30,10 +30,10 @@ chrome.runtime.onMessage.addListener(
                     );
                 }
             );
-		}
-		if (message.type === "tabsRequest")
-		{
-			sendResponse(pages);
-		}
-	}
+        }
+        if (message.type === "tabsRequest")
+        {
+            sendResponse(pages);
+        }
+    }
 );

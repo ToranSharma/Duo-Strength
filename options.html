@@ -1,617 +1,617 @@
 <!doctype html>
 <html>
 <head>
-	<meta charset="utf-8" />
-	<title>Duo Strength Options</title>
-	<link rel="stylesheet" href="styles/options.css" />
-	<script src="options.js"></script>
+    <meta charset="utf-8" />
+    <title>Duo Strength Options</title>
+    <link rel="stylesheet" href="styles/options.css" />
+    <script src="options.js"></script>
 </head>
 <body page="0">
-	<header>
-		<h1>Duo Strength Options</h1>
-		<span id="version">v2.0.24</span>
-	</header>
-	<ul>
-		<li class="section">
-			<h3 class="sectionHeading">Strength Bars</h3>
-			<ul class="sectionOptionsList">
-				<li class="checkboxOption">
-					<label for="strengthBars">Display Strength Bars</label>
-					<input class="option" id="strengthBars" type="checkbox" data-controlling='[false]:["#strengthBarBackgrounds"]' />
-				</li>
-				<li class="checkboxOption">
-					<label for="strengthBarBackgrounds">Show Background of Full Bar Width</label>
-					<input class="option" id="strengthBarBackgrounds" type="checkbox" />
-				</li>
-			</ul>
-		</li>
-		<li class="section">
-			<h3 class="sectionHeading">Mastered Skills</h3>
-			<ul class="sectionOptionsList">
-				<li class="checkboxOption">
-					<label for="ignoreMasteredSkills">Force Skills Mastered Skills to 100% Strength</label>
-					<input class="option" id="ignoreMasteredSkills" type="checkbox" data-controlling='[false]:["#masteredButton", "#masteredCriterion"]' />
-				</li>
-				<li class="checkboxOption">
-					<label for="masteredButton">Add Button to Mark Skills as Mastered in Skill Popouts</label>
-					<input class="option" id="masteredButton" type="checkbox" />
-				</li>
-				<li class="selectOption">
-					<label for="masteredCriterion">Criterion for Mastered Skills</label>
-					<select class="option" id="masteredCriterion" data-controlling='["markedOnly", "upToLastMarked", "aboveTreeLevel"]:["#masteredThreshold", "#separateGrammarSkillMasteredThreshold"]'>
-						<option value="markedOnly">Marked Skills Only</option>
-						<option value="upToLastMarked">All Skills Up To and Including Last Marked Skill</option>
-						<option value="aboveTreeLevel">Marked Skills and Skills Above Tree Level</option>
-						<option value="threshold">Marked Skills and Skills Above Threshold</option>
-					</select>
-				</li>
-				<li class="numberOption">
-					<label for="masteredThreshold" class="greaterThan">Considered Mastered if Skill's Crown Level<span>&ge;</span></label>
-					<input class="option" id="masteredThreshold" type="number" value="5" min="1" max="6" />
-				</li>
-				<li class="checkboxOption">
-					<label for="separateGrammarSkillMasteredThreshold">Separate Grammar Skill Threshold</label>
-					<input class="option" id="separateGrammarSkillMasteredThreshold" type="checkbox" data-controlling='[false]:["#grammarMasteredThreshold"]' />
-				</li>
-				<li class="numberOption">
-					<label for="grammarMasteredThreshold" class="greaterThan">Considered Mastered if Grammar Skill's Crown Level<span>&ge;</span></label>
-					<input class="option" id="grammarMasteredThreshold" type="number" value="2" min="1" max="3" />
-				</li>
-				<li class="button">
-					<button id="clearMasteredSkills">Clear Marked as Mastered for Current Tree</button>
-				</li>
-			</ul>
-		</li>
-		<li class="section">
-			<h3 class="sectionHeading">Top of Tree Summary</h3>
-			<ul class="sectionOptionsList">
-				<li class="subsection">
-					<label>Needs Strengthening List</label>
-					<img class="arrow" src="images/arrow.svg" />
-					<ul class="childPage">
-						<header>
-							<button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
-							<h2>Needs Strengthening List</h2>
-						</header>
-						<li class="section">
-							<ul class="sectionOptionsList">
-								<li class="checkboxOption">
-									<label for="needsStrengtheningList">Display Needs Strengthening List</label>
-									<input class="option"  id="needsStrengtheningList" type="checkbox" data-controlling='[false]:["#needsStrengtheningListLength", "#showBonusSkillsInNeedsStrengtheningList", "#needsStrengtheningPopoutButton", "#needsStrengtheningListSortOrder"]' />
-								</li>
-								<li class="numberOption">
-									<label for="needsStrengtheningListLength">Number of Skills Show in List</label>
-									<input class="option" id="needsStrengtheningListLength" type="number" value="10" min="1" />
-								</li>
-								<li class="checkboxOption">
-									<label for="showBonusSkillsInNeedsStrengtheningList">Include Bonus Skills</label>
-									<input class="option"  id="showBonusSkillsInNeedsStrengtheningList" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="needsStrengtheningPopoutButton">Skill Popout Button for Links</label>
-									<input class="option"  id="needsStrengtheningPopoutButton" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="practiseL5NeedsStrengtheningSkills">Link to Practice Session for L5 Skills</label>
-									<input class="option"  id="practiseL5NeedsStrengtheningSkills" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-						<li class="section">
-							<h3 class="sectionHeading">Sorting Method</h3>
-							<ul class="sectionOptionsList multiPart" id="needsStrengtheningListSortOrder" data-furtherItemCutoff="4" data-maxParts="3">
-								<li class="selectOption">
-									<label for="needsStrengtheningListSortOrder0">Primary</label>
-									<select class="option" id="needsStrengtheningListSortOrder0">
-										<option value="0" data-invalidNextValues="1">Tree Order</option>
-										<option value="1" data-invalidNextValues="1">Reverse Tree Order</option>
-										<option value="2" data-invalidNextValues="3">Alphabetical</option>
-										<option value="3" data-invalidNextValues="2">Reverse Alphabetical</option>
-										<option value="4">Random</option>
-										<option value="5" data-invalidNextValues="6">Strength Asc.</option>
-										<option value="6" data-invalidNextValues="5">Strength Desc.</option>
-										<option value="7" data-invalidNextValues="8">Crown Level Asc.</option>
-										<option value="8" data-invalidNextValues="7">Crown Level Desc.</option>
-									</select>
-								</li>
-								<li>
-									<span class="addPart">Add another sorting criterion</span>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="subsection">
-					<label>Cracked Skills List</label>
-					<img class="arrow" src="images/arrow.svg" />
-					<ul class="childPage">
-						<header>
-							<button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
-							<h2>Cracked Skills List</h2>
-						</header>
-						<li class="section">
-							<ul class="sectionOptionsList">
-								<li class="checkboxOption">
-									<label for="crackedSkillsList">Display Cracked Skills List</label>
-									<input class="option"  id="crackedSkillsList" type="checkbox" data-controlling='[false]:["#crackedSkillsListLength", "#showBonusSkillsInCrackedSkillsList", "#crackedPopoutButton", "#crackedSkillsListSortOrder"]' />
-								</li>
-								<li class="numberOption">
-									<label for="crackedSkillsListLength">Number of Skills Show in List</label>
-									<input class="option" id="crackedSkillsListLength" type="number" value="10" min="1" />
-								</li>
-								<li class="checkboxOption">
-									<label for="showBonusSkillsInCrackedSkillsList">Include Bonus Skills</label>
-									<input class="option"  id="showBonusSkillsInCrackedSkillsList" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="crackedPopoutButton">Skill Popout Button for Links</label>
-									<input class="option"  id="crackedPopoutButton" type="checkbox" />
-								</li>
-								<li class="selectOption">
-									<label>Order of Skills in List</label>
-									<select class="option" id="crackedSkillsListSortOrder">
-										<option value="0" selected="true">Tree Order</option>
-										<option value="1">Reverse Tree Order</option>
-										<option value="2">Alphabetical</option>
-										<option value="3">Reverse Alphabetical</option>
-										<option value="4">Random</option>
-									</select>
-								</li>
-								<li class="checkboxOption">
-									<label for="practiseL5CrackedSkills">Link to Practice Session for L5 Skills</label>
-									<input class="option"  id="practiseL5CrackedSkills" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="subsection">
-					<label>Skill Suggestion</label>
-					<img class="arrow" src="images/arrow.svg" />
-					<ul class="childPage">
-						<header>
-							<button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
-							<h2>Skill Suggestion</h2>
-						</header>
-						<li class="section">
-							<ul class="sectionOptionsList">
-								<li class="checkboxOption">
-									<label for="skillSuggestion">Display Skill Suggestion</label>
-									<input class="option"  id="skillSuggestion" type="checkbox" data-controlling='[false]:["#skillSuggestionMethod", "#hideSuggestionNonStrengthened", "#hideSuggestionWithCrackedSkills", "#suggestionPopoutButton"]' />
-								</li>
-								<li class="selectOption">
-									<label for="skillSuggestionMethod">Selection Method from Skils at Current Tree Level</label>
-									<select class="option" id="skillSuggestionMethod">
-										<option value="0" selected="true">Random</option>
-										<option value="1">First</option>
-										<option value="2">Last</option>
-									</select>
-								</li>
-								<li class="checkboxOption">
-									<label for="hideSuggestionNonStrengthened">Hide Suggestion When Not Fully Strengthened</label>
-									<input class="option"  id="hideSuggestionNonStrengthened" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="hideSuggestionWithCrackedSkills">Hide Suggestion When There Are Cracked Skills</label>
-									<input class="option"  id="hideSuggestionWithCrackedSkills" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="suggestionPopoutButton">Skill Popout Button for Links</label>
-									<input class="option"  id="suggestionPopoutButton" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="checkboxOption">
-					<label for="focusFirstSkill">Focus First Skill In List</label>
-					<input class="option" id="focusFirstSkill" type="checkbox" data-controlling='[false]:["#focusPriorities"]' />
-				</li>
-				<li class="selectOption">
-					<label for="focusPriorities">List Priority for Focus</label>
-					<select class="option" id="focusPriorities">
-						<option value="ncs" selected>Needs Strengthening &gt; Cracked &gt; Suggestion</option>
-						<option value="nsc">Needs Strengthening &gt; Suggestion &gt; Cracked</option>
-						<option value="cns">Cracked &gt; Needs Strengthening &gt; Suggestion</option>
-						<option value="csn">Cracked &gt; Suggestion &gt; Needs Strengthening</option>
-						<option value="snc">Suggestion &gt; Needs Strengthening &gt; Cracked</option>
-						<option value="scn">Suggestion &gt; Cracked &gt; Needs Strengthening</option>
-					</select>
-				</li>
-				<li class="selectOption">
-					<label for="practiceType">Link Session Type</label>
-					<select class="option selective" id="practiceType" data-controlling='["0", "1"]:["#lessonThreshold"]'>
-						<option value="0" selected>Lessons (Earn Crowns)</option>
-						<option value="1">Practice (Strengthen Only)</option>
-						<option value="2">Lessons up to Threshold</option>
-					</select>
-				</li>
-				<li class="numberOption">
-					<label for="lessonThreshold" class="greaterThan">Practice on Skills with Crown Level <span>&ge;</span></label>
-					<input class="option" id="lessonThreshold" type="number" value="4" min="1" max="5" />
-				</li>
-			</ul>
-		</li>
-		<li class="section">
-			<h3 class="sectionHeading">Learn Interface</h3>
-			<ul class="sectionOptionsList">
-				<li class="checkboxOption">
-					<label for="showOnlyNeededSkills">Show Only the Skills that Need Attention</label>
-					<input class="option" id="showOnlyNeededSkills" type="checkbox" data-controlling='[false]:["#showCompletedCheckpointsWithSkillsThatNeedAttention"]' />
-				</li>
-				<li class="checkboxOption">
-					<label for="showCompletedCheckpointsWithSkillsThatNeedAttention">Show Completed and Next Checkpoints with Skills that Need Attention</label>
-					<input class="option" id="showCompletedCheckpointsWithSkillsThatNeedAttention" type="checkbox" />
-				</li>
-				<li class="checkboxOption">
-					<label for="fixedSidebar">Scroll Sidebar Independently to the Tree</label>
-					<input class="option" id="fixedSidebar" type="checkbox" />
-				</li>
-				<li class="subsection">
-					<label>Focus Mode</label>
-					<img class="arrow" src="images/arrow.svg" />
-					<ul class="childPage">
-						<header>
-							<button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
-							<h2>Focus Mode</h2>
-						</header>
-						<li class="section">
-							<ul class="sectionOptionsList">
-								<li class="checkboxOption">
-									<label for="focusMode">Enable Focus Mode (Hide Sidebar)</label>
-									<input class="option"  id="focusMode" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="focusModeButton">Display Button to Toggle Focus Mode</label>
-									<input class="option"  id="focusModeButton" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="checkboxOption">
-					<label for="showLeagues">Hide League Table in Sidebar</label>
-					<input class="option negative" id="showLeagues" type="checkbox" />
-				</li>
-				<li class="checkboxOption">
-					<label for="treeLevelBorder">Coloured Flag Border in Language List to Show Tree Level</label>
-					<input class="option" id="treeLevelBorder" type="checkbox" />
-				</li>
-				<li class="subsection">
-					<label>Crowns Info</label>
-					<img class="arrow" src="images/arrow.svg" />
-					<ul class="childPage">
-						<header>
-							<button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
-							<h2>Crowns Info</h2>
-						</header>
-						<li class="section">
-							<ul class="sectionOptionsList">
-								<li class="checkboxOption">
-									<label for="crownsInfo">Show Additional Crowns Information</label>
-									<input class="option" id="crownsInfo" type="checkbox"  data-controlling='[false]:["#crownsLocation","#crownsInformation","#crownsPredictions"]'/>
-								</li>
-							</ul>
-						</li>
-						<li class="section">
-							<h3 class="sectionHeading">Location</h3>
-							<ul class="sectionOptionsList" id="crownsLocation">
-								<li class="checkboxOption">
-									<label for="crownsInfoInSidebar">Add Crowns Info Sidebar Box</label>
-									<input class="option" id="crownsInfoInSidebar" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="crownsInfoInPopup">Add Crowns Info to the Crowns Popup Box</label>
-									<input class="option" id="crownsInfoInPopup" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-						<li class="section">
-							<h3 class="sectionHeading">Information</h3>
-							<ul class="sectionOptionsList" id="crownsInformation">
-								<li class="checkboxOption">
-									<label for="crownsMaximum">Show Crowns Maximum</label>
-									<input class="option" id="crownsMaximum" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="crownsPercentage">Show Percentage of Maximum</label>
-									<input class="option" id="crownsPercentage" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="crownsGraph">Add Graph of Tree Level Progress</label>
-									<input class="option" id="crownsGraph" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="goldenTreePercentage">Show Percentage of Progress to a Golden Tree</label>
-									<input class="option" id="goldenTreePercentage" type="checkbox" />
-								</li>
-								<li class="subsection">
-									<label>Crowns Breakdown Table</label>
-									<img class="arrow" src="images/arrow.svg" />
-									<ul class="childPage">
-										<header>
-											<button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
-											<h2>Crowns Breakdown Table</h2>
-										</header>
-										<li class="section">
-											<ul class="sectionOptionsList">
-												<li class="checkboxOption">
-													<label for="crownsBreakdown">Add Breakdown Table of the Number of Skills at Each Crown Level</label>
-													<input class="option" id="crownsBreakdown" type="checkbox" />
-												</li>
-												<li class="checkboxOption">
-													<label for="crownsBreakdownShowZerosRows">Show Rows with Zero Skills</label>
-													<input class="option" id="crownsBreakdownShowZerosRows" type="checkbox" />
+    <header>
+        <h1>Duo Strength Options</h1>
+        <span id="version">v2.0.24</span>
+    </header>
+    <ul>
+        <li class="section">
+            <h3 class="sectionHeading">Strength Bars</h3>
+            <ul class="sectionOptionsList">
+                <li class="checkboxOption">
+                    <label for="strengthBars">Display Strength Bars</label>
+                    <input class="option" id="strengthBars" type="checkbox" data-controlling='[false]:["#strengthBarBackgrounds"]' />
+                </li>
+                <li class="checkboxOption">
+                    <label for="strengthBarBackgrounds">Show Background of Full Bar Width</label>
+                    <input class="option" id="strengthBarBackgrounds" type="checkbox" />
+                </li>
+            </ul>
+        </li>
+        <li class="section">
+            <h3 class="sectionHeading">Mastered Skills</h3>
+            <ul class="sectionOptionsList">
+                <li class="checkboxOption">
+                    <label for="ignoreMasteredSkills">Force Skills Mastered Skills to 100% Strength</label>
+                    <input class="option" id="ignoreMasteredSkills" type="checkbox" data-controlling='[false]:["#masteredButton", "#masteredCriterion"]' />
+                </li>
+                <li class="checkboxOption">
+                    <label for="masteredButton">Add Button to Mark Skills as Mastered in Skill Popouts</label>
+                    <input class="option" id="masteredButton" type="checkbox" />
+                </li>
+                <li class="selectOption">
+                    <label for="masteredCriterion">Criterion for Mastered Skills</label>
+                    <select class="option" id="masteredCriterion" data-controlling='["markedOnly", "upToLastMarked", "aboveTreeLevel"]:["#masteredThreshold", "#separateGrammarSkillMasteredThreshold"]'>
+                        <option value="markedOnly">Marked Skills Only</option>
+                        <option value="upToLastMarked">All Skills Up To and Including Last Marked Skill</option>
+                        <option value="aboveTreeLevel">Marked Skills and Skills Above Tree Level</option>
+                        <option value="threshold">Marked Skills and Skills Above Threshold</option>
+                    </select>
+                </li>
+                <li class="numberOption">
+                    <label for="masteredThreshold" class="greaterThan">Considered Mastered if Skill's Crown Level<span>&ge;</span></label>
+                    <input class="option" id="masteredThreshold" type="number" value="5" min="1" max="6" />
+                </li>
+                <li class="checkboxOption">
+                    <label for="separateGrammarSkillMasteredThreshold">Separate Grammar Skill Threshold</label>
+                    <input class="option" id="separateGrammarSkillMasteredThreshold" type="checkbox" data-controlling='[false]:["#grammarMasteredThreshold"]' />
+                </li>
+                <li class="numberOption">
+                    <label for="grammarMasteredThreshold" class="greaterThan">Considered Mastered if Grammar Skill's Crown Level<span>&ge;</span></label>
+                    <input class="option" id="grammarMasteredThreshold" type="number" value="2" min="1" max="3" />
+                </li>
+                <li class="button">
+                    <button id="clearMasteredSkills">Clear Marked as Mastered for Current Tree</button>
+                </li>
+            </ul>
+        </li>
+        <li class="section">
+            <h3 class="sectionHeading">Top of Tree Summary</h3>
+            <ul class="sectionOptionsList">
+                <li class="subsection">
+                    <label>Needs Strengthening List</label>
+                    <img class="arrow" src="images/arrow.svg" />
+                    <ul class="childPage">
+                        <header>
+                            <button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
+                            <h2>Needs Strengthening List</h2>
+                        </header>
+                        <li class="section">
+                            <ul class="sectionOptionsList">
+                                <li class="checkboxOption">
+                                    <label for="needsStrengtheningList">Display Needs Strengthening List</label>
+                                    <input class="option"  id="needsStrengtheningList" type="checkbox" data-controlling='[false]:["#needsStrengtheningListLength", "#showBonusSkillsInNeedsStrengtheningList", "#needsStrengtheningPopoutButton", "#needsStrengtheningListSortOrder"]' />
+                                </li>
+                                <li class="numberOption">
+                                    <label for="needsStrengtheningListLength">Number of Skills Show in List</label>
+                                    <input class="option" id="needsStrengtheningListLength" type="number" value="10" min="1" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="showBonusSkillsInNeedsStrengtheningList">Include Bonus Skills</label>
+                                    <input class="option"  id="showBonusSkillsInNeedsStrengtheningList" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="needsStrengtheningPopoutButton">Skill Popout Button for Links</label>
+                                    <input class="option"  id="needsStrengtheningPopoutButton" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="practiseL5NeedsStrengtheningSkills">Link to Practice Session for L5 Skills</label>
+                                    <input class="option"  id="practiseL5NeedsStrengtheningSkills" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="section">
+                            <h3 class="sectionHeading">Sorting Method</h3>
+                            <ul class="sectionOptionsList multiPart" id="needsStrengtheningListSortOrder" data-furtherItemCutoff="4" data-maxParts="3">
+                                <li class="selectOption">
+                                    <label for="needsStrengtheningListSortOrder0">Primary</label>
+                                    <select class="option" id="needsStrengtheningListSortOrder0">
+                                        <option value="0" data-invalidNextValues="1">Tree Order</option>
+                                        <option value="1" data-invalidNextValues="1">Reverse Tree Order</option>
+                                        <option value="2" data-invalidNextValues="3">Alphabetical</option>
+                                        <option value="3" data-invalidNextValues="2">Reverse Alphabetical</option>
+                                        <option value="4">Random</option>
+                                        <option value="5" data-invalidNextValues="6">Strength Asc.</option>
+                                        <option value="6" data-invalidNextValues="5">Strength Desc.</option>
+                                        <option value="7" data-invalidNextValues="8">Crown Level Asc.</option>
+                                        <option value="8" data-invalidNextValues="7">Crown Level Desc.</option>
+                                    </select>
+                                </li>
+                                <li>
+                                    <span class="addPart">Add another sorting criterion</span>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="subsection">
+                    <label>Cracked Skills List</label>
+                    <img class="arrow" src="images/arrow.svg" />
+                    <ul class="childPage">
+                        <header>
+                            <button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
+                            <h2>Cracked Skills List</h2>
+                        </header>
+                        <li class="section">
+                            <ul class="sectionOptionsList">
+                                <li class="checkboxOption">
+                                    <label for="crackedSkillsList">Display Cracked Skills List</label>
+                                    <input class="option"  id="crackedSkillsList" type="checkbox" data-controlling='[false]:["#crackedSkillsListLength", "#showBonusSkillsInCrackedSkillsList", "#crackedPopoutButton", "#crackedSkillsListSortOrder"]' />
+                                </li>
+                                <li class="numberOption">
+                                    <label for="crackedSkillsListLength">Number of Skills Show in List</label>
+                                    <input class="option" id="crackedSkillsListLength" type="number" value="10" min="1" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="showBonusSkillsInCrackedSkillsList">Include Bonus Skills</label>
+                                    <input class="option"  id="showBonusSkillsInCrackedSkillsList" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="crackedPopoutButton">Skill Popout Button for Links</label>
+                                    <input class="option"  id="crackedPopoutButton" type="checkbox" />
+                                </li>
+                                <li class="selectOption">
+                                    <label>Order of Skills in List</label>
+                                    <select class="option" id="crackedSkillsListSortOrder">
+                                        <option value="0" selected="true">Tree Order</option>
+                                        <option value="1">Reverse Tree Order</option>
+                                        <option value="2">Alphabetical</option>
+                                        <option value="3">Reverse Alphabetical</option>
+                                        <option value="4">Random</option>
+                                    </select>
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="practiseL5CrackedSkills">Link to Practice Session for L5 Skills</label>
+                                    <input class="option"  id="practiseL5CrackedSkills" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="subsection">
+                    <label>Skill Suggestion</label>
+                    <img class="arrow" src="images/arrow.svg" />
+                    <ul class="childPage">
+                        <header>
+                            <button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
+                            <h2>Skill Suggestion</h2>
+                        </header>
+                        <li class="section">
+                            <ul class="sectionOptionsList">
+                                <li class="checkboxOption">
+                                    <label for="skillSuggestion">Display Skill Suggestion</label>
+                                    <input class="option"  id="skillSuggestion" type="checkbox" data-controlling='[false]:["#skillSuggestionMethod", "#hideSuggestionNonStrengthened", "#hideSuggestionWithCrackedSkills", "#suggestionPopoutButton"]' />
+                                </li>
+                                <li class="selectOption">
+                                    <label for="skillSuggestionMethod">Selection Method from Skils at Current Tree Level</label>
+                                    <select class="option" id="skillSuggestionMethod">
+                                        <option value="0" selected="true">Random</option>
+                                        <option value="1">First</option>
+                                        <option value="2">Last</option>
+                                    </select>
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="hideSuggestionNonStrengthened">Hide Suggestion When Not Fully Strengthened</label>
+                                    <input class="option"  id="hideSuggestionNonStrengthened" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="hideSuggestionWithCrackedSkills">Hide Suggestion When There Are Cracked Skills</label>
+                                    <input class="option"  id="hideSuggestionWithCrackedSkills" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="suggestionPopoutButton">Skill Popout Button for Links</label>
+                                    <input class="option"  id="suggestionPopoutButton" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="checkboxOption">
+                    <label for="focusFirstSkill">Focus First Skill In List</label>
+                    <input class="option" id="focusFirstSkill" type="checkbox" data-controlling='[false]:["#focusPriorities"]' />
+                </li>
+                <li class="selectOption">
+                    <label for="focusPriorities">List Priority for Focus</label>
+                    <select class="option" id="focusPriorities">
+                        <option value="ncs" selected>Needs Strengthening &gt; Cracked &gt; Suggestion</option>
+                        <option value="nsc">Needs Strengthening &gt; Suggestion &gt; Cracked</option>
+                        <option value="cns">Cracked &gt; Needs Strengthening &gt; Suggestion</option>
+                        <option value="csn">Cracked &gt; Suggestion &gt; Needs Strengthening</option>
+                        <option value="snc">Suggestion &gt; Needs Strengthening &gt; Cracked</option>
+                        <option value="scn">Suggestion &gt; Cracked &gt; Needs Strengthening</option>
+                    </select>
+                </li>
+                <li class="selectOption">
+                    <label for="practiceType">Link Session Type</label>
+                    <select class="option selective" id="practiceType" data-controlling='["0", "1"]:["#lessonThreshold"]'>
+                        <option value="0" selected>Lessons (Earn Crowns)</option>
+                        <option value="1">Practice (Strengthen Only)</option>
+                        <option value="2">Lessons up to Threshold</option>
+                    </select>
+                </li>
+                <li class="numberOption">
+                    <label for="lessonThreshold" class="greaterThan">Practice on Skills with Crown Level <span>&ge;</span></label>
+                    <input class="option" id="lessonThreshold" type="number" value="4" min="1" max="5" />
+                </li>
+            </ul>
+        </li>
+        <li class="section">
+            <h3 class="sectionHeading">Learn Interface</h3>
+            <ul class="sectionOptionsList">
+                <li class="checkboxOption">
+                    <label for="showOnlyNeededSkills">Show Only the Skills that Need Attention</label>
+                    <input class="option" id="showOnlyNeededSkills" type="checkbox" data-controlling='[false]:["#showCompletedCheckpointsWithSkillsThatNeedAttention"]' />
+                </li>
+                <li class="checkboxOption">
+                    <label for="showCompletedCheckpointsWithSkillsThatNeedAttention">Show Completed and Next Checkpoints with Skills that Need Attention</label>
+                    <input class="option" id="showCompletedCheckpointsWithSkillsThatNeedAttention" type="checkbox" />
+                </li>
+                <li class="checkboxOption">
+                    <label for="fixedSidebar">Scroll Sidebar Independently to the Tree</label>
+                    <input class="option" id="fixedSidebar" type="checkbox" />
+                </li>
+                <li class="subsection">
+                    <label>Focus Mode</label>
+                    <img class="arrow" src="images/arrow.svg" />
+                    <ul class="childPage">
+                        <header>
+                            <button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
+                            <h2>Focus Mode</h2>
+                        </header>
+                        <li class="section">
+                            <ul class="sectionOptionsList">
+                                <li class="checkboxOption">
+                                    <label for="focusMode">Enable Focus Mode (Hide Sidebar)</label>
+                                    <input class="option"  id="focusMode" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="focusModeButton">Display Button to Toggle Focus Mode</label>
+                                    <input class="option"  id="focusModeButton" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="checkboxOption">
+                    <label for="showLeagues">Hide League Table in Sidebar</label>
+                    <input class="option negative" id="showLeagues" type="checkbox" />
+                </li>
+                <li class="checkboxOption">
+                    <label for="treeLevelBorder">Coloured Flag Border in Language List to Show Tree Level</label>
+                    <input class="option" id="treeLevelBorder" type="checkbox" />
+                </li>
+                <li class="subsection">
+                    <label>Crowns Info</label>
+                    <img class="arrow" src="images/arrow.svg" />
+                    <ul class="childPage">
+                        <header>
+                            <button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
+                            <h2>Crowns Info</h2>
+                        </header>
+                        <li class="section">
+                            <ul class="sectionOptionsList">
+                                <li class="checkboxOption">
+                                    <label for="crownsInfo">Show Additional Crowns Information</label>
+                                    <input class="option" id="crownsInfo" type="checkbox"  data-controlling='[false]:["#crownsLocation","#crownsInformation","#crownsPredictions"]'/>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="section">
+                            <h3 class="sectionHeading">Location</h3>
+                            <ul class="sectionOptionsList" id="crownsLocation">
+                                <li class="checkboxOption">
+                                    <label for="crownsInfoInSidebar">Add Crowns Info Sidebar Box</label>
+                                    <input class="option" id="crownsInfoInSidebar" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="crownsInfoInPopup">Add Crowns Info to the Crowns Popup Box</label>
+                                    <input class="option" id="crownsInfoInPopup" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="section">
+                            <h3 class="sectionHeading">Information</h3>
+                            <ul class="sectionOptionsList" id="crownsInformation">
+                                <li class="checkboxOption">
+                                    <label for="crownsMaximum">Show Crowns Maximum</label>
+                                    <input class="option" id="crownsMaximum" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="crownsPercentage">Show Percentage of Maximum</label>
+                                    <input class="option" id="crownsPercentage" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="crownsGraph">Add Graph of Tree Level Progress</label>
+                                    <input class="option" id="crownsGraph" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="goldenTreePercentage">Show Percentage of Progress to a Golden Tree</label>
+                                    <input class="option" id="goldenTreePercentage" type="checkbox" />
+                                </li>
+                                <li class="subsection">
+                                    <label>Crowns Breakdown Table</label>
+                                    <img class="arrow" src="images/arrow.svg" />
+                                    <ul class="childPage">
+                                        <header>
+                                            <button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
+                                            <h2>Crowns Breakdown Table</h2>
+                                        </header>
+                                        <li class="section">
+                                            <ul class="sectionOptionsList">
+                                                <li class="checkboxOption">
+                                                    <label for="crownsBreakdown">Add Breakdown Table of the Number of Skills at Each Crown Level</label>
+                                                    <input class="option" id="crownsBreakdown" type="checkbox" />
+                                                </li>
+                                                <li class="checkboxOption">
+                                                    <label for="crownsBreakdownShowZerosRows">Show Rows with Zero Skills</label>
+                                                    <input class="option" id="crownsBreakdownShowZerosRows" type="checkbox" />
 
-												</li>
-												<li class="checkboxOption">
-													<label for="bonusSkillsBreakdown">Show Breakdown of Bonus Skills</label>
-													<input class="option" id="bonusSkillsBreakdown" type="checkbox" />
+                                                </li>
+                                                <li class="checkboxOption">
+                                                    <label for="bonusSkillsBreakdown">Show Breakdown of Bonus Skills</label>
+                                                    <input class="option" id="bonusSkillsBreakdown" type="checkbox" />
 
-												</li>
-												<li class="checkboxOption">
-													<label for="separateGrammarSkillsInBreakdown">Separate Grammar Skills from Normal Skills</label>
-													<input class="option" id="separateGrammarSkillsInBreakdown" type="checkbox" />
+                                                </li>
+                                                <li class="checkboxOption">
+                                                    <label for="separateGrammarSkillsInBreakdown">Separate Grammar Skills from Normal Skills</label>
+                                                    <input class="option" id="separateGrammarSkillsInBreakdown" type="checkbox" />
 
-												</li>
-												<li class="checkboxOption">
-													<label for="grammarSkillsBreakdown">Show Grammar Skills Breakdown</label>
-													<input class="option" id="grammarSkillsBreakdown" type="checkbox" />
+                                                </li>
+                                                <li class="checkboxOption">
+                                                    <label for="grammarSkillsBreakdown">Show Grammar Skills Breakdown</label>
+                                                    <input class="option" id="grammarSkillsBreakdown" type="checkbox" />
 
-												</li>
-											</ul>
-										</li>
-									</ul>
-								</li>
-							</ul>
-						</li>
-						<li class="section">
-							<h3 class="sectionHeading">Predictions</h3>
-							<ul class="sectionOptionsList" id="crownsPredictions">
-								<li class="checkboxOption">
-									<label for="checkpointPrediction">Next Checkpoint Prediction</label>
-									<input class="option" id="checkpointPrediction" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="treeLevelPrediction">Tree Level Prediction</label>
-									<input class="option" id="treeLevelPrediction" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="subsection">
-					<label>XP Info</label>
-					<img class="arrow" src="images/arrow.svg" />
-					<ul class="childPage">
-						<header>
-							<button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
-							<h2>XP Info</h2>
-						</header>
-						<li class="section">
-							<ul class="sectionOptionsList">
-								<li class="checkboxOption">
-									<label for="XPInfo">Show Additional XP Information</label>
-									<input class="option" id="XPInfo" type="checkbox" data-controlling='[false]:["#XPLocation", "#XPInformation", "#XPPredictions"]' />
-								</li>
-							</ul>
-						</li>
-						<li class="section">
-							<h3 class="sectionHeading">Location</h3>
-							<ul class="sectionOptionsList" id="XPLocation">
-								<li class="checkboxOption">
-									<label for="XPInfoInSidebar">Add XP Info Sidebar Box</label>
-									<input class="option" id="XPInfoInSidebar" type="checkbox" />
-								</li>
-								<li class="checkboxOption">
-									<label for="XPInfoInPopup">Add XP Info to the Streak Popup Box</label>
-									<input class="option" id="XPInfoInPopup" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-						<li class="section">
-							<h3 class="sectionHeading">Information</h3>
-							<ul class="sectionOptionsList" id="XPInformation">
-								<li class="checkboxOption">
-									<label for="XPBreakdown">XP &amp; Level Breakdown</label>
-									<input class="option" id="XPBreakdown" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-						<li class="section">
-							<h3 class="sectionHeading">Predictions</h3>
-							<ul class="sectionOptionsList" id="XPPredictions">
-								<li class="checkboxOption">
-									<label for="XPPrediction">XP Prediction</label>
-									<input class="option" id="XPPrediction" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="subsection">
-					<label>Languages Info</label>
-					<img class="arrow" src="images/arrow.svg" />
-					<ul class="childPage">
-						<header>
-							<button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
-							<h2>Languages Info</h2>
-						</header>
-						<li class="section">
-							<ul class="sectionOptionsList">
-								<li class="checkboxOption">
-									<label for="languagesInfo">Add Languages Info Table to Sidebar</label>
-									<input class="option" id="languagesInfo" type="checkbox" data-controlling='[false]:["#languagesInfoSortOrder"]' />
-								</li>
-								<li class="selectOption">
-									<label for="languagesInfoSortOrder">Order of Languages</label>
-									<select class="option" id="languagesInfoSortOrder">
-										<option value="0">Alphabetical</option>
-										<option value="1">Reverse Alphabetical</option>
-										<option value="2" selected="true">Total XP Desc.</option>
-										<option value="3">Total XP Asc.</option>
-										<option value="4">XP to Next Level Desc.</option>
-										<option value="5">XP to Next Level Asc.</option>
-									</select>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="checkboxOption">
-					<label for="totalStrengthBox">Total Strength Box</label>
-					<input class="option" id="totalStrengthBox" type="checkbox" />
-				</li>
-			</ul>
-		</li>
-		<li class="section">
-			<h3 class="sectionHeading">Sidebar Box Sort Order</h3>
-			<ul class="sectionOptionsList multiPart" id="sidebarBoxOrder" data-furtherItemCutoff=" " data-maxParts="9">
-				<li class="selectOption">
-					<label>Top</label>
-					<select class="option" id="sidebarBoxOrder0">
-						<option value=" ">Unchanged</option>
-						<option value="leagues" data-invalidNextValues=" ">League Table</option>
-						<option value="XPBox" data-invalidNextValues=" ">Daily Goal (XP Info)</option>
-						<option value="languagesBox" data-invalidNextValues=" ">Languages Info</option>
-						<option value="totalStrengthBox" data-invalidNextValues=" ">Total Strength Box</option>
-						<option value="crownsBox" data-invalidNextValues=" ">Crowns Info</option>
-						<option value="assignmentsBox" data-invalidNextValues=" ">My Assignments</option>
-						<option value="ad" data-invalidNextValues=" ">Advert</option>
-						<option value="achievementBox" data-invalidNextValues=" ">Achievements</option>
-						<option value="friendsBox" data-invalidNextValues=" ">Friends</option>
-						<option value="socialButtonsBox" data-invalidNextValues=" ">Social Media Buttons</option>
-						<option value="progressQuizBox" data-invalidNextValues=" ">Progress Quiz Box</option>
-						<option value="duolingoScoreBox" data-invalidNextValues=" ">Duolingo Score Box</option>
-					</select>
-				</li>
-				<li>
-					<span class="addPart">Add another box to the sort order</span>
-				</li>
-			</ul>
-		</li>
-		<li class="section">
-			<h3 class="sectionHeading">Lessons Enhancements</h3>
-			<ul class="sectionOptionsList">
-				<li class="subsection">
-					<label>Sentence Hiding</label>
-					<img class="arrow" src="images/arrow.svg" />
-					<ul class="childPage">
-						<header>
-							<button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
-							<h2>Sentence Hiding</h2>
-						</header>
-						<li class="section">
-							<ul class="sectionOptionsList">
-								<li class="checkboxOption">
-									<label for="showTranslationText">Hide Translation Question Sentence Text</label>
-									<input class="option negative" id="showTranslationText" type="checkbox" data-controlling='[false]:["#sentenceHidingNewWords", "#sentenceHidingRevealSentenceHotkey"]' />
-								</li>
-								<li class="checkboxOption">
-									<label for="showToggleHidingTextButton">Add Button in Lessons to Toggle Sentence Hiding</label>
-									<input class="option" id="showToggleHidingTextButton" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-						<li class="section">
-							<h3 class="sectionHeading">New Words</h3>
-							<ul class="sectionOptionsList" id="sentenceHidingNewWords">
-								<li class="checkboxOption">
-									<label for="showNewWords">Show Sentences with New (Yellow) Words</label>
-									<input class="option" id="showNewWords" type="checkbox" />
-								</li>
-							</ul>
-						</li>
-						<li class="section">
-							<h3 class="sectionHeading">Reveal Sentence Hotkey</h3>
-							<ul class="sectionOptionsList" id="sentenceHidingRevealSentenceHotkey">
-								<li class="checkboxOption">
-									<label for="revealHotkey">Enable Hotkey to Unhide Current Sentence</label>
-									<input class="option" id="revealHotkey" type="checkbox" data-controlling='[false]:["#revealHotkeyCode"]' />
-								</li>
-								<li class="hotkeyOption">
-									<label for="revealHotkeyCode">Custom Hotkey</label>
-									<input class="option" id="revealHotkeyCode" type="text" />
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="checkboxOption">
-					<label for="revealNewWordTranslation">Automatically Translate New Words</label>
-					<input class="option" id="revealNewWordTranslation" type="checkbox" />
-				</li>
-				<li class="checkboxOption">
-					<label for="hideCartoons">Hide Cartoon Characters in Lessons</label>
-					<input class="option" id="hideCartoons" type="checkbox" data-controlling='[false]:["#keepQuestionBorders"]' />
-				</li>
-				<li class="checkboxOption">
-					<label for="keepQuestionBorders">Keep Border Around Questions When Cartoons are Hidden</label>
-					<input class="option" id="keepQuestionBorders" type="checkbox" />
-				</li>
-			</ul>
-		</li>
-		<li class="section">
-			<h3 class="sectionHeading">Tips Page</h3>
-			<ul class="sectionOptionsList">
-				<li class="checkboxOption">
-					<label for="addTipsPagePractiseButton">Add Practise Button at the Top of the Tips</label>
-					<input class="option" id="addTipsPagePractiseButton" type="checkbox" />
-				</li>
-				<li class="checkboxOption">
-					<label for="legendaryTipsPageButton">Add Legendary Button at the Top Of the Tips if Skill is the Correct Level</label>
-					<input class="option" id="legendaryTipsPageButton" type="checkbox" />
-				</li>
-				<li class="checkboxOption">
-					<label for="addTipsPageBottomButtons">Add Second Set of Buttons at the Bottom of the Tips</label>
-					<input class="option" id="addTipsPageBottomButtons" type="checkbox" />
-				</li>
-			</ul>
-		</li>
-		<li class="section">
-			<h3 class="sectionHeading">Skill Popout Buttons</h3>
-			<ul class="sectionOptionsList">
-				<li class="checkboxOption">
-					<label for="practiseButton">Practise Button</label>
-					<input class="option" id="practiseButton" type="checkbox" data-controlling='[false]:["#crownZeroPractiseButton"]'/>
-				</li>
-				<li class="checkboxOption">
-					<label for="crownZeroPractiseButton">Practise Button on Crown 0 Skills</label>
-					<input class="option" id="crownZeroPractiseButton" type="checkbox" />
-				</li>
-				<li class="checkboxOption">
-					<input class="option" id="wordsButton" type="checkbox" />
-					<label for="wordsButton">Words Button</label>
-				</li>
-				<li class="checkboxOption">
-					<input class="option" id="grammarSkillsTestButton" type="checkbox" />
-					<label for="grammarSkillsTestButton">Test Out Button for Grammar Skills</label>
-				</li>
-			</ul>
-		</li>
-		<li class="section">
-			<h3 class="sectionHeading">Checkpoint Popout Buttons</h3>
-			<ul class="sectionOptionsList">
-				<li class="checkboxOption">
-					<label for="checkpointButtons">Retry &amp; Test Out Buttons on Completed Checkpoints</label>
-					<input class="option" id="checkpointButtons" type="checkbox" />
-				</li>
-			</ul>
-		</li>
-		<li class="section">
-			<h3 class="sectionHeading">Debug</h3>
-			<ul class="sectionOptionsList">
-				<li class="button">
-					<button id="debugInfoButton">Get Debug Info</button>
-				</li>
-			</ul>
-		</li>
-	</ul>
-	<footer>
-		<button id="disableAll">Disable All</button>
-		<button id="resetDefault">Reset to Defaults</button>
-		<label for="darkOptions">Dark Options</label>
-		<input class="option" id="darkOptions" type="checkbox" checked />
-	</footer>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="section">
+                            <h3 class="sectionHeading">Predictions</h3>
+                            <ul class="sectionOptionsList" id="crownsPredictions">
+                                <li class="checkboxOption">
+                                    <label for="checkpointPrediction">Next Checkpoint Prediction</label>
+                                    <input class="option" id="checkpointPrediction" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="treeLevelPrediction">Tree Level Prediction</label>
+                                    <input class="option" id="treeLevelPrediction" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="subsection">
+                    <label>XP Info</label>
+                    <img class="arrow" src="images/arrow.svg" />
+                    <ul class="childPage">
+                        <header>
+                            <button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
+                            <h2>XP Info</h2>
+                        </header>
+                        <li class="section">
+                            <ul class="sectionOptionsList">
+                                <li class="checkboxOption">
+                                    <label for="XPInfo">Show Additional XP Information</label>
+                                    <input class="option" id="XPInfo" type="checkbox" data-controlling='[false]:["#XPLocation", "#XPInformation", "#XPPredictions"]' />
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="section">
+                            <h3 class="sectionHeading">Location</h3>
+                            <ul class="sectionOptionsList" id="XPLocation">
+                                <li class="checkboxOption">
+                                    <label for="XPInfoInSidebar">Add XP Info Sidebar Box</label>
+                                    <input class="option" id="XPInfoInSidebar" type="checkbox" />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="XPInfoInPopup">Add XP Info to the Streak Popup Box</label>
+                                    <input class="option" id="XPInfoInPopup" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="section">
+                            <h3 class="sectionHeading">Information</h3>
+                            <ul class="sectionOptionsList" id="XPInformation">
+                                <li class="checkboxOption">
+                                    <label for="XPBreakdown">XP &amp; Level Breakdown</label>
+                                    <input class="option" id="XPBreakdown" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="section">
+                            <h3 class="sectionHeading">Predictions</h3>
+                            <ul class="sectionOptionsList" id="XPPredictions">
+                                <li class="checkboxOption">
+                                    <label for="XPPrediction">XP Prediction</label>
+                                    <input class="option" id="XPPrediction" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="subsection">
+                    <label>Languages Info</label>
+                    <img class="arrow" src="images/arrow.svg" />
+                    <ul class="childPage">
+                        <header>
+                            <button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
+                            <h2>Languages Info</h2>
+                        </header>
+                        <li class="section">
+                            <ul class="sectionOptionsList">
+                                <li class="checkboxOption">
+                                    <label for="languagesInfo">Add Languages Info Table to Sidebar</label>
+                                    <input class="option" id="languagesInfo" type="checkbox" data-controlling='[false]:["#languagesInfoSortOrder"]' />
+                                </li>
+                                <li class="selectOption">
+                                    <label for="languagesInfoSortOrder">Order of Languages</label>
+                                    <select class="option" id="languagesInfoSortOrder">
+                                        <option value="0">Alphabetical</option>
+                                        <option value="1">Reverse Alphabetical</option>
+                                        <option value="2" selected="true">Total XP Desc.</option>
+                                        <option value="3">Total XP Asc.</option>
+                                        <option value="4">XP to Next Level Desc.</option>
+                                        <option value="5">XP to Next Level Asc.</option>
+                                    </select>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="checkboxOption">
+                    <label for="totalStrengthBox">Total Strength Box</label>
+                    <input class="option" id="totalStrengthBox" type="checkbox" />
+                </li>
+            </ul>
+        </li>
+        <li class="section">
+            <h3 class="sectionHeading">Sidebar Box Sort Order</h3>
+            <ul class="sectionOptionsList multiPart" id="sidebarBoxOrder" data-furtherItemCutoff=" " data-maxParts="9">
+                <li class="selectOption">
+                    <label>Top</label>
+                    <select class="option" id="sidebarBoxOrder0">
+                        <option value=" ">Unchanged</option>
+                        <option value="leagues" data-invalidNextValues=" ">League Table</option>
+                        <option value="XPBox" data-invalidNextValues=" ">Daily Goal (XP Info)</option>
+                        <option value="languagesBox" data-invalidNextValues=" ">Languages Info</option>
+                        <option value="totalStrengthBox" data-invalidNextValues=" ">Total Strength Box</option>
+                        <option value="crownsBox" data-invalidNextValues=" ">Crowns Info</option>
+                        <option value="assignmentsBox" data-invalidNextValues=" ">My Assignments</option>
+                        <option value="ad" data-invalidNextValues=" ">Advert</option>
+                        <option value="achievementBox" data-invalidNextValues=" ">Achievements</option>
+                        <option value="friendsBox" data-invalidNextValues=" ">Friends</option>
+                        <option value="socialButtonsBox" data-invalidNextValues=" ">Social Media Buttons</option>
+                        <option value="progressQuizBox" data-invalidNextValues=" ">Progress Quiz Box</option>
+                        <option value="duolingoScoreBox" data-invalidNextValues=" ">Duolingo Score Box</option>
+                    </select>
+                </li>
+                <li>
+                    <span class="addPart">Add another box to the sort order</span>
+                </li>
+            </ul>
+        </li>
+        <li class="section">
+            <h3 class="sectionHeading">Lessons Enhancements</h3>
+            <ul class="sectionOptionsList">
+                <li class="subsection">
+                    <label>Sentence Hiding</label>
+                    <img class="arrow" src="images/arrow.svg" />
+                    <ul class="childPage">
+                        <header>
+                            <button class="back"><img class="arrow" src="images/arrow.svg" />Back</button>
+                            <h2>Sentence Hiding</h2>
+                        </header>
+                        <li class="section">
+                            <ul class="sectionOptionsList">
+                                <li class="checkboxOption">
+                                    <label for="showTranslationText">Hide Translation Question Sentence Text</label>
+                                    <input class="option negative" id="showTranslationText" type="checkbox" data-controlling='[false]:["#sentenceHidingNewWords", "#sentenceHidingRevealSentenceHotkey"]' />
+                                </li>
+                                <li class="checkboxOption">
+                                    <label for="showToggleHidingTextButton">Add Button in Lessons to Toggle Sentence Hiding</label>
+                                    <input class="option" id="showToggleHidingTextButton" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="section">
+                            <h3 class="sectionHeading">New Words</h3>
+                            <ul class="sectionOptionsList" id="sentenceHidingNewWords">
+                                <li class="checkboxOption">
+                                    <label for="showNewWords">Show Sentences with New (Yellow) Words</label>
+                                    <input class="option" id="showNewWords" type="checkbox" />
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="section">
+                            <h3 class="sectionHeading">Reveal Sentence Hotkey</h3>
+                            <ul class="sectionOptionsList" id="sentenceHidingRevealSentenceHotkey">
+                                <li class="checkboxOption">
+                                    <label for="revealHotkey">Enable Hotkey to Unhide Current Sentence</label>
+                                    <input class="option" id="revealHotkey" type="checkbox" data-controlling='[false]:["#revealHotkeyCode"]' />
+                                </li>
+                                <li class="hotkeyOption">
+                                    <label for="revealHotkeyCode">Custom Hotkey</label>
+                                    <input class="option" id="revealHotkeyCode" type="text" />
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="checkboxOption">
+                    <label for="revealNewWordTranslation">Automatically Translate New Words</label>
+                    <input class="option" id="revealNewWordTranslation" type="checkbox" />
+                </li>
+                <li class="checkboxOption">
+                    <label for="hideCartoons">Hide Cartoon Characters in Lessons</label>
+                    <input class="option" id="hideCartoons" type="checkbox" data-controlling='[false]:["#keepQuestionBorders"]' />
+                </li>
+                <li class="checkboxOption">
+                    <label for="keepQuestionBorders">Keep Border Around Questions When Cartoons are Hidden</label>
+                    <input class="option" id="keepQuestionBorders" type="checkbox" />
+                </li>
+            </ul>
+        </li>
+        <li class="section">
+            <h3 class="sectionHeading">Tips Page</h3>
+            <ul class="sectionOptionsList">
+                <li class="checkboxOption">
+                    <label for="addTipsPagePractiseButton">Add Practise Button at the Top of the Tips</label>
+                    <input class="option" id="addTipsPagePractiseButton" type="checkbox" />
+                </li>
+                <li class="checkboxOption">
+                    <label for="legendaryTipsPageButton">Add Legendary Button at the Top Of the Tips if Skill is the Correct Level</label>
+                    <input class="option" id="legendaryTipsPageButton" type="checkbox" />
+                </li>
+                <li class="checkboxOption">
+                    <label for="addTipsPageBottomButtons">Add Second Set of Buttons at the Bottom of the Tips</label>
+                    <input class="option" id="addTipsPageBottomButtons" type="checkbox" />
+                </li>
+            </ul>
+        </li>
+        <li class="section">
+            <h3 class="sectionHeading">Skill Popout Buttons</h3>
+            <ul class="sectionOptionsList">
+                <li class="checkboxOption">
+                    <label for="practiseButton">Practise Button</label>
+                    <input class="option" id="practiseButton" type="checkbox" data-controlling='[false]:["#crownZeroPractiseButton"]'/>
+                </li>
+                <li class="checkboxOption">
+                    <label for="crownZeroPractiseButton">Practise Button on Crown 0 Skills</label>
+                    <input class="option" id="crownZeroPractiseButton" type="checkbox" />
+                </li>
+                <li class="checkboxOption">
+                    <input class="option" id="wordsButton" type="checkbox" />
+                    <label for="wordsButton">Words Button</label>
+                </li>
+                <li class="checkboxOption">
+                    <input class="option" id="grammarSkillsTestButton" type="checkbox" />
+                    <label for="grammarSkillsTestButton">Test Out Button for Grammar Skills</label>
+                </li>
+            </ul>
+        </li>
+        <li class="section">
+            <h3 class="sectionHeading">Checkpoint Popout Buttons</h3>
+            <ul class="sectionOptionsList">
+                <li class="checkboxOption">
+                    <label for="checkpointButtons">Retry &amp; Test Out Buttons on Completed Checkpoints</label>
+                    <input class="option" id="checkpointButtons" type="checkbox" />
+                </li>
+            </ul>
+        </li>
+        <li class="section">
+            <h3 class="sectionHeading">Debug</h3>
+            <ul class="sectionOptionsList">
+                <li class="button">
+                    <button id="debugInfoButton">Get Debug Info</button>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <footer>
+        <button id="disableAll">Disable All</button>
+        <button id="resetDefault">Reset to Defaults</button>
+        <label for="darkOptions">Dark Options</label>
+        <input class="option" id="darkOptions" type="checkbox" checked />
+    </footer>
 </body>
 </html>

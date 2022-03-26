@@ -5,6 +5,18 @@ Changelog
 ------------
 -
 
+[v2.0.24] - 2022-03-26
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.24)
+### Added
+- Link to duome.eu forum topic in README.
+
+### Changed
+- Reworked progress update, storage and retrieval functions.
+
+### Fixes
+- Guard against `newWordPopover` being null in mute script.
+
 [v2.0.23] - 2022-01-17
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.23)
@@ -63,8 +75,8 @@ Changelog
 - Option to add percentage indication of progress towards a golden tree.
   - This is the number of total crowns earned on non bonus skills subtracting
     the number of legendary skills (L5 normal, L3 grammar), divided by the
-	minimum number of crowns a golden tree can have (5\*number of normal skills
-	\+ 2\*number of grammar skills).
+  minimum number of crowns a golden tree can have (5\*number of normal skills
+  \+ 2\*number of grammar skills).
   - This option is disabled by default.
 - New mastered suboptions to choose which skills are considered mastered. The
   new options are:
@@ -73,8 +85,8 @@ Changelog
   - Marked Skills and Skills Above Tree Level.
   - Marked Skills and Skills Above Threshold.
     - Suboption to set threshold.
-	- Suboption to toggle a separate threshold for grammar skills.
-	  - Suboption to set grammar skill threshold.
+  - Suboption to toggle a separate threshold for grammar skills.
+    - Suboption to set grammar skill threshold.
 
 
 [v2.0.16] - 2021-10-01
@@ -1431,6 +1443,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.24]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.23...v2.0.24
 [v2.0.23]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.22...v2.0.23
 [v2.0.22]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.21...v2.0.22
 [v2.0.21]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.20...v2.0.21

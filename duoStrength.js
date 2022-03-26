@@ -5019,14 +5019,14 @@ function revealNewWord()
                             }
 
                             newWordPopover = document.querySelector("[data-test='hint-popover']");
-                            overlaysObserver.observe(newWordPopover.parentNode, {childList: true});
+                            newWordPopover && overlaysObserver.observe(newWordPopover.parentNode, {childList: true});
 
                             howlCalls.length = 0;
 
                             return ret;
                         }
                     }
-                    else if (newWordAudioSrc !== undefined)
+                    else
                     {
                         howlCalls.length = 0;
                         if (this._src === newWordAudioSrc)
@@ -5037,10 +5037,6 @@ function revealNewWord()
                         {
                             return originalHowlPlay.call(this, id);
                         }
-                    }
-                    else
-                    {
-                        return null;
                     }
                 };
             }

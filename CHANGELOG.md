@@ -10,6 +10,7 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.24)
 ### Added
 - Link to duome.eu forum topic in README.
+- Option to hide strength value percentages.
 
 ### Changed
 - Reworked progress update, storage and retrieval functions.

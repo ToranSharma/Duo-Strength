@@ -1701,6 +1701,7 @@ function addStrengthBars(strengths)
             
             const strengthValue = document.createElement("div");
             strengthValue.className = "strengthValue";
+            strengthValue.classList[options.noStrengthValues ? "add" : "remove"]('noStrengthValues');
             strengthValue.id = name + "StrengthValue";
             strengthValue.textContent = strength + "%";
             
@@ -1720,6 +1721,7 @@ function addStrengthBars(strengths)
             strengthBar.setAttribute("strength", strength);
             
             const strengthValue = document.getElementById(name + "StrengthValue");
+            strengthValue.classList[options.noStrengthValues ? "add" : "remove"]('noStrengthValues');
             strengthValue.textContent = strength + "%";
 
             strengthBar.parentNode.setAttribute("display", display);

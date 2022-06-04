@@ -3124,7 +3124,7 @@ function displayCrownsBreakdown()
             }
 
             // Add crowns progress graph
-            if (options.crownsGraph && currentTreeLevel() != 5)
+            if (options.crownsGraph && currentTreeLevel() !== 6)
             {
                 const treeLevelProgressInWeek = [];
                 // will hold number of tree level progressing lessons done each day for seven days

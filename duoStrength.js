@@ -27,7 +27,7 @@ const CROWN_DESCRIPTION_CONTAINER = "yccDx";
 const CROWN_TOTAL_CONTAINER = "H_XA0";
 const DAILY_GOAL_POPUP_CONTAINER = "_20sV-"; // parent of streak flame and description, and the 7 small flames
 const DAILY_GOAL_SIDEBAR_CONTAINER = "_2O43A";
-const SIDEBAR = "_1YfQ8";
+const SIDEBAR_SELECTOR = "._1YfQ8 div";
 const WHITE_SIDEBAR_BOX_CONTAINER = "_3ZuGY";
 const ZERO_CROWNS_CONTAINER = "bAsar"; // class applied to container of crown info that makes text inside the grey crown white
 const POPUP_ICON = "_3_CAz _2QyqO _3jIW4"; // parent of image for flag, crown flame lingot and profile pic
@@ -2778,7 +2778,7 @@ function applyFocusMode()
 
 function applyFixedSidebar()
 {
-    const sidebar = document.querySelector(`.${SIDEBAR}`);
+    const sidebar = document.querySelector(SIDEBAR_SELECTOR);
 
     if (sidebar === null)
     {
@@ -2979,7 +2979,7 @@ function displayCrownsBreakdown()
 
     removeCrownsBreakdown(); // Remove if there is anything, in case it is still visible when we call
     
-    const isSidebar = document.querySelector(`.${SIDEBAR}`) !== null;
+    const isSidebar = document.querySelector(SIDEBAR_SELECTOR) !== null;
     const isPopupContainer = document.querySelector(CROWNS_POPUP_CONTAINER_SELECTOR) !== null;
 
     const somethingToDo = (
@@ -3045,7 +3045,7 @@ function displayCrownsBreakdown()
         {
             elementToInsertCrownsInfoBefore = document.querySelector(`#languagesBox`).nextElementSibling;
         }
-        document.querySelector(`.${SIDEBAR}`).insertBefore(sidebarCrownsInfoContainer, elementToInsertCrownsInfoBefore);
+        document.querySelector(SIDEBAR_SELECTOR).insertBefore(sidebarCrownsInfoContainer, elementToInsertCrownsInfoBefore);
 
         placesToAdd.push(sidebarCrownsInfoContainer);
 
@@ -3571,7 +3571,7 @@ function displayXPBreakdown()
 
 function displayTotalStrenthBox()
 {
-    const sidebar = document.querySelector(`.${SIDEBAR}`);
+    const sidebar = document.querySelector(SIDEBAR_SELECTOR);
     if (sidebar === null) return false;
 
     const skills = userData.language_data[languageCode].skills.filter(skill => skill.skill_progress.level !== 0);
@@ -3633,7 +3633,7 @@ function displayTotalStrenthBox()
 
 function displayLanguagesInfo(languages)
 {
-    const sidebar = document.querySelector(`.${SIDEBAR}`);
+    const sidebar = document.querySelector(SIDEBAR_SELECTOR);
     if (sidebar === null) return false;
 
     if (languages.length === 0)

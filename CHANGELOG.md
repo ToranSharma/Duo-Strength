@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v2.0.26] - 2022-06-17
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.26)
+### Fixed
+- Sidebar selector after Duolingo UI change.
+
 [v2.0.25] - 2022-06-04
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.25)
@@ -1450,6 +1456,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.26]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.25...v2.0.26
 [v2.0.25]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.24...v2.0.25
 [v2.0.24]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.23...v2.0.24
 [v2.0.23]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.22...v2.0.23

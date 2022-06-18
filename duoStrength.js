@@ -27,7 +27,7 @@ const CROWN_DESCRIPTION_CONTAINER = "yccDx";
 const CROWN_TOTAL_CONTAINER = "H_XA0";
 const DAILY_GOAL_POPUP_CONTAINER = "_20sV-"; // parent of streak flame and description, and the 7 small flames
 const DAILY_GOAL_SIDEBAR_CONTAINER = "_2O43A";
-const SIDEBAR_SELECTOR = "._1YfQ8 div";
+const SIDEBAR_SELECTOR = "._1YfQ8 > div";
 const WHITE_SIDEBAR_BOX_CONTAINER = "_3ZuGY";
 const ZERO_CROWNS_CONTAINER = "bAsar"; // class applied to container of crown info that makes text inside the grey crown white
 const POPUP_ICON = "_3_CAz _2QyqO _3jIW4"; // parent of image for flag, crown flame lingot and profile pic
@@ -4122,7 +4122,7 @@ function fixPopoutAlignment(skillPopout)
 
 function arrangeSidebarBoxOrder()
 {
-    const sidebarBoxes = Array.from(document.querySelectorAll(`.${SIDEBAR} > div`)).map(element => ({element: element, type: getSidebarBoxType(element)}));
+    const sidebarBoxes = Array.from(document.querySelectorAll(`${SIDEBAR_SELECTOR} > div`)).map(element => ({element: element, type: getSidebarBoxType(element)}));
     sidebarBoxes.sort(sortByOrderPreference);
     sidebarBoxes.forEach((({element, type}) => element.parentElement.appendChild(element)));
 }

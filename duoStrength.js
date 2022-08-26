@@ -5865,7 +5865,7 @@ async function init()
 
         // now test to see if we are in a lesson or not
 
-        if (rootChild.firstChild.className === LESSON)
+        if (LESSON.split(" ").every(lessonClass => rootChild.firstChild.className.includes(lessonClass)))
         {
             // in a lesson
             // we probably got here from a link in the needs strengthening list or from a practiseButton

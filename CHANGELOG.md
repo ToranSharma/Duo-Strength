@@ -12,6 +12,7 @@ Changelog
 - Lesson Detection, which fixes:
   - Cartoon hiding
   - Sentence hiding
+- Sentence hiding reveal hotkey
 
 [v2.0.27] - 2022-06-18
 -----------------

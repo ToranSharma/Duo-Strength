@@ -5103,17 +5103,17 @@ function hideTranslationText(reveal = false, setupObserver = true)
                 if (options.revealHotkey)
                 {
                     hintSentence.title += " or Press " + options.revealHotkeyCode;
-                    document.body.addEventListener("keyDown",
+                    document.addEventListener("keydown",
                         (event) =>
                         {
                             const hotkeyList = options.revealHotkeyCode.split("+");
                             const numKeys = hotkeyList.length;
                             if (
                                 event.key.toUpperCase() === hotkeyList[numKeys-1]
-                                && ( (hotkeyList.includes("Ctrl") && e.ctrlKey) || !hotkeyList.includes("Ctrl") )
-                                && ( (hotkeyList.includes("Shift") && e.shiftKey) || !hotkeyList.includes("Shift") )
-                                && ( (hotkeyList.includes("Meta") && e.metaKey) || !hotkeyList.includes("Meta") )
-                                && ( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
+                                && ( (hotkeyList.includes("Ctrl") && event.ctrlKey) || !hotkeyList.includes("Ctrl") )
+                                && ( (hotkeyList.includes("Shift") && event.shiftKey) || !hotkeyList.includes("Shift") )
+                                && ( (hotkeyList.includes("Meta") && event.metaKey) || !hotkeyList.includes("Meta") )
+                                && ( (hotkeyList.includes("Alt") && event.altKey) || !hotkeyList.includes("Alt") )
                             )
                             {
                                 // Reveal hokey has been hit,

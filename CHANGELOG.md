@@ -5,6 +5,18 @@ Changelog
 ------------
 -
 
+[v2.0.28] - 2022-08-26
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.28)
+### Fixed
+- Lesson Detection, which fixes:
+  - Cartoon hiding.
+  - Sentence hiding.
+- Sentence hiding reveal hotkey.
+- Skill popout small button styling.
+- Tips page Legendary button.
+- Page scrolling when page loaded with a skill popout.
+
 [v2.0.27] - 2022-06-18
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.27)
@@ -1462,6 +1474,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.28]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.27...v2.0.28
 [v2.0.27]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.26...v2.0.27
 [v2.0.26]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.25...v2.0.26
 [v2.0.25]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.24...v2.0.25

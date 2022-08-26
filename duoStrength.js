@@ -72,7 +72,7 @@ const BOTTOM_NAV_SELECTOR = "._37erx";
 const CROWN_TOTAL_SELECTOR = "._3nYQm._1B0kf";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 const SKILL_TREE_SELECTOR = "._3YEom";
-const TIPS_PAGE_BODY_SELECTOR = "._1yyg2";
+const TIPS_PAGE_BODY_SELECTOR = "._3h6Yu";
 const LOCKED_SKILL_POPOUT = "_1fMEX"; // used only in styles/stylesheet.css
 const CARTOON_CONTAINER = "F2B9m"; // used only in styles/stylesheet.css
 const HINT_SENTENCE_CONTAINER = "._1KUxv";
@@ -4704,8 +4704,10 @@ async function addFeatures()
     // Centre the view on any skill or checkpoint popout
     {
         const popout = document.querySelector(`[data-test="skill-popout"], ${CHECKPOINT_POPOUT_SELECTOR}`);
-        if (popout != null)
+        if (popout !== null)
+        {
             popout.scrollIntoView({block: "center"});
+        }
     }
 
     // Flag Borders in Language List
@@ -5103,17 +5105,17 @@ function hideTranslationText(reveal = false, setupObserver = true)
                 if (options.revealHotkey)
                 {
                     hintSentence.title += " or Press " + options.revealHotkeyCode;
-                    document.body.addEventListener("keyDown",
+                    document.addEventListener("keydown",
                         (event) =>
                         {
                             const hotkeyList = options.revealHotkeyCode.split("+");
                             const numKeys = hotkeyList.length;
                             if (
                                 event.key.toUpperCase() === hotkeyList[numKeys-1]
-                                && ( (hotkeyList.includes("Ctrl") && e.ctrlKey) || !hotkeyList.includes("Ctrl") )
-                                && ( (hotkeyList.includes("Shift") && e.shiftKey) || !hotkeyList.includes("Shift") )
-                                && ( (hotkeyList.includes("Meta") && e.metaKey) || !hotkeyList.includes("Meta") )
-                                && ( (hotkeyList.includes("Alt") && e.altKey) || !hotkeyList.includes("Alt") )
+                                && ( (hotkeyList.includes("Ctrl") && event.ctrlKey) || !hotkeyList.includes("Ctrl") )
+                                && ( (hotkeyList.includes("Shift") && event.shiftKey) || !hotkeyList.includes("Shift") )
+                                && ( (hotkeyList.includes("Meta") && event.metaKey) || !hotkeyList.includes("Meta") )
+                                && ( (hotkeyList.includes("Alt") && event.altKey) || !hotkeyList.includes("Alt") )
                             )
                             {
                                 // Reveal hokey has been hit,
@@ -5865,7 +5867,7 @@ async function init()
 
         // now test to see if we are in a lesson or not
 
-        if (rootChild.firstChild.className === LESSON)
+        if (LESSON.split(" ").every(lessonClass => rootChild.firstChild.className.includes(lessonClass)))
         {
             // in a lesson
             // we probably got here from a link in the needs strengthening list or from a practiseButton
@@ -6029,9 +6031,6 @@ async function init()
                 {
                     popout.scrollIntoView({block: "center"});
                 }
-
-                
-
                 // Done all the prep we need, let's get some data to process
 
                 await requestData();

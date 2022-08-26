@@ -4704,8 +4704,10 @@ async function addFeatures()
     // Centre the view on any skill or checkpoint popout
     {
         const popout = document.querySelector(`[data-test="skill-popout"], ${CHECKPOINT_POPOUT_SELECTOR}`);
-        if (popout != null)
+        if (popout !== null)
+        {
             popout.scrollIntoView({block: "center"});
+        }
     }
 
     // Flag Borders in Language List
@@ -6029,9 +6031,6 @@ async function init()
                 {
                     popout.scrollIntoView({block: "center"});
                 }
-
-                
-
                 // Done all the prep we need, let's get some data to process
 
                 await requestData();

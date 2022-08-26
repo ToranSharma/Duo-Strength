@@ -19,6 +19,7 @@
     transform: scaleY(0);
     position: fixed;
     top: 50vh;
+	left: 10px;
 }
 
 /* Loading Animation */
@@ -26,13 +27,13 @@
 {
     width: 100%;
     height: 20em;
-    margin-bottom: 500vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: sticky;
     top: 3em;
+    margin-bottom: -20em;
 }
 #loadingAnimationContainer ~ *
 {

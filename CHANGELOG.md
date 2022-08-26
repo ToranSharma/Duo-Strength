@@ -14,6 +14,7 @@ Changelog
   - Sentence hiding.
 - Sentence hiding reveal hotkey.
 - Skill popout small button styling.
+- Tips page Legendary button.
 
 [v2.0.27] - 2022-06-18
 -----------------

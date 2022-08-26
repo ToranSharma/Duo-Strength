@@ -599,12 +599,12 @@
 .smallButtonsContainer > *
 {
 	text-transform: capitalize;
-	width: auto;
 	margin: 0 !important;
 }
 .smallButtonsContainer button[data-test="words-button"]
 {
-	width: 60px;
+	width: auto;
+	padding: 8px;
 }
 
 #wordsListBubble

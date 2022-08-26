@@ -10,9 +10,10 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.28)
 ### Fixed
 - Lesson Detection, which fixes:
-  - Cartoon hiding
-  - Sentence hiding
-- Sentence hiding reveal hotkey
+  - Cartoon hiding.
+  - Sentence hiding.
+- Sentence hiding reveal hotkey.
+- Skill popout small button styling.
 
 [v2.0.27] - 2022-06-18
 -----------------

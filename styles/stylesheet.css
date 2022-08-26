@@ -570,7 +570,7 @@
 
 /* Buttons in Skill Popouts */
 
-.skillPopout > div > div
+.skillPopout > div > div:first-child
 {
 	overflow: visible;
 }

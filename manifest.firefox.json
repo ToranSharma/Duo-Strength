@@ -1,0 +1,61 @@
+{
+    "name"				:	"Duo Strength",
+    "description"		:	"Adds individual skill strengths back into the duolingo webpage, similar to data on duome.eu",
+    "version"			:	"2.0.29",
+    "manifest_version"	:	2,
+    
+    "icons"				: 	{
+        "16"			: 	"icons/icon_16.png",
+        "32"			:	"icons/icon_32.png",
+        "48"			:	"icons/icon_48.png",
+        "64"			:	"icons/icon_64.png",
+        "128"			:	"icons/icon_128.png"
+    },
+
+    "background"		:	{
+        "scripts"		:	["background.js"]
+    },
+
+    "page_action"		:	{
+        "show_matches"	:	["https://www.duolingo.com/*", "https://preview.duolingo.com/*"],
+        "default_icon"	:	{
+            "16"		: 	"icons/icon_16.png",
+            "32"		:	"icons/icon_32.png",
+            "48"		:	"icons/icon_48.png",
+            "64"		:	"icons/icon_64.png",
+            "128"		:	"icons/icon_128.png"
+        },
+        "default_title"	:	"Duo Strength",
+        "default_popup"	:	"options.html"
+    },
+    
+    "content_scripts"	:	[
+        {
+            "matches"	:	["https://www.duolingo.com/*", "https://preview.duolingo.com/*"],
+            "js"		: 	["duoStrength.js"]
+        }
+    ],
+
+    "web_accessible_resources":
+    [
+        "images/focus.svg",
+        "images/defocus.svg",
+        "images/popout.svg",
+        "images/loading.svg",
+        "styles/stylesheet.css",
+        "defaultOptions.json",
+        "disabledOptions.json"
+    ],
+
+    "permissions"		:	["storage"],
+
+    "options_ui"		:	{
+        "page"			:	"options.html",
+        "open_in_tab"	:	false
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{911cd95f-2518-40ca-b122-a3d26b0d727b}"
+        }
+    }
+}

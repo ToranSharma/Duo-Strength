@@ -2579,7 +2579,7 @@ function addButtonsToTipsPage()
     const onTipsPage = (new RegExp("/tips/?")).test(window.location.pathname);
     const isStartLessonButton = document.querySelector(`[data-test="start-lesson"]`) !== null;
 
-    if (onTipsPage && isStartLessonButton)
+    if (onTipsPage && isStartLessonButton && languageCode !== "")
     {
         const desiredNumButtons = (1 + options.addTipsPagePractiseButton) * (options.addTipsPageBottomButtons? 2 : 1 )
 
@@ -3941,7 +3941,7 @@ function showOnlyNeededSkills()
             }
         );
 
-        document.querySelector(`[data-test="skill-tree"]`).classList.remove("hasOutOfViewSkills");
+        document.querySelector(`[data-test="skill-tree"]`)?.classList.remove("hasOutOfViewSkills");
 
         return false;
     }
@@ -5852,7 +5852,12 @@ async function homeInit(optionsPromise)
         applyFixedSidebar();
 
         // Add loading animation
-        addLoadingAnimation(document.querySelector(`[data-test="skill-tree"]`).parentElement);
+        if (
+            onMainPage
+            && document.querySelector(`[data-test="skill-tree"]`) !== null
+        ) {
+            addLoadingAnimation(document.querySelector(`[data-test="skill-tree"]`).parentElement);
+        }
 
         // Force Load all skills
         {

@@ -5,6 +5,12 @@ Changelog
 ------------
 -
 
+[v2.0.29] - 2022-09-19
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.29)
+### Updated
+- Use manifest v3.
+
 [v2.0.28] - 2022-08-26
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.28)
@@ -1474,6 +1480,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.28]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.28...v2.0.29
 [v2.0.28]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.27...v2.0.28
 [v2.0.27]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.26...v2.0.27
 [v2.0.26]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.25...v2.0.26
@@ -1597,4 +1604,3 @@ Changelog
 [v1.0.2]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/ToranSharma/Duo-Strength/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/ToranSharma/Duo-Strength/releases/tag/v1.0.0
-

@@ -72,7 +72,7 @@ const BOTTOM_NAV_SELECTOR = "._3rtds";
 const CROWN_TOTAL_SELECTOR = "._3nYQm._1B0kf";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 const SKILL_TREE_SELECTOR = "._3YEom";
-const TIPS_PAGE_BODY_SELECTOR = "._3h6Yu";
+const TIPS_PAGE_BODY_SELECTOR = "._33Mo9 > div:last-child";
 const LOCKED_SKILL_POPOUT = "_1fMEX"; // used only in styles/stylesheet.css
 const CARTOON_CONTAINER = "F2B9m"; // used only in styles/stylesheet.css
 const HINT_SENTENCE_CONTAINER = "._1KUxv";
@@ -2576,7 +2576,10 @@ function addCheckpointButtons(checkpointPopout, completedMessage = false)
 
 function addButtonsToTipsPage()
 {
-    if ((new RegExp("/tips/?")).test(window.location.pathname) && document.querySelector(`[data-test="start-lesson"]`) != null)
+    const onTipsPage = (new RegExp("/tips/?")).test(window.location.pathname);
+    const isStartLessonButton = document.querySelector(`[data-test="start-lesson"]`) !== null;
+
+    if (onTipsPage && isStartLessonButton)
     {
         const desiredNumButtons = (1 + options.addTipsPagePractiseButton) * (options.addTipsPageBottomButtons? 2 : 1 )
 
@@ -5199,6 +5202,7 @@ function childListMutationHandle(mutationsList, observer)
     let skillPopout;
     let checkpointPopoutAdded = false;
     let checkpointPopout;
+    let mainContentLoaded = false;
     
     for (let mutation of mutationsList)
     {
@@ -5306,6 +5310,14 @@ function childListMutationHandle(mutationsList, observer)
         {
             checkpointPopoutAdded = true;
             checkpointPopout = mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR);
+        }
+        else if
+        (
+            mutation.target.parentElement === mainBody
+            && mutation.addedNodes.length !== 0
+        )
+        {
+            mainContentLoaded = true;
         }
     }
 
@@ -5527,6 +5539,11 @@ function childListMutationHandle(mutationsList, observer)
     {
         if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);
     }
+
+    if (mainContentLoaded)
+    {
+        addButtonsToTipsPage();
+    }
 }
 
 function classNameMutationHandle(mutationsList, observer)
@@ -5641,9 +5658,8 @@ function classNameMutationHandle(mutationsList, observer)
 function setUpObservers()
 {
     topBarDiv = rootChild.querySelector(`.${TOP_BAR}`);
-    const bottomNav = rootChild.querySelector(BOTTOM_NAV_SELECTOR);
+    // const bottomNav = rootChild.querySelector(BOTTOM_NAV_SELECTOR);
     pagesSidebar = rootChild.querySelector(PAGES_SIDEBAR_SELECTOR);
-
 
     // Declare nav buttons that we will need to observe
     // pagesSidebar Buttons
@@ -5674,15 +5690,18 @@ function setUpObservers()
     childListObserver.observe(coursesMenu.lastChild, {childList: true});
 
     // set up observers for crown and streak nav hovers
-    childListObserver.observe(crownMenu.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
-    childListObserver.observe(streakMenu.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
+    childListObserver.observe(crownMenu.lastChild, {childList: true}); // Observing to see if pop-up box is created showing crown data.
+    childListObserver.observe(streakMenu.lastChild, {childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
 
     // need to set up Observer on language logo for language change detection
     // The element that changes on language change is the first grandchild of coursesMenu. Note that on over or click this granchild gets a sibling which is the dropdown box.
-    classNameObserver.observe(coursesMenu.childNodes[0].childNodes[0],{attributes: true});
+    classNameObserver.observe(coursesMenu.childNodes[0].childNodes[0], {attributes: true});
 
     // set up the observer to check for layout changes where the bottomNav might be added or removed
     childListObserver.observe(topBarDiv.parentNode.parentNode, {childList: true});
+
+    // set up the observer to check for the loading of the main page content for when the tips page does a first load.
+    childListObserver.observe(mainBody.lastChild, {childList: true});
 }
 
 async function lessonInit(optionsPromise)

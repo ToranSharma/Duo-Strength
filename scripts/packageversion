@@ -2,8 +2,6 @@
 
 VERNUM=$(awk '(/"version"/){vernum = $NF; gsub(/[^0-9^.]/, "", vernum); print vernum}' manifest.json)
 
-mv manifest.json manifest.json.original
-
 zip -r "Duo Strength v$VERNUM - chrome & opera.zip" \
 	CHANGELOG.md \
 	LICENSE \
@@ -18,6 +16,7 @@ zip -r "Duo Strength v$VERNUM - chrome & opera.zip" \
 	defaultOptions.json \
 	disabledOptions.json
 
+mv manifest.json manifest.json.original
 mv manifest.firefox.json manifest.json
 zip -r "Duo Strength v$VERNUM - firefox.zip" \
 	CHANGELOG.md \

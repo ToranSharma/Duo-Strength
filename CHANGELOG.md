@@ -9,7 +9,7 @@ Changelog
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.29)
 ### Updated
-- Use manifest v3.
+- Use manifest v3. Firefox still uses v2.
 ### Fixed
 - Nav button definitions for new side nav bar.
 

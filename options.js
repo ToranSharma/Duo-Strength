@@ -1,7 +1,7 @@
 let oldOptions = {};
 let options = {};
 let tabs = [];
-let optionsLoaded = null;
+let optionsPromise = null;
 
 let priorOptions = {};
 
@@ -67,7 +67,7 @@ async function init()
     document.querySelector("#disableAll").addEventListener("click", modifyOptionsButtonHandler);
     document.querySelector("#resetDefault").addEventListener("click", modifyOptionsButtonHandler);
 
-    await (optionsLoaded = getOptions());
+    await (optionsPromise = getOptions());
     applyDarkMode();
     applyOptions(true);
     saveOptions();
@@ -213,7 +213,7 @@ function applyOptions(hideTransitions = false)
 
 async function saveOptions(sendToTabs = true)
 {
-    if ((await optionsLoaded) === null)
+    if ((await optionsPromise) === null)
     {
         await getOptions();
     }

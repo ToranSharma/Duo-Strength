@@ -33,7 +33,7 @@ zip -r "Duo Strength v$VERNUM - firefox.zip" \
 	defaultOptions.json \
 	disabledOptions.json
 
-
+mv manifest.json manifest.firefox.json
 mv manifest.json.original manifest.json
 zip -r "Duo Strength v$VERNUM.zip" \
 	CHANGELOG.md \

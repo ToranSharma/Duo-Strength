@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener(
     {
         if (message.type === "showPageAction")
         {
-            chrome.pageAction.show(sender.tab.id);
+            chrome.pageAction?.show(sender.tab.id);
             if (!pages.openedTabs.includes(sender.tab.id))
             {
                 pages.openedTabs.push(sender.tab.id);

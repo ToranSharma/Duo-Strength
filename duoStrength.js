@@ -68,7 +68,7 @@ const MAIN_SECTION_SELECTOR = "._33Mo9";
 const TREE_OVERLAY_CONTAINER_SELECTOR = "._1fnwn";
 const GLOBAL_PRACTISE_BUTTON_ANCHOR = "_3_B9a _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
 const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0.np6Tv";
-const BOTTOM_NAV_SELECTOR = "._37erx";
+const BOTTOM_NAV_SELECTOR = "._3rtds";
 const CROWN_TOTAL_SELECTOR = "._3nYQm._1B0kf";
 const PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR = ".aUkqy";
 const SKILL_TREE_SELECTOR = "._3YEom";
@@ -5659,8 +5659,16 @@ function setUpObservers()
     const crownMenu = document.querySelector(CROWN_MENU_SELECTOR);
     const streakMenu = document.querySelector(STREAK_MENU_SELECTOR);
 
-    classNameObserver.observe(homeNav.parentElement, {attributes: true});
-    classNameObserver.observe(shopNav.parentElement, {attributes: true});
+    if (inMobileLayout)
+    {
+        classNameObserver.observe(homeNav.parentElement, {childList: true}); // element replaced but logic in classname mutation handler
+        classNameObserver.observe(shopNav.parentElement, {childList: true}); 
+    }
+    else
+    {
+        classNameObserver.observe(homeNav.parentElement, {attributes: true});
+        classNameObserver.observe(shopNav.parentElement, {attributes: true});
+    }
 
     // set up observer for language logo popup
     childListObserver.observe(coursesMenu.lastChild, {childList: true});

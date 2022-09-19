@@ -85,6 +85,16 @@ const ASSIGNMENTS_BOX = "_1f3LS";
 const FRIENDS_TABLE_TITLE_SELECTOR = ".-AHpg";
 const SOCIAL_BUTTONS_HEADER_SELECTOR = "._3qTe3";
 const NAVS_CONTAINER_SELECTOR = "._3ejvc";
+const PAGES_SIDEBAR_SELECTOR = "._3bTT7";
+const HOME_NAV_SELECTOR = `[data-test="home-nav"]`;
+const STORIES_NAV_SELECTOR = `[data-test="stories-nav"]`;
+const SCHOOLS_NAV_SELECTOR = `[data-test="schools-main-nav"]`;
+const SHOP_NAV_SELECTOR = `[data-test="shop-nav"]`;
+const PODCAST_NAV_SELECTOR = `[data-test="podcast-main-nav"]`;
+const WORDS_NAV_SELECTOR = `[data-test="vocab-nav"]`;
+const COURSES_MENU_SELECTOR = `[data-test="courses-menu"]`;
+const CROWN_MENU_SELECTOR = `[data-test="crown-menu"]`;
+const STREAK_MENU_SELECTOR = `[data-test="streak-menu"]`;
 
 const flagYValues =
 {
@@ -109,7 +119,7 @@ let UICode = "";
 let language = "";
 let languageChanged = false;
 let languageChangesPending = 0;
-let languageLogo;
+let coursesMenu;
 
 let options = {};
 let progress = [];
@@ -4740,66 +4750,6 @@ async function addFeatures()
     removeLoadingAnimation();
 }
 
-function httpGetAsync(url, responseHandler)
-{
-    /* firefox incompatible due to sameSite lax jwt_token to being sent with request...
-    let xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function()
-    { 
-        if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
-            responseHandler(xmlHttp.responseText);
-    };
-    xmlHttp.open("GET", url, true); // true for asynchronous 
-    xmlHttp.send(null);
-    */
-
-    // Horrible hack but works...
-    // We insert the xhr code into the body so that it excecutes there.
-    // The response text is then inserted into another element in the body.
-    // Back in content script we wait until the data has been written to the body.
-    // We then send it off for processing and remove the inserted elements from the body.
-
-
-    let code = 
-        `(function ()
-        {
-            let xmlHttp = new XMLHttpRequest();
-            xmlHttp.onreadystatechange = function()
-            {
-                if (xmlHttp.readyState === 4)
-                {
-                    if (xmlHttp.status === 200)
-                    {
-                        document.getElementById('userData${requestId}').textContent = "//" + xmlHttp.responseText;
-                    }
-                    else
-                    {
-                        // The request had an error, or possibly some unexpected accepted code.
-                        document.getElementById('userData${requestId}').textContent = "//ERROR " + xmlHttp.status;
-                    }
-                }
-            };
-            xmlHttp.open('GET', '${url+'&DuoStrengthRequestId='+requestId}', true);
-            xmlHttp.send(null);
-        })()`;
-
-    const requestResponseHelper = (mutationsList) => requestResponseMutationHandle(mutationsList, url, responseHandler);
-
-    let requestResponseObserver = new MutationObserver(requestResponseHelper);
-    let data = document.createElement('script');
-    data.id = 'userData' + requestId;
-
-    let xhrScript = document.createElement("script");
-    xhrScript.id = 'xhrScript' + requestId;
-    xhrScript.textContent = code;
-
-    document.body.appendChild(data);
-    requestResponseObserver.observe(data, {childList: true});
-    document.body.appendChild(xhrScript);
-    ++requestsPending;
-    ++requestId;
-}
-
 function requestResponseMutationHandle(mutationsList, url, responseHandler)
 {
     for (let mutation of mutationsList)
@@ -4923,39 +4873,51 @@ async function handleDataResponse(responseText)
     }
 }
 
-function requestData()
+async function requestData()
 {
     // requests data for actively logged in user.
-
-    return new Promise(function (resolve, reject)
+    if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
     {
-        if (!(Object.keys(userData).length === 0 && userData.constructor === Object) && (!languageChanged))
-        {
-            // If there is already userData and not changing language, display current data while requesting new data.
-            usingOldData = true;
-            addFeatures();
-        }
-
-        httpGetAsync( // asks for data and async calls handle function when ready.
-            encodeURI(window.location.origin+"/api/1/users/show?id="+userId),
-            function (responseText, responseId)
+        // If there is already userData and not changing language, display current data while requesting new data.
+        usingOldData = true;
+        addFeatures();
+    }
+    const currentRequestId = requestId;
+    ++requestId;
+    ++requestsPending;
+    const url = encodeURI(`${window.location.origin}/api/1/users/show?id=${userId}&DuoStrengthRequestId=${currentRequestId}`);
+    try
+    {
+        const response = await fetch(
+            url,
             {
-                if (responseId !== requestId - 1)
-                {
-                    // More than one changes took place before we could handle the data.
-                    // Ordering of responses is not always the same as the ordering of the request,
-                    // so we check that the id of the response is to that of the most recent request we have made.
-                    // We will clean up the languageChangesPending when we have sucessfully processed a request.
-                    resolve();
-                }
-                else
-                {
-                    handleDataResponse(responseText);
-                    resolve();
-                }
+                credentials: 'include',
             }
         );
-    });
+        --requestsPending; // We have recieved some sort of response for this request.
+        
+        if (response.status !== 200)
+        {
+            throw new Error(`code ${response.status}: ${response.statusText}`);
+        }
+
+        if (currentRequestId !== requestId - 1)
+        {
+            // More than one changes took place before we could handle the data.
+            // Ordering of responses is not always the same as the ordering of the request,
+            // so we check that the id of the response is to that of the most recent request we have made.
+            // We will clean up the languageChangesPending when we have sucessfully processed a request.
+            return;
+        }
+    
+        handleDataResponse(await response.text());
+    }
+    catch (err)
+    {
+        console.error(`Request ID${currentRequestId} failed, HTTP response ${err.message}`);
+
+        setTimeout(() => requestData());
+    }
 }
 
 function revealNewWord()
@@ -5580,7 +5542,7 @@ function classNameMutationHandle(mutationsList, observer)
     let questionCheckStatusChange = false;
     for (let mutation of mutationsList)
     {
-        if (mutation.target.parentNode.parentNode === languageLogo)
+        if (mutation.target.parentNode.parentNode === coursesMenu)
         {
             // it was a language change
             isLanguageChange = true;
@@ -5678,127 +5640,230 @@ function classNameMutationHandle(mutationsList, observer)
 
 function setUpObservers()
 {
-
-    // topBar Div is the direct container holding the navigation butons
-    // Safer to use class name, which may also change...
     topBarDiv = rootChild.querySelector(`.${TOP_BAR}`);
     const bottomNav = rootChild.querySelector(BOTTOM_NAV_SELECTOR);
+    pagesSidebar = rootChild.querySelector(PAGES_SIDEBAR_SELECTOR);
+
 
     // Declare nav buttons that we will need to observe
+    // pagesSidebar Buttons
+    const homeNav = document.querySelector(HOME_NAV_SELECTOR);
+    // const storiesNav = document.querySelector(STORIES_NAV_SELECTOR);
+    // const schoolsNav = document.querySelector(SCHOOLS_NAV_SELECTOR);
+    const shopNav = document.querySelector(SHOP_NAV_SELECTOR);
+    // const podcastNav = document.querySelector(PODCAST_NAV_SELECTOR);
+    // const wordsNav = document.querySelector(WORDS_NAV_SELECTOR);
 
-    let homeNav;
-    let storiesNav;
-    // let discussionNav;
-    let shopNav;
-    // languageLogo declared globally for use outside init;
-    let crownNav;
-    let streakNav;
+    // topBar Buttons
+    coursesMenu = document.querySelector(COURSES_MENU_SELECTOR);
+    const crownMenu = document.querySelector(CROWN_MENU_SELECTOR);
+    const streakMenu = document.querySelector(STREAK_MENU_SELECTOR);
 
-    if (!inMobileLayout)
-    {
-        // In normal layout, with everything in the top bar.
-
-        let numNavButtons = topBarDiv.querySelectorAll(`.${NAVIGATION_BUTTON}`).length;
-        // if numNavButtons = 4 then there is no stories button.
-        // if numNavButtons = 5 then there is a stories button and that goes after the homeNav.
-        // if numNavButtons = 6 then there is a stories button and characters button.
-
-        homeNav = topBarDiv.childNodes[0];
-
-        if (numNavButtons === 5)
-        {
-            storiesNav = topBarDiv.childNodes[2];
-            /* unused/unusable
-            discussionNav = topBarDiv.childNodes[4];
-            */
-            shopNav = topBarDiv.childNodes[6];
-            languageLogo = topBarDiv.childNodes[10];
-            crownNav = topBarDiv.childNodes[11];
-            streakNav = topBarDiv.childNodes[12];
-        }
-        // Languages with characters and stories (e.g. Japanese)
-        else if (numNavButtons === 6)
-        { 
-            storiesNav = topBarDiv.childNodes[4];
-            shopNav = topBarDiv.childNodes[8];
-            languageLogo = topBarDiv.childNodes[12];
-            crownNav = topBarDiv.childNodes[13];
-            streakNav = topBarDiv.childNodes[14];
-        }
-        else
-        {
-            /* unused/unusable
-            discussionNav = topBarDiv.childNodes[2];
-            */
-            shopNav = topBarDiv.childNodes[4];
-            languageLogo = topBarDiv.childNodes[8];
-            crownNav = topBarDiv.childNodes[9];
-            streakNav = topBarDiv.childNodes[10];
-        }
-
-        // set up observers for page changes
-        classNameObserver.observe(homeNav,{attributes: true}); // Observing to see if class of homeNav changes to tell if we have switched to or from main page.
-        /* unused/unusable
-        classNameObserver.observe(discussionNav,{attributes: true}); // Observing to see if class of discussionNav changes to tell if we have switched to or from discussion page. Though the extension does not handle this domain due to forums subdomain prefix.
-        */
-        classNameObserver.observe(shopNav,{attributes: true}); // Observing to see if class of shopNav changes to tell if we have switched to or from the shop.
-    }
-    else
-    {
-        // In mobile layout with the bottom nav bar.
-        // topBarDiv contains langageLogo, crownNav, streakNav
-        // bottomNav contains homeNav, storiesNav, discussionNav, shopNav, profileNav,
-
-        homeNav = bottomNav.childNodes[1];
-        storiesNav = bottomNav.childNodes[2]; // Always a stories button in mobile layout.
-        /* unused/unusable
-        discussionNav = bottomNav.childNodes[3];
-        */
-        shopNav = bottomNav.childNodes[4];
-
-        languageLogo = topBarDiv.childNodes[0];
-        crownNav = topBarDiv.childNodes[1];
-        streakNav = topBarDiv.childNodes[2];
-        
-        const homeImg = homeNav.querySelector(`img`);
-        const shopImg = shopNav.querySelector(`img`);
-        
-        classNameObserver.observe(homeImg, {attributes: true});
-        classNameObserver.observe(shopImg, {attributes: true});
-    }
-    
+    classNameObserver.observe(homeNav.parentElement, {attributes: true});
+    classNameObserver.observe(shopNav.parentElement, {attributes: true});
 
     // set up observer for language logo popup
-    childListObserver.observe(languageLogo.lastChild, {childList: true});
+    childListObserver.observe(coursesMenu.lastChild, {childList: true});
 
     // set up observers for crown and streak nav hovers
-    childListObserver.observe(crownNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
-    childListObserver.observe(streakNav.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
+    childListObserver.observe(crownMenu.lastChild,{childList: true}); // Observing to see if pop-up box is created showing crown data.
+    childListObserver.observe(streakMenu.lastChild,{childList: true}); // Observing to see if pop-up box is created showing streak and XP data.
 
     // need to set up Observer on language logo for language change detection
-    // The element that changes on language change is the first grandchild of languageLogo. Note that on over or click this granchild gets a sibling which is the dropdown box.
-    classNameObserver.observe(languageLogo.childNodes[0].childNodes[0],{attributes: true});
+    // The element that changes on language change is the first grandchild of coursesMenu. Note that on over or click this granchild gets a sibling which is the dropdown box.
+    classNameObserver.observe(coursesMenu.childNodes[0].childNodes[0],{attributes: true});
 
     // set up the observer to check for layout changes where the bottomNav might be added or removed
     childListObserver.observe(topBarDiv.parentNode.parentNode, {childList: true});
 }
 
+async function lessonInit(optionsPromise)
+{
+    // in a lesson
+    // we probably got here from a link in the needs strengthening list or from a practiseButton
+
+    onMainPage = false;
+
+    // On first load there is loading animation as the mainBody,
+    // we are already observing for if this is replaced,
+    // so on first call nothing will happen, but init will be called again when the lesson sections are loaded.
+    //
+    // We still do need to add the observer to the lesson main section when it has loaded in order to detect question changes
+
+    const lessonMainSection = document.querySelector(`.${LESSON_MAIN_SECTION}`);
+
+    if (lessonMainSection !== null)
+    {
+        // We have a main section.
+
+        // We are into the questions so let's observe the lessonMainSection's first child's children to watch for when the question changes.
+
+        childListObserver.observe(lessonMainSection.firstChild, {childList: true});
+
+        // Set up mutation observer for question checked status change.
+        const lessonBottomSection = document.querySelector(`.${LESSON_BOTTOM_SECTION}`);
+        classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
+    }
+    else
+    {
+        // No main section, so not in the question yet, we will possibly need to set up another observer for when we enter the questions
+
+        // Now check if we are on the selection practice type selection screen
+        const practiceTypeSelectMessage = document.querySelector(PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR); // Would be first (and only) child if exists
+
+        if (practiceTypeSelectMessage !== null)
+        {
+            // On timed/untimed practice selection screen.
+            // We need to observe lessonMainSection as its children get replaced when the practice type is selected.
+            
+            childListObserver.observe(practiceTypeSelectMessage.parentNode, {childList: true});
+        }
+    }
+
+    await optionsPromise;
+    hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
+    revealNewWord();
+
+    if (options.hideCartoons)
+    {
+        document.body.classList.add("hideCartoons");
+        document.body.classList[(options.keepQuestionBorders)? "add" : "remove"]("keepQuestionBorders");
+    }
+    else
+    {
+        document.body.classList.remove("hideCartoons", "keepQuestionBorders");
+    }
+
+    lastSkill = await retrieveLastSkill();
+    const pageUrl = window.location.href;
+    let currentUrlNotStored = true;
+    {
+        const somethingIsStored = lastSkill != null;
+        if (somethingIsStored && lastSkill.urlTitle != null)
+        {
+            // Stored last skill was a practice session or a grammar test out.
+            if (
+                pageUrl.includes(`/${lastSkill.urlTitle}/practice`)
+                || pageUrl.includes(`/${lastSkill.urlTitle}/test`)
+            )
+            {
+                // The current url matches up with the practice session stored.
+                currentUrlNotStored = false;
+            }
+        }
+
+        if (somethingIsStored && lastSkill.checkpointNumber != null)
+        {
+            // Stored last skill was a checkpoint
+            if (pageUrl.includes(`/${lastSkill.checkpointNumber}`))
+            {
+                // The current url matched up with the checkpoint stored.
+                currentUrlNotStored = false;
+            }
+        }
+    }
+
+    if (currentUrlNotStored)
+    {
+        // The lesson we have just entered does not match the lastSkill that was stored.
+        // We must have closed duolingo before it could be cleared properly after the lesson
+        // Let's clear this up now.
+        chrome.storage.sync.remove("lastSkill");
+        lastSkill = undefined;
+    }
+
+}
+
+async function homeInit(optionsPromise)
+{
+    questionNumber = 1;
+    if (document.querySelector(`.${TOP_BAR}`) === null)
+    {
+        // no topBarDiv
+        // set up the observer to check for layout changes where the bottomNav might be added or removed
+        onMainPage = false;
+        return false;
+    }
+    else
+    {
+        // there is a topBarDiv so we can continue to process the page to workout what to do
+
+
+        // Get user id from the pages cookies, it is stored under the key logged_out_uuid
+        userId = document.cookie.split("; ")
+                                .find(cookie => cookie.startsWith("logged_out_uuid"))
+                                .split("=")[1];
+
+        setUpObservers();
+
+        onMainPage = window.location.pathname === "/learn"
+
+        /*
+            language seems to be quite difficult to set on first load, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
+            We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
+            
+
+            Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
+        */
+
+        await optionsPromise;
+
+        // League hiding
+        if (options.showLeagues)
+        {
+            rootChild.classList.remove("hideLeagueTable");
+        }
+        else
+        {
+            rootChild.classList.add("hideLeagueTable");
+        }
+
+        // Focus mode - sidebar hiding
+        applyFocusMode();
+
+        // Fixed sidebar
+        applyFixedSidebar();
+
+        // Add loading animation
+        addLoadingAnimation(document.querySelector(`[data-test="skill-tree"]`).parentElement);
+
+        // Force Load all skills
+        {
+            await forceLoadAllSkills();
+        }
+
+        await openLastSkillPopout();
+
+        const popout = document.querySelector(`[data-test="skill-popout"], ${CHECKPOINT_POPOUT_SELECTOR}`);
+
+        if (popout !== null)
+        {
+            popout.scrollIntoView({block: "center"});
+        }
+        // Done all the prep we need, let's get some data to process
+
+        await requestData();
+        removeLoadingAnimation();
+    }
+}
+
 async function init()
 {
     // Load options
-    let optionsLoaded = retrieveOptions();
+    let optionsPromise = retrieveOptions();
 
     // Add external stylesheet
     addStyleSheet();
 
-    rootElem = document.getElementById("root"); // When logging in child list is changed.
-    childListObserver.observe(rootElem,{childList: true}); // Observing for changes to its children to detect logging in and out?
+    rootElem = document.querySelector("#root"); // When logging in child list is changed.
+    childListObserver.observe(rootElem, {childList: true}); // Observing for changes to its children to detect logging in and out?
 
-    if (rootElem.childElementCount === 0)
+    rootChild = rootElem.firstChild;
+    if (rootChild === null)
+    {
         return false;
-
-    rootChild = rootElem.childNodes[0];
-    childListObserver.observe(rootChild,{childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
+    }
+    childListObserver.observe(rootChild, {childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
 
     if (rootChild.querySelector(`:scope > [data-focus-guard]`) != null)
     {
@@ -5869,173 +5934,12 @@ async function init()
 
         if (LESSON.split(" ").every(lessonClass => rootChild.firstChild.className.includes(lessonClass)))
         {
-            // in a lesson
-            // we probably got here from a link in the needs strengthening list or from a practiseButton
-
-            onMainPage = false;
-
-            // On first load there is loading animation as the mainBody,
-            // we are already observing for if this is replaced,
-            // so on first call nothing will happen, but init will be called again when the lesson sections are loaded.
-            //
-            // We still do need to add the observer to the lesson main section when it has loaded in order to detect question changes
-
-            const lessonMainSection = document.querySelector(`.${LESSON_MAIN_SECTION}`);
-
-            if (lessonMainSection !== null)
-            {
-                // We have a main section.
-
-                // We are into the questions so let's observe the lessonMainSection's first child's children to watch for when the question changes.
-
-                childListObserver.observe(lessonMainSection.firstChild, {childList: true});
-
-                // Set up mutation observer for question checked status change.
-                const lessonBottomSection = document.querySelector(`.${LESSON_BOTTOM_SECTION}`);
-                classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
-            }
-            else
-            {
-                // No main section, so not in the question yet, we will possibly need to set up another observer for when we enter the questions
-
-                // Now check if we are on the selection practice type selection screen
-                const practiceTypeSelectMessage = document.querySelector(PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR); // Would be first (and only) child if exists
-
-                if (practiceTypeSelectMessage !== null)
-                {
-                    // On timed/untimed practice selection screen.
-                    // We need to observe lessonMainSection as its children get replaced when the practice type is selected.
-                    
-                    childListObserver.observe(practiceTypeSelectMessage.parentNode, {childList: true});
-                }
-            }
-
-            await optionsLoaded;
-            hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
-            revealNewWord();
-
-            if (options.hideCartoons)
-            {
-                document.body.classList.add("hideCartoons");
-                document.body.classList[(options.keepQuestionBorders)? "add" : "remove"]("keepQuestionBorders");
-            }
-            else
-            {
-                document.body.classList.remove("hideCartoons", "keepQuestionBorders");
-            }
-
-            lastSkill = await retrieveLastSkill();
-            const pageUrl = window.location.href;
-            let currentUrlNotStored = true;
-            {
-                const somethingIsStored = lastSkill != null;
-                if (somethingIsStored && lastSkill.urlTitle != null)
-                {
-                    // Stored last skill was a practice session or a grammar test out.
-                    if (
-                        pageUrl.includes(`/${lastSkill.urlTitle}/practice`)
-                        || pageUrl.includes(`/${lastSkill.urlTitle}/test`)
-                    )
-                    {
-                        // The current url matches up with the practice session stored.
-                        currentUrlNotStored = false;
-                    }
-                }
-
-                if (somethingIsStored && lastSkill.checkpointNumber != null)
-                {
-                    // Stored last skill was a checkpoint
-                    if (pageUrl.includes(`/${lastSkill.checkpointNumber}`))
-                    {
-                        // The current url matched up with the checkpoint stored.
-                        currentUrlNotStored = false;
-                    }
-                }
-            }
-
-            if (currentUrlNotStored)
-            {
-                // The lesson we have just entered does not match the lastSkill that was stored.
-                // We must have closed duolingo before it could be cleared properly after the lesson
-                // Let's clear this up now.
-                chrome.storage.sync.remove("lastSkill");
-                lastSkill = undefined;
-            }
-
+            await lessonInit(optionsPromise);
         }
         else
         {
             // not in a lesson
-
-            questionNumber = 1;
-            if (document.querySelector(`.${TOP_BAR}`) === null)
-            {
-                // no topBarDiv
-                // set up the observer to check for layout changes where the bottomNav might be added or removed
-                onMainPage = false;
-                return false;
-            }
-            else
-            {
-                // there is a topBarDiv so we can continue to process the page to workout what to do
-
-
-                // Get user id from the pages cookies, it is stored under the key logged_out_uuid
-                userId = document.cookie.split("; ")
-                                        .find(cookie => cookie.startsWith("logged_out_uuid"))
-                                        .split("=")[1];
-
-                setUpObservers();
-
-                onMainPage = window.location.pathname === "/learn"
-
-                /*
-                    language seems to be quite difficult to set on first load, the language as a string is only available embedded in sentences, which may change if the user is using a different language.
-                    We could use the whole sentence in its place as we really only care about the changes in the lanuage on the whole. However, I don't know how if the language is always embedded in these senteces for all languages.
-                    
-
-                    Instead we will not set it initially and wait for the data to be loaded the first time and take the language string from that.
-                */
-
-                await optionsLoaded;
-
-                // League hiding
-                if (options.showLeagues)
-                {
-                    rootChild.classList.remove("hideLeagueTable");
-                }
-                else
-                {
-                    rootChild.classList.add("hideLeagueTable");
-                }
-
-                // Focus mode - sidebar hiding
-                applyFocusMode();
-
-                // Fixed sidebar
-                applyFixedSidebar();
-
-                // Add loading animation
-                addLoadingAnimation(document.querySelector(`[data-test="skill-tree"]`).parentElement);
-
-                // Force Load all skills
-                {
-                    await forceLoadAllSkills();
-                }
-
-                await openLastSkillPopout();
-
-                const popout = document.querySelector(`[data-test="skill-popout"], ${CHECKPOINT_POPOUT_SELECTOR}`);
-
-                if (popout !== null)
-                {
-                    popout.scrollIntoView({block: "center"});
-                }
-                // Done all the prep we need, let's get some data to process
-
-                await requestData();
-                removeLoadingAnimation();
-            }
+            await homeInit(optionsPromise);
         }
     }
 }

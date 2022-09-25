@@ -26,7 +26,7 @@ const CROWN_LOGO_CONTAINER = "_1I6F9";
 const CROWN_DESCRIPTION_CONTAINER = "yccDx";
 const CROWN_TOTAL_CONTAINER = "H_XA0";
 const DAILY_GOAL_POPUP_CONTAINER = "_20sV-"; // parent of streak flame and description, and the 7 small flames
-const DAILY_GOAL_SIDEBAR_CONTAINER = "_2O43A";
+const DAILY_GOAL_SIDEBAR_SELECTOR = ".dx6CP";
 const SIDEBAR_SELECTOR = "._1YfQ8 > div";
 const WHITE_SIDEBAR_BOX_CONTAINER = "_3ZuGY";
 const ZERO_CROWNS_CONTAINER = "bAsar"; // class applied to container of crown info that makes text inside the grey crown white
@@ -77,8 +77,8 @@ const LOCKED_SKILL_POPOUT = "_1fMEX"; // used only in styles/stylesheet.css
 const CARTOON_CONTAINER = "F2B9m"; // used only in styles/stylesheet.css
 const HINT_SENTENCE_CONTAINER = "._1KUxv";
 const HINT_SENTENCE_BUBBLE_ARROW = "ite_X"; // used only in styles/stylesheet.css
-const AD = "_1UOwI _3bfsh";
-const ACHIEVEMENT_BOX = "Yth9H";
+const AD = "_3bfsh";
+const ACHIEVEMENT_BOX_SELECTOR = ".ESAZO";
 const PROGRESS_QUIZ_BOX = "_9GzaQ";
 const DUOLINGO_SCORE_BOX = "_37iXd";
 const ASSIGNMENTS_BOX = "_1f3LS";
@@ -3053,7 +3053,7 @@ function displayCrownsBreakdown()
         sidebarCrownsInfoContainer.classList.add(WHITE_SIDEBAR_BOX_CONTAINER);
         sidebarCrownsInfoContainer.id = "sidebarCrownsInfoContainer";
 
-        let elementToInsertCrownsInfoBefore = document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`).nextElementSibling;
+        let elementToInsertCrownsInfoBefore = document.querySelector(DAILY_GOAL_SIDEBAR_SELECTOR).parentElement.parentElement.nextElementSibling;
         if (document.querySelector(`#languagesBox`) != null)
         {
             elementToInsertCrownsInfoBefore = document.querySelector(`#languagesBox`).nextElementSibling;
@@ -3471,8 +3471,8 @@ function displayXPBreakdown()
     // First remove any existing XP Boxes
     removeXPBoxes();
 
-    const isSidebarContainer = document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`) !== null;
-    const isPopupContainer = document.querySelector(`.${DAILY_GOAL_POPUP_CONTAINER}`) !== null;
+    const isSidebarContainer = document.querySelector(DAILY_GOAL_SIDEBAR_SELECTOR) !== null;
+    const isPopupContainer = document.querySelector(DAILY_GOAL_POPUP_CONTAINER) !== null;
 
     const somethingToDo = (
         (options.XPInfoInSidebar && isSidebarContainer)
@@ -3564,7 +3564,7 @@ function displayXPBreakdown()
 
     if (options.XPInfoInSidebar && isSidebarContainer)
     {
-        document.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`).appendChild(XPBox.cloneNode(true));
+        document.querySelector(DAILY_GOAL_SIDEBAR_SELECTOR).parentElement.appendChild(XPBox.cloneNode(true));
     }
 
     if ((inMobileLayout || options.XPInfoInPopup) && isPopupContainer)
@@ -3629,12 +3629,12 @@ function displayTotalStrenthBox()
 
     if (document.querySelector("#totalStrengthBox") === null)
     {
-        if (sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`) === null) return false;
+        if (sidebar.querySelector(DAILY_GOAL_SIDEBAR_SELECTOR) === null) return false;
 
         const insertAfterTarget =
         [
             ...Array.from(sidebar.querySelectorAll("#languagesBox")),
-            ...Array.from(sidebar.querySelectorAll(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`))
+            ...Array.from(sidebar.querySelectorAll(DAILY_GOAL_SIDEBAR_SELECTOR)).map(elem => elem.parentElement)
         ][0];
         sidebar.insertBefore(totalStrengthBox, insertAfterTarget.nextSibling);
     }
@@ -3707,7 +3707,7 @@ function displayLanguagesInfo(languages)
     );
 
     // Add the new side bar box to the page
-    const dailyGoalBox = sidebar.querySelector(`.${DAILY_GOAL_SIDEBAR_CONTAINER}`);
+    const dailyGoalBox = sidebar.querySelector(DAILY_GOAL_SIDEBAR_SELECTOR).parentElement.parentElement;
     if (dailyGoalBox === null)
     {
         return false;
@@ -4146,7 +4146,7 @@ function getSidebarBoxType(boxElement)
     {
         return "leagues";
     }
-    if (boxElement.classList.contains(DAILY_GOAL_SIDEBAR_CONTAINER))
+    if (boxElement.contains(document.querySelector(DAILY_GOAL_SIDEBAR_SELECTOR)))
     {
         return "XPBox";
     }
@@ -4162,11 +4162,11 @@ function getSidebarBoxType(boxElement)
     {
         return "crownsBox";
     }
-    else if (AD.split(" ").every((classPart) => boxElement.classList.contains(classPart)))
+    else if (boxElement.classList.contains(AD))
     {
         return "ad";
     }
-    else if (boxElement.classList.contains(ACHIEVEMENT_BOX))
+    else if (boxElement.contains(document.querySelector(ACHIEVEMENT_BOX_SELECTOR)))
     {
         return "achievementBox";
     }

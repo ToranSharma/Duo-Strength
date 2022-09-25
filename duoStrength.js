@@ -25,7 +25,7 @@ const CROWNS_POPUP_CONTAINER_SELECTOR = "._2WrB_._2uf-t"; // parent of Crown log
 const CROWN_LOGO_CONTAINER = "_1I6F9";
 const CROWN_DESCRIPTION_CONTAINER = "yccDx";
 const CROWN_TOTAL_CONTAINER = "H_XA0";
-const DAILY_GOAL_POPUP_CONTAINER = "_20sV-"; // parent of streak flame and description, and the 7 small flames
+const DAILY_GOAL_POPUP_SELECTOR = `[data-test="streak-panel"]`; // parent of streak flame and description, and the 7 small flames
 const DAILY_GOAL_SIDEBAR_SELECTOR = ".dx6CP";
 const SIDEBAR_SELECTOR = "._1YfQ8 > div";
 const WHITE_SIDEBAR_BOX_CONTAINER = "_3ZuGY";
@@ -3472,7 +3472,7 @@ function displayXPBreakdown()
     removeXPBoxes();
 
     const isSidebarContainer = document.querySelector(DAILY_GOAL_SIDEBAR_SELECTOR) !== null;
-    const isPopupContainer = document.querySelector(DAILY_GOAL_POPUP_CONTAINER) !== null;
+    const isPopupContainer = document.querySelector(DAILY_GOAL_POPUP_SELECTOR) !== null;
 
     const somethingToDo = (
         (options.XPInfoInSidebar && isSidebarContainer)
@@ -3569,7 +3569,7 @@ function displayXPBreakdown()
 
     if ((inMobileLayout || options.XPInfoInPopup) && isPopupContainer)
     {
-        document.querySelector(`.${DAILY_GOAL_POPUP_CONTAINER}`).appendChild(XPBox);
+        document.querySelector(DAILY_GOAL_POPUP_SELECTOR).appendChild(XPBox);
         
         if(!inMobileLayout)
         {
@@ -5466,12 +5466,7 @@ function childListMutationHandle(mutationsList, observer)
             }
         }
 
-        if (
-            popupIcon.getElementsByClassName(LIT_FLAME).length
-            + popupIcon.getElementsByClassName(GREY_FLAME).length
-            + popupIcon.getElementsByClassName(BLUE_FLAME).length
-            != 0
-        ) // Lit flame for streak extended today, grey for not, blue possibly for frozen with duolingo plus?
+        if (popupIcon.parentElement.getAttribute('data-test') === 'streak-menu')
         {
             // Streak/XP has had the change.
             if (options.XPInfo && popupIcon.lastChild.nodeName === 'DIV')

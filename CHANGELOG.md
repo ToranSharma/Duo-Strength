@@ -10,6 +10,7 @@ Changelog
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.30)
 ### Fixed
 - Sidebar box features (XP Info, Languages Info etc.)
+- XP Info in Streak popup box.
 
 [v2.0.29] - 2022-09-19
 -----------------

@@ -5,6 +5,13 @@ Changelog
 ------------
 -
 
+[v2.0.30] - 2022-09-25
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.30)
+### Fixed
+- Sidebar box features (XP Info, Languages Info etc.)
+- XP Info in Streak popup box.
+
 [v2.0.29] - 2022-09-19
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.29)
@@ -1483,6 +1490,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.0.28]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.29...v2.0.30
 [v2.0.28]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.28...v2.0.29
 [v2.0.28]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.27...v2.0.28
 [v2.0.27]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.26...v2.0.27

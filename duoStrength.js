@@ -39,8 +39,8 @@ const TOP_BAR = "_1bdcY";
 const NAVIGATION_BUTTON = "_2fX2D"; // class for container of icon images of nav buttons
 const QUESTION_CONTAINER = "_863KE";
 const LOGIN_PAGE = "_2F5q9";
-const LESSON = "iLgf- _1Xlh1";
-const LESSON_MAIN_SECTION = "_3yOsW";
+const LESSON_CONTAINER_SELECTOR = "._3W86r._3YKTw";
+const LESSON_MAIN_SECTION_SELECTOR = "._3yOsW._3VXxf";
 const LESSON_BOTTOM_SECTION = "_2Fc1K";
 const QUESTION_UNCHECKED = "_399cc";
 const QUESTION_CHECKED = "YQ0lZ";
@@ -64,7 +64,7 @@ const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-te
 const UNLOADED_SKILL_SELECTOR = ".QS3B0";
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
-const MAIN_SECTION_SELECTOR = "._33Mo9";
+const MAIN_SECTION_CONTAINER_SELECTOR = "._2_9xr > :last-child";
 const TREE_OVERLAY_CONTAINER_SELECTOR = "._1fnwn";
 const GLOBAL_PRACTISE_BUTTON_ANCHOR = "_3_B9a _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
 const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0.np6Tv";
@@ -132,14 +132,10 @@ let requestsPending = 0;
 let usingOldData;
 
 let rootElem;
-let rootChild;
-let mainBody;
-let mainBodyContainer;
 let topBarDiv;
 
 let onMainPage;
 let onLoginPage;
-let inMobileLayout;
 
 let lastSkill;
 
@@ -163,7 +159,7 @@ async function getDebugInfo()
         [requestsPending, "requestsPending"],
         [onMainPage, "onMainPage"],
         [onLoginPage, "onLoginPage"],
-        [inMobileLayout, "inMobileLayout"],
+        [inMobileLayout(), "inMobileLayout"],
         [progress, "progress"],
         [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse(null, numBytes => resolve(`There are ${numBytes}B/102400B (${(100*numBytes/102400).toFixed(1)}%) being used in total`))), "Total Storage Usage"],
         [await new Promise((resolve, reject) => chrome.storage.sync.getBytesInUse("progress", numBytes => resolve(`There are ${numBytes}B/8192B (${(100*numBytes/8192).toFixed(1)}%) being used in a single entry`))), "progress Storage Usage"],
@@ -1925,7 +1921,7 @@ function displayNeedsStrengthening(needsStrengthening, cracked = false, needsSor
             {
                 // Is zero if element has been hidden e.g by an adblocker
                 const offset = boxRightEdge - buttonLeftEdge;
-                if (inMobileLayout)
+                if (inMobileLayout())
                 {
                     strengthenBox.style.width = `calc(100% - ${offset}px - 1.5em)`;
                 }
@@ -2754,7 +2750,7 @@ function applyFocusMode()
     // Add button to toggle the focus mode, if is wanted
     if (
         options.focusModeButton
-        && !inMobileLayout
+        && !inMobileLayout()
         && globalPractiseButtonContainer !== null 
     )
     {
@@ -2998,7 +2994,7 @@ function displayCrownsBreakdown()
     const somethingToDo = (
         (options.crownsInfoInSidebar && isSidebar)
         ||
-        ((inMobileLayout || options.crownsInfoInPopup) && isPopupContainer)
+        ((inMobileLayout() || options.crownsInfoInPopup) && isPopupContainer)
     );
     
     if (!somethingToDo)
@@ -3038,7 +3034,7 @@ function displayCrownsBreakdown()
 
     const placesToAdd = [];
 
-    if ((inMobileLayout || options.crownsInfoInPopup) && isPopupContainer)
+    if ((inMobileLayout() || options.crownsInfoInPopup) && isPopupContainer)
     {
         const crownsPopupContainer = document.querySelector(CROWNS_POPUP_CONTAINER_SELECTOR);
         crownsPopupContainer.id = "crownsPopupContainer";
@@ -3477,7 +3473,7 @@ function displayXPBreakdown()
     const somethingToDo = (
         (options.XPInfoInSidebar && isSidebarContainer)
         ||
-        ((inMobileLayout || options.XPInfoInPopup) && isPopupContainer)
+        ((inMobileLayout() || options.XPInfoInPopup) && isPopupContainer)
     );
     
     if (!somethingToDo)
@@ -3567,11 +3563,11 @@ function displayXPBreakdown()
         document.querySelector(DAILY_GOAL_SIDEBAR_SELECTOR).parentElement.appendChild(XPBox.cloneNode(true));
     }
 
-    if ((inMobileLayout || options.XPInfoInPopup) && isPopupContainer)
+    if ((inMobileLayout() || options.XPInfoInPopup) && isPopupContainer)
     {
         document.querySelector(DAILY_GOAL_POPUP_SELECTOR).appendChild(XPBox);
         
-        if(!inMobileLayout)
+        if(!inMobileLayout())
         {
             XPBox.parentNode.parentNode.classList.add("XPBoxOverflowContainer");
         }
@@ -3779,7 +3775,7 @@ function displaySuggestion(fullyStrengthened, noCrackedSkills)
             if (buttonLeftEdge !== 0)
             {
                 // Is zero if element has been hidden e.g by an adblocker
-                if (inMobileLayout)
+                if (inMobileLayout())
                 {
                     container.style.width = `calc(100% - ${offset}px - 1.5em)`;
                 }
@@ -4659,7 +4655,7 @@ async function addFeatures()
 
             if (options.masteredButton) addMasteredSkillButton(skillPopout);
 
-            if (inMobileLayout && document.querySelector("#revealHiddenSkillsButton") !== null)
+            if (inMobileLayout() && document.querySelector("#revealHiddenSkillsButton") !== null)
             {
                 // Hiding stuff while in mobile layout so need to fix the aligment of the popout.
                 fixPopoutAlignment(skillPopout);
@@ -5186,11 +5182,10 @@ function addStyleSheet()
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
 function childListMutationHandle(mutationsList, observer)
 {
-    let rootChildReplaced = false;
+    let mainPageContentChanged = false;
+    let mainSectionChanged = false;
+    let lessonContentLoaded = false;
     let goldenOwlMessageAdded = false;
-    let rootChildContentsReplaced = false;
-    let rootChildRemovedNodes = [];
-    let mainBodyReplaced = false
     let topBarToggled = false;
     let bottomNavToggled = false;
     let popupChanged = false;
@@ -5202,23 +5197,23 @@ function childListMutationHandle(mutationsList, observer)
     let skillPopout;
     let checkpointPopoutAdded = false;
     let checkpointPopout;
-    let mainContentLoaded = false;
     
     for (let mutation of mutationsList)
     {
-        if (
-            mutation.target === rootElem
-            &&
-            (
-                (
-                    mutation.addedNodes.length === 1
-                    && mutation.target.childElementCount === 1
-                )
-                || onLoginPage
-            )
+        if (mutation.target === rootElem)
+        {
+            mainPageContentChanged = true;
+        }
+        else if (mutation.target === document.querySelector(MAIN_SECTION_CONTAINER_SELECTOR))
+        {
+            mainSectionChanged = true;
+        }
+        else if (
+            mutation.target === document.querySelector(LESSON_CONTAINER_SELECTOR)
+            && mutation.addedNodes.length !== 0
         )
         {
-            rootChildReplaced = true;
+            lessonContentLoaded = true;
         }
         else if (
             mutation.target.id === "overlays"
@@ -5226,15 +5221,6 @@ function childListMutationHandle(mutationsList, observer)
         )
         {
             goldenOwlMessageAdded = true;
-        }
-        else if (mutation.target === rootChild)
-        {
-            rootChildContentsReplaced = true;
-            rootChildRemovedNodes = rootChildRemovedNodes.concat(Array.from(mutation.removedNodes));
-        }
-        else if (mutation.target === mainBodyContainer)
-        {
-            mainBodyReplaced = true;
         }
         else if
         (
@@ -5273,13 +5259,13 @@ function childListMutationHandle(mutationsList, observer)
             popupIcon = mutation.target;
         }
         else if (
-            mutation.target.className.includes(LESSON_MAIN_SECTION)
+            mutation.target === document.querySelector(LESSON_MAIN_SECTION_SELECTOR)
             && Array.from(mutation.removedNodes).some(node => node.matches(PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR))
         )
         {
             lessonMainSectionContentsReplaced = true;
         }
-        else if (mutation.target.parentNode.className.includes(LESSON_MAIN_SECTION) && mutation.addedNodes.length != 0)
+        else if (mutation.target.parentNode === document.querySelector(LESSON_MAIN_SECTION_SELECTOR) && mutation.addedNodes.length != 0)
         {
             lessonQuestionChanged = true;
         }
@@ -5311,50 +5297,21 @@ function childListMutationHandle(mutationsList, observer)
             checkpointPopoutAdded = true;
             checkpointPopout = mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR);
         }
-        else if
-        (
-            mutation.target.parentElement === mainBody
-            && mutation.addedNodes.length !== 0
-        )
-        {
-            mainContentLoaded = true;
-        }
     }
 
-    if (rootChildReplaced)
+    if (mainPageContentChanged)
     {
-        // root child list has changed so rootChild has probably been replaced, let's start again.
         init();
     }
-    else if (rootChildContentsReplaced)
+
+    if (mainSectionChanged)
     {
-        // Check if there is both the topbar and the main page elem.
-        languageChanged = false;
-        if (rootChild.childElementCount === 1)
-        {
-            // Entered a lesson in the normal way, through the skill tree.
-            // Don't need to do anything here as when the lesson will be loading first.
-            // When it has finished loading the mainBody is replaced with the lesson sections.
-            // We are already observing for that change and will handle it.
-        }
-        else
-        {
-            // not just changed into a lesson
-            init();
-        }
+        init();
     }
-    else if (mainBodyReplaced)
+
+    if (lessonContentLoaded)
     {
-        // mainBodyContainer childlist changed, so the mainBody element must have been replaced.
-        mainBody = mainBodyContainer.firstChild;
-
-
-        // This mainBody element being replaced happens on some page changes, so let's also trigger some page change checks.
-        // But also make sure that this page hasn't removed to top bar, if it has let's run init again to see what is going on.
-        if (document.body.contains(topBarDiv))
-            classNameMutationHandle(mutationsList, null);
-        else
-            init();
+        init();
     }
 
     if (goldenOwlMessageAdded)
@@ -5391,14 +5348,12 @@ function childListMutationHandle(mutationsList, observer)
         if (document.querySelector(BOTTOM_NAV_SELECTOR) !== null)
         {
             // There is the bottom navigation bar so we are in the mobile layout.
-            inMobileLayout = true;
             rootElem.classList.add("mobileLayout");
             rootElem.classList.remove("desktopLayout");
         }
         else
         {
             // There is not a bottom navigation bar so we are in normal desktop layout.
-            inMobileLayout = false;
             rootElem.classList.add("desktopLayout");
             rootElem.classList.remove("mobileLayout");
         }
@@ -5422,7 +5377,7 @@ function childListMutationHandle(mutationsList, observer)
         document.querySelectorAll(`.topOfTreeList`).forEach(
             (list) =>
             {
-                list.style.width = (inMobileLayout) ? mobileWidth : desktopWidth;
+                list.style.width = (inMobileLayout()) ? mobileWidth : desktopWidth;
             }
         );
 
@@ -5527,17 +5482,12 @@ function childListMutationHandle(mutationsList, observer)
 
         if (options.masteredButton) addMasteredSkillButton(skillPopout);
 
-        if (inMobileLayout && document.querySelector("#revealHiddenSkillsButton") !== null) fixPopoutAlignment(skillPopout);
+        if (inMobileLayout() && document.querySelector("#revealHiddenSkillsButton") !== null) fixPopoutAlignment(skillPopout);
     }
     
     if (checkpointPopoutAdded)
     {
         if (options.checkpointButtons) addCheckpointButtons(checkpointPopout);
-    }
-
-    if (mainContentLoaded)
-    {
-        addButtonsToTipsPage();
     }
 }
 
@@ -5607,7 +5557,7 @@ function classNameMutationHandle(mutationsList, observer)
                 // language has previously been set so not first time on main page, let's just get some new data.
                 requestData();
 
-                if (inMobileLayout)
+                if (inMobileLayout())
                 {
                     setUpObservers(); // topBarDiv gets replaced when changing to the shop in mobile layout;
                 }
@@ -5652,9 +5602,9 @@ function classNameMutationHandle(mutationsList, observer)
 
 function setUpObservers()
 {
-    topBarDiv = rootChild.querySelector(`.${TOP_BAR}`);
+    topBarDiv = rootElem.querySelector(`.${TOP_BAR}`);
     // const bottomNav = rootChild.querySelector(BOTTOM_NAV_SELECTOR);
-    pagesSidebar = rootChild.querySelector(PAGES_SIDEBAR_SELECTOR);
+    pagesSidebar = rootElem.querySelector(PAGES_SIDEBAR_SELECTOR);
 
     // Declare nav buttons that we will need to observe
     // pagesSidebar Buttons
@@ -5670,7 +5620,7 @@ function setUpObservers()
     const crownMenu = document.querySelector(CROWN_MENU_SELECTOR);
     const streakMenu = document.querySelector(STREAK_MENU_SELECTOR);
 
-    if (inMobileLayout)
+    if (inMobileLayout())
     {
         classNameObserver.observe(homeNav.parentElement, {childList: true}); // element replaced but logic in classname mutation handler
         classNameObserver.observe(shopNav.parentElement, {childList: true}); 
@@ -5695,8 +5645,8 @@ function setUpObservers()
     // set up the observer to check for layout changes where the bottomNav might be added or removed
     childListObserver.observe(topBarDiv.parentNode.parentNode, {childList: true});
 
-    // set up the observer to check for the loading of the main page content for when the tips page does a first load.
-    childListObserver.observe(mainBody.lastChild, {childList: true});
+    const mainSectionContainer = document.querySelector(MAIN_SECTION_CONTAINER_SELECTOR);
+    childListObserver.observe(mainSectionContainer, {childList: true});
 }
 
 async function lessonInit(optionsPromise)
@@ -5712,7 +5662,7 @@ async function lessonInit(optionsPromise)
     //
     // We still do need to add the observer to the lesson main section when it has loaded in order to detect question changes
 
-    const lessonMainSection = document.querySelector(`.${LESSON_MAIN_SECTION}`);
+    const lessonMainSection = document.querySelector(LESSON_MAIN_SECTION_SELECTOR);
 
     if (lessonMainSection !== null)
     {
@@ -5725,21 +5675,6 @@ async function lessonInit(optionsPromise)
         // Set up mutation observer for question checked status change.
         const lessonBottomSection = document.querySelector(`.${LESSON_BOTTOM_SECTION}`);
         classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
-    }
-    else
-    {
-        // No main section, so not in the question yet, we will possibly need to set up another observer for when we enter the questions
-
-        // Now check if we are on the selection practice type selection screen
-        const practiceTypeSelectMessage = document.querySelector(PRACTICE_TYPE_SELECT_MESSAGE_SELECTOR); // Would be first (and only) child if exists
-
-        if (practiceTypeSelectMessage !== null)
-        {
-            // On timed/untimed practice selection screen.
-            // We need to observe lessonMainSection as its children get replaced when the practice type is selected.
-            
-            childListObserver.observe(practiceTypeSelectMessage.parentNode, {childList: true});
-        }
     }
 
     await optionsPromise;
@@ -5833,11 +5768,11 @@ async function homeInit(optionsPromise)
         // League hiding
         if (options.showLeagues)
         {
-            rootChild.classList.remove("hideLeagueTable");
+            rootElem.classList.remove("hideLeagueTable");
         }
         else
         {
-            rootChild.classList.add("hideLeagueTable");
+            rootElem.classList.add("hideLeagueTable");
         }
 
         // Focus mode - sidebar hiding
@@ -5874,8 +5809,19 @@ async function homeInit(optionsPromise)
     }
 }
 
+function inMobileLayout() {
+    return (
+        document.querySelector(BOTTOM_NAV_SELECTOR) !== null // There is a bottom nav which only happens in mobile layout.
+        || (
+            (new RegExp("/tips/?")).test(window.location.pathname)
+            && document.querySelector(`.${TOP_BAR}`) === null
+        ) // We are on a tips page and there is no top bar, so we are in mobile layout.
+    );
+}
+
 async function init()
 {
+
     // Load options
     let optionsPromise = retrieveOptions();
 
@@ -5885,13 +5831,54 @@ async function init()
     rootElem = document.querySelector("#root"); // When logging in child list is changed.
     childListObserver.observe(rootElem, {childList: true}); // Observing for changes to its children to detect logging in and out?
 
-    rootChild = rootElem.firstChild;
-    if (rootChild === null)
+    if (inMobileLayout()) {
+        rootElem.classList.add("mobileLayout");
+        rootElem.classList.remove("desktopLayout");
+        if (
+            (new RegExp("/tips/?")).test(window.location.pathname)
+            && document.querySelector(`.${TOP_BAR}`) === null
+            && document.querySelector(NAVS_CONTAINER_SELECTOR) !== null
+        )
+        {
+            // Set up observer for the container of the nav bars when in mobile layout on tips page so we can detect if we change out of it.
+            childListObserver.observe(document.querySelector(NAVS_CONTAINER_SELECTOR), {childList: true});
+        }
+    }
+    else
     {
+        rootElem.classList.add("desktopLayout");
+        rootElem.classList.remove("mobileLayout");
+    }
+
+    if (rootElem.querySelector(`.${LOGIN_PAGE}`))
+    {
+        // On login page so cannot continue to run rest of init process.
+        onMainPage = false;
+        onLoginPage = true;
         return false;
     }
-    childListObserver.observe(rootChild, {childList: true}); // Observing for changes to its children to detect entering and leaving a lesson.
+    else
+    {
+        // should be logged in
+        onLoginPage = false;
 
+        // now test to see if we are in a lesson or not
+        const lessonContainer = document.querySelector(LESSON_CONTAINER_SELECTOR)
+        if (lessonContainer)
+        {
+            childListObserver.observe(lessonContainer, {childList: true}); // Observing for changes to its children to detect lesson content loading
+            await lessonInit(optionsPromise);
+        }
+        else
+        {
+            // not in a lesson
+            await homeInit(optionsPromise);
+        }
+    }
+}
+
+async function oldInitCodeNotUpdated()
+{
     if (rootChild.querySelector(`:scope > [data-focus-guard]`) != null)
     {
         // The golden owl message is being displayed.
@@ -5914,61 +5901,6 @@ async function init()
     }
 
     childListObserver.observe(mainBodyContainer, {childList:true}); // Observing for changes to its children to detect if the mainBody element has been replaced.
-
-
-    mainBody = mainBodyContainer.firstChild;
-    if (mainBody === null)
-        return false;
-    
-    if (
-        document.querySelector(BOTTOM_NAV_SELECTOR) !== null // There is a bottom nav which only happens in mobile layout.
-        || ((new RegExp("/tips/?")).test(window.location.pathname) && document.querySelector(`.${TOP_BAR}`) === null) // We are on a tips page and there is no top bar, so we are in mobile layout.
-    )
-    {
-        inMobileLayout = true;
-        rootElem.classList.add("mobileLayout");
-        rootElem.classList.remove("desktopLayout");
-        if (
-            (new RegExp("/tips/?")).test(window.location.pathname)
-            && document.querySelector(`.${TOP_BAR}`) === null
-            && document.querySelector(NAVS_CONTAINER_SELECTOR) !== null
-        )
-        {
-            // Set up observer for the container of the nav bars when in mobile layout on tips page so we can detect if we change out of it.
-            childListObserver.observe(document.querySelector(NAVS_CONTAINER_SELECTOR), {childList: true});
-        }
-    }
-    else
-    {
-        inMobileLayout = false;
-        rootElem.classList.add("desktopLayout");
-        rootElem.classList.remove("mobileLayout");
-    }
-    
-    if (rootChild.firstChild.className === LOGIN_PAGE)
-    {
-        // On login page so cannot continue to run rest of init process.
-        onMainPage = false;
-        onLoginPage = true;
-        return false;
-    }
-    else
-    {
-        // should be logged in
-        onLoginPage = false;
-
-        // now test to see if we are in a lesson or not
-
-        if (LESSON.split(" ").every(lessonClass => rootChild.firstChild.className.includes(lessonClass)))
-        {
-            await lessonInit(optionsPromise);
-        }
-        else
-        {
-            // not in a lesson
-            await homeInit(optionsPromise);
-        }
-    }
 }
 
 
@@ -6034,6 +5966,7 @@ else
 //observer.disconnet(); can't disconnect as always needed while page is loaded.
 
 /*
+OUTDATED
 The structure of page is as follows:
 <body>
     ...

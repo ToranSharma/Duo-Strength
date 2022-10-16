@@ -1490,8 +1490,9 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
-[v2.0.28]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.29...v2.0.30
-[v2.0.28]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.28...v2.0.29
+[v2.0.31]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.30...v2.0.31
+[v2.0.30]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.29...v2.0.30
+[v2.0.29]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.28...v2.0.29
 [v2.0.28]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.27...v2.0.28
 [v2.0.27]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.26...v2.0.27
 [v2.0.26]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.25...v2.0.26

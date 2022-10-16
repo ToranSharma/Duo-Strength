@@ -64,7 +64,7 @@ const SKILL_SELECTOR = `[data-test="tree-section"] [data-test="skill"], [data-te
 const UNLOADED_SKILL_SELECTOR = ".QS3B0";
 const CHECKPOINT_SELECTOR = `[data-test="checkpoint-badge"]`;
 const GOLDEN_OWL_MESSAGE_TROPHY_SELECTOR = `[src$="trophy.svg"]`;
-const MAIN_SECTION_SELECTOR = "._33Mo9";
+const MAIN_SECTION_CONTAINER_SELECTOR = "._2_9xr > :last-child";
 const TREE_OVERLAY_CONTAINER_SELECTOR = "._1fnwn";
 const GLOBAL_PRACTISE_BUTTON_ANCHOR = "_3_B9a _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
 const GLOBAL_PRACTISE_BUTTON_SELECTOR = "._2TTO0.np6Tv";
@@ -5183,6 +5183,7 @@ function addStyleSheet()
 function childListMutationHandle(mutationsList, observer)
 {
     let mainPageContentChanged = false;
+    let mainSectionChanged = false;
     let lessonContentLoaded = false;
     let goldenOwlMessageAdded = false;
     let topBarToggled = false;
@@ -5199,14 +5200,15 @@ function childListMutationHandle(mutationsList, observer)
     
     for (let mutation of mutationsList)
     {
-        if (
-            mutation.target === rootElem
-        )
+        if (mutation.target === rootElem)
         {
             mainPageContentChanged = true;
         }
-
-        if (
+        else if (mutation.target === document.querySelector(MAIN_SECTION_CONTAINER_SELECTOR))
+        {
+            mainSectionChanged = true;
+        }
+        else if (
             mutation.target === document.querySelector(LESSON_CONTAINER_SELECTOR)
             && mutation.addedNodes.length !== 0
         )
@@ -5298,6 +5300,11 @@ function childListMutationHandle(mutationsList, observer)
     }
 
     if (mainPageContentChanged)
+    {
+        init();
+    }
+
+    if (mainSectionChanged)
     {
         init();
     }
@@ -5637,6 +5644,9 @@ function setUpObservers()
 
     // set up the observer to check for layout changes where the bottomNav might be added or removed
     childListObserver.observe(topBarDiv.parentNode.parentNode, {childList: true});
+
+    const mainSectionContainer = document.querySelector(MAIN_SECTION_CONTAINER_SELECTOR);
+    childListObserver.observe(mainSectionContainer, {childList: true});
 }
 
 async function lessonInit(optionsPromise)

@@ -5182,6 +5182,7 @@ function addStyleSheet()
 // detect changes to class using mutation of attributes, may trigger more than necessary but it catches what we need.
 function childListMutationHandle(mutationsList, observer)
 {
+    let mainPageContentAdded = false;
     let lessonContentLoaded = false;
     let goldenOwlMessageAdded = false;
     let topBarToggled = false;
@@ -5198,6 +5199,21 @@ function childListMutationHandle(mutationsList, observer)
     
     for (let mutation of mutationsList)
     {
+        if (
+            mutation.target === rootElem
+            &&
+            (
+                (
+                    mutation.addedNodes.length === 1
+                    && mutation.target.childElementCount === 1
+                )
+                || onLoginPage
+            )
+        )
+        {
+            mainPageContentAdded = true;
+        }
+
         if (
             mutation.target === document.querySelector(LESSON_CONTAINER_SELECTOR)
             && mutation.addedNodes.length !== 0
@@ -5287,6 +5303,11 @@ function childListMutationHandle(mutationsList, observer)
             checkpointPopoutAdded = true;
             checkpointPopout = mutation.target.querySelector(CHECKPOINT_POPOUT_SELECTOR);
         }
+    }
+
+    if (mainPageContentAdded)
+    {
+        init();
     }
 
     if (lessonContentLoaded)

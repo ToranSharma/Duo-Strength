@@ -5640,7 +5640,6 @@ async function lessonInit(optionsPromise)
     // We still do need to add the observer to the lesson main section when it has loaded in order to detect question changes
 
     const lessonMainSection = document.querySelector(LESSON_MAIN_SECTION_SELECTOR);
-    console.log(lessonMainSection);
 
     if (lessonMainSection !== null)
     {
@@ -5652,7 +5651,6 @@ async function lessonInit(optionsPromise)
 
         // Set up mutation observer for question checked status change.
         const lessonBottomSection = document.querySelector(`.${LESSON_BOTTOM_SECTION}`);
-        console.log(lessonBottomSection);
         classNameObserver.observe(lessonBottomSection.firstChild, {attributes: true});
     }
 
@@ -5660,7 +5658,6 @@ async function lessonInit(optionsPromise)
     hideTranslationText(undefined, true); // hide text if appropriate and set up the observer on the question area
     revealNewWord();
 
-    console.log('here???');
     if (options.hideCartoons)
     {
         document.body.classList.add("hideCartoons");

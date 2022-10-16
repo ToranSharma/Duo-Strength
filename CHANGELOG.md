@@ -4,6 +4,11 @@ Changelog
 [Unreleased]
 ------------
 -
+[v2.0.31] - 2022-10-16
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.31)
+### Fixed
+- Handling of new UI structure (no rootChild).
 
 [v2.0.30] - 2022-09-25
 -----------------

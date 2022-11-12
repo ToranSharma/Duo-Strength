@@ -1,7 +1,7 @@
 {
     "name": "Duo Strength",
     "description": "Adds individual skill strengths back into the duolingo webpage, similar to data on duome.eu",
-    "version": "2.0.31",
+    "version": "2.1.0",
     "manifest_version": 3,
     "icons": {
         "16": "icons/icon_16.png",
@@ -16,7 +16,8 @@
     "action": {
         "show_matches": [
             "https://www.duolingo.com/*",
-            "https://preview.duolingo.com/*"
+            "https://preview.duolingo.com/*",
+            "https://www-internal.duolingo.com/*"
         ],
         "default_icon": {
             "16": "icons/icon_16.png",
@@ -32,7 +33,8 @@
         {
             "matches": [
                 "https://www.duolingo.com/*",
-                "https://preview.duolingo.com/*"
+                "https://preview.duolingo.com/*",
+                "https://www-internal.duolingo.com/*"
             ],
             "js": [
                 "duoStrength.js"
@@ -51,7 +53,8 @@
         ],
             "matches": [
             "https://www.duolingo.com/*",
-            "https://preview.duolingo.com/*"
+            "https://preview.duolingo.com/*",
+            "https://www-internal.duolingo.com/*"
         ]
     }],
     "permissions": [

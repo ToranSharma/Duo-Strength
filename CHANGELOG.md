@@ -3,8 +3,14 @@ Changelog
 
 [Unreleased]
 ------------
+-
+
+[v2.1.0] - 2022-11-12
+-----------------
+[GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.1.0)
 ### Added
 - Support for www-internal.duolingo.com to continue supporting the old layout.
+
 [v2.0.31] - 2022-10-16
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.31)
@@ -1496,6 +1502,7 @@ Changelog
   from a lesson to the main page.
 
 [Unreleased]: https://github.com/ToranSharma/Duo-Strength/compare/master...develop
+[v2.1.0]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.31...v2.1.0
 [v2.0.31]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.30...v2.0.31
 [v2.0.30]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.29...v2.0.30
 [v2.0.29]: https://github.com/ToranSharma/Duo-Strength/compare/v2.0.28...v2.0.29

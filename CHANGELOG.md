@@ -3,7 +3,8 @@ Changelog
 
 [Unreleased]
 ------------
--
+### Added
+- Support for www-internal.duolingo.com to continue supporting the old layout.
 [v2.0.31] - 2022-10-16
 -----------------
 [GitHub Release Page](https://github.com/ToranSharma/Duo-Strength/releases/tag/v2.0.31)
